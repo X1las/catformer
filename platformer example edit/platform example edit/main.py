@@ -127,7 +127,7 @@ class Game:
         pow_hits = pg.sprite.spritecollide(self.player, self.powerups, True)
         for pow in pow_hits:
             if pow.type == 'boost':
-                #self.boost_sound.play()qew
+                #self.boost_sound.play()qewwer
                 self.player.vel.y = -BOOST_POWER
                 self.player.jumping = False
 
