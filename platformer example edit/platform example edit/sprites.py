@@ -2,6 +2,7 @@
 import pygame as pg
 from settings import *
 from random import choice, randrange, uniform
+from os import path
 vec = pg.math.Vector2
 
 class Spritesheet:                      # "utility class for loading and parsing spritesheets" (?)
@@ -134,3 +135,23 @@ class Platform(pg.sprite.Sprite):                               # The platforms 
         self.rect.x = x                                                             # Put the platform at the given coordinate.
         self.rect.y = y                                                                # \\
 
+class Box(pg.sprite.Sprite):
+    def __init__(self, game, x, y, width, height):
+        self.game   = game
+        self.width  = width
+        self.height = height
+        self.groups = game.all_sprites, game.platforms
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.dir = path.dirname(__file__)
+        with open(path.join(self.dir, HS_FILE), 'r') as f:
+            try:
+                self.highscore = int(f.read())
+            except:
+                self.highscore = 0
+        # load spritesheet image
+        img_dir = path.join(self.dir, 'img')
+        self.image = pg.image.load(path.join(img_dir, 'RTS_Crate.png')).convert()
+        self.image = pg.transform.scale(self.image, (width, height))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y

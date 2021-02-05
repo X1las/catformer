@@ -28,9 +28,12 @@ class Game:
         self.level = Level(self,l1_platforms, length)       # Add levels
         self.all_sprites = pg.sprite.LayeredUpdates()       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         self.platforms = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type, like saying int i;)
+        self.boxes = pg.sprite.Group()
         self.player = Player(self)                          # Create player (the bunny)
         self.level.setPlatforms()                           # Creates the platforms from the level
 
+        for plot in l1_boxes:
+            Box(self, *plot)
         self.run()
 
     def run(self):                  # Game Loop
