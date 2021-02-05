@@ -1,6 +1,6 @@
 # game options/settings
 TITLE = "Jumpy!"
-WIDTH = 600
+WIDTH = 1000
 HEIGHT = 600
 FPS = 60
 FONT_NAME = 'arial'
@@ -10,7 +10,7 @@ SPRITESHEET = "spritesheet_jumper.png"
 # Player properties
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
-PLAYER_GRAV = 0.8
+PLAYER_GRAV = 0.7
 PLAYER_JUMP = 20
 
 # Game properties
