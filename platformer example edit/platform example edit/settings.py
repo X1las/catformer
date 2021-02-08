@@ -53,5 +53,5 @@ l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
                 (750,  HEIGHT - 100, 260,    40, False),
                 (450,  HEIGHT - 100, 260,    40, False)]
 
-l1_boxes = [(400, HEIGHT - 50,  10, 10)]
+l1_boxes = [(400, HEIGHT - 50,  40, 40)]
 

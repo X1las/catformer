@@ -54,11 +54,13 @@ class Player(pg.sprite.Sprite):
 
     def jump(self):                                                              # jump only if standing on a platform
         self.rect.y += 2                                                         # to see if there is a platform 2 pix below
-        hits = pg.sprite.spritecollide(self, self.game.platforms, False)         # Returns the platforms that (may) have been touched
+        hits = pg.sprite.spritecollide(self, self.game.surfaces, False)         # Returns the platforms that (may) have been touched
         self.rect.y -= 2                                                         # undo 2 lines before
         if hits and not self.jumping:                                            # If you are on a platform and not jumping
             self.jumping = True                                                  # then you jump
             self.vel.y = -PLAYER_JUMP                                                  #\\
+
+
 
     def update(self):                                                            # Updating pos, vel and acc.
         self.animate()                                                           # Animates first ?
@@ -117,12 +119,23 @@ class Player(pg.sprite.Sprite):
                 self.rect.bottom = bottom
         self.mask = pg.mask.from_surface(self.image)
 
-class Platform(pg.sprite.Sprite):                               # The platforms (surprise!)
+
+class Surface(pg.sprite.Sprite):
+    def __init__(self, game, x, y, width, height):
+
+        self.groups = game.all_sprites, game.surfaces
+        pg.sprite.Sprite.__init__(self, self.groups)  # Apparently a must, not sure what it does..
+
+
+
+
+
+class Platform(Surface):                               # The platforms (surprise!)
     def __init__(self, game, x, y, width, height, bot):
         self.bot = bot
         self.width = width
         self._layer = PLATFORM_LAYER
-        self.groups = game.all_sprites, game.platforms
+        self.groups = game.all_sprites, game.platforms, game.surfaces
         pg.sprite.Sprite.__init__(self, self.groups)            # Apparently a must, not sure what it does..
         self.game = game
         images = [self.game.spritesheet.get_image(0, 288, 380, 94),                 #Two types of platform, but I only use nr. 2
@@ -135,12 +148,13 @@ class Platform(pg.sprite.Sprite):                               # The platforms 
         self.rect.x = x                                                             # Put the platform at the given coordinate.
         self.rect.y = y                                                                # \\
 
-class Box(pg.sprite.Sprite):
+class Box(Surface):
     def __init__(self, game, x, y, width, height):
+        #super().__init__(game, x, y, width, height)
         self.game   = game
         self.width  = width
         self.height = height
-        self.groups = game.all_sprites, game.platforms
+        self.groups = game.all_sprites, game.boxes, game.surfaces
         pg.sprite.Sprite.__init__(self, self.groups)
         self.dir = path.dirname(__file__)
         with open(path.join(self.dir, HS_FILE), 'r') as f:
@@ -155,3 +169,6 @@ class Box(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+    def isBox(self, input):
+        return type(input) == type(Box)
