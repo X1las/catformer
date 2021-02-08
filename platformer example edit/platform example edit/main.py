@@ -56,7 +56,7 @@ class Game:
         # ----- check if player hits a platform - only if falling
 
 
-        if self.player.vel.y != 0:                                                              # Only when player moves
+        if self.player.vel.y > 0:                                                              # Only when player moves
             hits = pg.sprite.spritecollide(self.player, self.surfaces, False)                 # Returns list of platforms that player collides with
             if hits:                                                                           # If hits is not empty?
                 hitSurface = hits[0]
@@ -66,39 +66,47 @@ class Game:
                 if self.player.pos.x < hitSurface.rect.right + WIDTH/100 and \
                    self.player.pos.x > hitSurface.rect.left  - WIDTH/100:                            # If the player is actually (horizontically) on the platform
                     if self.player.pos.y < hitSurface.rect.centery:  # If player is above half of the platform
-                        if self.player.pos.y - hitSurface.rect.top >
+                        #if self.player.rect.bottom - hitSurface.rect.top > self.player.rect.top - hitSurface.rect.bottom:
                         self.player.pos.y = hitSurface.rect.top                              # Pop on top of the platform
+
                         self.player.vel.y = 0                                                  # Stop player from falling
                         self.player.jumping = False
 
 
 
         # Pushes player away from obstacle
-        bob = pg.sprite.spritecollide(self.player, self.obstacles, False)
-        if bob:
-            bob = bob[0]
-            touchRight = self.player.rect.left   - bob.rect.right
-            touchLeft  = self.player.rect.right  - bob.rect.left
-            touchTop   = self.player.rect.bottom - bob.rect.top
-            touchBot   = self.player.rect.top    - bob.rect.bottom
+        bobs = pg.sprite.spritecollide(self.player, self.obstacles, False)
+        if bobs:
+            for bab in bobs:
+                bob = bab
+                touchRight = self.player.rect.left   - bob.rect.right
+                touchLeft  = self.player.rect.right  - bob.rect.left
+                touchTop   = self.player.rect.bottom - bob.rect.top
+                touchBot   = self.player.rect.top    - bob.rect.bottom + 50
 
-            toucher = touchRight
-            if abs(touchLeft) < abs(touchRight):
-                toucher = touchLeft
-            if abs(touchTop) < abs(toucher):
-                toucher = touchTop
-            if abs(touchBot) < abs(toucher):
-                toucher = touchBot
+                toucher = touchRight
+                if abs(touchLeft) < abs(touchRight):
+                    toucher = touchLeft
 
-            if abs(toucher) >  5:
-                if toucher == touchRight:
-                    self.player.pos.x += 3
-                if toucher == touchLeft:
-                    self.player.pos.x -= 3
-                if toucher == touchTop:
-                    self.player.pos.y -= 3
-                if toucher == touchBot:
-                    self.player.pos.y += 5
+                toucher2 = touchTop
+                if abs(touchTop) < abs(toucher):
+                    toucher = touchTop
+                if abs(touchBot) < abs(toucher):
+                    toucher2 = touchBot
+                    toucher = touchBot
+                    print("swoei")
+
+                if abs(toucher) >  5:
+                    if toucher == touchRight:
+                        self.player.pos.x += 3
+                    if toucher == touchLeft:
+                        self.player.pos.x -= 3
+                    if toucher == touchTop:
+                        self.player.pos.y -= 3
+                    if toucher == touchBot:
+                        self.player.jumping = False
+                        self.player.vel.y = 0
+                        self.player.pos.y += 5
 
 
 
