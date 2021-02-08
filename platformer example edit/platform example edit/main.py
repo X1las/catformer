@@ -51,6 +51,7 @@ class Game:
 
     def update(self):
 
+        prevPos = self.player.pos.x,self.player.pos.y
         # ----- check if player hits a platform - only if falling
 
         if self.player.vel.y > 0:                                                              # Only when player moves
@@ -85,8 +86,30 @@ class Game:
         bob = pg.sprite.spritecollide(self.player, self.boxes, False)
         if bob:
             bob = bob[0]
+            #while self.pg.sprite.spritecollide(self.player, bob, False):
+            touchRight = self.player.rect.left - bob.rect.right
+            print("touch right: " + str(touchRight))
+            touchLeft  = self.player.rect.right - bob.rect.left
+            print("touch left: " + str(touchLeft))
+            touchTop = self.player.rect.bottom - bob.rect.top
+            toucher = touchRight
+
+
+            if abs(touchLeft) < abs(touchRight):
+                toucher = touchLeft
+            if toucher == touchRight:
+                print("toucher")
+            #if abs(touchTop) < abs(touchLeft):
+                #toucher = touchTop
+
+            if abs(toucher) >  5:
+                if toucher == touchRight:
+                    print(self.player.rect.left - bob.rect.right)
+                    self.player.pos.x += 3
+
             point = pg.sprite.collide_mask(self.player, bob)
-            print(point[0])
+            size = bob.image.get_size()
+
 
 
 
