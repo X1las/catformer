@@ -135,7 +135,7 @@ class Platform(Surface):                               # The platforms (surprise
         self.bot = bot
         self.width = width
         self._layer = PLATFORM_LAYER
-        self.groups = game.all_sprites, game.platforms, game.surfaces
+        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles
         pg.sprite.Sprite.__init__(self, self.groups)            # Apparently a must, not sure what it does..
         self.game = game
         images = [self.game.spritesheet.get_image(0, 288, 380, 94),                 #Two types of platform, but I only use nr. 2
@@ -154,7 +154,7 @@ class Box(Surface):
         self.game   = game
         self.width  = width
         self.height = height
-        self.groups = game.all_sprites, game.boxes, game.surfaces
+        self.groups = game.all_sprites, game.boxes, game.surfaces, game.obstacles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.dir = path.dirname(__file__)
         with open(path.join(self.dir, HS_FILE), 'r') as f:

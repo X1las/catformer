@@ -32,6 +32,7 @@ class Game:
         self.platforms   = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type, like saying int i;)
         self.boxes       = pg.sprite.Group()
         self.surfaces    = pg.sprite.Group()
+        self.obstacles    = pg.sprite.Group()
 
         self.player      = Player(self)                          # Create player (the bunny)
         self.level.setSurfaces()
@@ -54,7 +55,8 @@ class Game:
         prevPos = self.player.pos.x,self.player.pos.y
         # ----- check if player hits a platform - only if falling
 
-        if self.player.vel.y > 0:                                                              # Only when player moves
+
+        if self.player.vel.y != 0:                                                              # Only when player moves
             hits = pg.sprite.spritecollide(self.player, self.surfaces, False)                 # Returns list of platforms that player collides with
             if hits:                                                                           # If hits is not empty?
                 hitSurface = hits[0]
@@ -63,52 +65,40 @@ class Game:
                         hitSurface = hit                                                       #\\
                 if self.player.pos.x < hitSurface.rect.right + WIDTH/100 and \
                    self.player.pos.x > hitSurface.rect.left  - WIDTH/100:                            # If the player is actually (horizontically) on the platform
-                    if self.player.pos.y < hitSurface.rect.centery:                          # If player is above half of the platform
+                    if self.player.pos.y < hitSurface.rect.centery:  # If player is above half of the platform
+                        if self.player.pos.y - hitSurface.rect.top >
                         self.player.pos.y = hitSurface.rect.top                              # Pop on top of the platform
                         self.player.vel.y = 0                                                  # Stop player from falling
                         self.player.jumping = False
-        """
-        if self.player.vel.y > 0:                                                              # Only when player moves
-            hits = pg.sprite.spritecollide(self.player, self.all_sprites, False)                 # Returns list of platforms that player collides with
-            if hits:                                                                           # If hits is not empty?
-                hit_platform = hits[0]
-                for hit in hits:                                                               # Checks to find the bottom must platform (if more a hit)
-                    if hit.rect.bottom > hit_platform.rect.bottom:                               #\\
-                        hit_platform = hit                                                       #\\
-                if self.player.pos.x < hit_platform.rect.right + 10 and \
-                   self.player.pos.x > hit_platform.rect.left - 10:                            # If the player is actually (horizontically) on the platform
-                    if self.player.pos.y < hit_platform.rect.centery:                          # If player is above half of the platform
-                        self.player.pos.y = hit_platform.rect.top                              # Pop on top of the platform
-                        self.player.vel.y = 0                                                  # Stop player from falling
-                        self.player.jumping = False                                            # ?
-        """
 
-        bob = pg.sprite.spritecollide(self.player, self.boxes, False)
+
+
+        # Pushes player away from obstacle
+        bob = pg.sprite.spritecollide(self.player, self.obstacles, False)
         if bob:
             bob = bob[0]
-            #while self.pg.sprite.spritecollide(self.player, bob, False):
-            touchRight = self.player.rect.left - bob.rect.right
-            print("touch right: " + str(touchRight))
-            touchLeft  = self.player.rect.right - bob.rect.left
-            print("touch left: " + str(touchLeft))
-            touchTop = self.player.rect.bottom - bob.rect.top
+            touchRight = self.player.rect.left   - bob.rect.right
+            touchLeft  = self.player.rect.right  - bob.rect.left
+            touchTop   = self.player.rect.bottom - bob.rect.top
+            touchBot   = self.player.rect.top    - bob.rect.bottom
+
             toucher = touchRight
-
-
             if abs(touchLeft) < abs(touchRight):
                 toucher = touchLeft
-            if toucher == touchRight:
-                print("toucher")
-            #if abs(touchTop) < abs(touchLeft):
-                #toucher = touchTop
+            if abs(touchTop) < abs(toucher):
+                toucher = touchTop
+            if abs(touchBot) < abs(toucher):
+                toucher = touchBot
 
             if abs(toucher) >  5:
                 if toucher == touchRight:
-                    print(self.player.rect.left - bob.rect.right)
                     self.player.pos.x += 3
-
-            point = pg.sprite.collide_mask(self.player, bob)
-            size = bob.image.get_size()
+                if toucher == touchLeft:
+                    self.player.pos.x -= 3
+                if toucher == touchTop:
+                    self.player.pos.y -= 3
+                if toucher == touchBot:
+                    self.player.pos.y += 5
 
 
 
@@ -120,11 +110,8 @@ class Game:
             if boxHits:
                 hitbox = boxHits[0]
                 if self.player.pos.y >= hitbox.rect.top + hitbox.height:
-
                     if self.player.rect.left < hitbox.rect.right - 10 and self.player.vel.x > 0:
-
                         hitbox.rect.centerx = round(hitbox.rect.centerx + self.player.vel.x)
-
                     elif self.player.pos.x > hitbox.rect.left + 10 and self.player.vel.x < 0:
                         hitbox.rect.centerx = round(hitbox.rect.centerx + self.player.vel.x)
 
