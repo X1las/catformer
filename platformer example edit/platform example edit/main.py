@@ -50,7 +50,6 @@ class Game:
             self.update()                # ?
             self.draw()                  # Actually draws wtf is going on yo
 
-
     def update(self):
 
 
@@ -98,17 +97,13 @@ class Game:
                     toucher = touchBot
                     print("swoei")
 
-                if abs(toucher) >  10:
+                if abs(toucher) >  5:
                     if toucher == touchRight:
                         self.player.pos.x += 3
                     if toucher == touchLeft:
-                        print("look here")
-                        #self.player.rect.right = bab.rect.left
-                        print(f"current: {self.player.pos.x}")
-                        self.player.pos.x = self.prevposx
-                        print(f"after: {self.player.pos.x}")
-                        self.player.vel.x = 0
-                        #self.player.pos.x -= 3
+
+                        self.player.vel = -self.player.vel
+                        self.player.pos.x -= 3
                     if toucher == touchTop and self.player.vel.y != 0:
                         self.player.pos.y -= 3
                         self.player.jumping = False
@@ -167,9 +162,10 @@ class Game:
 
         #                                    Game Loop - Update       ?
         self.prevposx = copy.copy(self.player.pos.x)
-        print(f"previous: {self.prevposx}")
+
+
         self.all_sprites.update()
-        print(f"new {self.player.pos.x}")
+
 
 
     def events(self):
