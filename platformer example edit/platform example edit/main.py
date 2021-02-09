@@ -5,6 +5,7 @@ from settings import *
 from sprites import *
 from os import path
 from level import *
+import copy
 
 class Game:
     def __init__(self):
@@ -27,7 +28,7 @@ class Game:
     def new(self):                                          # start a new game
         self.level       = Level(self,l1_platforms, l1_boxes ,length)       # Add levels
         self.all_sprites = pg.sprite.LayeredUpdates()       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
-
+        self.prevposx = 0
 
         self.platforms   = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type, like saying int i;)
         self.boxes       = pg.sprite.Group()
@@ -52,6 +53,7 @@ class Game:
 
     def update(self):
 
+
         prevPos = self.player.pos.x,self.player.pos.y
         # ----- check if player hits a platform - only if falling
 
@@ -74,7 +76,7 @@ class Game:
 
 
 
-        # Pushes player away from obstacle
+        # Pushes player away from obstacle - pretty fucked, I know
         bobs = pg.sprite.spritecollide(self.player, self.obstacles, False)
         if bobs:
             for bab in bobs:
@@ -96,17 +98,26 @@ class Game:
                     toucher = touchBot
                     print("swoei")
 
-                if abs(toucher) >  5:
+                if abs(toucher) >  10:
                     if toucher == touchRight:
                         self.player.pos.x += 3
                     if toucher == touchLeft:
-                        self.player.pos.x -= 3
-                    if toucher == touchTop:
+                        print("look here")
+                        #self.player.rect.right = bab.rect.left
+                        print(f"current: {self.player.pos.x}")
+                        self.player.pos.x = self.prevposx
+                        print(f"after: {self.player.pos.x}")
+                        self.player.vel.x = 0
+                        #self.player.pos.x -= 3
+                    if toucher == touchTop and self.player.vel.y != 0:
                         self.player.pos.y -= 3
+                        self.player.jumping = False
                     if toucher == touchBot:
                         self.player.jumping = False
-                        self.player.vel.y = 0
+
                         self.player.pos.y += 5
+                    self.player.vel.y = 0
+                    self.player.jump_cut()
 
 
 
@@ -155,8 +166,10 @@ class Game:
             self.playing = False                                          # Game ends
 
         #                                    Game Loop - Update       ?
+        self.prevposx = copy.copy(self.player.pos.x)
+        print(f"previous: {self.prevposx}")
         self.all_sprites.update()
-
+        print(f"new {self.player.pos.x}")
 
 
     def events(self):
