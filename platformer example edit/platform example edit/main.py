@@ -13,7 +13,7 @@ class Game:
         pg.init()                                                               # Always need this?
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Set window size
         pg.display.set_caption(TITLE)                                           # Name the window
-        self.clock = pg.time.Clock()                                            # ?
+        self.clock = pg.time.Clock()                                            # creates an object to track time
         self.running = True                                                     # ?
         self.font_name = pg.font.match_font(FONT_NAME)                          # Which font to use in game
         self.load_data()                                                        # calls load_data function it looks like
