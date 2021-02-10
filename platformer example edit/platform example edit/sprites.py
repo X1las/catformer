@@ -37,6 +37,7 @@ class Player(pg.sprite.Sprite):
         self.touchLeft = 0
         self.touchTop = 0
         self.touchBot = 0
+        self.crouching = False
 
     def load_images(self):                              # Just gets the images for the player
         self.standing_frames = [self.game.spritesheet.get_image(614, 1063, 120, 191),
@@ -50,6 +51,9 @@ class Player(pg.sprite.Sprite):
             frame.set_colorkey(BLACK)
             self.walk_frames_l.append(pg.transform.flip(frame, True, False))
         self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
+        self.crouch_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
+        self.crouch_frame = pg.transform.scale(self.crouch_frame, (300, 90))
+        self.crouch_frame.set_colorkey(BLACK)
         self.jump_frame.set_colorkey(BLACK)
 
     def jump_cut(self):                             # Never jump faster than a speed of 3.
@@ -80,12 +84,12 @@ class Player(pg.sprite.Sprite):
                 self.on_surface  = abs(self.rect.bottom - bob.rect.top) < 4
 
                 #print(self.touching_right)
-                if abs(self.touchRight) > PLAYER_ACC*10 + 1 and not self.on_surface and abs(self.touchRight) < abs(self.touchLeft):
+                if PLAYER_ACC * 10 + 1 < abs(self.touchRight) < abs(self.touchLeft) and not self.on_surface:
                     self.touching_left = True
                     self.acc.x = 0
                     if self.vel.x < 0:
                         self.vel.x = 0
-                if abs(self.touchLeft) > PLAYER_ACC*10 +1 and not self.on_surface:
+                if PLAYER_ACC * 10 + 1 < abs(self.touchLeft) < abs(self.touchRight) and not self.on_surface:
                     self.touching_right = True
                     self.acc.x = 0
                     if self.vel.x > 0:
@@ -148,6 +152,9 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_RIGHT] and not self.touching_right:
 
             self.acc.x = PLAYER_ACC
+
+        if keys[pg.K_DOWN]:
+            self.crouching = True
             #print(self.acc.x)
 
 
@@ -196,8 +203,19 @@ class Player(pg.sprite.Sprite):
                 self.image = self.standing_frames[self.current_frame]
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
-        self.mask = pg.mask.from_surface(self.image)
 
+
+        if self.crouching:
+
+            #self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.image = pg.transform.scale(self.image, (200, 100))
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+
+        self.mask = pg.mask.from_surface(self.image)
 
 class Surface(pg.sprite.Sprite):
     def __init__(self, game, x, y, width, height):
