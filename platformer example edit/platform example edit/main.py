@@ -34,6 +34,7 @@ class Game:
         self.boxes       = pg.sprite.Group()
         self.surfaces    = pg.sprite.Group()
         self.obstacles    = pg.sprite.Group()
+        self.non_moveable = pg.sprite.Group()
 
         self.player      = Player(self)                          # Create player (the bunny)
         self.level.setSurfaces()
@@ -52,7 +53,8 @@ class Game:
 
     def update(self):
 
-
+        self.player.touching_right = False
+        self.player.touching_left = False
         prevPos = self.player.pos.x,self.player.pos.y
         # ----- check if player hits a platform - only if falling
 
@@ -93,27 +95,32 @@ class Game:
                 if abs(touchTop) < abs(toucher):
                     toucher = touchTop
                 if abs(touchBot) < abs(toucher):
-                    toucher2 = touchBot
+                  #  toucher2 = touchBot
                     toucher = touchBot
-                    print("swoei")
+                #print(f'add: {self.player.acc.length()} and toucher {toucher}')
 
-                if abs(toucher) >  5:
+                if abs(toucher) >  abs(self.player.acc.length()*10) + 1:
+                #if abs(toucher) > 10:
+                    #print("NOW")
                     if toucher == touchRight:
+                        #self.player.vel.x = -self.player.vel.x
                         self.player.pos.x += 3
                     if toucher == touchLeft:
-
-                        self.player.vel = -self.player.vel
+                        #self.player.vel.x = 0
+                        #self.player.touching_right = True
                         self.player.pos.x -= 3
+                        #self.player.vel.x = -self.player.vel.y
                     if toucher == touchTop and self.player.vel.y != 0:
-                        self.player.pos.y -= 3
-                        self.player.jumping = False
+                        self.player.pos.y += 3
+                        #self.player.vel.y = -self.player.vel.y
+                        #self.player.jumping = False
                     if toucher == touchBot:
                         self.player.jumping = False
 
-                        self.player.pos.y += 5
-                    self.player.vel.y = 0
+                        self.player.pos.y -= 3
+                    #self.player.vel.y = 0
                     self.player.jump_cut()
-
+        #
 
 
 

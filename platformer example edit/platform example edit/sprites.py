@@ -32,6 +32,11 @@ class Player(pg.sprite.Sprite):
         self.pos           = vec(40, HEIGHT - 100)
         self.vel           = vec(0, 0)
         self.acc           = vec(0, 0)
+        self.touching_right = False; self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        self.touchRight = 0
+        self.touchLeft = 0
+        self.touchTop = 0
+        self.touchBot = 0
 
     def load_images(self):                              # Just gets the images for the player
         self.standing_frames = [self.game.spritesheet.get_image(614, 1063, 120, 191),
@@ -60,16 +65,90 @@ class Player(pg.sprite.Sprite):
             self.jumping = True                                                  # then you jump
             self.vel.y = -PLAYER_JUMP                                                  #\\
 
+    def touches(self):
+        bobs = pg.sprite.spritecollide(self, self.game.non_moveable, False)
+        if bobs:
+            for bab in bobs:
+                bob = bab
 
+
+                self.touchRight = self.rect.left - bob.rect.right
+                self.touchLeft = self.rect.right - bob.rect.left
+                self.touchTop = self.rect.bottom - bob.rect.top
+                self.touchBot = self.rect.top - bob.rect.bottom + 50
+
+                self.on_surface  = abs(self.rect.bottom - bob.rect.top) < 4
+
+                #print(self.touching_right)
+                if abs(self.touchRight) > PLAYER_ACC*10 + 1 and not self.on_surface and abs(self.touchRight) < abs(self.touchLeft):
+                    self.touching_left = True
+                    self.acc.x = 0
+                    if self.vel.x < 0:
+                        self.vel.x = 0
+                if abs(self.touchLeft) > PLAYER_ACC*10 +1 and not self.on_surface:
+                    self.touching_right = True
+                    self.acc.x = 0
+                    if self.vel.x > 0:
+                        self.vel.x = 0
+                    print("stuff")
+                maxSides = max(abs(self.touchRight), abs(self.touchLeft))
+
+
+                #if abs(self.touchBot) < PLAYER_ACC*10 +1 and abs(self.touchBot) > abs(maxSides):
+                 #   self.touching_top = True
+                  #  self.acc.y = 0
+                   # self.vel.y = -self.vel.y
+
+
+
+
+                """
+                toucher = self.touchRight
+                if abs(self.touchLeft) < abs(self.touchRight):
+                    toucher = self.touchLeft
+
+                toucher2 = self.touchTop
+                if abs(self.touchTop) < abs(toucher):
+                    toucher = self.touchTop
+                if abs(self.touchBot) < abs(toucher):
+                    toucher2 = self.touchBot
+                    toucher = self.touchBot
+                    print("swoei")
+
+                if abs(toucher) > 5:
+                    if toucher == self.touchRight:
+                        self.vel.x = 0
+                        self.touching_left = True
+                    if toucher == self.touchLeft:
+                        self.vel.x = 0
+                        self.touching_right = True
+                        #self.vel = -self.vel
+                        #self.pos.x -= 3
+                    if toucher == self.touchTop and self.vel.y != 0:
+                        self.vel.y = 0
+                        self.jumping = False
+                    if toucher == self.touchBot:
+                        self.jumping = False
+
+                     #   self.pos.y += 5
+                    #self.vel.y = 0
+                    #self.jump_cut()
+                """
 
     def update(self):                                                            # Updating pos, vel and acc.
         self.animate()                                                           # Animates first ?
         self.acc = vec(0, PLAYER_GRAV)                                           # Adds gravity
+        self.touches()
         keys     = pg.key.get_pressed()                                          # Checks for keys getting pressed
-        if keys[pg.K_LEFT]:                                                      # If it's left arrow
+
+        if keys[pg.K_LEFT] and not self.touching_left:                                                      # If it's left arrow
             self.acc.x = -PLAYER_ACC                                              # Accelerates to the left
-        if keys[pg.K_RIGHT]:
+
+
+        if keys[pg.K_RIGHT] and not self.touching_right:
+
             self.acc.x = PLAYER_ACC
+            #print(self.acc.x)
 
 
         # -     Sry, too lazy to look more precisely at it
@@ -135,7 +214,7 @@ class Platform(Surface):                               # The platforms (surprise
         self.bot = bot
         self.width = width
         self._layer = PLATFORM_LAYER
-        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles
+        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable
         pg.sprite.Sprite.__init__(self, self.groups)            # Apparently a must, not sure what it does..
         self.game = game
         images = [self.game.spritesheet.get_image(0, 288, 380, 94),                 #Two types of platform, but I only use nr. 2
