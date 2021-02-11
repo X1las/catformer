@@ -38,7 +38,9 @@ class Game:
         #self.level.setSurfaces()
 
 
+
         self.main_plat = Platform(self, *mainPlat)
+
         self.newPlat = Platform(self,1,1,1,1,False)
 
         self.run()
@@ -98,17 +100,18 @@ class Game:
 
     # ---> Just to make sure the game can quit
     def events(self):
+
         for event in pg.event.get():                           # Goes through all the events happening in a certrain frame (such as pressing a key)
             if event.type == pg.QUIT:                          # check for closing window
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
                 self.running = False                                   # \\
             if event.type == pg.MOUSEBUTTONDOWN:
-                self.point = event.pos
+                print(f" main plat {type(self.main_plat.rect)}")
+                print(f" new plat: {type(self.newPlat.rect)}")
                 print(self.point)
                 for obj in self.creater:
-                    print(obj.rect)
-
+                    print(type(obj.rect))
                     if obj.rect.collidepoint(event.pos):
                         if obj.main_creator != False:
                             self.newPlat = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
@@ -119,7 +122,10 @@ class Game:
             if event.type == pg.MOUSEMOTION:
                 self.point = pg.mouse.get_pos()
                 self.mousex, self.mousey = self.point[0], self.point[1]
-                self.newPlat.rect = self.point
+                self.newPlat.rect.x = self.point[0]
+                self.newPlat.rect.y = self.point[1]
+
+
 
             if event.type == pg.MOUSEBUTTONUP:
                 self.newPlat.drag = False
