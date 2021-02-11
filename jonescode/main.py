@@ -7,13 +7,15 @@ pygame.init()                                           # Initializing the pygam
 
 # Screen:
 screen = pygame.display.set_mode((WINDOW_W,WINDOW_H))   # Creating a screen (possibly an object)
-pygame.display.set_caption("Pygame Tutorial")           # Setting the screen caption
+pygame.display.set_caption("Pygame Testformer")           # Setting the screen caption
 
 # Variables:
 x = INIT_X              
 y = INIT_Y - C_HEIGHT
 cam_x = x - WINDOW_W/2
 cam_y = y - WINDOW_H/2
+cvelx = 0
+cvely = 0
 
 # Runtime:
 running = True                                          # Creating a boolean for while loop
@@ -26,10 +28,10 @@ while running:                                          # While loop
 
     # Movement:
     if keys[pygame.K_LEFT]:                         
-        x-=0.1
+        x-=10
     
     if keys[pygame.K_RIGHT]:        
-        x+=0.1
+        x+=10
     
     if keys[pygame.K_DOWN]:
         y+=10
@@ -48,20 +50,40 @@ while running:                                          # While loop
     elif x > LEVEL_WIDTH-C_WIDTH:
         x = LEVEL_WIDTH-C_WIDTH
 
-    # Camera Movements
+    # Camera Movements:
+
+    # Camera X-axis Movement:
     if cam_x < x - CAM_X_OFF:
-        cam_x+= ((x-cam_x)/100) * CAM_X_MVEL
+        cvelx+=CAM_VINC
+        cam_x+=cvelx
+        if cvelx > CAM_X_MVEL: cvelx = CAM_X_MVEL
     elif cam_x > x + CAM_X_OFF:
-        cam_x-= ((cam_x-x)/100) * CAM_X_MVEL
+        cvelx-=CAM_VINC
+        cam_x+=cvelx
+        if cvelx < CAM_X_MVEL: cvelx = -CAM_X_MVEL
+    else:
+        cvelx = 0
 
+    # Camera Y-axis Movement:
     if cam_y < y - CAM_Y_OFF:
-        cam_y+= ((y-cam_y)/100) * CAM_Y_MVEL
+        cvely+=CAM_VINC
+        cam_y+=cvely
+        if cvely > CAM_Y_MVEL: cvely = CAM_Y_MVEL
     elif cam_y > y + CAM_Y_OFF:
-        cam_y-= ((cam_y-y)/100) * CAM_Y_MVEL
+        cvely-=CAM_VINC
+        cam_y+=cvely
+        if cvely < CAM_Y_MVEL: cvely = -CAM_Y_MVEL
 
-    screen.fill((100,100,100))                                              # Fills the entire screen with a gray color
-    pygame.draw.rect(screen, (255 , 0 , 0) , (WINDOW_W/2 + x - cam_x , WINDOW_H/2 + y - cam_y , C_WIDTH , C_HEIGHT))  # Draws a rectangle on the screen
-    pygame.display.update()                                                 # Updates the display?
+    screen.fill((100,100,100))                                                                                                      # Fills the entire screen with a gray color
+    pygame.draw.rect(screen, (255 , 0 , 0) , (WINDOW_W/2 + x - cam_x , WINDOW_H/2 + y - cam_y , C_WIDTH , C_HEIGHT))                # Draws a rectangle on the screen
+    
+    # Draws rectangles at the level boundries:
+    pygame.draw.rect(screen, (50 , 50 , 50) , (WINDOW_W/2 + 0 - LEVEL_WIDTH - cam_x , WINDOW_H/2 + 0 - LEVEL_HEIGHT*2 - cam_y , LEVEL_WIDTH*2 , LEVEL_HEIGHT*2))
+    pygame.draw.rect(screen, (50 , 50 , 50) , (WINDOW_W/2 + 0 + LEVEL_WIDTH - cam_x , WINDOW_H/2 + 0 - LEVEL_HEIGHT - cam_y , LEVEL_WIDTH*2 , LEVEL_HEIGHT*2))
+    pygame.draw.rect(screen, (50 , 50 , 50) , (WINDOW_W/2 + 0 - LEVEL_WIDTH*2 - cam_x , WINDOW_H/2 + 0 - LEVEL_HEIGHT - cam_y , LEVEL_WIDTH*2 , LEVEL_HEIGHT*2))
+    pygame.draw.rect(screen, (50 , 50 , 50) , (WINDOW_W/2 + 0 - LEVEL_WIDTH - cam_x , WINDOW_H/2 + 0 + LEVEL_HEIGHT - cam_y , LEVEL_WIDTH*3 , LEVEL_HEIGHT*2))
+    
+    pygame.display.update()                                                                                                         # Updates the display?
 
 pygame.quit()                                                               # Terminates the pygame process
 sys.exit()                                                                  # Terminates the system process
