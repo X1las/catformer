@@ -12,6 +12,8 @@ pygame.display.set_caption("Pygame Tutorial")           # Setting the screen cap
 # Variables:
 x = INIT_X              
 y = INIT_Y - C_HEIGHT
+cam_x = x - WINDOW_W/2
+cam_y = y - WINDOW_H/2
 
 # Runtime:
 running = True                                          # Creating a boolean for while loop
@@ -35,8 +37,30 @@ while running:                                          # While loop
     if keys[pygame.K_UP]:
         y-=10
 
+    # Map Boundry Measures:
+    if y < 0:
+        y = 0
+    elif y > LEVEL_HEIGHT-C_HEIGHT:
+        y = LEVEL_HEIGHT-C_HEIGHT
+
+    if x < 0:
+        x = 0
+    elif x > LEVEL_WIDTH-C_WIDTH:
+        x = LEVEL_WIDTH-C_WIDTH
+
+    # Camera Movements
+    if cam_x < x - CAM_X_OFF:
+        cam_x+= ((x-cam_x)/100) * CAM_X_MVEL
+    elif cam_x > x + CAM_X_OFF:
+        cam_x-= ((cam_x-x)/100) * CAM_X_MVEL
+
+    if cam_y < y - CAM_Y_OFF:
+        cam_y+= ((y-cam_y)/100) * CAM_Y_MVEL
+    elif cam_y > y + CAM_Y_OFF:
+        cam_y-= ((cam_y-y)/100) * CAM_Y_MVEL
+
     screen.fill((100,100,100))                                              # Fills the entire screen with a gray color
-    pygame.draw.rect(screen, (255 , 0 , 0) , (x , y , C_WIDTH , C_HEIGHT))  # Draws a rectangle on the screen
+    pygame.draw.rect(screen, (255 , 0 , 0) , (WINDOW_W/2 + x - cam_x , WINDOW_H/2 + y - cam_y , C_WIDTH , C_HEIGHT))  # Draws a rectangle on the screen
     pygame.display.update()                                                 # Updates the display?
 
 pygame.quit()                                                               # Terminates the pygame process
