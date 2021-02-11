@@ -25,7 +25,7 @@ class Game:
     def new(self):                                          # start a new game
         self.level       = Level(self,l1_platforms, l1_boxes ,length)       # Add levels
         self.all_sprites = pg.sprite.LayeredUpdates()       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
-        self.prevposx = 0
+        self.prevposx = 0 # Not important!
 
         self.platforms    = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type, like saying int i;)
         self.boxes        = pg.sprite.Group()
@@ -33,7 +33,7 @@ class Game:
         self.obstacles    = pg.sprite.Group()
         self.non_moveable = pg.sprite.Group()
 
-        self.player      = Player(self)                          # Create player (the bunny)
+        self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
         self.level.setSurfaces()
 
 
@@ -105,9 +105,6 @@ class Game:
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
                 self.running = False                                   # \\
-            #if event.type == pg.KEYDOWN:                       # If the type is a key that is pressed down (opposite of a key released)
-             #   if event.key == pg.K_SPACE:                    # If the key pressed is space
-              #      self.player.jump()                         # Jump
 
 
     def draw(self):                                                     # Game Loop - draw
