@@ -141,7 +141,79 @@ class Game:
                     #self.currentplat.rect.width += event.rel[0]
 
                     self.currentplat.rect.width += pg.mouse.get_pos()[0] - self.currentplat.rect.right
-                    #
+                    #self.currentplat.width = self.currentplat.rect.width
+                   # self.currentplat.rect.width = self.currentplat.rect.width + 2
+
+                    #self.currentplat.rect = self.currentplat.rect
+                    self.currentplat.updates()
+
+            if event.type == pg.MOUSEBUTTONUP:
+                self.newPlat.drag = False
+
+                #if self.newPlat.main_creator == True:
+                if self.madeNewPlat == True:
+                    self.anotherP = self.newPlat
+                    anotherP = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
+                    self.creater.add(anotherP)
+
+            self.madeNewPlat == False
+
+
+    # --> pygame lets just draw the things on a screen :-)
+    def draw(self):                                                     # Game Loop - draw
+        self.screen.fill(BGCOLOR)                                       # Sets background color
+        self.all_sprites.draw(self.screen)                              # Where the sprites should be drawn (the screen obvi)
+        pg.display.flip()                                               # *after* drawing everything, flip the display (Nore sure about this one) ?
+
+
+    #----------------- DON'T NEED TO UNDERSTAND YET. JUST DON'T WANT TO DELETE IT. SOMETHING KATA DID HERSELF ---------------------------------
+    # CAN BE IGNORED!
+    def pushOut(self):
+        # Pushes player away from obstacle - pretty fucked, I know
+        bobs = pg.sprite.spritecollide(self.player, self.obstacles, False)
+        if bobs:
+            for bab in bobs:
+                bob = bab
+                touchRight = self.player.rect.left   - bob.rect.right
+                touchLeft  = self.player.rect.right  - bob.rect.left
+                touchTop   = self.player.rect.bottom - bob.rect.top
+                touchBot   = self.player.rect.top    - bob.rect.bottom + 50
+
+                toucher = touchRight
+                if abs(touchLeft) < abs(touchRight):
+                    toucher = touchLeft
+
+                toucher2 = touchTop
+                if abs(touchTop) < abs(toucher):
+                    toucher = touchTop
+                if abs(touchBot) < abs(toucher):
+                  #  toucher2 = touchBot
+                    toucher = touchBot
+                #print(f'add: {self.player.acc.length()} and toucher {toucher}')
+
+                if abs(toucher) >  abs(self.player.acc.length()*10) + 1:
+                #if abs(toucher) > 10:
+                    #print("NOW")
+                    if toucher == touchRight:
+                        #self.player.vel.x = -self.player.vel.x
+                        self.player.pos.x += 3
+                    if toucher == touchLeft:
+                        #self.player.vel.x = 0
+                        #self.player.touching_right = True
+                        self.player.pos.x -= 3
+                        #self.player.vel.x = -self.player.vel.y
+                    if toucher == touchTop and self.player.vel.y != 0:
+                        self.player.pos.y += 3
+                        #self.player.vel.y = -self.player.vel.y
+                        self.player.jumping = False
+                    if toucher == touchBot:
+                        self.player.jumping = False
+
+                        self.player.pos.y -= 3
+                    #self.player.vel.y = 0
+                    self.player.jump_cut()
+        #
+        self.prevposx = copy.copy(self.player.pos.x)    #WAS IN THE END BEFORE!!
 
     # CAN BE IGNORED!
     def pushSprite(self):
