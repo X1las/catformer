@@ -139,7 +139,8 @@ class Game:
                     poop = copy.deepcopy(self.currentplat.rect.right)
                     self.currentplat.rect.width += event.rel[0]
                     #self.currentplat.rect.width += pg.mouse.get_pos()[0] - self.currentplat.rect.right
-                    self.currentplat.rect.width = max(self.currentplat.rect.width, 200)
+                   # self.currentplat.rect.width = self.currentplat.rect.width + 2
+                    #self.currentplat.update()
                     #self.currentplat.rect = self.currentplat.rect
 
 
