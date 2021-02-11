@@ -17,7 +17,7 @@ WINDOW_H = 900
 
 # Camera Options:
 
-CAM_X_OFF = 70
+CAM_X_OFF = 400
 CAM_Y_OFF = 40
 
 CAM_X_MVEL = 6
