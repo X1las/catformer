@@ -113,7 +113,7 @@ class Game:
                     if toucher == touchTop and self.player.vel.y != 0:
                         self.player.pos.y += 3
                         #self.player.vel.y = -self.player.vel.y
-                        #self.player.jumping = False
+                        self.player.jumping = False
                     if toucher == touchBot:
                         self.player.jumping = False
 

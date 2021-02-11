@@ -94,14 +94,14 @@ class Player(pg.sprite.Sprite):
                     self.acc.x = 0
                     if self.vel.x > 0:
                         self.vel.x = 0
-                    print("stuff")
+
                 maxSides = max(abs(self.touchRight), abs(self.touchLeft))
 
 
-                #if abs(self.touchBot) < PLAYER_ACC*10 +1 and abs(self.touchBot) > abs(maxSides):
-                 #   self.touching_top = True
-                  #  self.acc.y = 0
-                   # self.vel.y = -self.vel.y
+                if abs(self.touchBot) < PLAYER_ACC*10 +1 and abs(self.touchBot) < abs(maxSides):
+                    self.touching_top = True
+                    self.acc.y = 0
+                    #self.vel.y = -self.vel.y
 
 
 
@@ -227,7 +227,7 @@ class Surface(pg.sprite.Sprite):
 
 
 
-class Platform(Surface):                               # The platforms (surprise!)
+class Platform(pg.sprite.Sprite):                               # The platforms (surprise!)
     def __init__(self, game, x, y, width, height, bot):
         self.bot = bot
         self.width = width
