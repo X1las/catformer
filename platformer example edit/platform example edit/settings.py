@@ -69,4 +69,4 @@ l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
 
 l1_boxes = [(400, HEIGHT - 50,  40, 40)]
 
-mainPlat =  (40,  HEIGHT / 2,   500,    40, False, True)
+mainPlat =  (40,  HEIGHT / 2,   100,    40, False, True)

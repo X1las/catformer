@@ -31,15 +31,17 @@ class Game:
         self.surfaces     = pg.sprite.Group()
         self.obstacles    = pg.sprite.Group()
         self.non_moveable = pg.sprite.Group()
+        self.creater      = pg.sprite.Group()
+        self.main_sprites    = pg.sprite.Group()
 
-        self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
-        self.level.setSurfaces()
-        self.run()
+        #self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
+        #self.level.setSurfaces()
+
 
         self.main_plat = Platform(self, *mainPlat)
         self.newPlat = Platform(self,1,1,1,1,False)
 
-
+        self.run()
 
 
 
@@ -58,8 +60,8 @@ class Game:
         #self.player.touching_right = False
         #self.player.touching_left = False
         #prevPos = self.player.pos.x,self.player.pos.y
-        self.standOnSurface()
-        self.moveScreen()
+        #self.standOnSurface()
+        #self.moveScreen()
         self.all_sprites.update()
 
     # --> Checks if the player is on a surface. Can maybe go to the Player class?
@@ -102,7 +104,27 @@ class Game:
                     self.playing = False                           # \\
                 self.running = False                                   # \\
             if event.type == pg.MOUSEBUTTONDOWN:
-                wd
+                self.point = pg.mouse.get_pos()
+                for object in self.creater:
+                    if object.rect.collidepoint(self.point):
+                        if object.main_creator != False:
+                            self.newPlat = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
+                            self.newPlat.drag = True
+                        elif object.main_creator == False:
+                            self.newPlat = object
+                            self.newPlat.drag = True
+            if event.type == pg.MOUSEMOTION:
+                self.point = pg.mouse.get_pos()
+                self.mousex, self.mousey = self.point[0], self.point[1]
+                self.newPlat.rect = self.point
+
+            if event.type == pg.MOUSEBUTTONUP:
+                self.newPlat.drag = False
+
+                if self.newPlat.main_creator == True:
+                    self.anotherP = self.newPlat
+                    anotherP = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
+
 
 
     # --> pygame lets just draw the things on a screen :-)

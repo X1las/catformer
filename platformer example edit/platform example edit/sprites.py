@@ -96,9 +96,9 @@ class Platform(pg.sprite.Sprite):
         self.bot = bot; self.width = width; self.game = game                                                  # Typical self.smth = smth
         self.main_creator = main_creator
         self.main_creator= False
+        self.drag = False
 
-
-        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable      #All of the groups the platforms should belong to
+        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable, game.creater      #All of the groups the platforms should belong to
         if main_creator == True:
             self.groups = self.groups, game.main_sprites
 
