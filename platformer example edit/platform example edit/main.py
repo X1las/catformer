@@ -37,7 +37,7 @@ class Game:
         #self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
         #self.level.setSurfaces()
 
-
+        self.firstTime = True
         self.madeNewPlat = False
         self.stuff = False
         self.main_plat = Platform(self, *mainPlat)
@@ -118,7 +118,8 @@ class Game:
                         self.currentplat = obj
                         #self.currentplat.rect.inflate_ip(400,400)
 
-                    elif obj.rect.collidepoint(event.pos):
+                    elif obj.rect.collidepoint(event.pos) and self.firstTime:
+                        self.firstTime = False
                         if obj.main_creator == True:
                             self.madeNewPlat == True
                             self.newPlat = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
@@ -128,7 +129,7 @@ class Game:
                         elif obj.main_creator != True:
                             self.newPlat = obj
                             self.newPlat.drag = True
-
+                        print(obj.rect)
             if event.type == pg.MOUSEMOTION:
                 self.point = pg.mouse.get_pos()
                 self.mousex, self.mousey = self.point[0], self.point[1]
@@ -140,7 +141,7 @@ class Game:
                     self.currentplat.rect.width += event.rel[0]
                     #self.currentplat.rect.width += pg.mouse.get_pos()[0] - self.currentplat.rect.right
                    # self.currentplat.rect.width = self.currentplat.rect.width + 2
-                    #self.currentplat.update()
+
                     #self.currentplat.rect = self.currentplat.rect
 
 

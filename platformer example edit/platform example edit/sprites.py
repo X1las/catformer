@@ -108,14 +108,12 @@ class Platform(pg.sprite.Sprite):
         self.rect.x = x                                                                       # Put the platform at the given coordinate.
         self.rect.y = y                                                                       # \\
         self.rect.right = x + self.width
-        self.rect.width = width
-
-    def update(self):
-        self.image = pg.Surface((self.width, self.height));
-        self.rect = self.image.get_rect()  # Making and getting dimensions of the sprite
+        self.rect.width = self.width
 
 
-# ---> boxes :-o
+
+
+    # ---> boxes :-o
 class Box(pg.sprite.Sprite):
     def __init__(self, game, x, y, width, height):
         self.game   = game;  self.width  = width; self.height = height
