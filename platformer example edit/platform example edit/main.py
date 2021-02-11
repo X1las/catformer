@@ -116,6 +116,7 @@ class Game:
                         self.stuff = True
                         #obj.rect.width += pg.mouse.get_pos()[0] - obj.rect.right
                         self.currentplat = obj
+                        self.currentplat.resize = True
                         #self.currentplat.rect.inflate_ip(400,400)
 
                     elif obj.rect.collidepoint(event.pos) and self.firstTime:
@@ -136,19 +137,16 @@ class Game:
                 if self.newPlat.drag == True:
                     self.newPlat.rect.x = self.point[0]
                     self.newPlat.rect.y = self.point[1]
-                if self.stuff == True:
+                if self.stuff == True and self.currentplat.resize == True:
                     poop = copy.deepcopy(self.currentplat.rect.right)
                     #self.currentplat.rect.width += event.rel[0]
-
-                    self.currentplat.rect.width += pg.mouse.get_pos()[0] - self.currentplat.rect.right
-                    #self.currentplat.width = self.currentplat.rect.width
-                   # self.currentplat.rect.width = self.currentplat.rect.width + 2
-
-                    #self.currentplat.rect = self.currentplat.rect
+                    if self.currentplat.rect.width + pg.mouse.get_pos()[0] - self.currentplat.rect.right > 0:
+                        self.currentplat.rect.width += pg.mouse.get_pos()[0] - self.currentplat.rect.right
                     self.currentplat.updates()
 
             if event.type == pg.MOUSEBUTTONUP:
                 self.newPlat.drag = False
+                self.currentplat.resize = False
 
                 #if self.newPlat.main_creator == True:
                 if self.madeNewPlat == True:
