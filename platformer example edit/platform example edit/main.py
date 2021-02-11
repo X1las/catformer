@@ -38,7 +38,7 @@ class Game:
         #self.level.setSurfaces()
 
 
-
+        self.madeNewPlat = False
         self.main_plat = Platform(self, *mainPlat)
 
         self.newPlat = Platform(self,1,1,1,1,False)
@@ -107,33 +107,36 @@ class Game:
                     self.playing = False                           # \\
                 self.running = False                                   # \\
             if event.type == pg.MOUSEBUTTONDOWN:
-                print(f" main plat {type(self.main_plat.rect)}")
-                print(f" new plat: {type(self.newPlat.rect)}")
-                print(self.point)
                 for obj in self.creater:
-                    print(type(obj.rect))
+                    print(obj.rect)
                     if obj.rect.collidepoint(event.pos):
-                        if obj.main_creator != False:
+                        print(obj.rect)
+                        if obj.main_creator == True:
+                            self.madeNewPlat == True
                             self.newPlat = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
                             self.newPlat.drag = True
-                        elif obj.main_creator == False:
+                        elif obj.main_creator != True:
+                            print("oejowieroiwueroiwueoriuoi")
                             self.newPlat = obj
                             self.newPlat.drag = True
             if event.type == pg.MOUSEMOTION:
                 self.point = pg.mouse.get_pos()
                 self.mousex, self.mousey = self.point[0], self.point[1]
-                self.newPlat.rect.x = self.point[0]
-                self.newPlat.rect.y = self.point[1]
+                if self.newPlat.drag == True:
+                    self.newPlat.rect.x = self.point[0]
+                    self.newPlat.rect.y = self.point[1]
 
 
 
             if event.type == pg.MOUSEBUTTONUP:
                 self.newPlat.drag = False
 
-                if self.newPlat.main_creator == True:
+                #if self.newPlat.main_creator == True:
+                if self.madeNewPlat == True:
                     self.anotherP = self.newPlat
                     anotherP = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
 
+            self.madeNewPlat == False
 
 
     # --> pygame lets just draw the things on a screen :-)
