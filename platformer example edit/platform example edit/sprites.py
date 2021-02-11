@@ -110,7 +110,8 @@ class Platform(pg.sprite.Sprite):
         self.rect.right = x + self.width
         self.rect.width = self.width
 
-
+    def updates(self):
+        self.image = pg.Surface((self.rect.width,self.height));
 
 
     # ---> boxes :-o
