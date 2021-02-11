@@ -101,8 +101,6 @@ class Platform(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable, game.creater      #All of the groups the platforms should belong to
         if main_creator == True:
             self.groups = self.groups, game.main_sprites
-
-
         pg.sprite.Sprite.__init__(self, self.groups)                                                          # Making sure the
         self.image = pg.Surface((width,height)); self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.x = x                                                                       # Put the platform at the given coordinate.

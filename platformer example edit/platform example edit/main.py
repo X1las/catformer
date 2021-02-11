@@ -104,14 +104,17 @@ class Game:
                     self.playing = False                           # \\
                 self.running = False                                   # \\
             if event.type == pg.MOUSEBUTTONDOWN:
-                self.point = pg.mouse.get_pos()
-                for object in self.creater:
-                    if object.rect.collidepoint(self.point):
-                        if object.main_creator != False:
+                self.point = event.pos
+                print(self.point)
+                for obj in self.creater:
+                    print(obj.rect)
+
+                    if obj.rect.collidepoint(event.pos):
+                        if obj.main_creator != False:
                             self.newPlat = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
                             self.newPlat.drag = True
-                        elif object.main_creator == False:
-                            self.newPlat = object
+                        elif obj.main_creator == False:
+                            self.newPlat = obj
                             self.newPlat.drag = True
             if event.type == pg.MOUSEMOTION:
                 self.point = pg.mouse.get_pos()
