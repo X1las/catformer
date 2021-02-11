@@ -36,6 +36,12 @@ class Game:
         self.level.setSurfaces()
         self.run()
 
+        self.main_plat = Platform(self, *mainPlat)
+        self.newPlat = Platform(self,1,1,1,1,False)
+
+
+
+
 
     # --> Collection of the things we want to run continuously
     def run(self):                  # Game Loop
@@ -95,6 +101,9 @@ class Game:
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
                 self.running = False                                   # \\
+            if event.type == pg.MOUSEBUTTONDOWN:
+                wd
+
 
     # --> pygame lets just draw the things on a screen :-)
     def draw(self):                                                     # Game Loop - draw

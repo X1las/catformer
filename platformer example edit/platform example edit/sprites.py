@@ -92,13 +92,23 @@ class Player(pg.sprite.Sprite):
 
 # --->  The platforms (surprise!)
 class Platform(pg.sprite.Sprite):
-    def __init__(self, game, x, y, width, height, bot):
+    def __init__(self, game, x, y, width, height, bot, main_creator = None):
         self.bot = bot; self.width = width; self.game = game                                                  # Typical self.smth = smth
+        self.main_creator = main_creator
+        self.main_creator= False
+
+
         self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable      #All of the groups the platforms should belong to
+        if main_creator == True:
+            self.groups = self.groups, game.main_sprites
+
+
         pg.sprite.Sprite.__init__(self, self.groups)                                                          # Making sure the
         self.image = pg.Surface((width,height)); self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.x = x                                                                       # Put the platform at the given coordinate.
         self.rect.y = y                                                                       # \\
+
+
 
 # ---> boxes :-o
 class Box(pg.sprite.Sprite):
