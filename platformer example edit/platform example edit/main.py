@@ -14,20 +14,19 @@ import copy
 class Game:
     def __init__(self):
         # initialize game window, etc
-
         pg.init()                                                               # Always need this?
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Set window size
         pg.display.set_caption(TITLE)                                           # Name the window
-        self.clock = pg.time.Clock()                                            # ?
-        self.running = True                                                     # ?
+        self.clock = pg.time.Clock()                                            # Keeps track of time (Not very sure of this part)
+        self.running = True                                                     # Used to make sure everything we do loops until we set it to FAlse
 
-
-    def new(self):                                          # start a new game
+    # --> Prepares the game
+    def new(self):
         self.level       = Level(self,l1_platforms, l1_boxes ,length)       # Add levels
-        self.all_sprites = pg.sprite.LayeredUpdates()       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        self.all_sprites = pg.sprite.LayeredUpdates()                       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         self.prevposx = 0 # Not important!
 
-        self.platforms    = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type, like saying int i;)
+        self.platforms    = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type)
         self.boxes        = pg.sprite.Group()
         self.surfaces     = pg.sprite.Group()
         self.obstacles    = pg.sprite.Group()
@@ -35,57 +34,53 @@ class Game:
 
         self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
         self.level.setSurfaces()
-
-
         self.run()
 
-    def run(self):                  # Game Loop
 
-        self.playing = True              # ?
-        while self.playing:              # ^?
+    # --> Collection of the things we want to run continuously
+    def run(self):                  # Game Loop
+        self.playing = True              # To make sure game loops
+        while self.playing:              # Until we say self.playing is not true (see the events() function)
             self.clock.tick(FPS)         # ? (something with making sure it runs at some FPS
             self.events()                # Checks events (such as pressed mouse button)
-            self.update()                # ?
+            self.update()                # Updates situation
             self.draw()                  # Actually draws wtf is going on yo
 
+    # --> Where we update screen movement and other things
     def update(self):
-
-        # Useless without my own functions
-        self.player.touching_right = False
-        self.player.touching_left = False
-        prevPos = self.player.pos.x,self.player.pos.y
-
-
-
+        # The 3 lines below are useless without my own functions
+        #self.player.touching_right = False
+        #self.player.touching_left = False
+        #prevPos = self.player.pos.x,self.player.pos.y
         self.standOnSurface()
         self.moveScreen()
-
         self.all_sprites.update()
 
+    # --> Checks if the player is on a surface. Can maybe go to the Player class?
     def standOnSurface(self):
         if self.player.vel.y > 0:                                                              # Only when player moves
-            hits = pg.sprite.spritecollide(self.player, self.surfaces, False)                 # Returns list of platforms that player collides with
-            if hits:                                                                           # If hits is not empty?
+            hits = pg.sprite.spritecollide(self.player, self.surfaces, False)                       # Returns list of platforms that player collides with
+            if hits:                                                                                 # If hits is not empty
                 hitSurface = hits[0]
                 for hit in hits:                                                               # Checks to find the bottom must platform (if more a hit)
-                    if hit.rect.bottom > hitSurface.rect.bottom:                               #\\
-                        hitSurface = hit                                                       #\\
+                    if hit.rect.bottom > hitSurface.rect.bottom:                                    #\\
+                        hitSurface = hit                                                                #\\
                 if self.player.pos.x < hitSurface.rect.right + WIDTH/100 and \
-                   self.player.pos.x > hitSurface.rect.left  - WIDTH/100:                            # If the player is actually (horizontically) on the platform
-                    if self.player.pos.y < hitSurface.rect.centery:  # If player is above half of the platform
-                        self.player.pos.y = hitSurface.rect.top                              # Pop on top of the platform
-                        self.player.vel.y = 0                                                  # Stop player from falling
+                   self.player.pos.x > hitSurface.rect.left  - WIDTH/100:                      # If the player is actually (horizontically) on the platform
+                    if self.player.pos.y < hitSurface.rect.centery:                                 # If player is above half of the platform
+                        self.player.pos.y = hitSurface.rect.top                                         # Pop on top of the platform
+                        self.player.vel.y = 0                                                           # Stop player from falling
                         self.player.jumping = False
 
 
 
 
 
-
+    # --> Moves everything in the background to make it seem like the player is "pushing" the screen
     def moveScreen(self):
         # If player is to the right
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
-            self.player.pos.x       -= max(abs(self.player.vel.x),2)  # The player shouldn't move out of the screen, so we make sure the position on screen stays
+            self.player.pos.x       -= max(abs(self.player.vel.x),2)                        # The player shouldn't move out of the screen, so we make sure the position on screen stays
             for sprite in self.all_sprites:
                 sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
 
@@ -96,17 +91,15 @@ class Game:
                 sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
 
 
-
-
+    # ---> Just to make sure the game can quit
     def events(self):
-        # Game Loop - events
         for event in pg.event.get():                           # Goes through all the events happening in a certrain frame (such as pressing a key)
             if event.type == pg.QUIT:                          # check for closing window
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
                 self.running = False                                   # \\
 
-
+    # --> pygame lets just draw the things on a screen :-)
     def draw(self):                                                     # Game Loop - draw
         self.screen.fill(BGCOLOR)                                       # Sets background color
         self.all_sprites.draw(self.screen)                              # Where the sprites should be drawn (the screen obvi)

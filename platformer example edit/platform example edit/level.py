@@ -13,6 +13,7 @@ class Level:
         self.game = game
         self.length = length
 
+    # --> Just makes the list of platforms in "settings" to actual platforms. creates the objects
     def setPlatforms(self):
         for plat in self.platforms:
             Platform(self.game, *plat)
