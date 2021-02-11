@@ -17,8 +17,8 @@ WINDOW_H = 1080
 
 # Camera Options:
 
-CAM_X_OFF = 300
-CAM_Y_OFF = 150
+CAM_X_OFF = 200
+CAM_Y_OFF = 50
 
 CAM_X_MVEL = 10
 CAM_Y_MVEL = 10
