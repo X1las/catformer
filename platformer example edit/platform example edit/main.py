@@ -24,7 +24,7 @@ class Game:
     def new(self):
         self.level       = Level(self,l1_platforms, l1_boxes ,length)       # Add levels
         self.all_sprites = pg.sprite.LayeredUpdates()                       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
-        self.prevposx = 0 # Not important!
+        #self.prevposx = 0 # Not important!
 
         self.platforms    = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type)
         self.boxes        = pg.sprite.Group()
@@ -48,7 +48,7 @@ class Game:
 
     # --> Where we update screen movement and other things
     def update(self):
-        # The 3 lines below are useless without my own functions
+        # The 3 lines below are useless without my own functions. CAN BE IGNORED
         #self.player.touching_right = False
         #self.player.touching_left = False
         #prevPos = self.player.pos.x,self.player.pos.y
@@ -71,9 +71,6 @@ class Game:
                         self.player.pos.y = hitSurface.rect.top                                         # Pop on top of the platform
                         self.player.vel.y = 0                                                           # Stop player from falling
                         self.player.jumping = False
-
-
-
 
 
     # --> Moves everything in the background to make it seem like the player is "pushing" the screen
@@ -107,6 +104,7 @@ class Game:
 
 
     #----------------- DON'T NEED TO UNDERSTAND YET. JUST DON'T WANT TO DELETE IT. SOMETHING KATA DID HERSELF ---------------------------------
+    # CAN BE IGNORED!
     def pushOut(self):
         # Pushes player away from obstacle - pretty fucked, I know
         bobs = pg.sprite.spritecollide(self.player, self.obstacles, False)
@@ -154,6 +152,7 @@ class Game:
         #
         self.prevposx = copy.copy(self.player.pos.x)    #WAS IN THE END BEFORE!!
 
+    # CAN BE IGNORED!
     def pushSprite(self):
         # Push box
         if self.player.vel.x != 0:
@@ -165,6 +164,7 @@ class Game:
                         hitbox.rect.centerx = round(hitbox.rect.centerx + self.player.vel.x)
                     elif self.player.pos.x > hitbox.rect.left + 10 and self.player.vel.x < 0:
                         hitbox.rect.centerx = round(hitbox.rect.centerx + self.player.vel.x)
+
     #--------------------------------------------------------------------------------------------------------------------------------------------
 
 g = Game()

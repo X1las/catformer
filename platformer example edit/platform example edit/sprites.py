@@ -55,6 +55,7 @@ class Player(pg.sprite.Sprite):
         self.pos += self.vel + 0.5 * self.acc
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
+    # -----------CAN BE IGNORED!----------
     # ---> Not important. I just tried to make make it impossible to walk through a platform. Not used atm, but keeping it for later inspiration
     def touches(self):
             bobs = pg.sprite.spritecollide(self, self.game.non_moveable, False)
