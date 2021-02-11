@@ -107,6 +107,8 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.x = x                                                                       # Put the platform at the given coordinate.
         self.rect.y = y                                                                       # \\
+        self.rect.right = x + self.width
+        self.rect.width = width
 
 
 

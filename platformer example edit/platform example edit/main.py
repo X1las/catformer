@@ -39,10 +39,12 @@ class Game:
 
 
         self.madeNewPlat = False
+        self.stuff = False
         self.main_plat = Platform(self, *mainPlat)
 
         self.newPlat = Platform(self,1,1,1,1,False)
 
+        self.currentplat = Platform(self, 1,1,1,1, False)
         self.run()
 
 
@@ -108,24 +110,37 @@ class Game:
                 self.running = False                                   # \\
             if event.type == pg.MOUSEBUTTONDOWN:
                 for obj in self.creater:
-                    print(obj.rect)
-                    if obj.rect.collidepoint(event.pos):
+
+                    if obj.rect.right -20 < pg.mouse.get_pos()[0] < obj.rect.right + 20 and obj.rect.top < pg.mouse.get_pos()[1] < obj.rect.bottom:
                         print(obj.rect)
+                        self.stuff = True
+                        #obj.rect.width += pg.mouse.get_pos()[0] - obj.rect.right
+                        self.currentplat = obj
+                        #self.currentplat.rect.inflate_ip(400,400)
+
+                    elif obj.rect.collidepoint(event.pos):
                         if obj.main_creator == True:
                             self.madeNewPlat == True
                             self.newPlat = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
                             self.newPlat.drag = True
+                            self.creater.add(self.newPlat)
+
                         elif obj.main_creator != True:
-                            print("oejowieroiwueroiwueoriuoi")
                             self.newPlat = obj
                             self.newPlat.drag = True
+
             if event.type == pg.MOUSEMOTION:
                 self.point = pg.mouse.get_pos()
                 self.mousex, self.mousey = self.point[0], self.point[1]
                 if self.newPlat.drag == True:
                     self.newPlat.rect.x = self.point[0]
                     self.newPlat.rect.y = self.point[1]
-
+                if self.stuff == True:
+                    poop = copy.deepcopy(self.currentplat.rect.right)
+                    self.currentplat.rect.width += event.rel[0]
+                    #self.currentplat.rect.width += pg.mouse.get_pos()[0] - self.currentplat.rect.right
+                    self.currentplat.rect.width = max(self.currentplat.rect.width, 200)
+                    #self.currentplat.rect = self.currentplat.rect
 
 
             if event.type == pg.MOUSEBUTTONUP:
@@ -135,6 +150,7 @@ class Game:
                 if self.madeNewPlat == True:
                     self.anotherP = self.newPlat
                     anotherP = Platform(self, self.mousex, self.mousey, self.main_plat.width, self.main_plat.height, False)
+                    self.creater.add(anotherP)
 
             self.madeNewPlat == False
 
