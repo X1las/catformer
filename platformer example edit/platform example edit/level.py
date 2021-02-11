@@ -6,8 +6,10 @@ from sprites import *
 from os import path
 
 class Level:
-    def __init__(self, game, platforms, length):
+    def __init__(self, game, platforms, boxes , length):
+        self.surfaces = pg.sprite.Group()
         self.platforms = platforms
+        self.boxes = boxes
         self.game = game
         self.length = length
 
@@ -15,6 +17,13 @@ class Level:
         for plat in self.platforms:
             Platform(self.game, *plat)
 
+    def setBoxes(self):
+        for plot in self.boxes:
+            Box(self.game, *plot)
 
+    def setSurfaces(self):
+        #self.surfaces = Surface
 
+        platforms = self.setPlatforms()
+        boxes = self.setBoxes()
 
