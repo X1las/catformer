@@ -12,8 +12,8 @@ pygame.display.set_caption("Pygame Testformer")           # Setting the screen c
 # Variables:
 x = INIT_X              
 y = INIT_Y - C_HEIGHT
-cam_x = x - WINDOW_W/2
-cam_y = y - WINDOW_H/2
+cam_x = x
+cam_y = y
 cvelx = 0
 cvely = 0
 
