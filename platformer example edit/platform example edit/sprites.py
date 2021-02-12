@@ -15,7 +15,7 @@ class Player(pg.sprite.Sprite):
         self.image         =  pg.Surface((30,40)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
         self.rect.center   = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
-        #self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         #self.touchRight = 0; self.touchLeft = 0; self.touchTop = 0; self.touchBot = 0
 
     # --> The different things that updates the position of the player
