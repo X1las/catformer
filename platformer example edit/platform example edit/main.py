@@ -54,7 +54,12 @@ class Game:
         #prevPos = self.player.pos.x,self.player.pos.y
         self.standOnSurface()
         self.moveScreen()
+
+
+
         self.all_sprites.update()
+
+
 
     # --> Checks if the player is on a surface. Can maybe go to the Player class?
     def standOnSurface(self):
@@ -100,7 +105,8 @@ class Game:
     def draw(self):                                                     # Game Loop - draw
         self.screen.fill(BGCOLOR)                                       # Sets background color
         self.all_sprites.draw(self.screen)                              # Where the sprites should be drawn (the screen obvi)
-        pg.display.flip()                                               # *after* drawing everything, flip the display (Nore sure about this one) ?
+        #self.screen.blits(self.screen, self.all_sprites)
+        pg.display.update()                                               # *after* drawing everything, flip the display (Nore sure about this one) ?
 
 
     #----------------- DON'T NEED TO UNDERSTAND YET. JUST DON'T WANT TO DELETE IT. SOMETHING KATA DID HERSELF ---------------------------------
