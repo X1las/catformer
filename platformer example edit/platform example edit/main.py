@@ -26,11 +26,11 @@ class Game:
         self.all_sprites = pg.sprite.LayeredUpdates()                       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         #self.prevposx = 0 # Not important!
 
-        self.platforms    = pg.sprite.Group()                  # Make platforms a group of sprites (basically, you set the type)
-        self.boxes        = pg.sprite.Group()
-        self.surfaces     = pg.sprite.Group()
-        self.obstacles    = pg.sprite.Group()
-        self.non_moveable = pg.sprite.Group()
+        self.platforms    = pg.sprite.LayeredUpdates()                  # Make platforms a group of sprites (basically, you set the type)
+        self.boxes        = pg.sprite.LayeredUpdates()
+        self.surfaces     = pg.sprite.LayeredUpdates()
+        self.obstacles    = pg.sprite.LayeredUpdates()
+        self.non_moveable = pg.sprite.LayeredUpdates()
 
         self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
         self.level.setSurfaces()
