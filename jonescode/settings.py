@@ -14,6 +14,8 @@ GRAVITY = 0.5
 
 WINDOW_W = 1600
 WINDOW_H = 900
+TITLE = "Catformer!"
+FPS = 30
 
 # Camera Options:
 
