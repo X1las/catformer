@@ -65,21 +65,19 @@ class Game:
                         self.player.vel.y = 0                                                           # Stop player from falling
                         self.player.jumping = False
 
-
     # --> Moves everything in the background to make it seem like the player is "pushing" the screen
     def moveScreen(self):
         # If player is to the right
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
             self.player.pos.x       -= max(abs(self.player.vel.x),2)                        # The player shouldn't move out of the screen, so we make sure the position on screen stays
             for sprite in self.all_sprites:
-                sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
+                sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))  # Moves each sprite to the left by the player's x velocity
 
         # if player is walking to the left
         if self.player.rect.left <= WIDTH / 3:
             self.player.pos.x       += max(abs(self.player.vel.x),2)
             for sprite in self.all_sprites:
                 sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
-
 
     # ---> Just to make sure the game can quit
     def events(self):
@@ -114,7 +112,7 @@ class Game:
                 if abs(touchLeft) < abs(touchRight):
                     toucher = touchLeft
 
-                toucher2 = touchTop
+                toucher2 = touchTop                                                 # Is not used?
                 if abs(touchTop) < abs(toucher):
                     toucher = touchTop
                 if abs(touchBot) < abs(toucher):
