@@ -10,7 +10,9 @@ SPRITESHEET = "spritesheet_jumper.png"
 # Player properties
 PLAYER_ACC = 1
 PLAYER_FRICTION = -0.08
-PLAYER_GRAV = 0.7
+#PLAYER_FRICTION2 = -0.5    # i used this to mess around with the physics
+PLAYER_GRAV = 0.7           # this should be a property dependent on level, not  player
+#GRAVITY = 1.5              # i used this to mess around with the physics
 PLAYER_JUMP = 20
 
 # Game properties

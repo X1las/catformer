@@ -45,6 +45,7 @@ class Player(pg.sprite.Sprite):
             self.acc.x = PLAYER_ACC
 
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
+    
     def applyPhysics(self):
         self.acc.y += PLAYER_GRAV                       # Gravity
         self.acc.x += self.vel.x * PLAYER_FRICTION      # Friction
@@ -53,6 +54,23 @@ class Player(pg.sprite.Sprite):
             self.vel.x = 0
         self.pos += self.vel + 0.5 * self.acc
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+
+
+    ''' this is me trying out some physics stuff
+    def applyPhysics2(self):
+    # update acceleration: apply gravity, apply friction
+        self.acc.y += GRAVITY                           # add gravity
+        #self.acc.x -= self.acc.x * PLAYER_FRICTION2     # add friction
+    # update velocity: add acceleration
+        self.vel.x -= self.acc.x * PLAYER_FRICTION2
+        self.vel.y += self.acc.y
+        if abs(self.vel.x) < 0.1:
+            self.vel.x = 0
+    # update position: add velocity
+        self.pos += self.vel + 0.5 * self.acc           # 2nd equation of motion
+    # reset acceleration
+        self.acc = vec(0,0)
+    '''
 
     # -----------CAN BE IGNORED!----------
     # ---> Not important. I just tried to make make it impossible to walk through a platform. Not used atm, but keeping it for later inspiration
