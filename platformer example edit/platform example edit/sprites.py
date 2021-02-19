@@ -16,14 +16,16 @@ class Player(pg.sprite.Sprite):
         self.rect.center   = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
-        #self.touchRight = 0; self.touchLeft = 0; self.touchTop = 0; self.touchBot = 0
+        self.touchRight = 0; self.touchLeft = 0; self.touchTop = 0; self.touchBot = 0
 
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
-        #self.touches()
+        self.touches()
         self.jump()
         self.move()
         self.applyPhysics()
+        
+        self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         self.rect.midbottom = self.pos
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
@@ -36,6 +38,7 @@ class Player(pg.sprite.Sprite):
             if keys[pg.K_SPACE]:                                                 # If it's left arrow
                 self.jumping = True                                                    # then you jump
                 self.vel.y = -PLAYER_JUMP                                                  #\\
+                print("jumped")
 
     # ---> Checks for pressed keys to move left/right
     def move(self):
@@ -44,7 +47,6 @@ class Player(pg.sprite.Sprite):
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT] and not self.touching_right:
             self.acc.x = PLAYER_ACC
-
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
     def applyPhysics(self):
         self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
@@ -68,26 +70,38 @@ class Player(pg.sprite.Sprite):
                     self.touchTop = self.rect.bottom - bob.rect.top
                     self.touchBot = self.rect.top - bob.rect.bottom + 50
 
-                    self.on_surface = abs(self.rect.bottom - bob.rect.top) < 4
+
+                    #self.on_surface = True
+                    self.on_surface = abs(self.rect.bottom - bob.rect.top) < 10
+
+                    print(f'In surface: {self.on_surface}')
+
+
+
+                    
 
                     # print(self.touching_right)
                     if PLAYER_ACC * 10 + 1 < abs(self.touchRight) < abs(self.touchLeft) and not self.on_surface:
+                        print("touching left")
                         self.touching_left = True
                         self.acc.x = 0
                         if self.vel.x < 0:
                             self.vel.x = 0
                     if PLAYER_ACC * 10 + 1 < abs(self.touchLeft) < abs(self.touchRight) and not self.on_surface:
+                        print("touching right")
                         self.touching_right = True
                         self.acc.x = 0
                         if self.vel.x > 0:
                             self.vel.x = 0
 
-                    maxSides = max(abs(self.touchRight), abs(self.touchLeft))
+                    maxSides = min(abs(self.touchRight), abs(self.touchLeft))
 
-                    if abs(self.touchBot) < PLAYER_ACC * 10 + 1 and abs(self.touchBot) < abs(maxSides):
+                    if 0 < abs(self.touchBot) < PLAYER_ACC * 10 + 1 and abs(self.touchBot) < abs(maxSides):
+                        print("touching top")
                         self.touching_top = True
                         self.acc.y = 0
-                        # self.vel.y = -self.vel.y
+                        self.vel.y = 0
+                        
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
 # --->  The platforms (surprise!)

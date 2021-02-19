@@ -55,6 +55,7 @@ class Game:
         #prevPos = self.player.pos.x,self.player.pos.y
         self.fallOnSurface()
         self.moveScreen()
+        self.pushSprite()
         #print(self.player.rect.topleft[0])
 
 

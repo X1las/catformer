@@ -26,7 +26,7 @@ class Level:
 
     def setVases(self):
         Vase(self.game, 100, 100)
-        Vase.on_platform(self.game, self.plats[1], "sdf")
+        Vase.on_platform(self.game, self.plats[1], "left")
 
     def setSurfaces(self):
         #self.surfaces = Surface
