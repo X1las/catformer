@@ -66,28 +66,32 @@ class Player(pg.sprite.Sprite):
                     bob = bab
 
                     self.touchRight = self.rect.left - bob.rect.right
-                    self.touchLeft = self.rect.right - bob.rect.left
-                    self.touchTop = self.rect.bottom - bob.rect.top
-                    self.touchBot = self.rect.top - bob.rect.bottom + 50
+                    self.touchLeft  = self.rect.right - bob.rect.left
+                    self.touchTop   = self.rect.bottom - bob.rect.top
+                    self.touchBot   = self.rect.top - bob.rect.bottom + 50
 
 
                     #self.on_surface = True
                     self.on_surface = abs(self.rect.bottom - bob.rect.top) < 10
 
-                    print(f'In surface: {self.on_surface}')
+                    #print(f'In surface: {self.on_surface}')
 
 
 
                     
 
                     # print(self.touching_right)
-                    if PLAYER_ACC * 10 + 1 < abs(self.touchRight) < abs(self.touchLeft) and not self.on_surface:
+                    if PLAYER_ACC * 10 + 1 < abs(self.touchRight) > abs(self.touchLeft) and not self.on_surface:
                         print("touching left")
                         self.touching_left = True
                         self.acc.x = 0
+           
+                        
+                        print(f"player: {self.rect.right}   platform: {bob.rect.left}")
                         if self.vel.x < 0:
                             self.vel.x = 0
-                    if PLAYER_ACC * 10 + 1 < abs(self.touchLeft) < abs(self.touchRight) and not self.on_surface:
+                    
+                    if PLAYER_ACC * 10 + 1 < abs(self.touchLeft) > abs(self.touchRight) and not self.on_surface:
                         print("touching right")
                         self.touching_right = True
                         self.acc.x = 0
@@ -96,9 +100,10 @@ class Player(pg.sprite.Sprite):
 
                     maxSides = min(abs(self.touchRight), abs(self.touchLeft))
 
-                    if 0 < abs(self.touchBot) < PLAYER_ACC * 10 + 1 and abs(self.touchBot) < abs(maxSides):
+                    if abs(self.touchBot) < PLAYER_ACC * 10 + 1 and abs(self.touchBot) < abs(maxSides):
                         print("touching top")
                         self.touching_top = True
+                        self.rect.top = bob.rect.bottom
                         self.acc.y = 0
                         self.vel.y = 0
                         

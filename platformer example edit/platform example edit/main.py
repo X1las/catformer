@@ -77,7 +77,7 @@ class Game:
                     if self.player.pos.y < hitSurface.rect.centery:                                 # If player is above half of the platform
                         self.player.pos.y = hitSurface.rect.top                                         # Pop on top of the platform
                         self.player.vel.y = 0                                                           # Stop player from falling
-                        self.player.jumping = False
+                        self.player.jumping =   False
 
 
     # --> Moves everything in the background to make it seem like the player is "pushing" the screen
