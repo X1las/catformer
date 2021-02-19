@@ -92,13 +92,20 @@ class Player(pg.sprite.Sprite):
 
 # --->  The platforms (surprise!)
 class Platform(pg.sprite.Sprite):
-    def __init__(self, game, x, y, width, height, bot):
-        self.bot = bot; self.width = width; self.game = game                                                  # Typical self.smth = smth
-        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable      #All of the groups the platforms should belong to
+    def __init__(self, game, x, y, width, height, typ = None, *args, **kwargs):
+        self.vel = kwargs.get('vel',None)
+        self.width = width; self.game = game; self.typ = typ                                                  # Typical self.smth = smth
+        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable 
+
+        if self.typ == moving_plat:
+            self.groups = self.groups, game.moving_plats
+        
+
         pg.sprite.Sprite.__init__(self, self.groups)                                                          # Making sure the
         self.image = pg.Surface((width,height)); self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.x = x                                                                       # Put the platform at the given coordinate.
         self.rect.y = y                                                                       # \\
+
 
 # ---> boxes :-o
 class Box(pg.sprite.Sprite):
@@ -111,3 +118,41 @@ class Box(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+class Vase(pg.sprite.Sprite):
+    def __init__(self,game,x,y):
+        self.broken = False
+        self.width = 20
+        self.height = 30
+        self.game = game
+        self.groups = game.all_sprites, game.vases
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((120,100,0))
+        self.rect = self.image.get_rect()
+        
+        self.rect.midbottom = (x,y)
+        #self.rect.x = x
+        #self.rect.y = y
+    
+    @classmethod
+    def on_platform(cls, game, plat : Platform, placement : str ):
+        try:
+            if placement == "left":
+                pos = plat.rect.topleft
+                push = 20   
+            elif placement == "right":
+                pos = plat.rect.topright
+                push = -20
+            elif placement == "mid":
+                push = 0
+                pos = plat.rect.midtop
+            return cls(game = game, x = pos[0] + push, y = pos[1])
+        except:
+            print("Must choose left, right or mid")    
+            return cls(game = game, x = plat.rect.midtop[0] , y = plat.rect.midtop[1])
+
+
+    def breaks(self):
+        self.image.fill((250,250,250))
+        self.broken = True

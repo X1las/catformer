@@ -7,6 +7,11 @@ FONT_NAME = 'arial'
 HS_FILE = "highscore.txt"
 SPRITESHEET = "spritesheet_jumper.png"
 
+#Platform types
+bot_plat = 1
+basic_plat = 2
+moving_plat = 3
+
 # Player properties
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
@@ -43,16 +48,7 @@ BGCOLOR = LIGHTBLUE
 #Level 1
 length = 5000
 
-l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
-                (300,  HEIGHT / 2,   500,    40, False),
-                (1000, HEIGHT - 350, 260,    40, False),
-                (1500, HEIGHT - 200, 200,    40, False),
-                (600,  HEIGHT - 100, 260,    40, False),
-                (800,  HEIGHT - 100, 260,    40, False),
-                (1108, HEIGHT - 100, 260,    40, False),
-                (750,  HEIGHT - 100, 260,    40, False),
-                (450,  HEIGHT - 100, 260,    40, False)]
-
+l1_vases = ()
 
 l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
                 (300,  HEIGHT / 2,   500,    40, False),

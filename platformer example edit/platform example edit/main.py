@@ -31,6 +31,7 @@ class Game:
         self.surfaces     = pg.sprite.LayeredUpdates()
         self.obstacles    = pg.sprite.LayeredUpdates()
         self.non_moveable = pg.sprite.LayeredUpdates()
+        self.vases        = pg.sprite.LayeredUpdates()
 
         self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
         self.level.setSurfaces()
@@ -52,9 +53,9 @@ class Game:
         #self.player.touching_right = False
         #self.player.touching_left = False
         #prevPos = self.player.pos.x,self.player.pos.y
-        self.standOnSurface()
+        self.fallOnSurface()
         self.moveScreen()
-
+        #print(self.player.rect.topleft[0])
 
 
         self.all_sprites.update()
@@ -62,7 +63,7 @@ class Game:
 
 
     # --> Checks if the player is on a surface. Can maybe go to the Player class?
-    def standOnSurface(self):
+    def fallOnSurface(self):
         if self.player.vel.y > 0:                                                              # Only when player moves
             hits = pg.sprite.spritecollide(self.player, self.surfaces, False)                       # Returns list of platforms that player collides with
             if hits:                                                                                 # If hits is not empty
