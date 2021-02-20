@@ -32,6 +32,8 @@ class Game:
         self.obstacles    = pg.sprite.LayeredUpdates()
         self.non_moveable = pg.sprite.LayeredUpdates()
         self.vases        = pg.sprite.LayeredUpdates()
+        self.non_player   = pg.sprite.LayeredUpdates()
+
 
         self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
         self.level.setSurfaces()
@@ -84,24 +86,31 @@ class Game:
     def moveScreen(self):
         # If player is to the right
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
-            self.player.pos.x       -= max(abs(self.player.vel.x),2)                        # The player shouldn't move out of the screen, so we make sure the position on screen stays
-            for sprite in self.all_sprites:
+            self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
+            for sprite in self.non_player:
                 sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
 
         # if player is walking to the left
         if self.player.rect.left <= WIDTH / 3:
-            self.player.pos.x       += max(abs(self.player.vel.x),2)
-            for sprite in self.all_sprites:
+            self.player.pos.x       += abs(self.player.vel.x)
+            for sprite in self.non_player:
                 sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
 
 
     # ---> Just to make sure the game can quit
     def events(self):
         for event in pg.event.get():                           # Goes through all the events happening in a certrain frame (such as pressing a key)
-            if event.type == pg.QUIT:                          # check for closing window
+            if event.type == (pg.QUIT)  :                          # check for closing window
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
                 self.running = False                                   # \\
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    if self.playing:                               # Stops game
+                        self.playing = False                           # \\
+                    self.running = False       
+
+
 
     # --> pygame lets just draw the things on a screen :-)
     def draw(self):                                                     # Game Loop - draw

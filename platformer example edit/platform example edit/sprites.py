@@ -3,6 +3,7 @@ import pygame as pg
 from settings import *
 from random import choice, randrange, uniform
 from os import path
+import copy
 vec = pg.math.Vector2
 
 
@@ -13,20 +14,27 @@ class Player(pg.sprite.Sprite):
         self.game          = game
         self.jumping       = False
         self.image         =  pg.Surface((30,40)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
-        self.rect.center   = (x, y)
+        self.rect.midbottom   = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         self.touchRight = 0; self.touchLeft = 0; self.touchTop = 0; self.touchBot = 0
+        self.on_surface = False
 
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
-        self.touches()
         self.jump()
+        #print(f'b4 TOUCH: {self.pos[0]}')
+        self.touches()
+        
         self.move()
+        print(f'af TOUCH: {self.pos[0]}')
         self.applyPhysics()
         
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        
         self.rect.midbottom = self.pos
+        print(f'UPDATED: {self.pos[0]}')
+
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
     def jump(self):                                                              # jump only if standing on a platform
@@ -45,54 +53,80 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT] and not self.touching_left:                  # If it's left arrow
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
+            print("key touched --------------------------------------------------")
         if keys[pg.K_RIGHT] and not self.touching_right:
             self.acc.x = PLAYER_ACC
+            print("key touched --------------------------------------------------")
+    
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
     def applyPhysics(self):
-        self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
-        self.acc.x += self.vel.x * PLAYER_FRICTION      # Friction
+        if not self.on_surface:
+            
+            self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
+        print(f'pos before grav: {self.pos}')
+        #self.acc.x += self.vel.x * PLAYER_FRICTION
+        #self.acc.x += self.vel.x * PLAYER_FRICTION      # Friction
+        self.vel.x = 0.93 * self.vel.x
         self.vel += self.acc                            # equations of motion
-        if abs(self.vel.x) < 0.1:
-            self.vel.x = 0
-        self.pos += self.vel + 0.5 * self.acc
+        if abs(self.vel.x) < 0.25:
+            self.vel.x = 0   
+        self.pos += self.vel# + 0.5 * self.acc
+        print(f'pos efter grav: {self.pos}')
+ 
+        
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
     # -----------CAN BE IGNORED!----------
     # ---> Not important. I just tried to make make it impossible to walk through a platform. Not used atm, but keeping it for later inspiration
     def touches(self):
-            bobs = pg.sprite.spritecollide(self, self.game.non_moveable, False)
-            if bobs:
-                for bab in bobs:
-                    bob = bab
+        #temp_pos = copy.copy(self.pos)
+        #temp_vel = copy.copy(self.vel)
+        #self.pos += temp_vel + self.acc
+        self.rect.y += 2                                                         # to see if there is a platform 2 pix below
+        hits = pg.sprite.spritecollide(self, self.game.non_moveable, False)          # Returns the platforms that (may) have been touched
+        self.rect.y -= 2   
+        if hits:
+            self.on_surface = True
+        else:
+            self.on_surface = False
 
-                    self.touchRight = self.rect.left - bob.rect.right
-                    self.touchLeft  = self.rect.right - bob.rect.left
-                    self.touchTop   = self.rect.bottom - bob.rect.top
-                    self.touchBot   = self.rect.top - bob.rect.bottom + 50
+        bobs = pg.sprite.spritecollide(self, self.game.non_moveable, False)
+        #self.pos = temp_pos
+        if bobs:
+            for bab in bobs:
+                bob = bab
+
+                self.touchRight = self.rect.left - bob.rect.right
+                self.touchLeft  = self.rect.right - bob.rect.left
+                self.touchTop   = self.rect.bottom - bob.rect.top
+                self.touchBot   = self.rect.top - bob.rect.bottom
 
 
-                    #self.on_surface = True
-                    self.on_surface = abs(self.rect.bottom - bob.rect.top) < 10
+                #self.on_surface = True
+                self.on_surface = abs(self.rect.bottom - bob.rect.top) < 2
+                
+                #print(f'In surface: {self.on_surface}')
 
-                    #print(f'In surface: {self.on_surface}')
 
 
-
-                    
-
-                    # print(self.touching_right)
-                    if PLAYER_ACC * 10 + 1 < abs(self.touchRight) > abs(self.touchLeft) and not self.on_surface:
-                        print("touching left")
+                
+                if not self.on_surface:
+                # print(self.touching_right)
+                    if 10 > abs(self.touchRight):
+                        print("touching right")
                         self.touching_left = True
+                        #self.rect.right = bob.rect.left
+                        self.pos[0] -= self.touchRight
                         self.acc.x = 0
-           
+        
                         
                         print(f"player: {self.rect.right}   platform: {bob.rect.left}")
                         if self.vel.x < 0:
                             self.vel.x = 0
                     
-                    if PLAYER_ACC * 10 + 1 < abs(self.touchLeft) > abs(self.touchRight) and not self.on_surface:
-                        print("touching right")
+                    if 10 > abs(self.touchLeft):
+                        print("touching left")
+                        self.pos[0] -= self.touchLeft
                         self.touching_right = True
                         self.acc.x = 0
                         if self.vel.x > 0:
@@ -106,15 +140,27 @@ class Player(pg.sprite.Sprite):
                         self.rect.top = bob.rect.bottom
                         self.acc.y = 0
                         self.vel.y = 0
-                        
     # ------------------------------------------------------------------------------------------------------------------------------------------------
+
+    def testNextFrame(self,sprite):
+
+        temp_pos = copy.copy(self.pos)
+        temp_vel = copy.copy(self.vel)
+        self.pos += temp_vel
+        possibleHits = pg.sprite.collide_rect(self,sprite, False)
+        self.pos = temp_pos
+        return possibleHits
+
+
+
+
 
 # --->  The platforms (surprise!)
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y, width, height, typ = None, *args, **kwargs):
         self.vel = kwargs.get('vel',None)
         self.width = width; self.game = game; self.typ = typ                                                  # Typical self.smth = smth
-        self.groups = game.all_sprites, game.platforms, game.surfaces, game.obstacles, game.non_moveable 
+        self.groups = game.all_sprites, game.non_player, game.platforms, game.surfaces, game.obstacles, game.non_moveable 
 
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
@@ -130,7 +176,7 @@ class Platform(pg.sprite.Sprite):
 class Box(pg.sprite.Sprite):
     def __init__(self, game, x, y, width, height):
         self.game   = game;  self.width  = width; self.height = height
-        self.groups = game.all_sprites, game.boxes, game.surfaces, game.obstacles
+        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
@@ -144,7 +190,7 @@ class Vase(pg.sprite.Sprite):
         self.width = 20
         self.height = 30
         self.game = game
-        self.groups = game.all_sprites, game.vases
+        self.groups = game.all_sprites, game.vases, game.non_player
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((120,100,0))
