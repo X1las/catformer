@@ -52,9 +52,6 @@ class Game:
     # --> Where we update screen movement and other things
     def update(self):
         # The 3 lines below are useless without my own functions. CAN BE IGNORED
-        #self.player.touching_right = False
-        #self.player.touching_left = False
-        #prevPos = self.player.pos.x,self.player.pos.y
         self.fallOnSurface()
         self.moveScreen()
         self.pushSprite()
@@ -85,21 +82,26 @@ class Game:
     # --> Moves everything in the background to make it seem like the player is "pushing" the screen
     def moveScreen(self):
         # If player is to the right
+        #print(self.player.rect.right)
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
+            #print(WIDTH*2/3)
             self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
-            for sprite in self.non_player:
-                sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
-
-        # if player is walking to the left
+            if self.player.vel.x > 0:
+                for sprite in self.non_player:
+                    sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
+        #else:
+            #print("NOT right screen")
         if self.player.rect.left <= WIDTH / 3:
             self.player.pos.x       += abs(self.player.vel.x)
-            for sprite in self.non_player:
-                sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
+            if self.player.vel.x < 0:
+                for sprite in self.non_player:
+                    sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
 
 
     # ---> Just to make sure the game can quit
     def events(self):
         for event in pg.event.get():                           # Goes through all the events happening in a certrain frame (such as pressing a key)
+            #key = event.key
             if event.type == (pg.QUIT)  :                          # check for closing window
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
@@ -108,7 +110,10 @@ class Game:
                 if event.key == pg.K_ESCAPE:
                     if self.playing:                               # Stops game
                         self.playing = False                           # \\
-                    self.running = False       
+                    self.running = False
+                #if event.key == pg.K_LEFT:
+                 #   print("lkj")
+                  #  self.player.move('left')    
 
 
 
@@ -120,54 +125,6 @@ class Game:
         pg.display.update()                                               # *after* drawing everything, flip the display (Nore sure about this one) ?
 
 
-    #----------------- DON'T NEED TO UNDERSTAND YET. JUST DON'T WANT TO DELETE IT. SOMETHING KATA DID HERSELF ---------------------------------
-    # CAN BE IGNORED!
-    def pushOut(self):
-        # Pushes player away from obstacle - pretty fucked, I know
-        bobs = pg.sprite.spritecollide(self.player, self.obstacles, False)
-        if bobs:
-            for bab in bobs:
-                bob = bab
-                touchRight = self.player.rect.left   - bob.rect.right
-                touchLeft  = self.player.rect.right  - bob.rect.left
-                touchTop   = self.player.rect.bottom - bob.rect.top
-                touchBot   = self.player.rect.top    - bob.rect.bottom + 50
-
-                toucher = touchRight
-                if abs(touchLeft) < abs(touchRight):
-                    toucher = touchLeft
-
-                toucher2 = touchTop
-                if abs(touchTop) < abs(toucher):
-                    toucher = touchTop
-                if abs(touchBot) < abs(toucher):
-                  #  toucher2 = touchBot
-                    toucher = touchBot
-                #print(f'add: {self.player.acc.length()} and toucher {toucher}')
-
-                if abs(toucher) >  abs(self.player.acc.length()*10) + 1:
-                #if abs(toucher) > 10:
-                    #print("NOW")
-                    if toucher == touchRight:
-                        #self.player.vel.x = -self.player.vel.x
-                        self.player.pos.x += 3
-                    if toucher == touchLeft:
-                        #self.player.vel.x = 0
-                        #self.player.touching_right = True
-                        self.player.pos.x -= 3
-                        #self.player.vel.x = -self.player.vel.y
-                    if toucher == touchTop and self.player.vel.y != 0:
-                        self.player.pos.y += 3
-                        #self.player.vel.y = -self.player.vel.y
-                        self.player.jumping = False
-                    if toucher == touchBot:
-                        self.player.jumping = False
-
-                        self.player.pos.y -= 3
-                    #self.player.vel.y = 0
-                    self.player.jump_cut()
-        #
-        self.prevposx = copy.copy(self.player.pos.x)    #WAS IN THE END BEFORE!!
 
     # CAN BE IGNORED!
     def pushSprite(self):

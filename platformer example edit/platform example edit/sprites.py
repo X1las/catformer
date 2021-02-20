@@ -52,9 +52,12 @@ class Player(pg.sprite.Sprite):
     def move(self):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT] and not self.touching_left:                  # If it's left arrow
+        #if direction == 'left':
+         #   print("ooooo")
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
             #print("left key touched --------------------------------------------------")
         if keys[pg.K_RIGHT] and not self.touching_right:
+        #if direction == 'right':
             self.acc.x = PLAYER_ACC
             #print("right key touched --------------------------------------------------")
     
@@ -91,7 +94,6 @@ class Player(pg.sprite.Sprite):
             self.on_surface = False
 
         bobs = pg.sprite.spritecollide(self, self.game.non_moveable, False)
-        #self.pos = temp_pos
         if bobs:
             for bab in bobs:
                 bob = bab
@@ -101,11 +103,10 @@ class Player(pg.sprite.Sprite):
                 self.touchTop   = self.rect.bottom - bob.rect.top
                 self.touchBot   = self.rect.top - bob.rect.bottom
 
-
-                #self.on_surface = True
                 self.on_surface = abs(self.rect.bottom - bob.rect.top) < 2
                 
-                #print(f'In surface: {self.on_surface}')
+   
+
 
 
 
@@ -119,7 +120,6 @@ class Player(pg.sprite.Sprite):
                         self.pos[0] -= self.touchRight
                         self.acc.x = 0
         
-                        
                         print(f"player: {self.rect.right}   platform: {bob.rect.left}")
                         if self.vel.x < 0:
                             self.vel.x = 0
