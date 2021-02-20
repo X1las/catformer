@@ -16,7 +16,7 @@ moving_plat = 3
 PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
 PLAYER_GRAV = 0.7
-PLAYER_JUMP = 20
+PLAYER_JUMP = 13
 
 # Game properties
 BOOST_POWER = 60

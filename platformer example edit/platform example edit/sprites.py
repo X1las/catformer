@@ -27,13 +27,13 @@ class Player(pg.sprite.Sprite):
         self.touches()
         
         self.move()
-        print(f'af TOUCH: {self.pos[0]}')
+        #print(f'af TOUCH: {self.pos[0]}')
         self.applyPhysics()
         
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
-        
+        self.pos[0] = round(self.pos[0])
+        self.pos[1] = round(self.pos[1])
         self.rect.midbottom = self.pos
-        print(f'UPDATED: {self.pos[0]}')
 
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
@@ -46,24 +46,24 @@ class Player(pg.sprite.Sprite):
             if keys[pg.K_SPACE]:                                                 # If it's left arrow
                 self.jumping = True                                                    # then you jump
                 self.vel.y = -PLAYER_JUMP                                                  #\\
-                print("jumped")
+                #print("jumped")
 
     # ---> Checks for pressed keys to move left/right
     def move(self):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT] and not self.touching_left:                  # If it's left arrow
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
-            print("key touched --------------------------------------------------")
+            #print("left key touched --------------------------------------------------")
         if keys[pg.K_RIGHT] and not self.touching_right:
             self.acc.x = PLAYER_ACC
-            print("key touched --------------------------------------------------")
+            #print("right key touched --------------------------------------------------")
     
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
     def applyPhysics(self):
         if not self.on_surface:
             
             self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
-        print(f'pos before grav: {self.pos}')
+        #print(f'pos before grav: {self.pos}')
         #self.acc.x += self.vel.x * PLAYER_FRICTION
         #self.acc.x += self.vel.x * PLAYER_FRICTION      # Friction
         self.vel.x = 0.93 * self.vel.x
@@ -71,7 +71,7 @@ class Player(pg.sprite.Sprite):
         if abs(self.vel.x) < 0.25:
             self.vel.x = 0   
         self.pos += self.vel# + 0.5 * self.acc
-        print(f'pos efter grav: {self.pos}')
+        #print(f'pos efter grav: {self.pos}')
  
         
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
