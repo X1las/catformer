@@ -1,11 +1,13 @@
 # Sprite classes for platform game
 import pygame as pg
+
+from vector import *
 from settings import *
 from random import choice, randrange, uniform
 from os import path
 import copy
-vec = pg.math.Vector2
-
+#vec = pg.math.Vector2
+vec = Vec
 
 
 class Player(pg.sprite.Sprite):
@@ -23,17 +25,15 @@ class Player(pg.sprite.Sprite):
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
         self.jump()
-        #print(f'b4 TOUCH: {self.pos[0]}')
-        self.touches()
-        
+        self.touches()    
         self.move()
-        #print(f'af TOUCH: {self.pos[0]}')
-        self.applyPhysics()
-        
+        self.applyPhysics() 
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
-        self.pos[0] = round(self.pos[0])
-        self.pos[1] = round(self.pos[1])
-        self.rect.midbottom = self.pos
+        #self.pos[0] = round(self.pos[0])
+        #self.pos[1] = round(self.pos[1])    
+        round(self.pos)
+        #print(self.pos.asTuples(1))
+        self.rect.midbottom = self.pos #(self.pos.x, self.pos.y) #self.pos.asTuples(1)
 
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
