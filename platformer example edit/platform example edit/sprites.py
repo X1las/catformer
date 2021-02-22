@@ -29,11 +29,8 @@ class Player(pg.sprite.Sprite):
         self.move()
         self.applyPhysics() 
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
-        #self.pos[0] = round(self.pos[0])
-        #self.pos[1] = round(self.pos[1])    
         round(self.pos)
-        #print(self.pos.asTuples(1))
-        self.rect.midbottom = self.pos #(self.pos.x, self.pos.y) #self.pos.asTuples(1)
+        self.rect.midbottom = self.pos.asTuple()
 
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
@@ -46,20 +43,14 @@ class Player(pg.sprite.Sprite):
             if keys[pg.K_SPACE]:                                                 # If it's left arrow
                 self.jumping = True                                                    # then you jump
                 self.vel.y = -PLAYER_JUMP                                                  #\\
-                #print("jumped")
 
     # ---> Checks for pressed keys to move left/right
     def move(self):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT] and not self.touching_left:                  # If it's left arrow
-        #if direction == 'left':
-         #   print("ooooo")
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
-            #print("left key touched --------------------------------------------------")
         if keys[pg.K_RIGHT] and not self.touching_right:
-        #if direction == 'right':
             self.acc.x = PLAYER_ACC
-            #print("right key touched --------------------------------------------------")
     
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
     def applyPhysics(self):
@@ -86,14 +77,14 @@ class Player(pg.sprite.Sprite):
         #temp_vel = copy.copy(self.vel)
         #self.pos += temp_vel + self.acc
         self.rect.y += 2                                                         # to see if there is a platform 2 pix below
-        hits = pg.sprite.spritecollide(self, self.game.non_moveable, False)          # Returns the platforms that (may) have been touched
+        hits = pg.sprite.spritecollide(self, self.game.obstacles, False)          # Returns the platforms that (may) have been touched
         self.rect.y -= 2   
         if hits:
             self.on_surface = True
         else:
             self.on_surface = False
 
-        bobs = pg.sprite.spritecollide(self, self.game.non_moveable, False)
+        bobs = pg.sprite.spritecollide(self, self.game.obstacles, False)
         if bobs:
             for bab in bobs:
                 bob = bab
@@ -104,37 +95,28 @@ class Player(pg.sprite.Sprite):
                 self.touchBot   = self.rect.top - bob.rect.bottom
 
                 self.on_surface = abs(self.rect.bottom - bob.rect.top) < 2
-                
-   
-
-
-
-
-                
+            
                 if not self.on_surface:
-                # print(self.touching_right)
                     if 10 > abs(self.touchRight):
-                        print("touching right")
-                        self.touching_left = True
-                        #self.rect.right = bob.rect.left
-                        self.pos[0] -= self.touchRight
-                        self.acc.x = 0
-        
-                        print(f"player: {self.rect.right}   platform: {bob.rect.left}")
-                        if self.vel.x < 0:
-                            self.vel.x = 0
+                        self.pos.x -= self.touchRight
+                        if bob in self.game.non_moveable:
+                            self.touching_left = True
+                        
+                            self.acc.x = 0
+                            if self.vel.x < 0:
+                                self.vel.x = 0
                     
                     if 10 > abs(self.touchLeft):
-                        print("touching left")
-                        self.pos[0] -= self.touchLeft
-                        self.touching_right = True
-                        self.acc.x = 0
-                        if self.vel.x > 0:
-                            self.vel.x = 0
+                        self.pos.x -= self.touchLeft
+                        if bob in self.game.non_moveable:
+                            self.touching_right = True      
+                            self.acc.x = 0
+                            if self.vel.x > 0:
+                                self.vel.x = 0
 
-                    maxSides = min(abs(self.touchRight), abs(self.touchLeft))
+                    minSides = min(abs(self.touchRight), abs(self.touchLeft))
 
-                    if abs(self.touchBot) < PLAYER_ACC * 10 + 1 and abs(self.touchBot) < abs(maxSides):
+                    if abs(self.touchBot) < PLAYER_ACC * 10 + 1 and abs(self.touchBot) < abs(minSides):
                         print("touching top")
                         self.touching_top = True
                         self.rect.top = bob.rect.bottom
