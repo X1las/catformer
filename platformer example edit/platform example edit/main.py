@@ -32,7 +32,7 @@ class Game:
         self.vases        = pg.sprite.LayeredUpdates()
         self.non_player   = pg.sprite.LayeredUpdates()
 
-        self.vases[0]
+
         self.player      = Player(self,300, HEIGHT - 100, name = "player")                          # Create player (the bunny)
         self.level.setSurfaces()
         self.run()
