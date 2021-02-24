@@ -68,7 +68,7 @@ class Player(pg.sprite.Sprite):
 
         intersection = V                                    # Default intersection vector for comparison
         hitObject = False                                   # Hit object as false by default
-        
+
         # Will check if the x and y vectors are not equal to 0 and assign A to their quotient if they are not
         A = False                                         
         if V.x != 0 and V.y != 0:                           
@@ -91,7 +91,7 @@ class Player(pg.sprite.Sprite):
                     if tempVec.length() < intersection.length():
                         intersection = tempVec
                         hitObject = c
-                
+
                 # Horizontal intersections:
                 x = c.rect.left
                 if V.x < 0:
@@ -104,7 +104,7 @@ class Player(pg.sprite.Sprite):
                         hitObject = c 
         else:
             # If V.x is not 0:
-            #If V.x is above 0
+            # If V.x is above 0
             if V.x > 0:
                 for c in COL:
                     x = c.rect.left
@@ -115,7 +115,7 @@ class Player(pg.sprite.Sprite):
                             if tempVec.length() < intersection.length():
                                 intersection = tempVec
                                 hitObject = c
-            #If V.x is below 0
+            # If V.x is below 0
             if V.x < 0:             
                 for c in COL:
                     x = c.rect.right
@@ -126,7 +126,8 @@ class Player(pg.sprite.Sprite):
                             if tempVec.length() < intersection.length():
                                 intersection = tempVec
                                 hitObject = c
-            #If V.y is above 0
+            # If V.y is not 0:
+            # If V.y is above 0
             if V.y > 0:
                 for c in COL:
                     y = c.rect.top
