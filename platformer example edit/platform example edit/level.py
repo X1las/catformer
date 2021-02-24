@@ -25,8 +25,8 @@ class Level:
             Box(self.game, *plot)
 
     def setVases(self):
-        Vase(self.game, 100, 100)
-        Vase.on_platform(self.game, self.plats[1], "left")
+        Vase(self.game, 100, 100, name = "vase_1")
+        Vase.on_platform(self.game, self.plats[1], "left", name = "vase 2")
 
     def setSurfaces(self):
         #self.surfaces = Surface

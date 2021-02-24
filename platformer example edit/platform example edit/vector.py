@@ -51,7 +51,6 @@ class Vec(object):
     def __mul__(self, scale : (float or int)):
         newx = self.x * scale; newy = self.y * scale
         self.x *= scale; self.y *= scale
-        print(f'lengths is: {self.len}')
         return Vec(newx, newy)
 
 

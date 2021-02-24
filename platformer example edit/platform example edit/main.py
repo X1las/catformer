@@ -9,8 +9,6 @@ import copy
 
 
 
-
-
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -35,7 +33,7 @@ class Game:
         self.non_player   = pg.sprite.LayeredUpdates()
 
 
-        self.player      = Player(self,300, HEIGHT - 100)                          # Create player (the bunny)
+        self.player      = Player(self,300, HEIGHT - 100, name = "player")                          # Create player (the bunny)
         self.level.setSurfaces()
         self.run()
 
@@ -56,7 +54,6 @@ class Game:
         self.moveScreen()
         self.pushSprite()
         #print(self.player.rect.topleft[0])
-
 
         self.all_sprites.update()
 
@@ -82,15 +79,11 @@ class Game:
     # --> Moves everything in the background to make it seem like the player is "pushing" the screen
     def moveScreen(self):
         # If player is to the right
-        #print(self.player.rect.right)
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
-            #print(WIDTH*2/3)
             self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
             if self.player.vel.x > 0:
                 for sprite in self.non_player:
                     sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
-        #else:
-            #print("NOT right screen")
         if self.player.rect.left <= WIDTH / 3:
             self.player.pos.x       += abs(self.player.vel.x)
             if self.player.vel.x < 0:
@@ -101,7 +94,6 @@ class Game:
     # ---> Just to make sure the game can quit
     def events(self):
         for event in pg.event.get():                           # Goes through all the events happening in a certrain frame (such as pressing a key)
-            #key = event.key
             if event.type == (pg.QUIT)  :                          # check for closing window
                 if self.playing:                               # Stops game
                     self.playing = False                           # \\
@@ -111,9 +103,6 @@ class Game:
                     if self.playing:                               # Stops game
                         self.playing = False                           # \\
                     self.running = False
-                #if event.key == pg.K_LEFT:
-                 #   print("lkj")
-                  #  self.player.move('left')    
 
 
 
@@ -121,7 +110,6 @@ class Game:
     def draw(self):                                                     # Game Loop - draw
         self.screen.fill(BGCOLOR)                                       # Sets background color
         self.all_sprites.draw(self.screen)                              # Where the sprites should be drawn (the screen obvi)
-        #self.screen.blits(self.screen, self.all_sprites)
         pg.display.update()                                               # *after* drawing everything, flip the display (Nore sure about this one) ?
 
 
