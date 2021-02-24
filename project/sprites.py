@@ -44,6 +44,21 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_RIGHT] and not self.touching_right:
             self.acc.x = PLAYER_ACC
 
+    def rayIntersect(self,origin,collision_objects):                    # function that will calculate and return the 
+        O = origin                                                      # startout vector for calculations
+        V = self.vel                                                    # Object's X and Y velocity
+        COL = collision_objects                                         # array of collideable objects
+
+        # so long as vel x != 0 then f(x) = ax+b, where b is 0 since we have origin in 0,0  
+        # if x = 0 then x and y are flipped
+
+        A = V.x/V.y                                             # if a = y2-y1/x2-x1, then because we have origin in 0,0 x1 and y1 is 0, an
+
+        if 
+        for c in COL:
+
+        
+
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
     def applyPhysics(self):
         self.acc.y += PLAYER_GRAV                       # Gravity

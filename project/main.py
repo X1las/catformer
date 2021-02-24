@@ -11,8 +11,8 @@ class Game:
         pg.init()                                                               # Always need this?
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Set window size
         pg.display.set_caption(TITLE)                                           # Name the window
-        self.clock = pg.time.Clock()                                            # Keeps track of time (Not very sure of this part)
-        self.running = True                                                     # Used to make sure everything we do loops until we set it to FAlse
+        self.clock = pg.time.Clock()                                            # Creates a clock object from pg.time module
+        self.running = True                                                     # Creates a boolean "running" to keep the game running
 
     # --> Prepares the game
     def new(self):
