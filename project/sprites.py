@@ -15,31 +15,22 @@ class Player(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
         self.game          = game; self.name = name; self._layer = 1
         self.jumping       = False
-        self.image         =  pg.Surface((30,40)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
+        self.width = 30; self.height = 40
+        self.image         =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
         self.rect.midbottom   = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         self.dist_from_right = 0; self.dist_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
-        self.on_collided_surface = False
+        self.on_collided_surface = False; self.stop_falling = False
 
-    def initKeys(self, jump, left, right, crouch):
+    def initKeys(jump, left, right, crouch):
         self.jump_key = jump
 
 
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
         self.jump()
-        self.touches()
-
-        # call rayIntersect(vel, origin, all_sprites)
-        # returns [hitObject, intersection] if it hits anything
-        # returns False if it hits nothing
-        # if rayIntersect(...):
-            # set position to intersection, intersection = rayIntersect[1]
-        Intersect = self.rayIntersect(self.vel, Vec(self.rect.left,self.rect.top),self.game.all_sprites) 
-        if Intersect:
-            self.pos = Intersect[1]
-            
+        self.touches()    
         self.move()
         self.applyPhysics() 
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
@@ -58,106 +49,6 @@ class Player(pg.sprite.Sprite):
                 self.jumping = True                                                    # then you jump
                 self.vel.y = -PLAYER_JUMP                                                  #\\
 
-    # Function to calculate and return the first intersection of a vector given an origin and a group of collision objects
-    # Returns false if there are no collisions and a list containing a hit object and the intersection vector if there are
-    def rayIntersect(self,vec,origin,collision_objects):   
-
-        O = origin                                          # Origin vector for calculations
-        V = vec                                             # X and Y vector
-        COL = collision_objects                             # Array of collideable objects
-
-        intersection = V                                    # Default intersection vector for comparison
-        hitObject = False                                   # Hit object as false by default
-
-        # Will check if the x and y vectors are not equal to 0 and assign A to their quotient if they are not
-        A = False                                         
-        if V.x != 0 and V.y != 0:                           
-            A = V.x/V.y 
-
-        # we use the linear function f(x) = ax+b
-        # if a = y2-y1/x2-x1, then because we have origin in 0,0 x1 and y1 is 0
-        # so long as V.x or V.y both aren't 0 then we can use the function as f(x) = a*x as b is 0
-        # therefore y = a*x AND x = y/a
-        
-        if A:
-            for c in COL:
-                # Vertical intersections:
-                y = c.rect.top
-                if V.y < 0:
-                    y = c.rect.bottom
-                x = O.x + (y - O.y) / A
-                if c.rect.left < x < c.rect.right:
-                    tempVec = Vec(x,y)
-                    if tempVec.length() < intersection.length():
-                        intersection = tempVec
-                        hitObject = c
-
-                # Horizontal intersections:
-                x = c.rect.left
-                if V.x < 0:
-                    x = c.rect.right
-                y = O.y + (x - O.x) * A
-                if c.rect.top < y < c.rect.bottom:
-                    tempVec = Vec(x,y)
-                    if tempVec.length() < intersection.length():
-                        intersection = tempVec
-                        hitObject = c 
-        else:
-            # If V.x is not 0:
-            # If V.x is above 0
-            if V.x > 0:
-                for c in COL:
-                    x = c.rect.left
-                    if O.x < x < O.x+V.x:
-                        y = O.y
-                        if c.rect.top < y < c.rect.bottom:
-                            tempVec = Vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            # If V.x is below 0
-            if V.x < 0:             
-                for c in COL:
-                    x = c.rect.right
-                    if O.x > x > O.x+V.x:
-                        y = O.y
-                        if c.rect.top < y < c.rect.bottom:
-                            tempVec = Vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            # If V.y is not 0:
-            # If V.y is above 0
-            if V.y > 0:
-                for c in COL:
-                    y = c.rect.top
-                    if O.y < y < O.y+V.y:
-                        x = O.x
-                        if c.rect.left < x < c.rect.right:
-                            tempVec = Vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            #If V.y is below 0
-            if V.y < 0:
-                for c in COL:
-                    y = c.rect.bottom
-                    if O.y > y > O.y+V.y:
-                        x = O.x
-                        if c.rect.left < x < c.rect.right:
-                            tempVec = Vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            # Hi guys :-)
-            # Made with love and hate of algebra
-        if hitObject:
-            return [hitObject,intersection]
-        else:
-            return False
-
-
-
     # ---> Checks for pressed keys to move left/right
     def move(self):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
@@ -169,85 +60,291 @@ class Player(pg.sprite.Sprite):
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
     def applyPhysics(self):
         #if not self.on_surface:
-        self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
-        self.acc.x += self.vel.x * PLAYER_FRICTION      # Friction
+        #if not self.on_collided_surface:
+        
+        #print(f"stop falling?: {self.stop_falling}")
+        #print(f'acc before: {self.acc}')
+        if not self.stop_falling:
+            self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
+        self.acc.x += self.vel.x * PLAYER_FRICTION          # Friction
+        
         #self.vel.x = 0.93 * self.vel.x
-        self.vel += self.acc                            # equations of motion
-        if abs(self.vel.x) < 0.25:
-            self.vel.x = 0   
+        self.vel += self.acc                                # equations of motion
+        
+        if abs(self.vel.x) < 0.25:                          
+            self.vel.x = 0                                  
+        
+
         self.pos += self.vel +  self.acc * 0.5
+
+        
+        self.stop_falling = False
+        
         #print(f'pos efter grav: {self.pos}')
  
         
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
+    def rayIntersect(self,vector,origin,col_objects):   
+
+        o = origin                      # Origin vector for calculations
+        v = vector                      # X and Y vector
+        col = col_objects               # Array of collideable objects
+
+        intersection = v.copy()         # Default intersection vector for comparison
+        hitObject = False               # Hit object as false by default
+
+        # Will check if the x and y vectors are not equal to 0 and assign a to their quotient if they are not
+        a = False                                         
+        if v.x != 0 and v.y != 0:                           
+            a = v.y/v.x     
+
+        # we use the linear function f(x) = ax+b
+        # if a = y2-y1/x2-x1, then because we have origin in 0,0 x1 and y1 is 0
+        # so long as v.x or v.y both aren't 0 then we can use the function as f(x) = a*x as b is 0
+        # therefore y = a*x AND x = y/a
+
+        if a:
+            for c in col:
+                # Vertical intersections:
+                y_temp_intersection = c.pos.y - c.height                                # y equals the tops if moving down
+                
+                if v.y < 0:                                                             # If jumping
+                    y_temp_intersection = c.pos.y                                       # y equals the bottoms if moving up
+
+                y_local_temp = y_temp_intersection - o.y                                # Making a local y coordinate which is the y intersection - the origin's y position
+                x_local_temp = y_local_temp / a                                         # Making a local x coordinate from the local y divided by a
+                
+                x_temp_intersection = o.x + x_local_temp                                # Using the local x and adding the origin's x to get global x coordinates of the intersection point
+                
+                if c.pos.x - c.width/2 < x_temp_intersection < c.pos.x + c.width/2:     # Check if collision's x is between the collision object's left and right sides
+                    tempVec = vec(x_local_temp , y_local_temp)                          # Making a temporary vector be equal to the intersection
+                    if tempVec.length() < intersection.length():                        # Checking if the temporary is shorter than the current intersection vector
+                        intersection = tempVec                                          # If it's true, the intersection will be equal to the temporary
+                        hitObject = c                                                   # Hit object will be defined as c
+                
+                # Horizontal intersections:
+                x = c.pos.x - c.width/2                             # x equals left side if moving right
+                if v.x < 0:
+                    x = c.pos.x + c.width/2                         # x equals right side if moving left
+                y = o.y + (x - o.x) * a
+                if c.pos.y - c.height < y < c.pos.y:                # check if collision's y is between the collision object's top and bottom sides
+                    tempVec = vec(x,y)
+                    if tempVec.length() < intersection.length():
+                        intersection = tempVec
+                        hitObject = c 
+        else:
+            # If v.x is not 0:
+            #If v.x is above 0
+            if v.x > 0:
+                for c in col:
+                    x = c.pos.x - c.width/2
+                    if o.x < x < o.x+v.x:
+                        y = o.y
+                        if c.pos.y - c.height < y < c.pos.y:
+                            tempVec = vec(x,y)
+                            if tempVec.length() < intersection.length():
+                                intersection = tempVec
+                                hitObject = c
+            #If v.x is below 0
+            if v.x < 0:             
+                for c in col:
+                    x = c.pos.x + c.width/2
+                    if o.x > x > o.x+v.x:
+                        y = o.y
+                        if c.pos.y - c.height < y < c.pos.y:
+                            tempVec = vec(x,y)
+                            if tempVec.length() < intersection.length():
+                                intersection = tempVec
+                                hitObject = c
+            #If v.y is above 0
+            if v.y > 0:
+                for c in col:
+                    y = c.pos.y - c.height
+                    if o.y < y < o.y+v.y:
+                        x = o.x
+                        if c.pos.x - c.width/2 < x < c.pos.x + c.width/2:
+                            tempVec = vec(x,y)
+                            if tempVec.length() < intersection.length():
+                                intersection = tempVec
+                                hitObject = c
+            #If v.y is below 0
+            if v.y < 0:
+                for c in col:
+                    y = c.pos.y
+                    if o.y > y > o.y+v.y:
+                        x = o.x
+                        if c.pos.x - c.width/2 < x < c.pos.x + c.width/2:
+                            tempVec = vec(x,y)
+                            if tempVec.length() < intersection.length():
+                                intersection = tempVec
+                                hitObject = c
+            # Hi guys :-)
+            # Made with love and hate of algebra
+        if hitObject:
+            intersection += o
+            return [hitObject,intersection]
+        else:
+            return False
+
+
+
+
     # -----------CAN BE IGNORED!----------
     # ---> Not important. I just tried to make make it impossible to walk through a platform. Not used atm, but keeping it for later inspiration
     def touches(self):
-        """
-        self.rect.y += 2                                                         # to see if there is a platform 2 pix below
-        hits = pg.sprite.spritecollide(self, self.game.obstacles, False)          # Returns the platforms that (may) have been touched
-        self.rect.y -= 2   
-        if hits:
-            self.on_surface = True
-        else:
-            self.on_surface = False
-        """
+
 
         #self.pos.x += self.vel.x
         #hits = pg.sprite.spritecollide(self, self.game.obstacles, False)
 
+        self.rect.midbottom = self.pos.asTuple()
+        #print("stuff")
+        #Vec(self.pos.x - self.width/2 ,self.pos.y - self.height)
+        Intersect = self.rayIntersect(self.vel, vec(self.pos.x - self.width/2 ,self.pos.y - self.height) , self.game.non_player)
+        #print(Intersect)
+        if Intersect:
+            collided_object = Intersect[0]
+            
+            collided_object_point = Intersect[1]
+            print(collided_object_point)
+
+
+            self.dist_from_right  = collided_object_point.x   ==  collided_object.pos.x + collided_object.width/2
+            self.dist_from_left   = collided_object_point.x  == collided_object.pos.x - collided_object.width/2
+            self.dist_from_top  = collided_object_point.y == collided_object.pos.y - collided_object.height
+            self.dist_from_bottom    =  collided_object_point.y == collided_object.pos.y
+
+            self.dist_from_right  = abs(collided_object_point.x   - collided_object.pos.x - collided_object.width/2) 
+            self.dist_from_left   = abs(collided_object_point.x  + collided_object.pos.x - collided_object.width/2)
+            self.dist_from_top  = abs( collided_object.pos.y - collided_object.height - collided_object_point.y)
+            self.dist_from_bottom    = abs(collided_object_point.y   - collided_object.pos.y)
+
+            hit_side = min(self.dist_from_bottom, self.dist_from_left, self.dist_from_right, self.dist_from_top)
 
 
 
+            #self.dist_from_right  = abs(self.pos.x - self.width/2   - collided_object.pos.x - collided_object.width/2) 
+            #self.dist_from_left   = abs(- self.pos.x - self.width/2  + collided_object.pos.x - collided_object.width/2)
+            #self.dist_from_top  = abs( collided_object.pos.y - collided_object.height - self.pos.y)
+            #self.dist_from_bottom    = abs(self.pos.y - self.height    - collided_object.pos.y)
+                        
+            if not self.on_collided_surface:
+
+                if hit_side == self.dist_from_bottom:
+                    self.touching_top = True
+                    #self.pos.y -= self.dist_from_bottom
+                    print("from bottom")
+                    
+                    #self.rect.top = collided_object.rect.bottom
+                    #self.acc.y = 0
+                    if self.vel.y < 0:
+                        self.vel.y = 0
+                    #self.vel.y = 0
+
+                
+                elif hit_side == self.dist_from_top:
+                    self.touching_bot = True
+                    print("on platform ---------------------------------------------------------------------------------")
+                    #self.pos.y += self.dist_from_top
+                    #self.rect.bottom = collided_object.rect.top
+                    self.acc.y = 0
+                    if self.vel.y > 0:
+                        self.vel.y = 0
+                    self.stop_falling = True
+                    #self.vel.y = 0
+
+                elif hit_side == self.dist_from_right:
+                    #self.pos.x += self.dist_from_right
+                    print("right side")
+                    if collided_object in self.game.non_moveable:
+                        self.touching_left = True
+                        self.acc.x = 0
+                        if self.vel.x < 0:
+                            self.vel.x = 0
+                    
+                
+                elif hit_side == self.dist_from_left:
+                    #self.pos.x -= self.dist_from_left
+                    
+                    print("left side")
+                    if collided_object in self.game.non_moveable:
+                        self.touching_right = True      
+                        self.acc.x = 0
+                        if self.vel.x > 0:
+                            self.vel.x = 0
+
+                            
+            self.pos = collided_object_point
+
+        """
         collided_group = pg.sprite.spritecollide(self, self.game.obstacles, False)
         if collided_group:
             for collided_object in collided_group:
        
                 #dist_from refers to the distance between the .... 
-                self.dist_from_right  = self.rect.left   - collided_object.rect.right
-                self.dist_from_left   = self.rect.right  - collided_object.rect.left
-                self.dist_from_top    = abs(self.rect.bottom - collided_object.rect.top)
-                self.dist_from_bottom = abs(self.rect.top    - collided_object.rect.bottom)
-
+                self.dist_from_right  = abs(self.pos.x - self.width/2   - collided_object.pos.x - collided_object.width/2) 
+                self.dist_from_left   = abs(- self.pos.x - self.width/2  + collided_object.pos.x - collided_object.width/2)
+                self.dist_from_top  = abs( collided_object.pos.y - collided_object.height - self.pos.y)
+                self.dist_from_bottom    = abs(self.pos.y - self.height    - collided_object.pos.y)
+                
+                #print(f"dist from bottom platform: {self.dist_from_bottom} ")
+                #print(f"dist from top platform: {self.dist_from_top} ")
+                #print(f"y position: {self.pos.y} ")
+                #print(f"collided object y position: {collided_object.pos.y} ")
+                #print(f"dist from right platform: {self.dist_from_right} ")
+                #print(f"dist from left platform: {self.dist_from_left} ")
                 self.on_collided_surface = abs(self.rect.bottom - collided_object.rect.top) < 5
-            
+                
                 if not self.on_collided_surface:
 
-                    if abs(self.dist_from_bottom) < PLAYER_ACC * 10:
+                    if abs(self.dist_from_bottom) < 6:
                         self.touching_top = True
                         self.pos.y -= self.dist_from_bottom
+                        print("from bottom")
+                        
                         #self.rect.top = collided_object.rect.bottom
-                        self.acc.y = 0
-                        self.vel.y = 0
+                        #self.acc.y = 0
+                        if self.vel.y < 0:
+                            self.vel.y = 0
+                        #self.vel.y = 0
 
                     
-                    elif abs(self.dist_from_top) < self.vel.length():
+                    elif abs(self.dist_from_top) < 10:
                         self.touching_bot = True
+                        print("on platform ---------------------------------------------------------------------------------")
                         self.pos.y += self.dist_from_top
                         #self.rect.bottom = collided_object.rect.top
                         self.acc.y = 0
-                        self.vel.y = 0
+                        if self.vel.y > 0:
+                            self.vel.y = 0
+                        self.stop_falling = True
+                        #self.vel.y = 0
 
                     elif 10 > abs(self.dist_from_right):
                         self.pos.x += self.dist_from_right
+                        print("right side")
                         if collided_object in self.game.non_moveable:
                             self.touching_left = True
                             self.acc.x = 0
                             if self.vel.x < 0:
                                 self.vel.x = 0
+                        
                     
                     elif 10 > abs(self.dist_from_left):
                         self.pos.x -= self.dist_from_left
+                        print("left side")
                         if collided_object in self.game.non_moveable:
                             self.touching_right = True      
                             self.acc.x = 0
                             if self.vel.x > 0:
                                 self.vel.x = 0
+        """
+                    
 
-
-
-
+        #print(f'acc: {self.acc}')
+        #print(f'vel: {self.vel}')
+        #print(f'pos: {self.pos}')
         #self.pos.x -= self.vel.x    
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -268,7 +365,9 @@ class Player(pg.sprite.Sprite):
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y, width, height, name, typ = None, *args, **kwargs):
         self.vel = kwargs.get('vel',None)
-        self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
+        
+
+        self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
         self.groups = game.all_sprites, game.non_player, game.platforms, game.surfaces, game.obstacles, game.non_moveable 
 
         if self.typ == moving_plat:
@@ -277,9 +376,17 @@ class Platform(pg.sprite.Sprite):
 
         pg.sprite.Sprite.__init__(self, self.groups)                                                          # Making sure the
         self.image = pg.Surface((width,height)); self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
-        self.rect.x = x                                                                       # Put the platform at the given coordinate.
-        self.rect.y = y
-        self.typed = "platform"                                                                       # \\
+        self.typed = "platform"    
+        self.rect.midbottom = (x,y)
+        self.pos = vec(x,y)
+        #self.rect.x = x                                                                       # Put the platform at the given coordinate.
+        #self.rect.y = y
+                                                                           # \\
+
+
+    def update(self):
+        round(self.pos)
+        self.rect.midbottom = self.pos.asTuple()
 
 
 # ---> boxes :-o
@@ -291,8 +398,19 @@ class Box(pg.sprite.Sprite):
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        #self.rect.x = x
+        #self.rect.y = y
+
+        self.rect.midbottom = (x,y)
+        self.pos = vec(x,y)
+        #self.rect.x = x                                                                       # Put the platform at the given coordinate.
+        #self.rect.y = y
+                                                                           # \\
+
+
+    def update(self):
+        round(self.pos)
+        self.rect.midbottom = self.pos.asTuple()
 
 class Vase(pg.sprite.Sprite):
     def __init__(self,game,x,y, name = None):
@@ -306,9 +424,19 @@ class Vase(pg.sprite.Sprite):
         self.image.fill((120,100,0))
         self.rect = self.image.get_rect()
         
-        self.rect.midbottom = (x,y)
+        #self.rect.midbottom = (x,y)
         #self.rect.x = x
         #self.rect.y = y
+        self.rect.midbottom = (x,y)
+        self.pos = vec(x,y)
+        #self.rect.x = x                                                                       # Put the platform at the given coordinate.
+        #self.rect.y = y
+                                                                           # \\
+
+
+    def update(self):
+        round(self.pos)
+        self.rect.midbottom = self.pos.asTuple()
     
     @classmethod
     def on_platform(cls, game, plat : Platform, placement : str , name = None):
@@ -331,3 +459,5 @@ class Vase(pg.sprite.Sprite):
     def breaks(self):
         self.image.fill((250,250,250))
         self.broken = True
+
+ 
