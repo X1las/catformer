@@ -77,14 +77,14 @@ class Game:
             #self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
             
             if self.player.vel.x > 0:
-                for sprite in self.all_sprites:
+                for sprite in self.non_player:
                     sprite.pos.x       -= abs(self.player.vel.x)  
                 #for sprite in self.all_sprites:
                  #   sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
         if self.player.rect.left <= WIDTH / 3:
             #self.player.pos.x       += abs(self.player.vel.x)
             if self.player.vel.x < 0:
-                for sprite in self.all_sprites:
+                for sprite in self.non_player:
                     sprite.pos.x       += abs(self.player.vel.x) 
                 #for sprite in self.non_player:
                  #   sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
