@@ -19,12 +19,6 @@ class Game:
         self.font_name = pg.font.match_font(FONT_NAME)                          # Which font to use in game
         self.load_data()                                                        # calls load_data function it looks like
 
-    def load_data(self):
-        self.dir = path.dirname(__file__)                                       # Gets the directory you are in
-        img_dir = path.join(self.dir, 'img')                                    # Sets the image directory to the main file's directory/img
-        self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))         # It's making a Spritesheet object from sprites.py, using SPRITESHEET as a reference to a filename?
-
-
     def new(self):                                          # start a new game
         self.level       = Level(self,l1_platforms, l1_boxes ,length)       # Add levels
         self.all_sprites = pg.sprite.LayeredUpdates()                       # "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
