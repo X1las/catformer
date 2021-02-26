@@ -77,17 +77,18 @@ class Game:
 
     # --> Moves everything in the background to make it seem like the player is "pushing" the screen
     def moveScreen(self):
-        # If player is to the right
+
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
-            self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
+            #self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
+            
             if self.player.vel.x > 0:
-                for sprite in self.non_player:
-                    sprite.rect.centerx  = round(sprite.rect.centerx - abs(self.player.vel.x))
+                for sprite in self.all_sprites:
+                    sprite.pos.x       -= abs(self.player.vel.x)  
         if self.player.rect.left <= WIDTH / 3:
-            self.player.pos.x       += abs(self.player.vel.x)
             if self.player.vel.x < 0:
-                for sprite in self.non_player:
-                    sprite.rect.centerx = round(sprite.rect.centerx + abs(self.player.vel.x))
+                for sprite in self.all_sprites:
+                    sprite.pos.x       += abs(self.player.vel.x) 
+
 
 
     # ---> Just to make sure the game can quit
@@ -113,18 +114,17 @@ class Game:
 
 
 
-    # CAN BE IGNORED!
     def pushSprite(self):
         # Push box
         if self.player.vel.x != 0:
             boxHits = pg.sprite.spritecollide(self.player, self.boxes, False)
             if boxHits:
                 hitbox = boxHits[0]
-                if self.player.pos.y >= hitbox.rect.top + hitbox.height:
-                    if self.player.rect.left < hitbox.rect.right - 10 and self.player.vel.x > 0:
-                        hitbox.rect.centerx = round(hitbox.rect.centerx + self.player.vel.x)
-                    elif self.player.pos.x > hitbox.rect.left + 10 and self.player.vel.x < 0:
-                        hitbox.rect.centerx = round(hitbox.rect.centerx + self.player.vel.x)
+                if self.player.pos.y > hitbox.pos.y - hitbox.height:
+                    if self.player.rect.left < hitbox.pos.x + hitbox.width / 2 - 10 and self.player.vel.x > 0:
+                        hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
+                    elif self.player.pos.x >  hitbox.pos.x - hitbox.width / 2  + 10 and self.player.vel.x < 0:
+                        hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
 
     #--------------------------------------------------------------------------------------------------------------------------------------------
 
