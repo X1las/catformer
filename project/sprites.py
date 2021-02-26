@@ -23,7 +23,7 @@ class Player(pg.sprite.Sprite):
         self.dist_from_right = 0; self.dist_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
 
-    def initKeys(jump, left, right, crouch):
+    def initKeys(self,jump, left, right, crouch):
         self.jump_key = jump
 
 
