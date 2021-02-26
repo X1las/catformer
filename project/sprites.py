@@ -124,65 +124,65 @@ class Player(pg.sprite.Sprite):
                         hitObject = c                                                   # Hit object will be defined as c
                 
                 # Horizontal intersections:
-                x = c.pos.x - c.width/2                             # x equals left side if moving right
+                x_temp_intersection = c.pos.x - c.width/2                               # x equals left side if moving right
                 if v.x < 0:
-                    x = c.pos.x + c.width/2                         # x equals right side if moving left
-                y = o.y + (x - o.x) * a
-                if c.pos.y - c.height < y < c.pos.y:                # check if collision's y is between the collision object's top and bottom sides
-                    tempVec = vec(x,y)
+                    x_temp_intersection = c.pos.x + c.width/2                           # x equals right side if moving left
+                
+                x_local_temp = x_temp_intersection - o.x                                # Making a local x coordinate which is the x intersection - origin's x position
+                y_local_temp = x_local_temp * a                                         # Making a local y coordinate from the local x multiplied by a        
+
+                y_temp_intersection = o.y + y_local_temp                                # Global y position is the same as the origin's y + the local intersection's y position
+                
+                if c.pos.y - c.height < y_temp_intersection < c.pos.y:                  # check if collision's y is between the collision object's top and bottom sides
+                    tempVec = vec(x_local_temp,y_local_temp)
                     if tempVec.length() < intersection.length():
                         intersection = tempVec
                         hitObject = c 
+        # When we have cases where one side is 0
+        # Reduce it later, when we can boil it down more
+        # Refer to the bit above if confused, there's a lot of repitition
         else:
             # If v.x is not 0:
-            #If v.x is above 0
-            if v.x > 0:
+            if v.x != 0:
+                for c in col:                                   
+                    # X intersection will be equal to the left side by default and the right side if we're moving left 
+                    x_temp_intersection = c.pos.x - c.width/2
+                    if v.x < 0:
+                        x_temp_intersection = c.pos.x + c.width/2
+                    
+                    x_local_temp = x_temp_intersection - o.x                               
+                    y_local_temp = 0                                         
+
+                    y_temp_intersection = o.y + y_local_temp                                
+                    
+                    if c.pos.y - c.height < y_temp_intersection < c.pos.y:                  
+                        tempVec = vec(x_local_temp,y_local_temp)
+                        if tempVec.length() < intersection.length():
+                            intersection = tempVec
+                            hitObject = c 
+            # If v.y is above 0
+            if v.y != 0:
                 for c in col:
-                    x = c.pos.x - c.width/2
-                    if o.x < x < o.x+v.x:
-                        y = o.y
-                        if c.pos.y - c.height < y < c.pos.y:
-                            tempVec = vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            #If v.x is below 0
-            if v.x < 0:             
-                for c in col:
-                    x = c.pos.x + c.width/2
-                    if o.x > x > o.x+v.x:
-                        y = o.y
-                        if c.pos.y - c.height < y < c.pos.y:
-                            tempVec = vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            #If v.y is above 0
-            if v.y > 0:
-                for c in col:
-                    y = c.pos.y - c.height
-                    if o.y < y < o.y+v.y:
-                        x = o.x
-                        if c.pos.x - c.width/2 < x < c.pos.x + c.width/2:
-                            tempVec = vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
-            #If v.y is below 0
-            if v.y < 0:
-                for c in col:
-                    y = c.pos.y
-                    if o.y > y > o.y+v.y:
-                        x = o.x
-                        if c.pos.x - c.width/2 < x < c.pos.x + c.width/2:
-                            tempVec = vec(x,y)
-                            if tempVec.length() < intersection.length():
-                                intersection = tempVec
-                                hitObject = c
+                    # Y intersection will be equal to the top side by default and the bottom if we're moving up
+                    y_temp_intersection = c.pos.y - c.height 
+                    if v.y < 0:                                                             
+                        y_temp_intersection = c.pos.y                                       
+
+                    y_local_temp = y_temp_intersection - o.y                                
+                    x_local_temp = 0                                        
+                    
+                    x_temp_intersection = o.x + x_local_temp                                
+                    
+                    if c.pos.x - c.width/2 < x_temp_intersection < c.pos.x + c.width/2:     
+                        tempVec = vec(x_local_temp , y_local_temp)                          
+                        if tempVec.length() < intersection.length():                        
+                            intersection = tempVec                                          
+                            hitObject = c 
             # Hi guys :-)
             # Made with love and hate of algebra
+        
         if hitObject:
-            intersection += o
+            intersection += o # Adding the origin's vector in the end to return the global coordinates instead of the local
             return [hitObject,intersection]
         else:
             return False
