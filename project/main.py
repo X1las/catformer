@@ -79,8 +79,6 @@ class Game:
     def moveScreen(self):
 
         if self.player.rect.right >= WIDTH * 2/3:                                           # If the player moved to the last 1/3 of the screen
-            #self.player.pos.x       -= abs(self.player.vel.x)                     # The player shouldn't move out of the screen, so we make sure the position on screen stays
-            
             if self.player.vel.x > 0:
                 for sprite in self.all_sprites:
                     sprite.pos.x       -= abs(self.player.vel.x)  
