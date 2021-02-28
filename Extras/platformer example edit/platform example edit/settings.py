@@ -42,7 +42,7 @@ BGCOLOR = LIGHTBLUE
 
 #Level 1
 length = 5000
-
+"""
 l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
                 (300,  HEIGHT / 2,   500,    40, False),
                 (1000, HEIGHT - 350, 260,    40, False),
@@ -53,7 +53,6 @@ l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
                 (750,  HEIGHT - 100, 260,    40, False),
                 (450,  HEIGHT - 100, 260,    40, False)]
 
-
 l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
                 (300,  HEIGHT / 2,   500,    40, False),
                 #(1000, HEIGHT - 350, 260,    40, False),
@@ -63,9 +62,17 @@ l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True),
                 (1108, HEIGHT - 100, 260,    40, False),
                 (750,  HEIGHT - 100, 260,    40, False),
                 (450,  HEIGHT - 100, 260,    40, False)]
+"""
+l1_platforms = [(-400,    HEIGHT - 10,  length, 40,  "p_base"),
+                (300,  HEIGHT / 2,   500,    40,  "p_2"),
+                #(1000, HEIGHT - 350, 260,    40, False),
+                #(1500, HEIGHT - 200, 200,    40, False),
+                #(600,  HEIGHT - 100, 260,    40, False),
+                #(800,  HEIGHT - 100, 260,    40, False),
+                (1108, HEIGHT - 100, 260,    40,  "p_3"),
+                (750,  HEIGHT - 100, 260,    40,  "p_4"),
+                (450,  HEIGHT - 100, 260,    40,  "p_5")]
 
 
-
-
-l1_boxes = [(400, HEIGHT - 50,  40, 40)]
+l1_boxes = [(200, HEIGHT - 50,  40, 40, "box 1")]
 

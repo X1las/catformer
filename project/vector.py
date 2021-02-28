@@ -50,12 +50,15 @@ class Vec(object):
 
     def __mul__(self, scale : (float or int)):
         newx = self.x * scale; newy = self.y * scale
-        self.x *= scale; self.y *= scale
+        #self.x *= scale; self.y *= scale
         return Vec(newx, newy)
 
 
     def __str__(self):
-        return f'({round(self.x)},{round(self.y)})'
+        #print(f'rounding: {round(self.x)},{round(self.y)}')
+        #print(f'exact: ({self.x},{self.y})')
+        return f'exact: ({self.x},{self.y})'
+        #return f'({round(self.x)},{round(self.y)})'
 
 
     def setList(self, x, y):
