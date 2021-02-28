@@ -77,6 +77,7 @@ class Player(pg.sprite.Sprite):
 
         self.pos += self.vel +  self.acc * 0.5
 
+
         
         self.stop_falling = False
         
@@ -95,9 +96,9 @@ class Player(pg.sprite.Sprite):
         hitObject = False               # Hit object as false by default
 
         # Will check if the x and y vectors are not equal to 0 and assign a to their quotient if they are not
-        a = False                                         
-        if v.x != 0 and v.y != 0:                           
-            a = v.y/v.x     
+        a = False                                               
+        if v.x != 0 and v.y != 0:                               
+            a = v.y/v.x                                         
 
         # we use the linear function f(x) = ax+b
         # if a = y2-y1/x2-x1, then because we have origin in 0,0 x1 and y1 is 0
