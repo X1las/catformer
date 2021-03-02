@@ -1,7 +1,4 @@
-import math
-import copy
-
-
+import math, copy
 
 # (A part of) the Vec class:
 class Vec(object):

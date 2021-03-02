@@ -5,7 +5,7 @@ from vector import *
 from settings import *
 from random import choice, randrange, uniform
 from os import path
-import copy
+import copy, time
 #vec = pg.math.Vector2
 vec = Vec
 
@@ -77,6 +77,7 @@ class Player(pg.sprite.Sprite):
 
         self.pos += self.vel +  self.acc * 0.5
 
+
         
         self.stop_falling = False
         
@@ -95,9 +96,9 @@ class Player(pg.sprite.Sprite):
         hitObject = False               # Hit object as false by default
 
         # Will check if the x and y vectors are not equal to 0 and assign a to their quotient if they are not
-        a = False                                         
-        if v.x != 0 and v.y != 0:                           
-            a = v.y/v.x     
+        a = False                                               
+        if v.x != 0 and v.y != 0:                               
+            a = v.y/v.x                                         
 
         # we use the linear function f(x) = ax+b
         # if a = y2-y1/x2-x1, then because we have origin in 0,0 x1 and y1 is 0
@@ -201,7 +202,20 @@ class Player(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.asTuple()
         #print("stuff")
         #Vec(self.pos.x - self.width/2 ,self.pos.y - self.height)
+        # Time testing
+
+        #errCorrect = time.perf_counter()
+        #errCorrect = time.perf_counter()-errCorrect
+        
+        #print(f"Error correction in {errCorrect} seconds")
+        
+        #t = time.perf_counter()
+        
         Intersect = self.rayIntersect(self.vel, vec(self.pos.x - self.width/2 ,self.pos.y - self.height) , self.game.non_player)
+        
+        #t = time.perf_counter() - t - errCorrect
+        
+        print(f"Execution took {t} seconds")
         #print(Intersect)
         if Intersect:
             collided_object = Intersect[0]

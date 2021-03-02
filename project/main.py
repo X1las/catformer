@@ -1,13 +1,9 @@
-
 import pygame as pg
-import random
+import random, copy
 from settings import *
 from sprites import *
 from os import path
 from level import *
-import copy
-
-
 
 class Game:
     def __init__(self):
@@ -36,9 +32,8 @@ class Game:
         self.level.setSurfaces()
         self.run()
 
-
     # --> Collection of the things we want to run continuously
-    def run(self):                  # Game Loop
+    def run(self):                       # Game Loop
         self.playing = True              # To make sure game loops
         while self.playing:              # Until we say self.playing is not true (see the events() function)
             self.clock.tick(FPS)         # ? (something with making sure it runs at some FPS
@@ -91,11 +86,11 @@ class Game:
 
     # ---> Just to make sure the game can quit
     def events(self):
-        for event in pg.event.get():                           # Goes through all the events happening in a certrain frame (such as pressing a key)
-            if event.type == (pg.QUIT)  :                          # check for closing window
-                if self.playing:                               # Stops game
-                    self.playing = False                           # \\
-                self.running = False                                   # \\
+        for event in pg.event.get():                            # Goes through all the events happening in a certrain frame (such as pressing a key)
+            if event.type == (pg.QUIT):                         # check for closing window
+                if self.playing:                                # Stops game
+                    self.playing = False                            # \\
+                self.running = False                                    # \\
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     if self.playing:                               # Stops game
@@ -108,7 +103,7 @@ class Game:
     def draw(self):                                                     # Game Loop - draw
         self.screen.fill(BGCOLOR)                                       # Sets background color
         self.all_sprites.draw(self.screen)                              # Where the sprites should be drawn (the screen obvi)
-        pg.display.update()                                               # *after* drawing everything, flip the display (Nore sure about this one) ?
+        pg.display.update()                                             # *after* drawing everything, flip the display (Nore sure about this one) ?
 
 
 
