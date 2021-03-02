@@ -5,7 +5,7 @@ from vector import *
 from settings import *
 from random import choice, randrange, uniform
 from os import path
-import copy
+import copy, time
 #vec = pg.math.Vector2
 vec = Vec
 
@@ -202,7 +202,20 @@ class Player(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.asTuple()
         #print("stuff")
         #Vec(self.pos.x - self.width/2 ,self.pos.y - self.height)
+        # Time testing
+
+        #errCorrect = time.perf_counter()
+        #errCorrect = time.perf_counter()-errCorrect
+        
+        #print(f"Error correction in {errCorrect} seconds")
+        
+        #t = time.perf_counter()
+        
         Intersect = self.rayIntersect(self.vel, vec(self.pos.x - self.width/2 ,self.pos.y - self.height) , self.game.non_player)
+        
+        #t = time.perf_counter() - t - errCorrect
+        
+        print(f"Execution took {t} seconds")
         #print(Intersect)
         if Intersect:
             collided_object = Intersect[0]
