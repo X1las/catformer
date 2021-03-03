@@ -11,7 +11,7 @@ vec = Vec
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x,y, name = None):
+    def __init__(self, game, x, y, name = None):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
         self.game          = game; self.name = name; self._layer = 1
         self.jumping       = False
@@ -215,7 +215,7 @@ class Player(pg.sprite.Sprite):
         
         #t = time.perf_counter() - t - errCorrect
         
-        print(f"Execution took {t} seconds")
+        #print(f"Execution took {t} seconds")
         #print(Intersect)
         if Intersect:
             collided_object = Intersect[0]

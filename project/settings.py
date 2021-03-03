@@ -7,6 +7,10 @@ FONT_NAME = 'arial'
 HS_FILE = "highscore.txt"
 SPRITESHEET = "spritesheet_jumper.png"
 
+# Camera Options
+CAMERA_BORDER_R = WIDTH * 2/3
+CAMERA_BORDER_L = WIDTH / 3
+
 #Platform types
 bot_plat = 1
 basic_plat = 2
