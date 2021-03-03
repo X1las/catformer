@@ -74,12 +74,12 @@ class Game:
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
         
-        if self.player.rect.right >= CAMERA_BORDER_R:                                               # If the player moves to the right 1/3 of the screen
+        if self.player.rect.right >= CAMERA_BORDER_R:                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 for sprite in self.all_sprites:
                     sprite.pos.x       -= abs(self.player.vel.x)  
         
-        if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to the left 1/3 of the screen                      
+        if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
             if self.player.vel.x < 0:
                 for sprite in self.all_sprites:
                     sprite.pos.x       += abs(self.player.vel.x) 

@@ -1,12 +1,12 @@
 # Sprite classes for platform game
 import pygame as pg
-
 from vector import *
 from settings import *
 from random import choice, randrange, uniform
 from os import path
 import copy, time
-#vec = pg.math.Vector2
+
+# Variables
 vec = Vec
 
 
