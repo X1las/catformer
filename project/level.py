@@ -1,5 +1,4 @@
 import pygame as pg
-import random
 from settings import *
 from sprites import *
 from os import path

@@ -1,17 +1,17 @@
 # Sprite classes for platform game
 import pygame as pg
-
 from vector import *
 from settings import *
 from random import choice, randrange, uniform
 from os import path
 import copy, time
-#vec = pg.math.Vector2
+
+# Variables
 vec = Vec
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x,y, name = None):
+    def __init__(self, game, x, y, name = None):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
         self.game          = game; self.name = name; self._layer = 1
         self.jumping       = False
@@ -215,7 +215,7 @@ class Player(pg.sprite.Sprite):
         
         #t = time.perf_counter() - t - errCorrect
         
-        print(f"Execution took {t} seconds")
+        #print(f"Execution took {t} seconds")
         #print(Intersect)
         if Intersect:
             collided_object = Intersect[0]
