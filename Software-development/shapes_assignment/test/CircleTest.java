@@ -9,7 +9,7 @@ class CircleTest {
 
     @BeforeEach
     void setUp(){
-        circle = new Circle(new Vector(4,2), Math.sqrt(10/Math.PI));
+        circle = new Circle(new Vector(4.0,2.0), Math.sqrt(10/Math.PI));
     }
 
     @Test
@@ -19,10 +19,14 @@ class CircleTest {
 
     @Test
     void circumference() {
+        circle = new Circle(new Vector(0,0), 1/Math.PI);
+        assertEquals(circle.circumference(), 2);
     }
 
     @Test
     void center() {
+        assertEquals(circle.center().toString(), new Vector(4.0,2.0).toString());
+        assertEquals(circle.center(), circle.getCenter());
     }
 
     @Test
