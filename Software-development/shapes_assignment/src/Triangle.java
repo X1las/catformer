@@ -58,11 +58,11 @@ public class Triangle extends Shape{
         
         return centroid;
     }
-    
+    /*
     public boolean isInside(Vector point){
         // From: https://mathworld.wolfram.com/TriangleInterior.html#:~:text=The%20simplest%20way%20to%20determine,it%20lies%20outside%20the%20triangle.
-        Vector v = point;
         
+        Vector v = point;
         Vector v0 = pointA;
         Vector v1 = pointC.sub(pointA);
         Vector v2 = pointB.sub(pointA);
@@ -70,18 +70,33 @@ public class Triangle extends Shape{
         double a =   (det(v, v2) - det(v0, v2)) / det(v1, v2);
         double b = - (det(v, v1) - det(v0, v1)) / det(v1, v2);
 
-        if (a > 0 && b > 0 && a + b < 1){
+        if (a >= 0 && b >= 0 && a + b <= 1){
+            return true;
+        }
+        
+        return false;
+    }*/
+
+
+
+    public boolean isInside(Vector point){
+        // From: https://mathworld.wolfram.com/TriangleInterior.html#:~:text=The%20simplest%20way%20to%20determine,it%20lies%20outside%20the%20triangle.
+        
+        Vector v = point;
+        Vector v0 = pointA;
+        Vector v1 = pointC.sub(pointA);
+        Vector v2 = pointB.sub(pointA);
+    
+        double a =   (det(v, v2) - det(v0, v2)) / det(v1, v2);
+        double b = - (det(v, v1) - det(v0, v1)) / det(v1, v2);
+
+        if (a == 0 && b == 0 && a + b < 1){
             return true;
         }
         
         return false;
     }
 
-    public double dist(Shape shape){
-        Vector v = centroid().sub(shape.center());
-        double result = v.length();
-        return result;
-    }   
 
     private double det(Vector vec1, Vector vec2){
         double determinant = (vec1.x*vec2.y) - (vec1.y*vec2.x);

@@ -12,8 +12,12 @@ public abstract class Shape {
     
     public abstract boolean isInside(Vector point);
 
-    public abstract double dist(Shape shape);
-
+    
+    public double dist(Shape shape){
+        Vector v = this.center().sub(shape.center());
+        double result = v.length();
+        return result;
+    }   
 
 }
 
