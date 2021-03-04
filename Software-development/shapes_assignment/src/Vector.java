@@ -49,7 +49,7 @@ public class Vector {
         System.out.println(")");
     }
 
-    // Gives a string version of the vector for printing especially. Distuinguished from print() above, since this allows for concatenation.
+    // Gives a string version of the vector for printing especially. Distinguished from print() above, since this allows for concatenation.
     public String toString(){
         String str = ("(" + this.x + "," + this.y + ")" );
         return str;
