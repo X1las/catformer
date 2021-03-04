@@ -17,20 +17,21 @@ public class Vector {
         this.y = 0;
     }
 
+    // Returns the length of the vector
     public double length(){
-        double len; 
-        len = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+        double len = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
         return len;        
     }
 
+    // Returns new vectors by adding two vectors
     public Vector add(Vector other_vec){
         Vector new_vector = new Vector();
         new_vector.x = this.x + other_vec.x;
         new_vector.y = this.y + other_vec.y;
         return new_vector;
-    
     }
 
+    // Returns new vectors by substracting two vectors
     public Vector sub(Vector other_vec){
         Vector new_vector = new Vector();
         new_vector.x = this.x - other_vec.x;
@@ -39,6 +40,7 @@ public class Vector {
     
     }
     
+    // Directly prints the vector
     public void print(){
         System.out.print("(");
         System.out.print(this.x);
@@ -47,6 +49,7 @@ public class Vector {
         System.out.println(")");
     }
 
+    // Gives a string version of the vector for printing especially. Distuinguished from print() above, since this allows for concatenation.
     public String toString(){
         String str = ("(" + this.x + "," + this.y + ")" );
         return str;
