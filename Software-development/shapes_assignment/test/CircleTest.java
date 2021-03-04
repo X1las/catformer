@@ -31,7 +31,7 @@ class CircleTest {
 
     @Test
     void containsPoint() {
-        assertEquals(circle.containsPoint(new Vector(4,3)), true);
+        assertTrue(circle.containsPoint(new Vector(4,3)));
         assertFalse(circle.containsPoint(new Vector(100,100)));
     }
 }
