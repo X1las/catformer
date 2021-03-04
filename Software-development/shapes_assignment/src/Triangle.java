@@ -90,7 +90,7 @@ public class Triangle extends Shape{
         double a =   (det(v, v2) - det(v0, v2)) / det(v1, v2);
         double b = - (det(v, v1) - det(v0, v1)) / det(v1, v2);
 
-        if (a == 0 && b == 0 && a + b < 1){
+        if (a > 0 && b > 0 && a + b < 1){
             return true;
         }
         

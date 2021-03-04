@@ -1,19 +1,39 @@
-
+import java.util.*;
 
 
 public class Circle extends Shape {
+    Vector center;
+    double radius;
+
+    public Circle(Vector center, double radius){
+        this.center = center;
+        this.radius = radius;
+    }
     
 
-    public abstract double area();
+    public double area(){
+        double area = Math.PI * (Math.pow(radius,2));
+        return area;
+    }
     
-    public abstract double circumference();
+    public double circumference(){
+        double circumference = 2 * Math.PI * radius;
+        return circumference;
+    }
 
-    public abstract Vector center();
+    public Vector center(){
+        return center;
+    }
     
-    public abstract boolean isInside();
+    public  boolean isInside(Vector v){
+        Vector dist = v.sub(center);
+        double dist_length = dist.length();
+        if (dist_length < radius){
+            return true;
+        }
+        return false;
+    }
 
-    public abstract double dist();
-
-
+  
 
 }
