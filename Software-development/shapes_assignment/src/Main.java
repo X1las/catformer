@@ -34,12 +34,20 @@ public class Main {
 
         Triangle tri2 = new Triangle(vec_1,vec2_1,vec3_1);
         
-
+        System.out.println(tri2.getPointA());
         //System.out.println(tri2.isInside(new Point(12.0,2.0)));
         
 
 
     }
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
