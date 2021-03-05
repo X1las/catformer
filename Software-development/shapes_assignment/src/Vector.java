@@ -42,11 +42,7 @@ public class Vector {
     
     // Directly prints the vector
     public void print(){
-        System.out.print("(");
-        System.out.print(this.x);
-        System.out.print(",");
-        System.out.print(this.y);
-        System.out.println(")");
+        System.out.print(this.toString());
     }
 
     // Gives a string version of the vector for printing especially. Distinguished from print() above, since this allows for concatenation.
