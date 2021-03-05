@@ -10,6 +10,8 @@ class ShapeTest {
         Circle cir = new Circle(new Vector(2,0), 2);
         Rectangle rec = new Rectangle(new Vector(0,0),1, 1);
 
-
+        assertEquals(tri.dist(rec), 0.24, 0.01);
+        assertEquals(cir.dist(tri), 1.37, 0.01);
+        assertEquals(rec.dist(cir), 1.58, 0.01);
     }
 }

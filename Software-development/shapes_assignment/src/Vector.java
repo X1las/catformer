@@ -54,7 +54,6 @@ public class Vector {
         String str = ("(" + this.x + "," + this.y + ")" );
         return str;
     }
-
 }
 
 
