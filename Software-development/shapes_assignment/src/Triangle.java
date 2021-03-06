@@ -12,7 +12,14 @@ public class Triangle extends Shape{
         this.pointB = pointB;
         this.pointC = pointC;
     }
-    
+
+    public Triangle(double vecA_x, double vecA_y, double vecB_x, double vecB_y,double vecC_x, double vecC_y){
+        this.pointA = new Vector(vecA_x,vecA_y);
+        this.pointB = new Vector(vecB_x,vecB_y);
+        this.pointC = new Vector(vecC_x, vecC_y);
+    }
+
+
     // Getters
     public Vector getPointA(){
         return pointA;

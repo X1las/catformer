@@ -1,6 +1,7 @@
 
 public class Rectangle extends Shape {
     private Vector bottom_left;
+    private double bot_left_x,bot_left_y;
     private double width;
     private double height;
 
@@ -8,6 +9,12 @@ public class Rectangle extends Shape {
         this.bottom_left = bottom_left;
         this.width       = width;
         this.height      = height;
+    }
+
+    public Rectangle(double bot_left_x, double bot_left_y,double width, double height){
+        this.bottom_left = new Vector(bot_left_x,bot_left_y);
+        this.width = width;
+        this.height = height;
     }
 
     // Getters

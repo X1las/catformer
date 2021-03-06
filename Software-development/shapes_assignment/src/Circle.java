@@ -9,6 +9,10 @@ public class Circle extends Shape {
         this.center = center;
         this.radius = radius;
     }
+    public Circle(double center_x, double center_y, double radius){
+        this.center = new Vector(center_x, center_y);
+        this.radius = radius;
+    }
 
     // getters
     public Vector getCenter() {
