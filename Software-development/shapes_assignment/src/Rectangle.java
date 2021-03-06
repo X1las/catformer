@@ -1,7 +1,6 @@
 
 public class Rectangle extends Shape {
     private Vector bottom_left;
-    private double bot_left_x,bot_left_y;
     private double width;
     private double height;
 

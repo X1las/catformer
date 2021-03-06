@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TriangleTest {
-    Triangle tri_vec;
-    Triangle tri_doubles;
+    Triangle tri_vec, tri_doubles;
     Triangle[] triangles;
 
     @BeforeEach

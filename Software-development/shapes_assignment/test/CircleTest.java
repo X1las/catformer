@@ -5,8 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 class CircleTest {
 
-    Circle circle_vec;
-    Circle circle_doubles;
+    Circle circle_vec, circle_doubles;
     Circle[] circles;
 
     @BeforeEach
