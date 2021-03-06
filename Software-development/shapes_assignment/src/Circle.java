@@ -9,6 +9,7 @@ public class Circle extends Shape {
         this.center = center;
         this.radius = radius;
     }
+
     public Circle(double center_x, double center_y, double radius){
         this.center = new Vector(center_x, center_y);
         this.radius = radius;
@@ -34,16 +35,14 @@ public class Circle extends Shape {
         double area = Math.PI * (Math.pow(radius,2));
         return area;
     }
-    
 
     // Returning the circumference of the circle
     public double circumference(){
         double circumference = 2 * Math.PI * radius;
         return circumference;
     }
-
     // Returning the center of the circle (technically does the same as the getCenter())
-    public Vector center(){
+     public Vector center(){
         return center;
     }
 

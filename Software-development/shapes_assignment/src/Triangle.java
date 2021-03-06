@@ -12,7 +12,6 @@ public class Triangle extends Shape{
         this.pointB = pointB;
         this.pointC = pointC;
     }
-
     public Triangle(double vecA_x, double vecA_y, double vecB_x, double vecB_y,double vecC_x, double vecC_y){
         this.pointA = new Vector(vecA_x,vecA_y);
         this.pointB = new Vector(vecB_x,vecB_y);
@@ -77,10 +76,10 @@ public class Triangle extends Shape{
         // formula for centroid: ((x1+x2+x3)/3,(y1+y2+y3)/3)
         double centroidX = (pointA.x + pointB.x + pointC.x) / 3;
         double centroidY = (pointA.y + pointB.y + pointC.y) / 3;
-
         Vector centroid = new Vector(centroidX, centroidY);
         return centroid;
     }
+
 
     // To check whether a point is inside the triangle. 
     // Mathematics are based on: https://mathworld.wolfram.com/TriangleInterior.html#:~:text=The%20simplest%20way%20to%20determine,it%20lies%20outside%20the%20triangle.
@@ -112,11 +111,8 @@ public class Triangle extends Shape{
     }
 
     // The determinant of a 2x2 matrix with column vectors vec1 and vec2, which is used when checking if a point is inside the triangle.
-    private double det(Vector vec1, Vector vec2){
-        double determinant = (vec1.x*vec2.y) - (vec1.y*vec2.x);
+    private double det(Vector vec1, Vector vec2) {
+        double determinant = (vec1.x * vec2.y) - (vec1.y * vec2.x);
         return determinant;
-
     }
-    
-    
 }

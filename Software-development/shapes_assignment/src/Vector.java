@@ -4,8 +4,8 @@ import java.math.*;
 
 
 public class Vector {
-    double x;
-    double y;
+    public double x;
+    public double y;
 
     public Vector(double x, double y){
         this.x = x;
@@ -31,7 +31,7 @@ public class Vector {
         return new_vector;
     }
 
-    // Returns new vectors by substracting two vectors
+    // Returns new vectors by subtracting two vectors
     public Vector sub(Vector other_vec){
         Vector new_vector = new Vector();
         new_vector.x = this.x - other_vec.x;

@@ -18,7 +18,7 @@ public abstract class Shape {
     public double dist(Shape shape){
         Vector v = this.center().sub(shape.center());
         return v.length();
-    }   
+    }
 
 }
 
