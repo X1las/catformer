@@ -45,9 +45,9 @@ public class Triangle extends Shape{
         
         // semiperimeter = (|BC|+|AC|+|AB|)/2
         double semiperimeter = circumference() / 2;
-        
+
         // Heron's formula: area = sqrt(semiperimeter*(semiperimeter-|BC|)(semiperimeter-|AC|)(semiperimeter -|AB|))
-        double area = Math.sqrt(semiperimeter * (semiperimeter - sideBC * (semiperimeter - sideAC) * (semiperimeter - sideAB)));
+        double area = Math.sqrt(semiperimeter * (semiperimeter - sideBC) * (semiperimeter - sideAC) * (semiperimeter - sideAB));
         return area;
     }
 
