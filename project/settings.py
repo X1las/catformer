@@ -4,8 +4,6 @@ WIDTH = 600
 HEIGHT = 600
 FPS = 60
 FONT_NAME = 'arial'
-PLAYER_SPAWN_X = 0
-PLAYER_SPAWN_Y = 500
 
 # Camera Options
 CAMERA_BORDER_R = WIDTH * 2/3
@@ -21,6 +19,8 @@ PLAYER_ACC = 0.4
 PLAYER_FRICTION = -0.12
 PLAYER_GRAV = 0.7
 PLAYER_JUMP = 13
+PLAYER_SPAWN_X = 0
+PLAYER_SPAWN_Y = 500
 
 # Game properties
 BOOST_POWER = 60
@@ -53,29 +53,6 @@ BGCOLOR = LIGHTBLUE
 length = 5000
 
 l1_vases = ()
-
-"""
-l1_platforms = [(-400,    HEIGHT - 10,  length, 60, True, "base"),
-                (300,  HEIGHT / 2,   500,    40, False),
-                #(1000, HEIGHT - 350, 260,    40, False),
-                #(1500, HEIGHT - 200, 200,    40, False),
-                #(600,  HEIGHT - 100, 260,    40, False),
-                #(800,  HEIGHT - 100, 260,    40, False),
-                (1108, HEIGHT - 100, 260,    40, False),
-                (750,  HEIGHT - 100, 260,    40, False),
-                (450,  HEIGHT - 100, 260,    40, False)]
-"""
-# l1_platforms = []
-"""[(-400,    HEIGHT - 10,  length, 40,  "p_base"),
-                (300,  HEIGHT / 2,   500,    40,  "p_2"),
-                #(1000, HEIGHT - 350, 260,    40, False),
-                #(1500, HEIGHT - 200, 200,    40, False),
-                #(600,  HEIGHT - 100, 260,    40, False),
-                #(800,  HEIGHT - 100, 260,    40, False),
-                (1108, HEIGHT - 100, 260,    40,  "p_3"),
-                (750,  HEIGHT - 100, 260,    40,  "p_4"),
-                (450,  HEIGHT - 100, 260,    40,  "p_5")]
-"""
 
 l1_boxes = [(200, HEIGHT - 50,  40, 40, "box 1")]
 
