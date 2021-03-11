@@ -6,7 +6,6 @@ from os import path
 from level import *
 
 class Game:
-
     # initializes the game class, runs once when the Game class gets instantialized
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
@@ -18,8 +17,8 @@ class Game:
     # Method that creates a new game
     def new(self):
         # Here is where we would need filewrite for loading multiple levels
-        self.level       = Level(self, l1_boxes ,length)           # "Loads" the level
-        self.level.loadLevel("level1")
+        self.level       = Level(self)                        # Makes a Level instance
+        self.level.load("level1")                                          # Loads the level
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         # Assigning spritegroups with LayeredUpdates
@@ -31,7 +30,7 @@ class Game:
         self.vases        = pg.sprite.LayeredUpdates()
         self.non_player   = pg.sprite.LayeredUpdates()
 
-        self.player      = Player(self,PLAYER_SPAWN_X, PLAYER_SPAWN_Y, name = "player")      # Creates player object
+        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
         self.run()                                                              # Runs the
 
