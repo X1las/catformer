@@ -13,11 +13,11 @@ vec = Vec
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y, name = None):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
-        self.game          = game; self.name = name; self._layer = 1
-        self.jumping       = False
-        self.width = 30; self.height = 40
-        self.image         =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
-        self.rect.midbottom   = (x, y)
+        self.game           = game; self.name = name; self._layer = 1
+        self.jumping        = False
+        self.width          = 30; self.height = 40
+        self.image          =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
+        self.rect.midbottom = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         self.dist_from_right = 0; self.dist_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
