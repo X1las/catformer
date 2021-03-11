@@ -9,7 +9,6 @@ import copy, time
 # Variables
 vec = Vec
 
-
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y, name = None):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
@@ -26,7 +25,6 @@ class Player(pg.sprite.Sprite):
     def initKeys(self,jump, left, right, crouch):
         self.jump_key = jump
 
-
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
         self.jump()
@@ -36,7 +34,6 @@ class Player(pg.sprite.Sprite):
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
-
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
     def jump(self):                                                              # jump only if standing on a platform
@@ -445,8 +442,6 @@ class Vase(pg.sprite.Sprite):
         self.pos = vec(x,y)
         #self.rect.x = x                                                                       # Put the platform at the given coordinate.
         #self.rect.y = y
-                                                                           # \\
-
 
     def update(self):
         round(self.pos)

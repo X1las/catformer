@@ -18,7 +18,8 @@ class Game:
     # Method that creates a new game
     def new(self):
         # Here is where we would need filewrite for loading multiple levels
-        self.level       = Level(self,l1_platforms, l1_boxes ,length)           # "Loads" the level
+        self.level       = Level(self, l1_boxes ,length)           # "Loads" the level
+        self.level.loadLevel("level1")
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         # Assigning spritegroups with LayeredUpdates
@@ -30,7 +31,7 @@ class Game:
         self.vases        = pg.sprite.LayeredUpdates()
         self.non_player   = pg.sprite.LayeredUpdates()
 
-        self.player      = Player(self,300, HEIGHT - 100, name = "player")      # Creates player object
+        self.player      = Player(self,PLAYER_SPAWN_X, PLAYER_SPAWN_Y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
         self.run()                                                              # Runs the
 
