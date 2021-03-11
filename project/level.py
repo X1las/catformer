@@ -35,44 +35,32 @@ class Level:
     def loadLevel(self , filename):
         plats = []
         spawn = Vec(0,0)
-        set = False
-        pla = False
+        category = "none"
+        counter = 0
 
         file = open(f"{filename}.txt" , "r")
-        file = file.splitlines()
+        lines = file.read().splitlines()
         
-        for line in file:
-            string1 = line.replace("\n" , "")
-            string2 = line.split()
-            print(string1)
+        for line in lines:
+            print(line)
 
-            if (set and string1!= ""):
-                string1 = line.split(" , ")
-                print(string1)
+            if (line == "Settings"):
+                category = "Settings"
+                print("Reading " + category)
+
+            if (line == "Platforms"):
+                category = "Platforms"
+                print("Reading " + category)
+
+            if (category == "Settings" and line!= "" and line != "Settings"):
+                linesplit = line.split(" , ")
                 spawn.x = int(line[0])
                 spawn.y = int(line[1])
 
-            if (pla and string1!=""):
-                string1 = line.split(",")
-                print(string1)
-                plats[len(plats)] = (int(string1[0]),int(string1[1]),int(string1[2]),int(string1[3]),string1[4])
-
-            if (string2[0] == "Settings"):
-                print("true")
-                set = True
-                pla = False
-
-            if (string2[0] == "Platform"):
-                print("true2")
-                set = False
-                pla = True
+            if (category == "Platforms" and line!= "" and line != "Platforms"):
+                linesplit = line.split(" , ")
+                plats+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
+                print(plats)
 
         print(plats)
         self.platforms = plats
-            
-
-            
-
-            
-
-
