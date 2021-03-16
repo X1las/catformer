@@ -1,6 +1,9 @@
+# Description:
+
+# Imports
 import math, copy
 
-# (A part of) the Vec class:
+# Classes
 class Vec(object):
     __slots__=['x', 'y', 'len', 'mag']
 

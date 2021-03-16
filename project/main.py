@@ -1,11 +1,17 @@
-import pygame as pg
-import random, copy, sys
-from settings import *
-from sprites import *
-from player import *
-from os import path
-from level import *
+# Description:
 
+# Imports
+import pygame as pg
+import sys
+
+from settings import *
+from subSprites import *
+
+from Player import Player
+from Level import Level
+from Vector import Vec
+
+# Classes
 class Game:
     # initializes the game class, runs once when the Game class gets instantialized
     def __init__(self):
@@ -153,9 +159,7 @@ in Player:
 
 
 """
-
-
-
+# Game Loop
 g = Game()                                                                      # Creates a game instance
 while g.running:                                                                # While loop checking the Game.running boolean
     g.new()                                                                     # Creates a new running process, if broken without stopping the game from running it will restart

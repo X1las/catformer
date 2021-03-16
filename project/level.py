@@ -1,8 +1,9 @@
+# Imports
 import pygame as pg
 from settings import *
-from sprites import *
-from os import path
+from subSprites import *
 
+# Classes
 class Level:
     def __init__(self, game):
         self.surfaces = pg.sprite.Group()

@@ -1,11 +1,19 @@
-from sprites import CustomSprite
+# Description:
+
+# Imports
 import pygame as pg
-from vector import *
-from settings import *
-from random import choice, randrange, uniform
 import copy
+
+from settings import *
+
+from Vector import Vec
+from CustomSprite import CustomSprite
+from random import choice, randrange, uniform
+
+# Variables
 vec = Vec
 
+# Classes
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
         pg.sprite.Sprite.__init__(self, game.all_sprites)

@@ -1,3 +1,5 @@
+# Description: 
+
 # game options/settings
 TITLE = "Jumpy!"
 WIDTH = 600
