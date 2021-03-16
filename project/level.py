@@ -57,10 +57,12 @@ class Level:
             else:
                 # If the category is Settings, then we check the following lines for settings data we need:
                 if category == "Settings" and line!= "":
+                    # Using the header to check if it's a spawn point option
                     if header[0] == "Spawn:":
                         linesplit = line.replace("Spawn: " , "").split(" , ")
                         spawn.x = int(linesplit[0])
                         spawn.y = int(linesplit[1])
+                    # Using the header to check if it's a level lenght option
                     if header[0] == "Length:":
                         length = header[1]
 
