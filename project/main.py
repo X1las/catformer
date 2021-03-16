@@ -2,6 +2,7 @@ import pygame as pg
 import random, copy, sys
 from settings import *
 from sprites import *
+from player import *
 from os import path
 from level import *
 
@@ -109,8 +110,7 @@ class Game:
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
 
-
-    # Method for pushing the player out of other sprites
+    # pushes a sprite (such as a box)
     def pushSprite(self):
         if self.player.vel.x != 0:
             boxHits = pg.sprite.spritecollide(self.player, self.boxes, False)
@@ -121,6 +121,40 @@ class Game:
                         hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
                     elif self.player.pos.x >  hitbox.pos.x - hitbox.width / 2  + 10 and self.player.vel.x < 0:
                         hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
+
+
+"""
+collisions()
+    obj = player.rayIntersect(all_sprites)
+        if obj.isPushable:
+            move obj
+        if obj == pickUp
+            player picks up
+
+
+
+
+in Player:
+- pushSprite() -> pushing boxes etc.                                      - rayIntersect
+- pullSprite() -> pulling boxes etc.                                      - rayIntersect
+
+
+- solidCollisions() -> not moving through objects (touches())
+- knockDown() -> knock vases off of platforms etc.                        - pygame collision
+- takeDamage() -> will contain respawn                                    - rayIntersect
+        enemy.rayIntersect(player....)
+        player.rayIntersect(enemies)
+- pickUp() -> 3 different for the different types                         - rayIntersect
+- atClimbable() -> whether the player is around a cat tree to climb up    - pygame collision
+- atPressurePlate() -> whether something is on a button of sorts          - pygame collision
+
+- levelCompletion() -> When you "collide" with the flag pole at the end of the level
+
+
+
+"""
+
+
 
 g = Game()                                                                      # Creates a game instance
 while g.running:                                                                # While loop checking the Game.running boolean
