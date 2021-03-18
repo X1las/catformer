@@ -61,13 +61,14 @@ class Game:
         # The 3 lines below are useless without my own functions. CAN BE IGNORED
         #self.fallOnSurface()
         self.moveScreen()
+        
         self.pushSprite()
-        if self.hitbox != None:
-            print(self.hitbox.name)
         self.all_sprites.update()
         
         self.collisions_rayIntersect()
         self.player.update_pos()                                                                # Updates all the sprites and their positions
+        if self.hitbox != None:
+            self.hitbox.vel.x = 0
 
     # Method to check if player falls on a surface, seems like a Player class method
     def fallOnSurface(self):
@@ -119,14 +120,15 @@ class Game:
                     print("start")
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
 
-                    pass              
+                                
             if event.type == pg.KEYUP:
                 if event.key == pg.K_l:
-                    
                     self.interactive_box.kill()
-                    print("del")
+                    self.interactive_box = None
+                    
+                    print(self.interactive_box)
                     # delete interactive
-                    pass   
+                     
             
 
 
@@ -188,19 +190,15 @@ class Game:
         
         changY = 0
         if hit_position.y == hit_object.top_y():
-            print("hit top")
+            #print("hit top")
             moving_object.vel.y = 0
             self.player.jumping = False
             changY = local_origin.y-1
 
         elif hit_position.y == hit_object.bot_y():
-            print("hit bottom")
+            #print("hit bottom")
             moving_object.vel.y = 0
             changY = local_origin.y+1
-
-        print(changX)
-        print(changY)
-        print(moving_object.pos)
 
         moving_object.pos = hit_position - local_origin + Vec(changX,changY)
 
@@ -218,24 +216,31 @@ class Game:
 
     # pushes a sprite (such as a box)
     def pushSprite(self):
+        """
+        boxes = self.boxes
+        range = 50
+        for box in boxes:
+            if self.interact:
+                if box.left_x() < self.player.right_x() + range or box.right_x() > self.player.left_x() - range:
+                    if box.top_y() < self.player.top_y + range and box.bot_y() 
+                        interacted_box = box
+        """
+        
         temp = self.player.vel.x
-        if self.player.vel.x != 0 and self.interactive_box != None:
+        if self.interactive_box != None:
             boxHits = pg.sprite.spritecollide(self.interactive_box, self.boxes, False)
             if boxHits:
-                print(self.boxes)
                 self.hitbox = boxHits[0]
-                print("updated")
+                
                 self.hitbox.vel.x = temp
-          
+                self.player.locked = True
         else: 
-            temp = 0
-            """
-                if self.player.pos.y > hitbox.pos.y - hitbox.height:
-                    if self.player.rect.left < hitbox.pos.x + hitbox.width / 2 - 10 and self.player.vel.x > 0:
-                        hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
-                    elif self.player.pos.x >  hitbox.pos.x - hitbox.width / 2  + 10 and self.player.vel.x < 0:
-                        hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
-            """
+            self.player.locked = False
+
+      
+
+
+            
 
 """
 collisions()
