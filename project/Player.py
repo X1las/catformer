@@ -33,7 +33,7 @@ class Player(CustomSprite):
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
         self.jump()
-        self.touches()    
+        #self.touches()    
         self.move()
         self.applyPhysics() 
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False

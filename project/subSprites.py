@@ -16,8 +16,9 @@ vec = Vec
 class Platform(CustomSprite):
     def __init__(self, game, x, y, width, height, name, typ = None, *args, **kwargs):
         self.vel = kwargs.get('vel',None)
+        self.solid = True
         self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
-        self.groups = game.all_sprites, game.non_player, game.platforms, game.surfaces, game.obstacles, game.non_moveable 
+        self.groups = game.all_sprites, game.non_player, game.platforms, game.surfaces, game.obstacles, game.non_moveable, game.rayIntersecters
 
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
@@ -38,7 +39,7 @@ class Platform(CustomSprite):
 class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
-        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles
+        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
@@ -97,7 +98,7 @@ class Vase(CustomSprite):
         self.broken = True
 
 class PickUp(CustomSprite):
-    def __init__(self,game,x,y, type, name = None):
+    def __init__(self,game,x,y, type, name = None): 
         pass
     # Catnip
     # Health (fish)

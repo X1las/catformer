@@ -17,7 +17,7 @@ class Game:
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
-        pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
+        pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TTLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
 
@@ -36,6 +36,7 @@ class Game:
         self.non_moveable = pg.sprite.LayeredUpdates()
         self.vases        = pg.sprite.LayeredUpdates()
         self.non_player   = pg.sprite.LayeredUpdates()
+        self.rayIntersecters = pg.sprite.Group()
 
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
@@ -59,7 +60,7 @@ class Game:
         self.fallOnSurface()
         self.moveScreen()
         self.pushSprite()
-
+        self.collisions_rayIntersect()
         self.all_sprites.update()                                                                   # Updates all the sprites and their positions
 
     # Method to check if player falls on a surface, seems like a Player class method
@@ -116,6 +117,45 @@ class Game:
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
 
+
+    def collisions_rayIntersect(self):
+        intersect = self.player.rayIntersect(vec(0.0),self.rayIntersecters)
+        if intersect:
+            hit_object = intersect[0]
+            hit_pos    = intersect[1]
+            if hit_object.solid:
+                # the "touches" function
+                self.hitsSolid(self.player , hit_pos)
+                
+        
+    def hitsSolid(self, moving_object, hit_position):
+        # x detect which side is hit
+        
+        moving_object.pos = hit_position
+
+        """if hit_position.x == moving_object.left_x():
+            moving_object.pos.x = hit_position.x
+            pass
+        if hit_position.x == moving_object.right_x():
+            moving_object.pos.x = hit_position.x
+            pass
+        if hit_position.y == moving_object.top_y():
+            moving_object.pos.y = hit_position.y
+            pass
+        if hit_position.y == moving_object.bot_y():
+            moving_object.pos.y = hit_position.y
+            pass
+        """
+        
+        
+        # set position of player to that side
+        # set vel to 0 if appropriate
+
+        pass    
+
+
+
+
     # pushes a sprite (such as a box)
     def pushSprite(self):
         if self.player.vel.x != 0:
@@ -141,8 +181,8 @@ collisions()
 
 
 in Player:
-- pushSprite() -> pushing boxes etc.                                      - rayIntersect
-- pullSprite() -> pulling boxes etc.                                      - rayIntersect
+- pushSprite() -> pushing boxes etc.                                      - pygame collision
+- pullSprite() -> pulling boxes etc.                                      - pygame collision
 
 
 - solidCollisions() -> not moving through objects (touches())

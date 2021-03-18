@@ -90,7 +90,7 @@ class CustomSprite(pg.sprite.Sprite):
 
                     y_temp_intersection = original_pos.y + y_local_temp                                
                     
-                    if collidable.pos.y - collidable.height < y_temp_intersection < collidable.pos.y:                  
+                    if collidable.top_y() < y_temp_intersection < collidable.bot_y():                  
                         tempVec = vec(x_local_temp,y_local_temp)
                         if tempVec.length() < intersection.length():
                             intersection = tempVec
@@ -99,7 +99,7 @@ class CustomSprite(pg.sprite.Sprite):
             if vel.y != 0:
                 for collidable in collidables:
                     # Y intersection will be equal to the top side by default and the bottom if we're moving up
-                    y_temp_intersection = collidable.pos.y - collidable.height 
+                    y_temp_intersection = collidable.top_y() 
                     if vel.y < 0:                                                             
                         y_temp_intersection = collidable.pos.y                                       
 
@@ -108,7 +108,7 @@ class CustomSprite(pg.sprite.Sprite):
                     
                     x_temp_intersection = original_pos.x + x_local_temp                                
                     
-                    if collidable.pos.x - collidable.width/2 < x_temp_intersection < collidable.pos.x + collidable.width/2:     
+                    if collidable.left_x() < x_temp_intersection < collidable.right_x():     
                         tempVec = vec(x_local_temp , y_local_temp)                          
                         if tempVec.length() < intersection.length():                        
                             intersection = tempVec                                          
