@@ -209,11 +209,6 @@ class Game:
         # set position of player to that side
         # set vel to 0 if appropriate
 
-        
-
-
-
-
     # pushes a sprite (such as a box)
     def pushSprite(self):
         """
