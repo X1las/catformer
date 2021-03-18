@@ -12,6 +12,37 @@ from random import choice, randrange, uniform
 # Variables
 vec = Vec
 
+class Interactive(CustomSprite):
+    def __init__(self, game,  player, facing):
+
+        # anchor depends on which way player faces
+        self.player = player
+        width = self.player.width/2 + 20
+        height = self.player.height       
+        self.facing = facing
+        self.image = pg.Surface((width,height)); 
+        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
+        self.image.fill((0,200,0)) 
+        if self.facing == "left":
+            self.rect.bottomright = (player.pos.x,player.pos.y)   
+        else: 
+            self.rect.bottomleft = (player.pos.x,player.pos.y)   
+
+        pg.sprite.Sprite.__init__(self, game.all_sprites)  
+    
+    def update(self):
+        if self.player.facing == "left":
+
+            self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
+        else: 
+            self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
+
+
+       
+
+
+
+
 # Classes
 class Platform(CustomSprite):
     def __init__(self, game, x, y, width, height, name, typ = None, *args, **kwargs):
@@ -39,6 +70,7 @@ class Platform(CustomSprite):
 class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
+        self.solid = True
         self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
@@ -55,6 +87,7 @@ class Box(CustomSprite):
 
 
     def update(self):
+        self.pos += self.vel
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 

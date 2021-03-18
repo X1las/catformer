@@ -18,6 +18,7 @@ class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
         pg.sprite.Sprite.__init__(self, game.all_sprites)
         self.game           = game; self.name = name; self._layer = 1
+        self.facing = None
         self.jumping        = False
         self.width          = 30; self.height = 40
         self.image          =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
@@ -26,6 +27,14 @@ class Player(CustomSprite):
         self.touching_slopeight = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
+        self.interactRect   = self.interact()
+
+    def interact(self):
+
+        
+        pass
+
+
 
     def initKeys(self,jump, left, right, crouch):
         self.jump_key = jump
@@ -57,8 +66,10 @@ class Player(CustomSprite):
     def move(self):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT] and not self.touching_left:                  # If it's left arrow
+            self.facing = "left"
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT] and not self.touching_right:
+            self.facing = "right"
             self.acc.x = PLAYER_ACC
     
     # -->  Applies gravity, friction, mortion etc, nerdy stuff

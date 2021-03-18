@@ -38,6 +38,8 @@ class Game:
         self.non_player   = pg.sprite.LayeredUpdates()
         self.rayIntersecters = pg.sprite.Group()
 
+        self.interactive_box = None
+        self.hitbox = None
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
         self.run()                                                              # Runs the
@@ -60,7 +62,8 @@ class Game:
         #self.fallOnSurface()
         self.moveScreen()
         self.pushSprite()
-        
+        if self.hitbox != None:
+            print(self.hitbox.name)
         self.all_sprites.update()
         
         self.collisions_rayIntersect()
@@ -110,7 +113,22 @@ class Game:
                 if event.key == pg.K_ESCAPE:                                    # checks if the uses presses the escape key
                     if self.playing:                                            # Does the same as before
                         self.playing = False                                        
-                    self.running = False                                        
+                    self.running = False        
+
+                if event.key == pg.K_l:
+                    print("start")
+                    self.interactive_box = Interactive(self,self.player, self.player.facing)
+
+                    pass              
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_l:
+                    
+                    self.interactive_box.kill()
+                    print("del")
+                    # delete interactive
+                    pass   
+            
+
 
 
 
@@ -137,13 +155,13 @@ class Game:
         changX = 0
 
         if hit_position.x == hit_object.left_x():
-            print("hit left")
+            
             self.player.touching_right = True
             moving_object.vel.x = 0
             changX = -moving_object.width/2-1
 
         elif hit_position.x == hit_object.right_x():
-            print("hit right")
+            
             self.player.touching_left = True
             moving_object.vel.x = 0
             changX = moving_object.width/2+1
@@ -151,12 +169,12 @@ class Game:
         changY = 0
 
         if hit_position.y == hit_object.top_y():
-            print("hit top?")
+            
             moving_object.vel.y = 0
             self.player.jumping = False
             changY = -1
         elif hit_position.y == hit_object.bot_y():
-            print("hit bot")
+        
             moving_object.vel.y = 0
             changY = moving_object.height+1
 
@@ -177,16 +195,24 @@ class Game:
 
     # pushes a sprite (such as a box)
     def pushSprite(self):
-        if self.player.vel.x != 0:
-            boxHits = pg.sprite.spritecollide(self.player, self.boxes, False)
+        temp = self.player.vel.x
+        if self.player.vel.x != 0 and self.interactive_box != None:
+            boxHits = pg.sprite.spritecollide(self.interactive_box, self.boxes, False)
             if boxHits:
-                hitbox = boxHits[0]
+                print(self.boxes)
+                self.hitbox = boxHits[0]
+                print("updated")
+                self.hitbox.vel.x = temp
+          
+        else: 
+            temp = 0
+            """
                 if self.player.pos.y > hitbox.pos.y - hitbox.height:
                     if self.player.rect.left < hitbox.pos.x + hitbox.width / 2 - 10 and self.player.vel.x > 0:
                         hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
                     elif self.player.pos.x >  hitbox.pos.x - hitbox.width / 2  + 10 and self.player.vel.x < 0:
                         hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
-
+            """
 
 """
 collisions()
