@@ -38,6 +38,8 @@ class Player(CustomSprite):
         self.applyPhysics() 
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         round(self.pos)
+    
+    def update_pos(self):
         self.rect.midbottom = self.pos.asTuple()
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
@@ -66,8 +68,8 @@ class Player(CustomSprite):
         
         #print(f"stop falling?: {self.stop_falling}")
         #print(f'acc before: {self.acc}')
-        if not self.stop_falling:
-            self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
+        
+        self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
         self.acc.x += self.vel.x * PLAYER_FRICTION          # Friction
         
         #self.vel.x = 0.93 * self.vel.x

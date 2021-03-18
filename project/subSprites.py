@@ -61,8 +61,8 @@ class Box(CustomSprite):
 class Vase(CustomSprite):
     def __init__(self,game,x,y, name = None):
         self.broken = False; self.name = name
-        self.width = 20
-        self.height = 30
+        self.width = 10
+        self.height = 10
         self.game = game
         self.groups = game.all_sprites, game.vases, game.non_player
         pg.sprite.Sprite.__init__(self, self.groups)

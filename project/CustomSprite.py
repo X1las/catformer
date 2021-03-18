@@ -9,18 +9,28 @@ class CustomSprite(pg.sprite.Sprite):
     height = None; width = None
     #game   = None
     #groups = game.all_sprites
-
-
-
     #attributes:
     solid     = False
     moveable  = False
     breakable = False
 
+    def top_y(self):
+        return self.pos.y - self.height
+    def bot_y(self):
+        return self.pos.y
+    def left_x(self):
+        return self.pos.x - self.width/2
+    def right_x(self):
+        return self.pos.x + self.width/2
+    def mid(self):
+        return vec(self.pos.x,self.bot_y()-self.height/2)
+
+
+    def collideWith(self):
+        pass
 
 
     #groups = game.all_sprites
-
     def rayIntersect(self,local_origin,collidables):   
         original_pos = self.pos + local_origin     # Origin vector for calculations
         vel = self.vel                    # X and Y vector
@@ -122,18 +132,9 @@ class CustomSprite(pg.sprite.Sprite):
             return False
 
 
-    def top_y(self):
-        return self.pos.y - self.height
-    def bot_y(self):
-        return self.pos.y
-    def left_x(self):
-        return self.pos.x - self.width/2
-    def right_x(self):
-        return self.pos.x + self.width/2
 
 
-    def loadImage(self):
-        pass
+
     
     def distributeAttributes(self, *attributes):
         for attribute in attributes:

@@ -10,8 +10,6 @@ class Vec(object):
     def __init__(self, x=0, y=0):
         self.x = x; self.y = y
 
-        self.len = math.sqrt(self.x**2+self.y**2)
-        self.mag = self.len
   
 
 
