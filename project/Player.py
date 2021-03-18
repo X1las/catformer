@@ -23,8 +23,8 @@ class Player(CustomSprite):
         self.image          =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
-        self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
-        self.dist_from_right = 0; self.dist_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
+        self.touching_slopeight = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
 
     def initKeys(self,jump, left, right, crouch):
@@ -45,7 +45,7 @@ class Player(CustomSprite):
         self.rect.y += 2                                                         # to see if there is a platform 2 pix below
         hits = pg.sprite.spritecollide(self, self.game.surfaces, False)          # Returns the platforms that (may) have been touched
         self.rect.y -= 2                                                         # undo 2 lines before
-        if hits and not self.jumping:                                            # If you are on a platform and not jumping
+        if hits and not self.jumping:                                            # If you are on aslopeplatform and not jumping
             keys = pg.key.get_pressed()                                            # Checks for keys getting pressed
             if keys[pg.K_SPACE]:                                                 # If it's left arrow
                 self.jumping = True                                                    # then you jump
@@ -128,8 +128,8 @@ class Player(CustomSprite):
             self.dist_from_top  = collided_object_point.y == collided_object.pos.y - collided_object.height
             self.dist_from_bottom    =  collided_object_point.y == collided_object.pos.y
 
-            self.dist_from_right  = abs(collided_object_point.x   - collided_object.pos.x - collided_object.width/2) 
-            self.dist_from_left   = abs(collided_object_point.x  + collided_object.pos.x - collided_object.width/2)
+            self.dist_from_right  = abs(collided_object_point.x   - collided_object.pos.x - collided_object.width/2)  # left
+            self.dist_from_left   = abs(collided_object_point.x  + collided_object.pos.x - collided_object.width/2)   #
             self.dist_from_top  = abs( collided_object.pos.y - collided_object.height - collided_object_point.y)
             self.dist_from_bottom    = abs(collided_object_point.y   - collided_object.pos.y)
 
@@ -190,75 +190,75 @@ class Player(CustomSprite):
                             
             self.pos = collided_object_point
 
-        """
-        collided_group = pg.sprite.spritecollide(self, self.game.obstacles, False)
-        if collided_group:
-            for collided_object in collided_group:
-       
-                #dist_from refers to the distance between the .... 
-                self.dist_from_right  = abs(self.pos.x - self.width/2   - collided_object.pos.x - collided_object.width/2) 
-                self.dist_from_left   = abs(- self.pos.x - self.width/2  + collided_object.pos.x - collided_object.width/2)
-                self.dist_from_top  = abs( collided_object.pos.y - collided_object.height - self.pos.y)
-                self.dist_from_bottom    = abs(self.pos.y - self.height    - collided_object.pos.y)
-                
-                #print(f"dist from bottom platform: {self.dist_from_bottom} ")
-                #print(f"dist from top platform: {self.dist_from_top} ")
-                #print(f"y position: {self.pos.y} ")
-                #print(f"collided object y position: {collided_object.pos.y} ")
-                #print(f"dist from right platform: {self.dist_from_right} ")
-                #print(f"dist from left platform: {self.dist_from_left} ")
-                self.on_collided_surface = abs(self.rect.bottom - collided_object.rect.top) < 5
-                
-                if not self.on_collided_surface:
+            """
+            collided_group = pg.sprite.spritecollide(self, self.game.obstacles, False)
+            if collided_group:
+                for collided_object in collided_group:
+        
+                    #dist_from refers to the distance between the .... 
+                    self.dist_from_right  = abs(self.pos.x - self.width/2   - collided_object.pos.x - collided_object.width/2) 
+                    self.dist_from_left   = abs(- self.pos.x - self.width/2  + collided_object.pos.x - collided_object.width/2)
+                    self.dist_from_top  = abs( collided_object.pos.y - collided_object.height - self.pos.y)
+                    self.dist_from_bottom    = abs(self.pos.y - self.height    - collided_object.pos.y)
+                    
+                    #print(f"dist from bottom platform: {self.dist_from_bottom} ")
+                    #print(f"dist from top platform: {self.dist_from_top} ")
+                    #print(f"y position: {self.pos.y} ")
+                    #print(f"collided object y position: {collided_object.pos.y} ")
+                    #print(f"dist from right platform: {self.dist_from_right} ")
+                    #print(f"dist from left platform: {self.dist_from_left} ")
+                    self.on_collided_surface = abs(self.rect.bottom - collided_object.rect.top) < 5
+                    
+                    if not self.on_collided_surface:
 
-                    if abs(self.dist_from_bottom) < 6:
-                        self.touching_top = True
-                        self.pos.y -= self.dist_from_bottom
-                        print("from bottom")
+                        if abs(self.dist_from_bottom) < 6:
+                            self.touching_top = True
+                            self.pos.y -= self.dist_from_bottom
+                            print("from bottom")
+                            
+                            #self.rect.top = collided_object.rect.bottom
+                            #self.acc.y = 0
+                            if self.vel.y < 0:
+                                self.vel.y = 0
+                            #self.vel.y = 0
+
                         
-                        #self.rect.top = collided_object.rect.bottom
-                        #self.acc.y = 0
-                        if self.vel.y < 0:
-                            self.vel.y = 0
-                        #self.vel.y = 0
+                        elif abs(self.dist_from_top) < 10:
+                            self.touching_bot = True
+                            print("on platform ---------------------------------------------------------------------------------")
+                            self.pos.y += self.dist_from_top
+                            #self.rect.bottom = collided_object.rect.top
+                            self.acc.y = 0
+                            if self.vel.y > 0:
+                                self.vel.y = 0
+                            self.stop_falling = True
+                            #self.vel.y = 0
 
-                    
-                    elif abs(self.dist_from_top) < 10:
-                        self.touching_bot = True
-                        print("on platform ---------------------------------------------------------------------------------")
-                        self.pos.y += self.dist_from_top
-                        #self.rect.bottom = collided_object.rect.top
-                        self.acc.y = 0
-                        if self.vel.y > 0:
-                            self.vel.y = 0
-                        self.stop_falling = True
-                        #self.vel.y = 0
-
-                    elif 10 > abs(self.dist_from_right):
-                        self.pos.x += self.dist_from_right
-                        print("right side")
-                        if collided_object in self.game.non_moveable:
-                            self.touching_left = True
-                            self.acc.x = 0
-                            if self.vel.x < 0:
-                                self.vel.x = 0
+                        elif 10 > abs(self.dist_from_right):
+                            self.pos.x += self.dist_from_right
+                            print("right side")
+                            if collided_object in self.game.non_moveable:
+                                self.touching_left = True
+                                self.acc.x = 0
+                                if self.vel.x < 0:
+                                    self.vel.x = 0
+                            
                         
-                    
-                    elif 10 > abs(self.dist_from_left):
-                        self.pos.x -= self.dist_from_left
-                        print("left side")
-                        if collided_object in self.game.non_moveable:
-                            self.touching_right = True      
-                            self.acc.x = 0
-                            if self.vel.x > 0:
-                                self.vel.x = 0
-        """
-                    
+                        elif 10 > abs(self.dist_from_left):
+                            self.pos.x -= self.dist_from_left
+                            print("left side")
+                            if collided_object in self.game.non_moveable:
+                                self.touching_right = True      
+                                self.acc.x = 0
+                                if self.vel.x > 0:
+                                    self.vel.x = 0
+            """
+                        
 
-        #print(f'acc: {self.acc}')
-        #print(f'vel: {self.vel}')
-        #print(f'pos: {self.pos}')
-        #self.pos.x -= self.vel.x    
+            #print(f'acc: {self.acc}')
+            #print(f'vel: {self.vel}')
+            #print(f'pos: {self.pos}')
+            #self.pos.x -= self.vel.x    
     # ------------------------------------------------------------------------------------------------------------------------------------------------
 
     def testNextFrame(self,sprite):
@@ -269,3 +269,7 @@ class Player(CustomSprite):
         possibleHits = pg.sprite.collide_rect(self,sprite, False)
         self.pos = temp_pos
         return possibleHits
+
+
+    def poo(self):
+        pass

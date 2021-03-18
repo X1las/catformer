@@ -5,10 +5,10 @@ vec = Vec
 
 # Classes
 class CustomSprite(pg.sprite.Sprite):
-    pos = vec(); vel = vec(); acc = vec()
+    pos    = vec(); vel  = vec(); acc = vec()
     height = None; width = None
-    game = None
-    groups = game.all_sprites
+    #game   = None
+    #groups = game.all_sprites
 
 
 
@@ -124,7 +124,7 @@ class CustomSprite(pg.sprite.Sprite):
 
     def top_y(self):
         return self.pos.y - self.height
-    def bottom_y(self):
+    def bot_y(self):
         return self.pos.y
     def left_x(self):
         return self.pos.x - self.width/2

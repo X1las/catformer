@@ -35,7 +35,7 @@ class Platform(CustomSprite):
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 
-class Box(pg.sprite.Sprite):
+class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
         self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles
@@ -57,7 +57,7 @@ class Box(pg.sprite.Sprite):
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 
-class Vase(pg.sprite.Sprite):
+class Vase(CustomSprite):
     def __init__(self,game,x,y, name = None):
         self.broken = False; self.name = name
         self.width = 20
