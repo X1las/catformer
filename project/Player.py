@@ -28,6 +28,7 @@ class Player(CustomSprite):
         self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
         self.interactRect   = self.interact()
+        self.locked = False
 
     def interact(self):
 
@@ -66,10 +67,12 @@ class Player(CustomSprite):
     def move(self):
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT] and not self.touching_left:                  # If it's left arrow
-            self.facing = "left"
+            if self.locked == False:
+                self.facing = "left"
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT] and not self.touching_right:
-            self.facing = "right"
+            if self.locked == False:
+                self.facing = "right"
             self.acc.x = PLAYER_ACC
     
     # -->  Applies gravity, friction, mortion etc, nerdy stuff

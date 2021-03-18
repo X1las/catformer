@@ -17,7 +17,7 @@ class Interactive(CustomSprite):
 
         # anchor depends on which way player faces
         self.player = player
-        width = self.player.width/2 + 20
+        width = self.player.width/2 + 50
         height = self.player.height       
         self.facing = facing
         self.image = pg.Surface((width,height)); 
@@ -37,7 +37,8 @@ class Interactive(CustomSprite):
         else: 
             self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
 
-
+    def draw(self):
+        pass
        
 
 
