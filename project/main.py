@@ -1,12 +1,18 @@
+# Description:
+
+# Imports
 import pygame as pg
-import random, copy, sys
+import sys
+
 from settings import *
-from sprites import *
-from os import path
-from level import *
+from subSprites import *
 
+from Player import Player
+from Level import Level
+from Vector import Vec
+
+# Classes
 class Game:
-
     # initializes the game class, runs once when the Game class gets instantialized
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
@@ -18,8 +24,8 @@ class Game:
     # Method that creates a new game
     def new(self):
         # Here is where we would need filewrite for loading multiple levels
-        self.level       = Level(self, l1_boxes ,length)           # "Loads" the level
-        self.level.loadLevel("level1")
+        self.level       = Level(self)                        # Makes a Level instance
+        self.level.load("level1")                                          # Loads the level
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         # Assigning spritegroups with LayeredUpdates
@@ -31,7 +37,7 @@ class Game:
         self.vases        = pg.sprite.LayeredUpdates()
         self.non_player   = pg.sprite.LayeredUpdates()
 
-        self.player      = Player(self,PLAYER_SPAWN_X, PLAYER_SPAWN_Y, name = "player")      # Creates player object
+        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
         self.run()                                                              # Runs the
 
@@ -110,8 +116,7 @@ class Game:
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
 
-
-    # Method for pushing the player out of other sprites
+    # pushes a sprite (such as a box)
     def pushSprite(self):
         if self.player.vel.x != 0:
             boxHits = pg.sprite.spritecollide(self.player, self.boxes, False)
@@ -123,6 +128,38 @@ class Game:
                     elif self.player.pos.x >  hitbox.pos.x - hitbox.width / 2  + 10 and self.player.vel.x < 0:
                         hitbox.pos.x = round(hitbox.pos.x + self.player.vel.x)
 
+
+"""
+collisions()
+    obj = player.rayIntersect(all_sprites)
+        if obj.isPushable:
+            move obj
+        if obj == pickUp
+            player picks up
+
+
+
+
+in Player:
+- pushSprite() -> pushing boxes etc.                                      - rayIntersect
+- pullSprite() -> pulling boxes etc.                                      - rayIntersect
+
+
+- solidCollisions() -> not moving through objects (touches())
+- knockDown() -> knock vases off of platforms etc.                        - pygame collision
+- takeDamage() -> will contain respawn                                    - rayIntersect
+        enemy.rayIntersect(player....)
+        player.rayIntersect(enemies)
+- pickUp() -> 3 different for the different types                         - rayIntersect
+- atClimbable() -> whether the player is around a cat tree to climb up    - pygame collision
+- atPressurePlate() -> whether something is on a button of sorts          - pygame collision
+
+- levelCompletion() -> When you "collide" with the flag pole at the end of the level
+
+
+
+"""
+# Game Loop
 g = Game()                                                                      # Creates a game instance
 while g.running:                                                                # While loop checking the Game.running boolean
     g.new()                                                                     # Creates a new running process, if broken without stopping the game from running it will restart
