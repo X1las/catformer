@@ -55,7 +55,7 @@ class Vec(object):
     def __str__(self):
         #print(f'rounding: {round(self.x)},{round(self.y)}')
         #print(f'exact: ({self.x},{self.y})')
-        return f'exact: ({self.x},{self.y})'
+        return f'({self.x},{self.y})'
         #return f'({round(self.x)},{round(self.y)})'
 
 

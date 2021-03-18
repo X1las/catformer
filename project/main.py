@@ -37,6 +37,7 @@ class Game:
         self.vases              = pg.sprite.LayeredUpdates()
         self.non_player         = pg.sprite.LayeredUpdates()
         self.rayIntersecters    = pg.sprite.Group()
+        self.interactables      = pg.sprite.Group()
 
         self.interactive_box = None
         self.hitbox = None
@@ -63,10 +64,12 @@ class Game:
         self.moveScreen()
         
         self.pushSprite()
-        self.all_sprites.update()
-        
+ 
         self.collisions_rayIntersect()
-        self.player.update_pos()                                                                # Updates all the sprites and their positions
+                                                                   # Updates all the sprites and their positions
+        self.all_sprites.update()
+        self.player.update_pos()     
+
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
@@ -116,13 +119,17 @@ class Game:
                         self.playing = False                                        
                     self.running = False        
 
-                if event.key == pg.K_l:
+                if event.key == pg.K_e:                                    # checks if the uses presses the escape key
+                                                          
+                    self.new()
+
+                if event.key == pg.K_d:
                     print("start")
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
 
                                 
             if event.type == pg.KEYUP:
-                if event.key == pg.K_l:
+                if event.key == pg.K_d:
                     self.interactive_box.kill()
                     self.interactive_box = None
                     
@@ -170,7 +177,21 @@ class Game:
         if hit:
             if hitObject.solid:
                 self.hitsSolid(self.player , hitObject,  hitPos , cornerOrigin)
-                
+
+        # making vase break
+        if self.hitbox:
+            vase_intersect = self.hitbox.rayIntersect(vec(0,0), self.obstacles)
+            if vase_intersect:
+                hit_point = vase_intersect[0]
+                if vase_intersect[1].y == vase_intersect[0].top_y():
+                    print("skdjfl")
+                    self.hitbox.pos.y = hit_point.top_y()
+                    self.hitbox.vel *= 0
+                    self.hitbox.fall = False
+                    self.hitbox.breaks()
+
+
+
     def hitsSolid(self, moving_object, hit_object, hit_position , origin):
 
         local_origin = origin - moving_object.pos
@@ -210,6 +231,10 @@ class Game:
         # set vel to 0 if appropriate
 
     # pushes a sprite (such as a box)
+
+    def interactWithSprite(self):
+        pass
+
     def pushSprite(self):
         """
         boxes = self.boxes
@@ -223,13 +248,17 @@ class Game:
         
         temp = self.player.vel.x
         if self.interactive_box != None:
-            boxHits = pg.sprite.spritecollide(self.interactive_box, self.boxes, False)
+            boxHits = pg.sprite.spritecollide(self.interactive_box, self.interactables, False)
             if boxHits:
                 self.hitbox = boxHits[0]
-                
-                self.hitbox.vel.x = temp
-                self.player.locked = True
-        else: 
+                if self.hitbox.moveable == True:
+                    self.hitbox.vel.x = temp
+                    self.player.locked = True
+        
+                if self.hitbox.breakable == True:
+
+                    self.hitbox.fall = True
+
             self.player.locked = False
 
       
@@ -269,7 +298,7 @@ in Player:
 """
 # Game Loop
 g = Game()                                                                      # Creates a game instance
-while g.running:                                                                # While loop checking the Game.running boolean
-    g.new()                                                                     # Creates a new running process, if broken without stopping the game from running it will restart
+                                                             # While loop checking the Game.running boolean
+g.new()                                                                     # Creates a new running process, if broken without stopping the game from running it will restart
 pg.quit()                                                                       # Exits the pygame program
 sys.exit()                                                                      # Makes sure the process is terminated (Linux issue mostly)

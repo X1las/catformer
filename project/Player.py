@@ -76,34 +76,7 @@ class Player(CustomSprite):
             self.acc.x = PLAYER_ACC
     
     # -->  Applies gravity, friction, mortion etc, nerdy stuff
-    def applyPhysics(self):
-        #if not self.on_surface:
-        #if not self.on_collided_surface:
-        
-        #print(f"stop falling?: {self.stop_falling}")
-        #print(f'acc before: {self.acc}')
-        
-        self.acc = self.acc + vec(0, PLAYER_GRAV)       # Gravity
-        self.acc.x += self.vel.x * PLAYER_FRICTION          # Friction
-        
-        #self.vel.x = 0.93 * self.vel.x
-        self.vel += self.acc                                # equations of motion
-        
-        if abs(self.vel.x) < 0.25:                          
-            self.vel.x = 0                                  
-        
-
-        self.pos += self.vel +  self.acc * 0.5
-
-
-        
-        self.stop_falling = False
-        
-        #print(f'pos efter grav: {self.pos}')
  
-        
-        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
-
 
 
     # -----------CAN BE IGNORED!----------

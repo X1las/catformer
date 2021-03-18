@@ -72,7 +72,7 @@ class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
         self.solid = True
-        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters
+        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters, game.interactables
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
@@ -95,34 +95,40 @@ class Box(CustomSprite):
 class Vase(CustomSprite):
     def __init__(self,game,x,y, name = None):
         self.broken = False; self.name = name
-        self.width = 10
-        self.height = 10
+        self.breakable = True
+        self.width = 20
+        self.height = 30
         self.game = game
-        self.groups = game.all_sprites, game.vases, game.non_player
+        self.groups = game.all_sprites, game.vases, game.non_player, game.interactables
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((120,100,0))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
+        self.fall = False
 
     def update(self):
+        
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
+        if self.fall == True:
+            self.applyPhysics()
     
     @classmethod
     def on_platform(cls, game, plat : Platform, placement : str , name = None):
         try:
             if placement == "left":
-                pos = plat.rect.topleft
+                pos = plat.topleft()
+             
                 push = 20   
             elif placement == "right":
                 pos = plat.rect.topright
                 push = -20
             elif placement == "mid":
                 push = 0
-                pos = plat.rect.midtop
-            return cls(game = game, x = pos[0] + push, y = pos[1])
+                pos.x, pos.y = plat.rect.midtop.x, plat.rect.midtop.y 
+            return cls(game = game, x = pos.x+ push, y = pos.y, name = name)
         except:
             print("Must choose left, right or mid")    
             return cls(game = game, x = plat.rect.midtop[0] , y = plat.rect.midtop[1])
