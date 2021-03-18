@@ -29,14 +29,14 @@ class Game:
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         # Assigning spritegroups with LayeredUpdates
-        self.platforms    = pg.sprite.LayeredUpdates()              
-        self.boxes        = pg.sprite.LayeredUpdates()
-        self.surfaces     = pg.sprite.LayeredUpdates()
-        self.obstacles    = pg.sprite.LayeredUpdates()
-        self.non_moveable = pg.sprite.LayeredUpdates()
-        self.vases        = pg.sprite.LayeredUpdates()
-        self.non_player   = pg.sprite.LayeredUpdates()
-        self.rayIntersecters = pg.sprite.Group()
+        self.platforms          = pg.sprite.LayeredUpdates()              
+        self.boxes              = pg.sprite.LayeredUpdates()
+        self.surfaces           = pg.sprite.LayeredUpdates()
+        self.obstacles          = pg.sprite.LayeredUpdates()
+        self.non_moveable       = pg.sprite.LayeredUpdates()
+        self.vases              = pg.sprite.LayeredUpdates()
+        self.non_player         = pg.sprite.LayeredUpdates()
+        self.rayIntersecters    = pg.sprite.Group()
 
         self.interactive_box = None
         self.hitbox = None
@@ -141,45 +141,68 @@ class Game:
 
     def collisions_rayIntersect(self):
         self.player.jumping = True
-        intersect = self.player.rayIntersect(vec(0, 0) , self.rayIntersecters)
-        if intersect:
-            hit_object = intersect[0]
-            hit_pos    = intersect[1]
-            if hit_object.solid:
-                # the "touches" function
-                self.hitsSolid(self.player , hit_object,  hit_pos)
+        
+        tempLen = self.player.vel.length()
+        
+        corners = [
+            self.player.topleft(),
+            self.player.topright(),
+            self.player.bottomleft(),
+            self.player.bottomright()]
+
+        hit = False
+
+        for corner in corners:
+           
+            intersect = self.player.rayIntersect(corner - self.player.pos, self.rayIntersecters)
+            if intersect:
+               
+                tempVec = intersect[1] - corner
+                if tempVec.length() < tempLen:
+                    tempLen = tempVec.length()
+                    hitObject = intersect[0]
+                    hitPos = intersect[1]
+                    cornerOrigin = corner   
+                    hit = True
+        
+        if hit:
+            if hitObject.solid:
+                self.hitsSolid(self.player , hitObject,  hitPos , cornerOrigin)
                 
-    def hitsSolid(self, moving_object, hit_object, hit_position):
-        # x detect which side is hit
+    def hitsSolid(self, moving_object, hit_object, hit_position , origin):
+
+        local_origin = origin - moving_object.pos
 
         changX = 0
-
         if hit_position.x == hit_object.left_x():
             
             self.player.touching_right = True
             moving_object.vel.x = 0
-            changX = -moving_object.width/2-1
+            changX = local_origin.x+1
 
         elif hit_position.x == hit_object.right_x():
             
             self.player.touching_left = True
             moving_object.vel.x = 0
-            changX = moving_object.width/2+1
+            changX = local_origin.x-1
         
         changY = 0
-
         if hit_position.y == hit_object.top_y():
-            
+            print("hit top")
             moving_object.vel.y = 0
             self.player.jumping = False
-            changY = -1
+            changY = local_origin.y-1
+
         elif hit_position.y == hit_object.bot_y():
-        
+            print("hit bottom")
             moving_object.vel.y = 0
-            changY = moving_object.height+1
+            changY = local_origin.y+1
 
+        print(changX)
+        print(changY)
+        print(moving_object.pos)
 
-        moving_object.pos = hit_position + Vec(changX,changY)
+        moving_object.pos = hit_position - local_origin + Vec(changX,changY)
 
         """poop = Vase(self,hit_position.x,hit_position.y)
         self.all_sprites.add(poop)"""

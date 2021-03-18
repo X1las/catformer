@@ -22,8 +22,21 @@ class CustomSprite(pg.sprite.Sprite):
         return self.pos.x - self.width/2
     def right_x(self):
         return self.pos.x + self.width/2
+
+    def bottomleft(self):
+        return vec(self.left_x(), self.bot_y())
+    def bottomright(self):
+        return vec(self.right_x(), self.bot_y())
+    def topleft(self):
+        return vec(self.left_x(), self.top_y())
+    def topright(self):
+        return vec(self.right_x(), self.top_y())
+
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
+
+
+
 
 
     def collideWith(self):
@@ -141,4 +154,4 @@ class CustomSprite(pg.sprite.Sprite):
             attribute = True
     
     def distributeGroups(self, *groups):
-        pass
+        passe
