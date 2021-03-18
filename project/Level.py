@@ -68,6 +68,10 @@ class Level:
                     # Using the header to check if it's a level lenght option
                     if header[0] == "Length:":
                         length = header[1]
+                    if header[0] == "Track:":
+                        track = "resources/"+header[1]
+                    else:
+                        track = "resources/default.mp3"
 
                 # If the category is Platforms, then we check the following lines for platform data
                 if category == "Platforms" and line!= "":
@@ -82,4 +86,5 @@ class Level:
         self.spawn = spawn
         self.boxes = boxes
         self.length = length
+        self.musicTrack = track
         print("Level loaded successfully!")

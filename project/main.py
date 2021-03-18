@@ -24,10 +24,18 @@ class Game:
     # Method that creates a new game
     def new(self):
         # Here is where we would need filewrite for loading multiple levels
-        self.level       = Level(self)                        # Makes a Level instance
-        self.level.load("level1")                                          # Loads the level
+        self.level       = Level(self)                                          # Makes a Level instance
+        self.level.load("level1")                                               # Loads the level
+        
+        if pg.mixer.music.get_busy:
+            pg.mixer.music.stop
+            pg.mixer.music.unload
+
+        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
+        pg.mixer.music.play(-1)
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
+
         # Assigning spritegroups with LayeredUpdates
         self.platforms          = pg.sprite.LayeredUpdates()              
         self.boxes              = pg.sprite.LayeredUpdates()
