@@ -62,8 +62,9 @@ class Game:
         self.pushSprite()
         
         self.all_sprites.update()
+        
         self.collisions_rayIntersect()
-        self.player.update_pos()                                                                   # Updates all the sprites and their positions
+        self.player.update_pos()                                                                # Updates all the sprites and their positions
 
     # Method to check if player falls on a surface, seems like a Player class method
     def fallOnSurface(self):
@@ -121,6 +122,7 @@ class Game:
 
 
     def collisions_rayIntersect(self):
+        self.player.jumping = True
         intersect = self.player.rayIntersect(vec(0, 0) , self.rayIntersecters)
         if intersect:
             hit_object = intersect[0]
@@ -130,62 +132,41 @@ class Game:
                 self.hitsSolid(self.player , hit_object,  hit_pos)
                 
     def hitsSolid(self, moving_object, hit_object, hit_position):
-        changX = 0
         # x detect which side is hit
+
+        changX = 0
+
         if hit_position.x == hit_object.left_x():
             print("hit left")
-            changX = moving_object.width/2
+            self.player.touching_right = True
             moving_object.vel.x = 0
-            
+            changX = -moving_object.width/2-1
+
         elif hit_position.x == hit_object.right_x():
             print("hit right")
-            changX = - moving_object.width/2
-            
-        if hit_position.y == hit_object.top_y() or moving_object.vel.y > 0:
+            self.player.touching_left = True
+            moving_object.vel.x = 0
+            changX = moving_object.width/2+1
+        
+        changY = 0
+
+        if hit_position.y == hit_object.top_y():
             print("hit top?")
+            moving_object.vel.y = 0
+            self.player.jumping = False
             changY = -1
-            
         elif hit_position.y == hit_object.bot_y():
             print("hit bot")
+            moving_object.vel.y = 0
             changY = moving_object.height+1
 
 
-        
-        """
-        if moving_object.vel.x > 0:
-            changX = moving_object.width/2
-            moving_object.vel.x = 0
-        elif moving_object.vel.x < 0:
-            changX = - moving_object.width/2
-        
-        if moving_object.vel.y > 0:
-            changY = -1
-        else:
-            changY = moving_object.height+1
-        """
-        moving_object.pos = hit_position+Vec(changX,changY)
-        
-        poop = Vase(self,hit_position.x,hit_position.y)
-        #poop = pg.Rect(hit_position.x-5,hit_position.y-5,10,10)
-        self.all_sprites.add(poop)
+        moving_object.pos = hit_position + Vec(changX,changY)
+
+        """poop = Vase(self,hit_position.x,hit_position.y)
+        self.all_sprites.add(poop)"""
 
         #moving_object.pos = hit_position-moving_object.vel
-        
-        """if hit_position.x == hit_object.left_x():
-            moving_object.pos.x = hit_position.x - moving_object.width/2
-            
-        if hit_position.x == hit_object.right_x():
-            moving_object.pos.x = hit_position.x + moving_object.width/2
-            
-        if hit_position.y == hit_object.top_y():
-            moving_object.pos.y = hit_position.y
-            
-        if hit_position.y == hit_object.bot_y():
-            moving_object.pos.y = hit_position.y + moving_object.height
-            
-        """
-        
-        
         # set position of player to that side
         # set vel to 0 if appropriate
 
