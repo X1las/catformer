@@ -1,7 +1,7 @@
 # Description: 
 
 # game options/settings
-TITLE = "Jumpy!"
+TITLE = "Catformer!"
 WIDTH = 600
 HEIGHT = 600
 FPS = 60
@@ -31,6 +31,7 @@ PLATFORM_LAYER = 1
 POW_LAYER = 1
 MOB_LAYER = 2
 CLOUD_LAYER = 0
+VOLUME = 0.05
 
 # define colors
 WHITE = (255, 255, 255)
