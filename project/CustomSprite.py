@@ -11,9 +11,13 @@ class CustomSprite(pg.sprite.Sprite):
     #game   = None
     #groups = game.all_sprites
     #attributes:
+    touching_left = False
+    touching_right = False
     solid     = False
     moveable  = False
     breakable = False
+    shouldApplyPhysics = False
+
 
     def top_y(self):
         return self.pos.y - self.height
@@ -37,7 +41,13 @@ class CustomSprite(pg.sprite.Sprite):
         return vec(self.pos.x,self.bot_y()-self.height/2)
 
 
-
+    def corners(self):
+        corners = [
+            self.topleft(),
+            self.topright(),
+            self.bottomleft(),
+            self.bottomright()]
+        return corners
 
 
     def collideWith(self):
@@ -149,6 +159,15 @@ class CustomSprite(pg.sprite.Sprite):
         else:
             return False
 
+    def applyGravity(self):
+        self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity
+        
+        self.vel += self.acc
+        print(self.vel)
+        #self.pos += self.vel +  self.acc * 0.5  
+        self.pos += self.vel
+        self.acc *= 0
+        
 
     def applyPhysics(self):
         #if not self.on_surface:

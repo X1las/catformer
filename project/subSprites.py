@@ -72,23 +72,21 @@ class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
         self.solid = True
+        self.moveable = True
         self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters, game.interactables
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
         self.rect = self.image.get_rect()
-        #self.rect.x = x
-        #self.rect.y = y
-
+   
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
-        #self.rect.x = x                                                                       # Put the platform at the given coordinate.
-        #self.rect.y = y
-                                                                           # \\
-
-
+   
     def update(self):
-        self.pos += self.vel
+        if self.shouldApplyPhysics:
+            self.applyGravity()
+            pass
+      
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 

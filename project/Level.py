@@ -19,7 +19,7 @@ class Level:
 
     def setBoxes(self):
         for plot in self.boxes:
-            Box(self.game, *plot)
+            Box(self.game, *plot).name = "box1"
 
     def setVases(self):
         #Vase(self.game, 100, 100, name = "vase_1")
