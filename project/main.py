@@ -31,8 +31,8 @@ class Game:
             pg.mixer.music.stop
             pg.mixer.music.unload
 
-        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
-        pg.mixer.music.play(-1)
+        #pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
+        #pg.mixer.music.play(-1)
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
 
@@ -67,8 +67,7 @@ class Game:
     # Method where we update game processes
     def update(self):
         
-        # The 3 lines below are useless without my own functions. CAN BE IGNORED
-        #self.fallOnSurface()
+     
         self.moveScreen()
         
         self.pushSprite()
@@ -76,7 +75,7 @@ class Game:
         self.collisions_rayIntersect()
                                                                    # Updates all the sprites and their positions
         self.all_sprites.update()
-        self.player.update_pos()     
+        self.player.update_pos()    
 
         if self.hitbox != None:
             self.hitbox.vel.x = 0
@@ -127,10 +126,8 @@ class Game:
                         self.playing = False                                        
                     self.running = False        
 
-                if event.key == pg.K_e:                                    # checks if the uses presses the escape key
-                                                          
+                if event.key == pg.K_e:                                    # checks if the uses presses the escape key                               
                     self.new()
-
                 if event.key == pg.K_d:
                     print("start")
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
@@ -160,15 +157,15 @@ class Game:
         self.player.jumping = True
         
         tempLen = self.player.vel.length()
-        
+        """
         corners = [
             self.player.topleft(),
             self.player.topright(),
             self.player.bottomleft(),
             self.player.bottomright()]
-
+        """
         hit = False
-
+        corners = self.player.corners()
         for corner in corners:
            
             intersect = self.player.rayIntersect(corner - self.player.pos, self.rayIntersecters)
@@ -188,32 +185,42 @@ class Game:
 
         # making vase break
         if self.hitbox:
-            vase_intersect = self.hitbox.rayIntersect(vec(0,0), self.obstacles)
+            vase_intersect = self.hitbox.rayIntersect(self.hitbox.topleft() - self.hitbox.pos, self.obstacles)
             if vase_intersect:
-                hit_point = vase_intersect[0]
-                if vase_intersect[1].y == vase_intersect[0].top_y():
-                    print("skdjfl")
-                    self.hitbox.pos.y = hit_point.top_y()
-                    self.hitbox.vel *= 0
-                    self.hitbox.fall = False
-                    self.hitbox.breaks()
+                if self.hitbox.breakable:
+                    hit_point = vase_intersect[0]
+                    if vase_intersect[1].y == vase_intersect[0].top_y():
+                        print("skdjfl")
+                        self.hitbox.pos.y = hit_point.top_y()
+                        self.hitbox.vel *= 0
+                        self.hitbox.fall = False
+                        
+                        self.hitbox.breaks()
+                if self.hitbox.moveable:
+                    hitSolid = self.hitsSolid(self.hitbox , vase_intersect[0],  vase_intersect[1] , self.hitbox.topleft())
+                    if hitSolid:
+                        self.hitbox.shouldApplyPhysics = False
+                        print("hit solid")
+        
+        
 
 
 
     def hitsSolid(self, moving_object, hit_object, hit_position , origin):
 
-        local_origin = origin - moving_object.pos
+        local_origin =origin -  moving_object.pos
 
         changX = 0
+        #changX = - local_origin.x
         if hit_position.x == hit_object.left_x():
             
-            self.player.touching_right = True
+            moving_object.touching_right = True
             moving_object.vel.x = 0
             changX = local_origin.x+1
 
         elif hit_position.x == hit_object.right_x():
             
-            self.player.touching_left = True
+            moving_object.touching_left = True
             moving_object.vel.x = 0
             changX = local_origin.x-1
         
@@ -228,9 +235,24 @@ class Game:
             #print("hit bottom")
             moving_object.vel.y = 0
             changY = local_origin.y+1
-
+        
+        if moving_object.moveable:
+            print(f'{moving_object.name} pos: {moving_object.pos}')
+        #print(f'{moving_object.name} pos: {moving_object.pos}')
         moving_object.pos = hit_position - local_origin + Vec(changX,changY)
+        if moving_object.moveable:
+            print(f'hit pos: {hit_position}')
+            print(f'local origin: {local_origin}')
+            print(f'changeXY: {vec(changX, changY)}')
 
+            print(f'{moving_object.name} pos: {moving_object.pos}')
+        #print(f'hit pos: {hit_position}')
+        #print(f'local origin: {local_origin}')  
+        #print(f'changeXY: {vec(changX, changY)}')
+
+        #print(f'{moving_object.name} pos: {moving_object.pos}') 
+        
+        return (changX != 0 or changY != 0)
         """poop = Vase(self,hit_position.x,hit_position.y)
         self.all_sprites.add(poop)"""
 
@@ -260,14 +282,15 @@ class Game:
             if boxHits:
                 self.hitbox = boxHits[0]
                 if self.hitbox.moveable == True:
-                    self.hitbox.vel.x = temp
+                    self.hitbox.vel.x = self.player.vel.x
+                    self.hitbox.shouldApplyPhysics = True
                     self.player.locked = True
         
                 if self.hitbox.breakable == True:
-
                     self.hitbox.fall = True
 
-            self.player.locked = False
+            else:
+                self.player.locked = False
 
       
 
