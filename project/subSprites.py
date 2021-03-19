@@ -71,6 +71,7 @@ class Platform(CustomSprite):
 class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
+        self._layer = 5
         self.solid = True
         self.moveable = True
         self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters, game.interactables
@@ -86,7 +87,13 @@ class Box(CustomSprite):
         if self.shouldApplyPhysics:
             self.applyGravity()
             pass
-      
+        #if self.somebool:
+         #   self.vel = vec(game.player.vel.x, self.vel.y)
+        if self.change_vel:
+            self.vel = self.change_vel
+        self.somebool = False
+        self.change_vel = None
+        self.pos += self.vel
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 

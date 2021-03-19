@@ -71,32 +71,23 @@ class Game:
      
         self.moveScreen()
         
-        self.pushSprite()
- 
+        
+        
         self.collisions_rayIntersect()
                                                                    # Updates all the sprites and their positions
+        """
+        counter = 0
+        for i in self.all_sprites:
+            counter += 1
+            print(f'{counter} : {i}')
+        """
         self.all_sprites.update()
         self.player.update_pos()    
-
+        self.pushSprite()
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
-    # Method to check if player falls on a surface, seems like a Player class method
-    def fallOnSurface(self):
-        if self.player.vel.y > 0:                                                                   # Only when player moves
-            hits = pg.sprite.spritecollide(self.player, self.surfaces, False)                       # Returns list of platforms that player collides with
-            if hits:                                                                                # If hits is not empty
-                hitSurface = hits[0]
-                for hit in hits:                                                                    # Checks to find the bottom must platform (if more a hit)
-                    if hit.rect.bottom > hitSurface.rect.bottom:                                    #\\
-                        hitSurface = hit                                                            #\\
-                if self.player.pos.x < hitSurface.rect.right + WIDTH/100 and \
-                   self.player.pos.x > hitSurface.rect.left  - WIDTH/100:                           # If the player is actually (horizontically) on the platform
-                    if self.player.pos.y < hitSurface.rect.centery:                                 # If player is above half of the platform
-                        self.player.pos.y = hitSurface.rect.top                                     # Pop on top of the platform
-                        self.player.vel.y = 0                                                       # Stop player from falling
-                        self.player.jumping =   False
-
+  
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
         
@@ -158,13 +149,7 @@ class Game:
         self.player.jumping = True
         
         tempLen = self.player.vel.length()
-        """
-        corners = [
-            self.player.topleft(),
-            self.player.topright(),
-            self.player.bottomleft(),
-            self.player.bottomright()]
-        """
+       
         hit = False
         corners = self.player.corners()
         for corner in corners:
@@ -240,7 +225,11 @@ class Game:
         if moving_object.moveable:
             print(f'{moving_object.name} pos: {moving_object.pos}')
         #print(f'{moving_object.name} pos: {moving_object.pos}')
-        moving_object.pos = hit_position - local_origin + Vec(changX,changY)
+
+        #moving_object.pos = hit_position - local_origin + Vec(changX,changY)
+        moving_object.change_pos = hit_position - local_origin + Vec(changX,changY)
+        #moving_object.adds_pos.append(hit_position - local_origin + Vec(changX,changY))
+
         if moving_object.moveable:
             print(f'hit pos: {hit_position}')
             print(f'local origin: {local_origin}')
@@ -280,11 +269,18 @@ class Game:
         temp = self.player.vel.x
         if self.interactive_box != None:
             boxHits = pg.sprite.spritecollide(self.interactive_box, self.interactables, False)
+            
             if boxHits:
                 self.hitbox = boxHits[0]
+                
                 if self.hitbox.moveable == True:
-                    self.hitbox.vel.x = self.player.vel.x
-                    self.hitbox.shouldApplyPhysics = True
+                    #print("something")
+                    #self.hitbox.vel.x = self.player.vel.x
+                    #self.somebool = True
+                    self.hitbox.change_vel = vec(self.player.vel.x, self.hitbox.vel.y)
+                    print(self.hitbox.change_vel)
+                    #self.hitbox.change_vel.x = self.player.vel.x
+                    #self.hitbox.shouldApplyPhysics = True
                     self.player.locked = True
         
                 if self.hitbox.breakable == True:

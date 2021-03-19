@@ -11,6 +11,10 @@ class CustomSprite(pg.sprite.Sprite):
     #game   = None
     #groups = game.all_sprites
     #attributes:
+    somebool = False
+    change_pos = None
+    change_vel = None
+    adds_pos = []
     touching_left = False
     touching_right = False
     solid     = False
@@ -175,7 +179,13 @@ class CustomSprite(pg.sprite.Sprite):
         
         #print(f"stop falling?: {self.stop_falling}")
         #print(f'acc before: {self.acc}')
+        if self.change_pos:
+            self.pos = self.change_pos
+        self.change_pos = None
+        for vect in self.adds_pos:
+            self.pos += vect
         
+
         self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity
         self.acc.x += self.vel.x * PLAYER_FRICTION          # Friction
 
