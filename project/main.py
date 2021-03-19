@@ -33,6 +33,7 @@ class Game:
 
         pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
         pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(VOLUME)
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
 
