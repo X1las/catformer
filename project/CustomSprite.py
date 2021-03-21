@@ -123,9 +123,12 @@ class CustomSprite(pg.sprite.Sprite):
             if vel.x != 0:
                 for collidable in collidables:                                   
                     # X intersection will be equal to the left side by default and the right side if we're moving left 
-                    x_temp_intersection = collidable.pos.x - collidable.width/2
+                    #x_temp_intersection = collidable.pos.x - collidable.width/2
+                    x_temp_intersection = collidable.left_x()
+                    
                     if vel.x < 0:
-                        x_temp_intersection = collidable.pos.x + collidable.width/2
+                        #x_temp_intersection = collidable.pos.x + collidable.width/2
+                        x_temp_intersection = collidable.right_x()
                     
                     x_local_temp = x_temp_intersection - original_pos.x                               
                     y_local_temp = 0                                         
