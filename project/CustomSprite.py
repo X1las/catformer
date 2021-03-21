@@ -165,6 +165,42 @@ class CustomSprite(pg.sprite.Sprite):
             return [hitObject,intersection]
         else:
             return False
+    
+
+    # function that checks intersection using all four corners of moving object
+    # input:  objects that might be hit
+    # output: uniform point of collision, side of hit object (not implemented yet)
+    def quadrupleRayIntersect(self, potential_hit_objects):
+        dicts = [
+            {"corner": "TL", "corner pos": self.topleft(),     "hitsobject": None, "hit pos": None, "relative hit pos": None},
+            {"corner": "TR", "corner pos": self.topright(),    "hitsobject": None, "hit pos": None, "relative hit pos": None},
+            {"corner": "BL", "corner pos": self.bottomleft(),  "hitsobject": None, "hit pos": None, "relative hit pos": None},
+            {"corner": "BR", "corner pos": self.bottomright(), "hitsobject": None, "hit pos": None, "relative hit pos": None}
+        ]
+
+        finalIntersection = None
+        
+        # iterate through all corners and ray intersect for each
+        for corner in dicts:
+            hitObj = self.rayIntersect(corner["corner pos"], potential_hit_objects)             # rayIntersect for each corner
+            
+            if hitObj:
+                corner["hitsobject"] = hitObj[0]                                                # store which object the corner will hit
+                corner["hit pos"] = hitObj[1]                                                   # store where the corner will hit the object
+                corner["relative hit pos"] = corner["hit pos"] - corner["corner pos"]           # store the collision position relative to the corner
+                finalIntersection = [item["relative hit pos"] for item in dicts if item["relative hit pos"]][0]    # store one collision position relative to the corner for updating
+        
+        # find the intersection point that is closest and return it + side of hit object        
+        if finalIntersection:
+            print(finalIntersection)
+            for corner in dicts:
+                if corner["relative hit pos"] and corner["relative hit pos"].length() < finalIntersection.length():
+                    finalIntersection = corner["relative hit pos"]                              # update final collision point to the closest collision point
+        
+                
+        
+        
+
 
     def applyGravity(self):
         self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity

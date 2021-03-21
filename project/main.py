@@ -138,7 +138,7 @@ class Game:
 
 
 
-    # Method for drawing everything to the screen
+     # Method for drawing everything to the screen
     def draw(self):                                                             
         self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
@@ -147,7 +147,7 @@ class Game:
 
     def collisions_rayIntersect(self):
         self.player.jumping = True
-        
+        #self.player.quadrupleRayIntersect(self.rayIntersecters)
         tempLen = self.player.vel.length()
        
         hit = False
@@ -155,6 +155,7 @@ class Game:
         for corner in corners:
            
             intersect = self.player.rayIntersect(corner - self.player.pos, self.rayIntersecters)
+            
             if intersect:
                
                 tempVec = intersect[1] - corner
