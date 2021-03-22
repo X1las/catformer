@@ -73,12 +73,17 @@ class Game:
         
         self.player.collisions_rayIntersect(self.rayIntersecters)
                                                                    # Updates all the sprites and their positions
+
+        for box in self.boxes:
+            box.collisions_rayIntersect(self.rayIntersecters)
+            
         """
         counter = 0
         for i in self.all_sprites:
             counter += 1
             print(f'{counter} : {i}')
         """
+        
         self.all_sprites.update()
         self.player.update_pos()    
         self.pushSprite()
