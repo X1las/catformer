@@ -32,7 +32,7 @@ POW_LAYER = 1
 MOB_LAYER = 2
 CLOUD_LAYER = 0
 #VOLUME = 0.05
-VOLUME = 0.2
+VOLUME = 0.1
 
 # define colors
 WHITE = (255, 255, 255)
