@@ -201,8 +201,6 @@ class CustomSprite(pg.sprite.Sprite):
         
         
 
-        
-
 
     def applyGravity(self):
         self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity
