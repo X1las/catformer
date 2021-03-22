@@ -101,8 +101,6 @@ class Game:
                 for sprite in self.all_sprites:
                     sprite.pos.x       += abs(self.player.vel.x) 
 
-
-
     # Method that checks for events in pygame
     def events(self):
         for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
@@ -133,11 +131,6 @@ class Game:
                     print(self.interactive_box)
                     # delete interactive
                      
-            
-
-
-
-
      # Method for drawing everything to the screen
     def draw(self):                                                             
         self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
@@ -147,7 +140,7 @@ class Game:
 
     def collisions_rayIntersect(self):
         self.player.jumping = True
-        #self.player.quadrupleRayIntersect(self.rayIntersecters)
+        self.player.quadrupleRayIntersect(self.rayIntersecters)
         tempLen = self.player.vel.length()
        
         hit = False
