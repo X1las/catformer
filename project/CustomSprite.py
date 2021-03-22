@@ -201,6 +201,8 @@ class CustomSprite(pg.sprite.Sprite):
         
         
 
+        
+
 
     def applyGravity(self):
         self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity
@@ -231,6 +233,11 @@ class CustomSprite(pg.sprite.Sprite):
         #self.vel.x = 0.93 * self.vel.x
         self.vel += self.acc                                # equations of motion
    
+        if abs(self.vel.x) < 0.25:                          
+            self.vel.x = 0                                  
+        
+
+        self.pos += self.vel +  self.acc * 0.5     
         self.stop_falling = False
    
         
