@@ -196,16 +196,41 @@ class CustomSprite(pg.sprite.Sprite):
             for corner in dicts:
                 if corner["relative hit pos"] and corner["relative hit pos"].length() < finalIntersection.length():
                     finalIntersection = corner["relative hit pos"]                              # update final collision point to the closest collision point
+        
+                
+        
+        
+
+
+    def applyGravity(self):
+        self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity
+        
+        self.vel += self.acc
+        print(self.vel)
+        #self.pos += self.vel +  self.acc * 0.5  
+        self.pos += self.vel
+        self.acc *= 0
+        
+
+    def applyPhysics(self):
+        #if not self.on_surface:
+        #if not self.on_collided_surface:
+        
+        #print(f"stop falling?: {self.stop_falling}")
+        #print(f'acc before: {self.acc}')
+        if self.change_pos:
+            self.pos = self.change_pos
+        self.change_pos = None
+        for vect in self.adds_pos:
+            self.pos += vect
+        
+
+        self.acc    = self.acc + vec(0, PLAYER_GRAV)       # Gravity
         self.acc.x += self.vel.x * PLAYER_FRICTION          # Friction
 
         #self.vel.x = 0.93 * self.vel.x
         self.vel += self.acc                                # equations of motion
    
-        if abs(self.vel.x) < 0.25:                          
-            self.vel.x = 0                                  
-        
-
-        self.pos += self.vel +  self.acc * 0.5     
         self.stop_falling = False
    
         
