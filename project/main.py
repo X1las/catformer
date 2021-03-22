@@ -137,12 +137,11 @@ class Game:
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
 
-
     def collisions_rayIntersect(self):
         self.player.jumping = True
         self.player.quadrupleRayIntersect(self.rayIntersecters)
         tempLen = self.player.vel.length()
-       
+
         hit = False
         corners = self.player.corners()
         for corner in corners:
@@ -182,13 +181,9 @@ class Game:
                         self.hitbox.shouldApplyPhysics = False
                         print("hit solid")
         
-        
-
-
-
     def hitsSolid(self, moving_object, hit_object, hit_position , origin):
 
-        local_origin =origin -  moving_object.pos
+        local_origin = origin -  moving_object.pos
 
         changX = 0
         #changX = - local_origin.x
