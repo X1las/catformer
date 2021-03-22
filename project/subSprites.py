@@ -84,9 +84,9 @@ class Box(CustomSprite):
         self.pos = vec(x,y)
    
     def update(self):
-        if self.shouldApplyPhysics:
-            self.applyGravity()
-            pass
+        #if self.shouldApplyPhysics:
+        self.applyGravity()
+        #    pass
         #if self.somebool:
          #   self.vel = vec(game.player.vel.x, self.vel.y)
         if self.change_vel:
