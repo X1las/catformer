@@ -178,24 +178,85 @@ class CustomSprite(pg.sprite.Sprite):
             {"corner": "BR", "corner pos": self.bottomright(), "hitsobject": None, "hit pos": None, "relative hit pos": None}
         ]
 
+        #print(dicts)
+
         finalIntersection = None
+        finalHitObject = None
+        tempLen = self.vel.length()
+        finalResult = None
         
         # iterate through all corners and ray intersect for each
         for corner in dicts:
-            hitObj = self.rayIntersect(corner["corner pos"], potential_hit_objects)             # rayIntersect for each corner
+            hitObj = self.rayIntersect(corner["corner pos"]-self.pos, potential_hit_objects)             # rayIntersect for each corner
             
             if hitObj:
                 corner["hitsobject"] = hitObj[0]                                                # store which object the corner will hit
                 corner["hit pos"] = hitObj[1]                                                   # store where the corner will hit the object
                 corner["relative hit pos"] = corner["hit pos"] - corner["corner pos"]           # store the collision position relative to the corner
-                finalIntersection = [item["relative hit pos"] for item in dicts if item["relative hit pos"]][0]    # store one collision position relative to the corner for updating
+                # update final collision point to the closest collision point
+                if corner["relative hit pos"].length() < tempLen:
+                    tempLen = corner["relative hit pos"].length()
+                    finalResult = corner
+                        
+        return finalResult
+
+    #
+    def collisions_rayIntersect(self,Intersecters):
         
-        # find the intersection point that is closest and return it + side of hit object        
-        if finalIntersection:
-            print(finalIntersection)
-            for corner in dicts:
-                if corner["relative hit pos"] and corner["relative hit pos"].length() < finalIntersection.length():
-                    finalIntersection = corner["relative hit pos"]                              # update final collision point to the closest collision point
+        #self.player.jumping = True
+        corner = self.quadrupleRayIntersect(Intersecters)
+
+        if corner:
+            hitObject = corner['hitsobject']
+            hitPos = corner['hit pos']
+            relHitPos = corner['relative hit pos']
+            if hitObject.solid:
+                self.hitsSolid(hitObject,  hitPos, relHitPos)
+
+        # making vase break
+        """if self.hitbox:
+            vase_intersect = self.hitbox.rayIntersect(self.hitbox.topleft() - self.hitbox.pos, self.obstacles)
+            if vase_intersect:
+                if self.hitbox.breakable:
+                    hit_point = vase_intersect[0]
+                    if vase_intersect[1].y == vase_intersect[0].top_y():
+                        print("skdjfl")
+                        self.hitbox.pos.y = hit_point.top_y()
+                        self.hitbox.vel *= 0
+                        self.hitbox.fall = False
+                        
+                        self.hitbox.breaks()
+                if self.hitbox.moveable:
+                    hitSolid = self.hitsSolid(self.hitbox , vase_intersect[0],  vase_intersect[1] , self.hitbox.topleft())
+                    if hitSolid:
+                        self.hitbox.shouldApplyPhysics = False
+                        print("hit solid")
+        """
+
+    # Moves the object when it's about to collide with a solid object
+    def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
+        
+        betweenLR = hitObject.right_x() > hitPosition.x > hitObject.left_x()
+        betweenTB = hitObject.bot_y()   > hitPosition.y > hitObject.top_y()
+        
+        offsetX = 0
+        if hitPosition.x == hitObject.left_x() and betweenTB:
+            offsetX = -1
+            self.vel.x = 0
+        elif hitPosition.x == hitObject.right_x() and betweenTB:
+            offsetX = 1
+            self.vel.x = 0
+        
+        offsetY = 0
+        if hitPosition.y == hitObject.top_y() and betweenLR:
+            offsetY = -1
+            self.vel.y = 0
+            #self.player.jumping = False
+        elif hitPosition.y == hitObject.bot_y() and betweenLR:
+            offsetY = 1
+            self.vel.y = 0
+
+        self.pos += relativeHitPos + vec(offsetX,offsetY)                                  
         
                 
         

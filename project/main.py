@@ -71,9 +71,7 @@ class Game:
      
         self.moveScreen()
         
-        
-        
-        self.collisions_rayIntersect()
+        self.player.collisions_rayIntersect(self.rayIntersecters)
                                                                    # Updates all the sprites and their positions
         """
         counter = 0
@@ -100,6 +98,8 @@ class Game:
             if self.player.vel.x < 0:
                 for sprite in self.all_sprites:
                     sprite.pos.x       += abs(self.player.vel.x) 
+
+
 
     # Method that checks for events in pygame
     def events(self):
@@ -131,113 +131,11 @@ class Game:
                     print(self.interactive_box)
                     # delete interactive
                      
-     # Method for drawing everything to the screen
+    # Method for drawing everything to the screen
     def draw(self):                                                             
         self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
-
-    def collisions_rayIntersect(self):
-        self.player.jumping = True
-        self.player.quadrupleRayIntersect(self.rayIntersecters)
-        tempLen = self.player.vel.length()
-
-        hit = False
-        corners = self.player.corners()
-        for corner in corners:
-           
-            intersect = self.player.rayIntersect(corner - self.player.pos, self.rayIntersecters)
-            
-            if intersect:
-               
-                tempVec = intersect[1] - corner
-                if tempVec.length() < tempLen:
-                    tempLen = tempVec.length()
-                    hitObject = intersect[0]
-                    hitPos = intersect[1]
-                    cornerOrigin = corner   
-                    hit = True
-        
-        if hit:
-            if hitObject.solid:
-                self.hitsSolid(self.player , hitObject,  hitPos , cornerOrigin)
-
-        # making vase break
-        if self.hitbox:
-            vase_intersect = self.hitbox.rayIntersect(self.hitbox.topleft() - self.hitbox.pos, self.obstacles)
-            if vase_intersect:
-                if self.hitbox.breakable:
-                    hit_point = vase_intersect[0]
-                    if vase_intersect[1].y == vase_intersect[0].top_y():
-                        print("skdjfl")
-                        self.hitbox.pos.y = hit_point.top_y()
-                        self.hitbox.vel *= 0
-                        self.hitbox.fall = False
-                        
-                        self.hitbox.breaks()
-                if self.hitbox.moveable:
-                    hitSolid = self.hitsSolid(self.hitbox , vase_intersect[0],  vase_intersect[1] , self.hitbox.topleft())
-                    if hitSolid:
-                        self.hitbox.shouldApplyPhysics = False
-                        print("hit solid")
-        
-    def hitsSolid(self, moving_object, hit_object, hit_position , origin):
-
-        local_origin = origin -  moving_object.pos
-
-        changX = 0
-        #changX = - local_origin.x
-        if hit_position.x == hit_object.left_x():
-            
-            moving_object.touching_right = True
-            moving_object.vel.x = 0
-            changX = local_origin.x+1
-
-        elif hit_position.x == hit_object.right_x():
-            
-            moving_object.touching_left = True
-            moving_object.vel.x = 0
-            changX = local_origin.x-1
-        
-        changY = 0
-        if hit_position.y == hit_object.top_y():
-            #print("hit top")
-            moving_object.vel.y = 0
-            self.player.jumping = False
-            changY = local_origin.y-1
-
-        elif hit_position.y == hit_object.bot_y():
-            #print("hit bottom")
-            moving_object.vel.y = 0
-            changY = local_origin.y+1
-        
-        if moving_object.moveable:
-            print(f'{moving_object.name} pos: {moving_object.pos}')
-        #print(f'{moving_object.name} pos: {moving_object.pos}')
-
-        #moving_object.pos = hit_position - local_origin + Vec(changX,changY)
-        moving_object.change_pos = hit_position - local_origin + Vec(changX,changY)
-        #moving_object.adds_pos.append(hit_position - local_origin + Vec(changX,changY))
-
-        if moving_object.moveable:
-            print(f'hit pos: {hit_position}')
-            print(f'local origin: {local_origin}')
-            print(f'changeXY: {vec(changX, changY)}')
-
-            print(f'{moving_object.name} pos: {moving_object.pos}')
-        #print(f'hit pos: {hit_position}')
-        #print(f'local origin: {local_origin}')  
-        #print(f'changeXY: {vec(changX, changY)}')
-
-        #print(f'{moving_object.name} pos: {moving_object.pos}') 
-        
-        return (changX != 0 or changY != 0)
-        """poop = Vase(self,hit_position.x,hit_position.y)
-        self.all_sprites.add(poop)"""
-
-        #moving_object.pos = hit_position-moving_object.vel
-        # set position of player to that side
-        # set vel to 0 if appropriate
 
     # pushes a sprite (such as a box)
 
@@ -278,11 +176,6 @@ class Game:
             else:
                 self.player.locked = False
 
-      
-
-
-            
-
 """
 collisions()
     obj = player.rayIntersect(all_sprites)
@@ -290,9 +183,6 @@ collisions()
             move obj
         if obj == pickUp
             player picks up
-
-
-
 
 in Player:
 - pushSprite() -> pushing boxes etc.                                      - pygame collision

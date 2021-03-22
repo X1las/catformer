@@ -84,6 +84,15 @@ class Player(CustomSprite):
         self.pos = temp_pos
         return possibleHits
 
+    def collisions_rayIntersect(self,Intersecters):
+        self.jumping = True
+        super().collisions_rayIntersect(Intersecters)
+
+    # Moves the object when it's about to collide with a solid object
+    def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
+        betweenLR = hitObject.right_x() > hitPosition.x > hitObject.left_x()
+        self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
+        super().hitsSolid(hitObject, hitPosition , relativeHitPos)
 
     def poo(self):
         pass
