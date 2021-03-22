@@ -241,8 +241,3 @@ class CustomSprite(pg.sprite.Sprite):
         
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
-
-
-
-
-
