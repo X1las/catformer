@@ -1,5 +1,5 @@
 H: Settings
-Spawn: 300 , 400
+Spawn: 170 , 350
 Length: 5000
 
 H: Platforms
@@ -11,4 +11,4 @@ H: Platforms
 900 ,  400 , 150 , 40 , p_5
 
 H: Boxes
-170 , 355 , 45 , 45 , box_1
+150 , 350 , 45 , 45 , box_1

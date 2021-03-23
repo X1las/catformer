@@ -20,15 +20,16 @@ class Player(CustomSprite):
         self.game           = game; self.name = name; self._layer = 1
         self.facing = None
         self.jumping        = False
+        self.solid          = True
         self.width          = 30; self.height = 40
         self.image          =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
-        self.touching_slopeight = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
         self.interactRect   = self.interact()
         self.locked = False
+        self.groups = game.all_sprites, game.rayIntersecters, game.players
 
     def interact(self):
 
@@ -48,6 +49,7 @@ class Player(CustomSprite):
         self.applyPhysics() 
         self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         round(self.pos)
+        self.update_pos()
     
     def update_pos(self):
         self.rect.midbottom = self.pos.asTuple()
@@ -90,7 +92,7 @@ class Player(CustomSprite):
 
     # Moves the object when it's about to collide with a solid object
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
-        betweenLR = hitObject.right_x() > hitPosition.x > hitObject.left_x()
+        betweenLR = hitObject.right_x() >= hitPosition.x >= hitObject.left_x()
         self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)
 

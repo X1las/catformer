@@ -47,6 +47,7 @@ class Game:
         self.non_player         = pg.sprite.LayeredUpdates()
         self.rayIntersecters    = pg.sprite.Group()
         self.interactables      = pg.sprite.Group()
+        self.players            = pg.sprite.Group()
 
         self.interactive_box = None
         self.hitbox = None
@@ -68,13 +69,6 @@ class Game:
     # Method where we update game processes
     def update(self):
         self.moveScreen()
-        
-        self.player.collisions_rayIntersect(self.rayIntersecters)
-                                                                   # Updates all the sprites and their positions
-
-        for box in self.boxes:
-            box.collisions_rayIntersect(self.rayIntersecters)
-            
         """
         counter = 0
         for i in self.all_sprites:
@@ -82,9 +76,18 @@ class Game:
             print(f'{counter} : {i}')
         """
         
+        #self.all_sprites.update()                                               # Updates all the sprites and their positions
+        #self.player.update_pos()                                    
+
+        #self.all_sprites.update() 
         self.all_sprites.update()
-        self.player.update_pos()    
         self.pushSprite()
+
+        self.player.collisions_rayIntersect(self.rayIntersecters)
+
+        for box in self.boxes:
+            box.collisions_rayIntersect(self.rayIntersecters)   
+
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
@@ -131,7 +134,7 @@ class Game:
                     self.interactive_box.kill()
                     self.interactive_box = None
                     
-                    print(self.interactive_box)
+                    #print(self.interactive_box)
                     # delete interactive
                      
     # Method for drawing everything to the screen
@@ -156,7 +159,6 @@ class Game:
                         interacted_box = box
         """
         
-        temp = self.player.vel.x
         if self.interactive_box != None:
             boxHits = pg.sprite.spritecollide(self.interactive_box, self.interactables, False)
             
@@ -168,7 +170,7 @@ class Game:
                     #self.hitbox.vel.x = self.player.vel.x
                     #self.somebool = True
                     self.hitbox.change_vel = vec(self.player.vel.x, self.hitbox.vel.y)
-                    print(self.hitbox.change_vel)
+                    #print(self.hitbox.change_vel)
                     #self.hitbox.change_vel.x = self.player.vel.x
                     #self.hitbox.shouldApplyPhysics = True
                     self.player.locked = True
