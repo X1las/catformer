@@ -20,6 +20,7 @@ class CustomSprite(pg.sprite.Sprite):
     solid     = False
     moveable  = False
     breakable = False
+    pickup = False
     shouldApplyPhysics = False
     inAir = True
     gravity = GRAVITY
@@ -56,10 +57,61 @@ class CustomSprite(pg.sprite.Sprite):
         return corners
 
 
-    def collideWith(self):
+
+    def collideWith(self, player, collider):
         pass
 
     
+    def buttonPress(self, activator, agents):
+        collided = pg.sprite.spritecollide(activator, agents, False)
+        if collided: 
+            for collided_obj in collided:
+                activator.activate()
+                self.prevActivated = True
+                return activator
+        else:
+            self.deactivate()
+            activator.activated = False
+            activator.deactivated = True
+            return None
+
+    def leverPull(self, lever, agents, turn):
+        collided = pg.sprite.spritecollide(lever, agents, False)
+        if collided: 
+            for collided_obj in collided:
+
+                if not turn:
+                    print("not turn")
+                    if not lever.activated:
+                        lever.activate()
+                    else:
+                        lever.deactivate()
+                self.prevActivated = True
+                return lever
+        
+
+
+
+    def touchEnemy(self, player, damager):
+        collided = pg.sprite.spritecollide(player, damager, False)
+        if collided: 
+            for collided_obj in collided:
+                player.takeDamage()
+                    
+        
+    def touchPickUp(self, player, pickups):
+        collided = pg.sprite.spritecollide(player, pickups, False)
+        if collided: 
+            for collided_obj in collided:
+                if collided_obj.type == 'health' and player.lives < 9:
+                    player.heal()
+                    collided_obj.kill()
+                if collided_obj.type == 'catnip':
+                    player.addCatnip()
+                    collided_obj.kill()
+            
+                    
+        pass
   
 
 
