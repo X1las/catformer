@@ -16,12 +16,12 @@ vec = Vec
 # Classes
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
-        pg.sprite.Sprite.__init__(self, game.all_sprites)
+        pg.sprite.Sprite.__init__(self, game.all_sprites, game.surfaces)
         self.game           = game; self.name = name; self._layer = 1
         self.facing = None
         self.jumping        = False
         self.width          = 30; self.height = 40
-        self.image          =  pg.Surface((self.width,self.height)); self.image.fill((250,0,0)); self.rect = self.image.get_rect()
+        self.image          =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
         self.touching_slopeight = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
@@ -29,6 +29,25 @@ class Player(CustomSprite):
         self.on_collided_surface = False; self.stop_falling = False
         self.interactRect   = self.interact()
         self.locked = False
+        self.lives = 9
+        self.catnip_level = 0
+
+    def takeDamage(self):
+        self.lives -= 1
+        print(self.lives)
+        
+        return self.lives
+
+    def heal(self):
+        self.lives += 1
+        print(self.lives)
+        return self.lives
+
+
+    def addCatnip(self):
+        self.catnip_level += 1
+        print(self.catnip_level)
+        return self.catnip_level
 
     def interact(self):
 

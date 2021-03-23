@@ -47,11 +47,22 @@ class Game:
         self.non_player         = pg.sprite.LayeredUpdates()
         self.rayIntersecters    = pg.sprite.Group()
         self.interactables      = pg.sprite.Group()
+        self.pickups            = pg.sprite.Group()
+        self.damager            = pg.sprite.Group()
+        self.activator          = pg.sprite.Group()
+        self.interactive_boxes    = pg.sprite.Group()
 
         self.interactive_box = None
         self.hitbox = None
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
+        self.health = PickUp(self, 400, 400, 10, 10, 'health')
+        self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')
+        self.button = Button(self, 400, 550, 30, 20)
+        self.water = Water(self, 500, 400, 10, 10)
+        self.lever = Lever(self, 450, 550, 10, 40)
+        self.turn = False
+        self.intboxlist = [None]
         self.run()                                                              # Runs the
 
     # Method that loops until a false is passed inside the game
@@ -65,10 +76,20 @@ class Game:
             self.update()                                                       
             self.draw()                                                         
 
+    def isSameInteraction(self):
+        return self.intboxlist[0] == self.interactive_box
+
     # Method where we update game processes
     def update(self):
         self.moveScreen()
-        
+        self.player.touchPickUp(self.player, self.pickups)
+        self.player.touchEnemy(self.player, self.damager)
+        activated_button = self.button.buttonPress(self.button, self.surfaces)
+        #if self.intboxlist[0] != self.interactive_box:
+         #   print(f'box in list {self.intboxlist[0]}')
+          #  print(f'box itself: {self.interactive_box}')
+        if self.interactive_box:
+            self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
         self.player.collisions_rayIntersect(self.rayIntersecters)
                                                                    # Updates all the sprites and their positions
 
@@ -122,8 +143,12 @@ class Game:
                 if event.key == pg.K_e:                                    # checks if the uses presses the escape key                               
                     self.new()
                 if event.key == pg.K_d:
-                    print("start")
+                    
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
+                    self.intboxlist[0] = self.interactive_box
+                    print(self.interactive_box == self.intboxlist[0])
+          
+                    
 
                                 
             if event.type == pg.KEYUP:
@@ -131,7 +156,7 @@ class Game:
                     self.interactive_box.kill()
                     self.interactive_box = None
                     
-                    print(self.interactive_box)
+                    #print(self.interactive_box)
                     # delete interactive
                      
     # Method for drawing everything to the screen
@@ -168,7 +193,7 @@ class Game:
                     #self.hitbox.vel.x = self.player.vel.x
                     #self.somebool = True
                     self.hitbox.change_vel = vec(self.player.vel.x, self.hitbox.vel.y)
-                    print(self.hitbox.change_vel)
+                    #print(self.hitbox.change_vel)
                     #self.hitbox.change_vel.x = self.player.vel.x
                     #self.hitbox.shouldApplyPhysics = True
                     self.player.locked = True
