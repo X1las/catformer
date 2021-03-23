@@ -67,12 +67,11 @@ class Game:
 
     # Method where we update game processes
     def update(self):
-        
-     
         self.moveScreen()
         
         self.player.collisions_rayIntersect(self.rayIntersecters)
-                                                                   # Updates all the sprites and their positions
+        
+                                                                                # Updates all the sprites and their positions
         """
         counter = 0
         for i in self.all_sprites:
