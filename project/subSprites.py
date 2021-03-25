@@ -80,17 +80,7 @@ class Box(CustomSprite):
         self.pos = vec(x,y)
    
     def update(self):
-        #if self.shouldApplyPhysics:
-        self.applyGravity()
-        
-        #    pass
-        #if self.somebool:
-         #   self.vel = vec(game.player.vel.x, self.vel.y)
-        if self.change_vel:
-            self.vel = self.change_vel
-        self.somebool = False
-        self.change_vel = None
-        self.pos += self.vel
+        self.applyPhysics(self.game.rayIntersecters)
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 
@@ -116,7 +106,7 @@ class Vase(CustomSprite):
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
         if self.fall == True:
-            self.applyPhysics()
+            self.applyPhysics(self.game.rayIntersecters)
     
     @classmethod
     def on_platform(cls, game, plat : Platform, placement : str , name = None):

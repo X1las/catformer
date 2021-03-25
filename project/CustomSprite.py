@@ -7,23 +7,16 @@ vec = Vec
 # Classes
 class CustomSprite(pg.sprite.Sprite):
     #attributes:
-    pos    = vec(); vel  = vec(); acc = vec()
-    height = None
-    width = None
-    somebool = False
-    change_pos = None
-    change_vel = None
-    adds_pos = []
-    touching_left = False
-    touching_right = False
-    solid     = False
-    moveable  = False
-    breakable = False
-    pickup = False
-    shouldApplyPhysics = False
-    inAir = True
-    gravity = GRAVITY
-    friction = FRICTION
+    pos         = vec(); vel  = vec(); acc = vec()
+    change_pos  = None
+    change_vel  = None
+    solid       = False
+    moveable    = False
+    breakable   = False
+    pickup      = False
+    inAir       = True
+    gravity     = GRAVITY
+    friction    = FRICTION
 
     def top_y(self):
         return self.pos.y - self.height
@@ -45,17 +38,6 @@ class CustomSprite(pg.sprite.Sprite):
 
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
-
-    def corners(self):
-        corners = [
-            self.topleft(),
-            self.topright(),
-            self.bottomleft(),
-            self.bottomright()]
-        return corners
-
-    def collideWith(self, player, collider):
-        pass
     
     def buttonPress(self, activator, agents):
         collided = pg.sprite.spritecollide(activator, agents, False)
@@ -212,23 +194,21 @@ class CustomSprite(pg.sprite.Sprite):
     # input:  objects that might be hit
     # output: uniform point of collision, side of hit object (not implemented yet)
     def quadrupleRayIntersect(self, potential_hit_objects):
+        offset = 1
         dicts = [
-            {"corner": "TL", "corner pos": self.topleft(),     "hitsobject": None, "hit pos": None, "relative hit pos": None},
-            {"corner": "TR", "corner pos": self.topright(),    "hitsobject": None, "hit pos": None, "relative hit pos": None},
-            {"corner": "BL", "corner pos": self.bottomleft(),  "hitsobject": None, "hit pos": None, "relative hit pos": None},
-            {"corner": "BR", "corner pos": self.bottomright(), "hitsobject": None, "hit pos": None, "relative hit pos": None}
+            {"corner": "TL", "corner pos": self.topleft()+vec(offset,offset),     "hitsobject": None, "hit pos": None, "relative hit pos": None},
+            {"corner": "TR", "corner pos": self.topright()+vec(-offset,offset),    "hitsobject": None, "hit pos": None, "relative hit pos": None},
+            {"corner": "BL", "corner pos": self.bottomleft()+vec(offset,-offset),  "hitsobject": None, "hit pos": None, "relative hit pos": None},
+            {"corner": "BR", "corner pos": self.bottomright()+vec(-offset,-offset), "hitsobject": None, "hit pos": None, "relative hit pos": None}
         ]
-
-        #print(dicts)
 
         tempLen = self.vel.length()
         finalResult = None
         
         # iterate through all corners and ray intersect for each
         for corner in dicts:
-            hitObj = self.rayIntersect(corner["corner pos"]-self.pos, potential_hit_objects)             # rayIntersect for each corner
+            hitObj = self.rayIntersect(corner["corner pos"]-self.pos, potential_hit_objects)    # rayIntersect for each corner
             if hitObj:
-                #print(hitObj[0])
                 corner["hitsobject"] = hitObj[0]                                                # store which object the corner will hit
                 corner["hit pos"] = hitObj[1]                                                   # store where the corner will hit the object
                 corner["relative hit pos"] = corner["hit pos"] - corner["corner pos"]           # store the collision position relative to the corner
@@ -274,57 +254,86 @@ class CustomSprite(pg.sprite.Sprite):
     # Moves the object when it's about to collide with a solid object
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
         
+        #print(hitObject)
+
         betweenLR = hitObject.right_x() >= hitPosition.x >= hitObject.left_x()
         betweenTB = hitObject.bot_y()   >= hitPosition.y >= hitObject.top_y()
         
         offsetX = 0
-        if hitPosition.x == hitObject.left_x() and betweenTB:
+        if round(hitPosition.x) == round(hitObject.left_x()) and betweenTB:
             offsetX = -1
             self.vel.x = 0
-        elif hitPosition.x == hitObject.right_x() and betweenTB:
+            self.acc.x = 0
+        elif round(hitPosition.x) == round(hitObject.right_x()) and betweenTB:
             offsetX = 1
             self.vel.x = 0
+            self.acc.x = 0
         
         offsetY = 0
         if hitPosition.y == hitObject.top_y() and betweenLR:
             offsetY = -1
             self.vel.y = 0
+            self.acc.y = 0
             self.inAir = False
         elif hitPosition.y == hitObject.bot_y() and betweenLR:
             offsetY = 1
             self.vel.y = 0
+            self.acc.y = 0
 
         self.pos += relativeHitPos + vec(offsetX,offsetY)                                  
-        
-                
-        
-        
 
-
-    def applyGravity(self):
-        self.acc    = self.acc + vec(0, self.gravity)       # Gravity
+    """def applyGravity(self , Intersecters):
+    
+        if self.inAir:
+            self.gravity = GRAVITY
+        else:
+            self.gravity = 0
+            tempVelY = self.vel.y
+            self.vel.y = 1
+            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
+            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
+            self.vel.y = tempVelY
+            if (not intersect) and (not intersect2):
+                self.inAir = True
         
+        self.acc += vec(0, self.gravity)       # Gravity
         self.vel += self.acc
-        #print(self.vel)
-        #self.pos += self.vel +  self.acc * 0.5  
-        self.pos += self.vel
-        self.acc *= 0
         
+        if self.change_vel:
+            self.vel = self.change_vel
+        
+        self.change_vel = None
+        self.pos += self.vel
+        self.acc *= 0"""
 
-    def applyPhysics(self):
+    def applyPhysics(self,Intersecters):
 
-        self.acc    = self.acc + vec(0, self.gravity)       # Gravity
+        if self.inAir:
+            self.gravity = GRAVITY
+        else:
+            self.gravity = 0
+            tempVel = self.vel.copy()
+            self.vel.y = 2
+            self.vel.x = 0
+            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
+            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
+            self.vel = tempVel
+            if (not intersect) and (not intersect2):
+                self.inAir = True
+        
+        self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
-
-        self.vel += self.acc                                # equations of motion
+        self.vel   += self.acc                              # equations of motion
    
         if abs(self.vel.x) < 0.25:                          
             self.vel.x = 0                                  
-        
+
+        if self.change_vel:
+            self.vel = self.change_vel
+        self.change_vel = None  
+
+        self.collisions_rayIntersect(Intersecters) 
 
         self.pos += self.vel +  self.acc * 0.5     
-        self.stop_falling = False
-   
-        
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 

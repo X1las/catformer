@@ -80,41 +80,23 @@ class Game:
     def isSameInteraction(self):
         return self.intboxlist[0] == self.interactive_box
 
-    # Method where we update game processes
+    # Method where we update game processesd
     def update(self):
-        self.moveScreen()
-
         self.player.touchPickUp(self.player, self.pickups)
         self.player.touchEnemy(self.player, self.damager)
         activated_button = self.button.buttonPress(self.button, self.surfaces)
         
-        #if self.intboxlist[0] != self.interactive_box:
-         #   print(f'box in list {self.intboxlist[0]}')
-          # print(f'box itself: {self.interactive_box}')
         if self.interactive_box:
             self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
                                                                    # Updates all the sprites and their positions
-
-        for box in self.boxes:
-            box.collisions_rayIntersect(self.rayIntersecters)
-            
-        """
-        counter = 0
-        for i in self.all_sprites:
-            counter += 1
-            print(f'{counter} : {i}')
-        """
-        
-        self.all_sprites.update()
-        self.pushSprite()
-
-        self.player.collisions_rayIntersect(self.rayIntersecters)
-
-        for box in self.boxes:
-            box.collisions_rayIntersect(self.rayIntersecters)   
-
         if self.hitbox != None:
             self.hitbox.vel.x = 0
+
+        self.moveScreen()
+        self.pushSprite()
+        self.all_sprites.update() 
+        
+        
 
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
