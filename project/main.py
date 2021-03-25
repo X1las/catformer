@@ -90,7 +90,7 @@ class Game:
         
         #if self.intboxlist[0] != self.interactive_box:
          #   print(f'box in list {self.intboxlist[0]}')
-          #  print(f'box itself: {self.interactive_box}')
+          # print(f'box itself: {self.interactive_box}')
         if self.interactive_box:
             self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
                                                                    # Updates all the sprites and their positions

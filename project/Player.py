@@ -16,7 +16,7 @@ vec = Vec
 # Classes
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
-        pg.sprite.Sprite.__init__(self, game.all_sprites, game.surfaces)
+        pg.sprite.Sprite.__init__(self, game.all_sprites)
         self.game           = game; self.name = name; self._layer = 1
         self.facing = None
         self.jumping        = False
@@ -62,7 +62,7 @@ class Player(CustomSprite):
         #self.touches()    
         self.move()
         self.applyPhysics() 
-        self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        #self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         round(self.pos)
         self.update_pos()
     
@@ -107,8 +107,10 @@ class Player(CustomSprite):
 
     # Moves the object when it's about to collide with a solid object
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
+        print(self.jumping)
         betweenLR = hitObject.right_x() >= hitPosition.x >= hitObject.left_x()
-        self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
+        self.jumping = False
+        #self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)
 
     def poo(self):
