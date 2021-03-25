@@ -35,6 +35,7 @@ class Player(CustomSprite):
 
     def takeDamage(self):
         self.lives -= 1
+        self.pos = self.pos
         print(self.lives)
         
         return self.lives

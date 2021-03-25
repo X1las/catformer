@@ -8,7 +8,6 @@ class Level:
     def __init__(self, game):
         self.surfaces = pg.sprite.Group()
         self.game = game
-        self.length = length
 
     # --> Just makes the list of platforms in "settings" to actual platforms. creates the objects
     def setPlatforms(self):

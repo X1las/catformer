@@ -6,11 +6,10 @@ vec = Vec
 
 # Classes
 class CustomSprite(pg.sprite.Sprite):
-    pos    = vec(); vel  = vec(); acc = vec()
-    height = None; width = None
-    #game   = None
-    #groups = game.all_sprites
     #attributes:
+    pos    = vec(); vel  = vec(); acc = vec()
+    height = None
+    width = None
     somebool = False
     change_pos = None
     change_vel = None
@@ -47,7 +46,6 @@ class CustomSprite(pg.sprite.Sprite):
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
 
-
     def corners(self):
         corners = [
             self.topleft(),
@@ -56,11 +54,8 @@ class CustomSprite(pg.sprite.Sprite):
             self.bottomright()]
         return corners
 
-
-
     def collideWith(self, player, collider):
         pass
-
     
     def buttonPress(self, activator, agents):
         collided = pg.sprite.spritecollide(activator, agents, False)
@@ -79,7 +74,6 @@ class CustomSprite(pg.sprite.Sprite):
         collided = pg.sprite.spritecollide(lever, agents, False)
         if collided: 
             for collided_obj in collided:
-
                 if not turn:
                     print("not turn")
                     if not lever.activated:
@@ -88,16 +82,12 @@ class CustomSprite(pg.sprite.Sprite):
                         lever.deactivate()
                 self.prevActivated = True
                 return lever
-        
-
-
 
     def touchEnemy(self, player, damager):
         collided = pg.sprite.spritecollide(player, damager, False)
         if collided: 
             for collided_obj in collided:
-                player.takeDamage()
-                    
+                player.takeDamage()         
         
     def touchPickUp(self, player, pickups):
         collided = pg.sprite.spritecollide(player, pickups, False)
@@ -109,12 +99,6 @@ class CustomSprite(pg.sprite.Sprite):
                 if collided_obj.type == 'catnip':
                     player.addCatnip()
                     collided_obj.kill()
-            
-                    
-        pass
-  
-
-
 
     #groups = game.all_sprites
     def rayIntersect(self,local_origin,collidables):   
