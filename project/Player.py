@@ -33,6 +33,7 @@ class Player(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.lives = 9
         self.catnip_level = 0
+        self.isPlayer = True
 
     def takeDamage(self):
         self.lives -= 1

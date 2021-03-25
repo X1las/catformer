@@ -72,6 +72,12 @@ class Vec(object):
     def __round__(self):
         self.x, self.y = round(self.x), round(self.y)
 
+    def rounded(self):
+        roundedx = round(self.x)
+        roundedy = round(self.y)
+        return Vec(roundedx,roundedy)
+
+
     def printExact(self):
         print(f'({self.x},{self.y})')
 
