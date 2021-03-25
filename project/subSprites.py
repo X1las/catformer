@@ -64,8 +64,8 @@ class LevelGoal(CustomSprite):
 
     def activate(self):
         # Whatever it does
-        #self.game.run()
         self.game.new()
+        
 
 # ---------------- PLATFORM ---------------------------------------------------------------------------------------------------------------------------------
 
