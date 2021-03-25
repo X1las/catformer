@@ -16,7 +16,8 @@ vec = Vec
 # Classes
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
-        pg.sprite.Sprite.__init__(self, game.all_sprites)
+        self.groups = game.all_sprites, game.rayIntersecters, game.players, game.weight_act
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game           = game; self.name = name; self._layer = 1
         self.facing = None
         self.jumping        = False
@@ -29,26 +30,27 @@ class Player(CustomSprite):
         self.on_collided_surface = False; self.stop_falling = False
         self.interactRect   = self.interact()
         self.locked = False
-        self.groups = game.all_sprites, game.rayIntersecters, game.players
+        
+        self.relativePosition = self.pos.copy()
         self.lives = 9
         self.catnip_level = 0
 
     def takeDamage(self):
         self.lives -= 1
         self.pos = self.pos
-        print(self.lives)
+        
         
         return self.lives
 
     def heal(self):
         self.lives += 1
-        print(self.lives)
+       
         return self.lives
 
 
     def addCatnip(self):
         self.catnip_level += 1
-        print(self.catnip_level)
+    
         return self.catnip_level
 
     def interact(self):
@@ -60,14 +62,16 @@ class Player(CustomSprite):
     # --> The different things that updates the position of the player
     def update(self):                                                            # Updating pos, vel and acc.
         self.jump()
-        #self.touches()    
+        #self.touches()   
         self.move()
         self.applyPhysics() 
-        #self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        #self.touching_right = False;    seplf.touching_left = False; self.touching_top = False; self.touching_bot = False
         round(self.pos)
         self.update_pos()
     
     def update_pos(self):
+        #pass
+        #self.rect.midbottom = self.relativePosition.asTuple()
         self.rect.midbottom = self.pos.asTuple()
 
     # -->  This function will check if a player stands on a platform and well when jump if space is pressed
@@ -108,10 +112,10 @@ class Player(CustomSprite):
 
     # Moves the object when it's about to collide with a solid object
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
-        print(self.jumping)
+        #print(self.jumping)
         betweenLR = hitObject.right_x() >= hitPosition.x >= hitObject.left_x()
-        self.jumping = False
-        #self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
+        #self.jumping = False
+        self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)
 
     def poo(self):

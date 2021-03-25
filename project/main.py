@@ -52,6 +52,7 @@ class Game:
         self.damager            = pg.sprite.Group()
         self.activator          = pg.sprite.Group()
         self.interactive_boxes  = pg.sprite.Group()
+        self.weight_act         = pg.sprite.Group()             
 
         self.interactive_box = None
         self.hitbox = None
@@ -64,6 +65,10 @@ class Game:
         self.lever = Lever(self, 450, 550, 10, 40)
         self.turn = False
         self.intboxlist = [None]
+        self.frames = 0
+        self.counter = 0
+        self.prev_counter = 0
+        self.text = pg.Surface((2,2))
         self.run()                                                              # Runs the
 
     # Method that loops until a false is passed inside the game
@@ -71,10 +76,18 @@ class Game:
         self.playing = True                                                     # Making a playing boolean that can be changed from inside the loop
         while self.playing:                                                     
             self.clock.tick(FPS)                                                # Changing our tickrate so that our frames per second will be the same as FPS from settings
-            
+            """
+            self.frames += 1
+            if (self.frames >= 60):
+                print("new frame")
+                self.frames = 0
+            print(self.clock.get_rawtime())
+            """
             # Runs all our methods on loop:
+
             self.events()                                                       
-            self.update()                                                       
+            self.update()
+            self.displayHUD()                                                       
             self.draw()                                                         
 
     def isSameInteraction(self):
@@ -86,14 +99,13 @@ class Game:
 
         self.player.touchPickUp(self.player, self.pickups)
         self.player.touchEnemy(self.player, self.damager)
-        activated_button = self.button.buttonPress(self.button, self.surfaces)
-        
-        #if self.intboxlist[0] != self.interactive_box:
-         #   print(f'box in list {self.intboxlist[0]}')
-          # print(f'box itself: {self.interactive_box}')
+        activated_button = self.button.buttonPress(self.button, self.weight_act)
+        print(self.weight_act)
+    
+        self.turn = self.counter > self.prev_counter
         if self.interactive_box:
-            self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
-                                                                   # Updates all the sprites and their positions
+            self.lever.leverPull(self.lever, self.interactive_boxes, self.turn)
+                                                              
 
         for box in self.boxes:
             box.collisions_rayIntersect(self.rayIntersecters)
@@ -116,6 +128,8 @@ class Game:
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
+        self.prev_counter = self.counter
+
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
@@ -123,11 +137,24 @@ class Game:
         if self.player.rect.right >= CAMERA_BORDER_R:                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 for sprite in self.all_sprites:
+                    """
+                    if not isinstance(sprite, Player):
+                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                    else:
+                    #if isinstance(sprite, Player):
+                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                    """
                     sprite.pos.x       -= abs(self.player.vel.x)  
         
         if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
             if self.player.vel.x < 0:
                 for sprite in self.all_sprites:
+                    """
+                    if not isinstance(sprite, Player):
+                        sprite.relativePosition.x +=  abs(self.player.vel.x)
+                    else:
+                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                    """
                     sprite.pos.x       += abs(self.player.vel.x) 
 
 
@@ -151,9 +178,15 @@ class Game:
                     self.new()
                 if event.key == pg.K_d:
                     
+                    self.prev_counter = self.counter
+
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
+                    self.counter += 1
+                    #print(self.counter)
+
                     self.intboxlist[0] = self.interactive_box
-                    print(self.interactive_box == self.intboxlist[0])
+                    #print(self.interactive_box == self.intboxlist[0])
+                    
           
                     
 
@@ -169,8 +202,32 @@ class Game:
     # Method for drawing everything to the screen
     def draw(self):                                                             
         self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
+        #for sprite in self.all_sprites:
+         #   if not isinstance(sprite, Player):
+          #      sprite.updateRect()
+        
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+        self.screen.blit(self.lives_display,  (100, 100))
+        self.screen.blit(self.points_display,  (100, 150))
+        
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
+        #for sprite in self.all_sprites:
+            #if not isinstance(sprite, Player):
+         #   sprite.resetRects()
+
+    def displayHUD(self):
+        self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
+        self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
+        #font = pg.font.SysFont('Algerian', 40, True, False)
+        #self.text = font.render(f'Lives: {self.player.lives}', True, (255, 255, 255))
+        #self.text.blit(self.screen, (500, 100))
+        #pg.displat.update()
+        #pg.display.blit(text, (500, 100))
+
+    def textToDisplay(self, text, font = 'Algerian', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
+        font = pg.font.SysFont(font, fontsize, bold, italic)
+        return font.render(text, True, color)
+
 
     # pushes a sprite (such as a box)
 

@@ -22,8 +22,15 @@ class CustomSprite(pg.sprite.Sprite):
     pickup = False
     shouldApplyPhysics = False
     inAir = True
+    relativePosition = vec()
     gravity = GRAVITY
     friction = FRICTION
+
+    def updateRect(self):
+        self.rect.midbottom = self.relativePosition.asTuple()
+
+    def resetRects(self):
+        self.rect.midbottom = self.pos.asTuple()
 
     def top_y(self):
         return self.pos.y - self.height
@@ -74,8 +81,7 @@ class CustomSprite(pg.sprite.Sprite):
         collided = pg.sprite.spritecollide(lever, agents, False)
         if collided: 
             for collided_obj in collided:
-                if not turn:
-                    print("not turn")
+                if turn:
                     if not lever.activated:
                         lever.activate()
                     else:
