@@ -86,7 +86,7 @@ class Game:
 
         self.player.touchPickUp(self.player, self.pickups)
         self.player.touchEnemy(self.player, self.damager)
-        activated_button = self.button.buttonPress(self.button, self.surfaces)
+        #activated_button = self.button.buttonPress(self.button, self.surfaces)
         
         #if self.intboxlist[0] != self.interactive_box:
          #   print(f'box in list {self.intboxlist[0]}')

@@ -16,7 +16,7 @@ vec = Vec
 # Classes
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
-        pg.sprite.Sprite.__init__(self, game.all_sprites, game.surfaces)
+        pg.sprite.Sprite.__init__(self, game.all_sprites)
         self.game           = game; self.name = name; self._layer = 1
         self.facing = None
         self.jumping        = False
