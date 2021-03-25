@@ -42,6 +42,30 @@ class Interactive(CustomSprite):
     def draw(self):
         pass
 
+# ---------------- LEVEL GOAL---------------------------------------------------------------------------------------------------------------------------------
+
+class LevelGoal(CustomSprite):
+    def __init__(self,game,x,y, width, height, name = None): 
+        self.game = game
+        self.width = width; self.height = height
+        self.groups = game.all_sprites, game.level_goals
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((255, 165, 0))
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (x,y)
+        self.pos = vec(x,y)
+        self.relativePosition = self.pos.copy()
+
+
+    def update(self):
+        round(self.pos)
+        self.rect.midbottom = self.pos.asTuple()
+
+    def activate(self):
+        # Whatever it does
+        #self.game.run()
+        self.game.new()
 
 # ---------------- PLATFORM ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -95,10 +119,7 @@ class Box(CustomSprite):
     def update(self):
         #if self.shouldApplyPhysics:
         self.applyGravity()
-        
-        #    pass
-        #if self.somebool:
-         #   self.vel = vec(game.player.vel.x, self.vel.y)
+    
         if self.change_vel:
             self.vel = self.change_vel
         self.somebool = False
@@ -166,7 +187,7 @@ class Lever(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.interactables#, game.self.levers
+        self.groups = game.all_sprites, game.interactables, game.levers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,200,200))
@@ -184,6 +205,7 @@ class Lever(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.image.fill((255,255,255))
+        # whatever else it needs to activate
      
             
         
@@ -195,7 +217,7 @@ class Lever(CustomSprite):
             self.activated = False
           
             self.image.fill((0,200,200))
-            
+        # whatever else it needs to deactivate
             
     
 
@@ -209,7 +231,7 @@ class Button(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.activator
+        self.groups = game.all_sprites, game.activator, game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((200,0,0))
@@ -217,7 +239,6 @@ class Button(CustomSprite):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
-        #self.prevActivated = False
         self.activated = False
         self.deactivated = True
 
@@ -226,7 +247,7 @@ class Button(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
-        
+        # whatever else it needs to activate
         
 
     def deactivate(self):
@@ -237,6 +258,7 @@ class Button(CustomSprite):
             print("anything")
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
             #    self.prevActivated = False
+        # whatever else it needs to deactivate
 
     def update(self):
        
