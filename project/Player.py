@@ -51,8 +51,6 @@ class Player(CustomSprite):
         return self.catnip_level
 
     def interact(self):
-
-        
         pass
 
 
@@ -66,7 +64,7 @@ class Player(CustomSprite):
         #self.touches()    
         self.move()
         self.applyPhysics() 
-        self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
+        #self.touching_right = False;    self.touching_left = False; self.touching_top = False; self.touching_bot = False
         round(self.pos)
         self.update_pos()
     
@@ -111,8 +109,10 @@ class Player(CustomSprite):
 
     # Moves the object when it's about to collide with a solid object
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
+        print(self.jumping)
         betweenLR = hitObject.right_x() >= hitPosition.x >= hitObject.left_x()
-        self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
+        self.jumping = False
+        #self.jumping = not (hitPosition.y == hitObject.top_y() and betweenLR)
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)
 
     def poo(self):

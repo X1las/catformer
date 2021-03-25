@@ -86,14 +86,14 @@ class Game:
 
         self.player.touchPickUp(self.player, self.pickups)
         self.player.touchEnemy(self.player, self.damager)
-        #activated_button = self.button.buttonPress(self.button, self.surfaces)
+        activated_button = self.button.buttonPress(self.button, self.surfaces)
         
         #if self.intboxlist[0] != self.interactive_box:
          #   print(f'box in list {self.intboxlist[0]}')
-          #  print(f'box itself: {self.interactive_box}')
+          # print(f'box itself: {self.interactive_box}')
         if self.interactive_box:
             self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
-        self.player.collisions_rayIntersect(self.rayIntersecters)
+        #self.player.collisions_rayIntersect(self.rayIntersecters)
                                                                    # Updates all the sprites and their positions
 
         for box in self.boxes:
