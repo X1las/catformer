@@ -61,49 +61,53 @@ class CustomSprite(pg.sprite.Sprite):
             self.bottomright()]
         return corners
 
-    def collideWith(self, player, collider):
-        pass
-    
-    def buttonPress(self, activator, agents):
-        collided = pg.sprite.spritecollide(activator, agents, False)
+    def endGoal(self, player):
+        has_collided = pg.sprite.collide_rect(self, player)
+        if has_collided:
+            self.activate()
+            
+
+ 
+    def buttonPress(self, agents):
+        collided = pg.sprite.spritecollide(self, agents, False)
         if collided: 
             for collided_obj in collided:
-                activator.activate()
+                self.activate()
                 self.prevActivated = True
-                return activator
+                return self
         else:
             self.deactivate()
-            activator.activated = False
-            activator.deactivated = True
+            self.activated = False
+            self.deactivated = True
             return None
 
-    def leverPull(self, lever, agents, turn):
-        collided = pg.sprite.spritecollide(lever, agents, False)
+    def leverPull(self,  agents, turn):
+        collided = pg.sprite.spritecollide(self, agents, False)
         if collided: 
             for collided_obj in collided:
                 if turn:
-                    if not lever.activated:
-                        lever.activate()
+                    if not self.activated:
+                        self.activate()
                     else:
-                        lever.deactivate()
+                        self.deactivate()
                 self.prevActivated = True
-                return lever
+                return self
 
-    def touchEnemy(self, player, damager):
-        collided = pg.sprite.spritecollide(player, damager, False)
+    def touchEnemy(self, damager):
+        collided = pg.sprite.spritecollide(self, damager, False)
         if collided: 
             for collided_obj in collided:
-                player.takeDamage()         
+                self.takeDamage()         
         
-    def touchPickUp(self, player, pickups):
-        collided = pg.sprite.spritecollide(player, pickups, False)
+    def touchPickUp(self, pickups):
+        collided = pg.sprite.spritecollide (self, pickups, False)
         if collided: 
             for collided_obj in collided:
-                if collided_obj.type == 'health' and player.lives < 9:
-                    player.heal()
+                if collided_obj.type == 'health' and self.lives < 9:
+                    self.heal()
                     collided_obj.kill()
                 if collided_obj.type == 'catnip':
-                    player.addCatnip()
+                    self.addCatnip()
                     collided_obj.kill()
 
     #groups = game.all_sprites

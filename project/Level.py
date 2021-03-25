@@ -23,8 +23,14 @@ class Level:
     def setVases(self):
         #Vase(self.game, 100, 100, name = "vase_1")
         vase = Vase.on_platform(self.game, self.plats[1], "left", name = "vase 2")
-        print(vase.name)
+        
+    def setLevers(self):
+        for lever in self.levers:
+            Lever(self.game, *lever)
 
+    def setButtons(self):
+        for button in self.buttons:
+            Button(self.game, *button)
 
     def setSurfaces(self):
         #self.surfaces = Surface
@@ -32,6 +38,8 @@ class Level:
         platforms = self.setPlatforms()
         boxes = self.setBoxes()
         vases = self.setVases()
+        buttons = self.setButtons()
+        levers = self.setLevers()
     
     # Function to load level files
     def load(self , filename): 
@@ -39,7 +47,9 @@ class Level:
         # Define empty obstacle arrays:   
         plats = []                                      
         boxes = []                                      
-        vases = []   
+        vases = []  
+        buttons = [] 
+        levers = []
 
         spawn = Vec(0,0)                                # Define a spawnpoint vector as 0,0
         category = "none"                               # Define a category string as none 
@@ -81,9 +91,21 @@ class Level:
                     linesplit = line.split(" , ")
                     boxes+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
 
+                if category == "Buttons" and line!= "":
+                    linesplit = line.split(" , ")
+                    buttons+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
+
+                if category == "Levers" and line!= "":
+                    linesplit = line.split(" , ")
+                    levers+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
+
+
+
         self.platforms = plats
         self.spawn = spawn
         self.boxes = boxes
+        self.buttons = buttons
+        self.levers = levers
         self.length = length
         self.musicTrack = track
         print("Level loaded successfully!")

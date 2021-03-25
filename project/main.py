@@ -21,6 +21,7 @@ class Game:
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
 
+
     # Method that creates a new game
     def new(self):
         # Here is where we would need filewrite for loading multiple levels
@@ -52,24 +53,29 @@ class Game:
         self.damager            = pg.sprite.Group()
         self.activator          = pg.sprite.Group()
         self.interactive_boxes  = pg.sprite.Group()
-        self.weight_act         = pg.sprite.Group()             
+        self.weight_act         = pg.sprite.Group()      
+        self.buttons            = pg.sprite.Group()       
+        self.levers             = pg.sprite.Group()
+        self.level_goals         = pg.sprite.Group()
 
-        self.interactive_box = None
-        self.hitbox = None
+        self.interactive_box    = None
+        self.hitbox             = None
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
+        self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')
+        
+
         self.health = PickUp(self, 400, 400, 10, 10, 'health')
         self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')
-        self.button = Button(self, 400, 550, 30, 20)
         self.water = Water(self, 500, 400, 10, 10)
-        self.lever = Lever(self, 450, 550, 10, 40)
         self.turn = False
         self.intboxlist = [None]
         self.frames = 0
         self.counter = 0
         self.prev_counter = 0
         self.text = pg.Surface((2,2))
-        self.run()                                                              # Runs the
+        self.run()
+        #self.run()                                                              # Runs the
 
     # Method that loops until a false is passed inside the game
     def run(self):                       
@@ -90,32 +96,26 @@ class Game:
             self.displayHUD()                                                       
             self.draw()                                                         
 
-    def isSameInteraction(self):
-        return self.intboxlist[0] == self.interactive_box
-
     # Method where we update game processes
     def update(self):
         self.moveScreen()
 
-        self.player.touchPickUp(self.player, self.pickups)
-        self.player.touchEnemy(self.player, self.damager)
-        activated_button = self.button.buttonPress(self.button, self.weight_act)
+        self.level_goal.endGoal(self.player)
+        self.player.touchPickUp(self.pickups)
+        self.player.touchEnemy(self.damager)
+        for button in self.buttons:
+            activated_button = button.buttonPress(self.weight_act)
         print(self.weight_act)
     
         self.turn = self.counter > self.prev_counter
         if self.interactive_box:
-            self.lever.leverPull(self.lever, self.interactive_boxes, self.turn)
+            for lever in self.levers:
+                lever.leverPull(self.interactive_boxes, self.turn)
                                                               
 
         for box in self.boxes:
             box.collisions_rayIntersect(self.rayIntersecters)
-            
-        """
-        counter = 0
-        for i in self.all_sprites:
-            counter += 1
-            print(f'{counter} : {i}')
-        """
+        
         
         self.all_sprites.update()
         self.pushSprite()
@@ -176,21 +176,12 @@ class Game:
 
                 if event.key == pg.K_e:                                    # checks if the uses presses the escape key                               
                     self.new()
-                if event.key == pg.K_d:
-                    
+                if event.key == pg.K_d:  
                     self.prev_counter = self.counter
-
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
                     self.counter += 1
-                    #print(self.counter)
-
                     self.intboxlist[0] = self.interactive_box
-                    #print(self.interactive_box == self.intboxlist[0])
-                    
-          
-                    
-
-                                
+                                           
             if event.type == pg.KEYUP:
                 if event.key == pg.K_d:
                     self.interactive_box.kill()
@@ -298,5 +289,6 @@ in Player:
 g = Game()                                                                      # Creates a game instance
                                                              # While loop checking the Game.running boolean
 g.new()                                                                     # Creates a new running process, if broken without stopping the game from running it will restart
+#g.run()
 pg.quit()                                                                       # Exits the pygame program
 sys.exit()                                                                      # Makes sure the process is terminated (Linux issue mostly)

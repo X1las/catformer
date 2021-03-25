@@ -16,7 +16,7 @@ vec = Vec
 # Classes
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
-        self.groups = game.all_sprites, game.rayIntersecters, game.players, game.weight_act
+        self.groups = game.all_sprites,  game.players, game.weight_act
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game           = game; self.name = name; self._layer = 1
         self.facing = None
@@ -28,7 +28,7 @@ class Player(CustomSprite):
         self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
         self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
-        self.interactRect   = self.interact()
+        #self.interactRect   = self.interact()
         self.locked = False
         
         self.relativePosition = self.pos.copy()
@@ -38,23 +38,16 @@ class Player(CustomSprite):
     def takeDamage(self):
         self.lives -= 1
         self.pos = self.pos
-        
-        
         return self.lives
 
     def heal(self):
         self.lives += 1
-       
         return self.lives
-
 
     def addCatnip(self):
         self.catnip_level += 1
-    
         return self.catnip_level
 
-    def interact(self):
-        pass
 
     def initKeys(self,jump, left, right, crouch):
         self.jump_key = jump
@@ -79,7 +72,7 @@ class Player(CustomSprite):
         self.rect.y += 2                                                         # to see if there is a platform 2 pix below
         hits = pg.sprite.spritecollide(self, self.game.surfaces, False)          # Returns the platforms that (may) have been touched
         self.rect.y -= 2                                                         # undo 2 lines before
-        if hits and not self.jumping:                                            # If you are on aslopeplatform and not jumping
+        if not self.jumping:                                            # If you are on aslopeplatform and not jumping
             keys = pg.key.get_pressed()                                            # Checks for keys getting pressed
             if keys[pg.K_SPACE]:                                                 # If it's left arrow
                 self.jumping = True                                                    # then you jump
