@@ -12,6 +12,7 @@ from random import choice, randrange, uniform
 # Variables
 vec = Vec
 
+# ---------------- INTERACTIVE ---------------------------------------------------------------------------------------------------------------------------------
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
 
@@ -23,6 +24,7 @@ class Interactive(CustomSprite):
         self.image = pg.Surface((width,height)); 
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
         self.image.fill((0,200,0)) 
+        self.relativePosition = self.pos.copy()
         if self.facing == "left":
             self.rect.bottomright = (player.pos.x,player.pos.y)   
         else: 
@@ -39,7 +41,34 @@ class Interactive(CustomSprite):
 
     def draw(self):
         pass
-       
+
+# ---------------- LEVEL GOAL---------------------------------------------------------------------------------------------------------------------------------
+
+class LevelGoal(CustomSprite):
+    def __init__(self,game,x,y, width, height, name = None): 
+        self.game = game
+        self.width = width; self.height = height
+        self.groups = game.all_sprites, game.level_goals
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((255, 165, 0))
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (x,y)
+        self.pos = vec(x,y)
+        self.relativePosition = self.pos.copy()
+
+
+    def update(self):
+        round(self.pos)
+        self.rect.midbottom = self.pos.asTuple()
+
+    def activate(self):
+        # Whatever it does
+        self.game.new()
+        
+
+# ---------------- PLATFORM ---------------------------------------------------------------------------------------------------------------------------------
+
 # Classes
 class Platform(CustomSprite):
     def __init__(self, game, x, y, width, height, name, typ = None, *args, **kwargs):
@@ -47,7 +76,7 @@ class Platform(CustomSprite):
         self.solid = True
         self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
         self.groups = game.all_sprites, game.non_player, game.platforms, game.obstacles, game.non_moveable, game.rayIntersecters, game.surfaces
-
+        
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
         
@@ -57,12 +86,19 @@ class Platform(CustomSprite):
         self.typed = "platform"    
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
+        self.relativePosition = self.pos.copy()
+        #print(self.pos)
+        #print(self.relativePosition)
     
 
 
     def update(self):
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
+        #print(self.pos)
+        #print(self.relativePosition)
+
+# ---------------- BOX ---------------------------------------------------------------------------------------------------------------------------------
 
 class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
@@ -70,19 +106,24 @@ class Box(CustomSprite):
         self._layer = 5
         self.solid = True
         self.moveable = True
-        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters, game.interactables
+        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters, game.interactables, game.weight_act
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
         self.rect = self.image.get_rect()
-   
+        
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
+        self.relativePosition = self.pos.copy()
    
     def update(self):
         self.applyPhysics(self.game.rayIntersecters)
         round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
+
+
+
+# ---------------- VASE ---------------------------------------------------------------------------------------------------------------------------------
 
 class Vase(CustomSprite):
     def __init__(self,game,x,y, name = None):
@@ -100,6 +141,7 @@ class Vase(CustomSprite):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.fall = False
+        self.relativePosition = self.pos.copy()
 
     def update(self):
         
@@ -130,19 +172,23 @@ class Vase(CustomSprite):
         self.image.fill((250,250,250))
         self.broken = True
 
+
+
+# ---------------- LEVER ---------------------------------------------------------------------------------------------------------------------------------
+
 class Lever(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.interactables#, game.self.levers
+        self.groups = game.all_sprites, game.interactables, game.levers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,200,200))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
-    
-        #self.prevActivated = False
+        self.relativePosition = self.pos.copy()
+
         self.activated = False
         self.deactivated = True
         
@@ -152,6 +198,8 @@ class Lever(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.image.fill((255,255,255))
+        # whatever else it needs to activate
+     
             
         
         
@@ -160,30 +208,30 @@ class Lever(CustomSprite):
         if self.deactivated != True:
             self.deactivated = True
             self.activated = False
-            #if self.prevActivated:
+          
             self.image.fill((0,200,200))
-            print("anything2")
+        # whatever else it needs to deactivate
             
-            #    self.prevActivated = False
     
 
     def update(self):
         round(self.pos) 
         self.rect.midbottom = self.pos.asTuple()
 
+# ---------------- BUTTON ---------------------------------------------------------------------------------------------------------------------------------
+
 class Button(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.activator
+        self.groups = game.all_sprites, game.activator, game.buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((200,0,0))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
-
-        #self.prevActivated = False
+        self.relativePosition = self.pos.copy()
         self.activated = False
         self.deactivated = True
 
@@ -192,7 +240,7 @@ class Button(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
-        
+        # whatever else it needs to activate
         
 
     def deactivate(self):
@@ -203,6 +251,7 @@ class Button(CustomSprite):
             print("anything")
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
             #    self.prevActivated = False
+        # whatever else it needs to deactivate
 
     def update(self):
        
@@ -213,7 +262,7 @@ class Button(CustomSprite):
         self.rect.midbottom = self.pos.asTuple()
 
 
-
+# ---------------- PICKUP ---------------------------------------------------------------------------------------------------------------------------------
 
 class PickUp(CustomSprite):
     def __init__(self,game,x,y, width, height, type_, name = None): 
@@ -222,7 +271,7 @@ class PickUp(CustomSprite):
         self.groups = game.all_sprites, game.pickups
         self.type = type_
         self.pickup = True
-
+        
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         if self.type == 'health':
@@ -235,13 +284,18 @@ class PickUp(CustomSprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
+        self.relativePosition = self.pos.copy()
 
     def update(self):
         round(self.pos) 
         self.rect.midbottom = self.pos.asTuple()
 
+# ---------------- HOStiLE ---------------------------------------------------------------------------------------------------------------------------------
+
 class Hostile(CustomSprite):
     pass
+
+# ---------------- WATER ---------------------------------------------------------------------------------------------------------------------------------
 
 class Water(Hostile):
     def __init__(self,game,x,y, width, height, name = None): 
@@ -254,10 +308,8 @@ class Water(Hostile):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
-
+        self.relativePosition = self.pos.copy()
         
-
-
     def update(self):
         round(self.pos) 
         self.rect.midbottom = self.pos.asTuple()
@@ -271,7 +323,7 @@ class Water(Hostile):
 
 
 
-
+# ---------------- PATrOLLING ENEMY ---------------------------------------------------------------------------------------------------------------------------------
 
 class PatrollingEnemy(Hostile):
     def __init__(self,game,x,y, name = None):

@@ -20,20 +20,10 @@ class Game:
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TTLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
+        #self.create()
 
-    # Method that creates a new game
-    def new(self):
-        # Here is where we would need filewrite for loading multiple levels
-        self.level       = Level(self)                                          # Makes a Level instance
-        self.level.load("level1")                                               # Loads the level
-        
-        if pg.mixer.music.get_busy:
-            pg.mixer.music.stop
-            pg.mixer.music.unload
-
-        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
-        pg.mixer.music.play(-1)
-        pg.mixer.music.set_volume(VOLUME)
+    def create(self):
+    
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
 
@@ -52,18 +42,44 @@ class Game:
         self.damager            = pg.sprite.Group()
         self.activator          = pg.sprite.Group()
         self.interactive_boxes  = pg.sprite.Group()
+        self.weight_act         = pg.sprite.Group()      
+        self.buttons            = pg.sprite.Group()       
+        self.levers             = pg.sprite.Group()
+        self.level_goals         = pg.sprite.Group()
 
-        self.interactive_box = None
-        self.hitbox = None
+
+    # Method that creates a new game
+    def new(self):
+        # Here is where we would need filewrite for loading multiple levels
+        self.create()
+        self.level       = Level(self)                                          # Makes a Level instance
+        self.level.load("level1")                                               # Loads the level
+        if pg.mixer.music.get_busy:
+            pg.mixer.music.stop
+            pg.mixer.music.unload
+
+        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
+        pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(VOLUME)
+ 
+
+
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
         self.level.setSurfaces()                                                # Sets surfaces?
+        self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')
+        
+
         self.health = PickUp(self, 400, 400, 10, 10, 'health')
         self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')
-        self.button = Button(self, 400, 550, 30, 20)
         self.water = Water(self, 500, 400, 10, 10)
-        self.lever = Lever(self, 450, 550, 10, 40)
         self.turn = False
         self.intboxlist = [None]
+        self.interactive_box    = None
+        self.hitbox             = None
+        self.frames = 0
+        self.counter = 0
+        self.prev_counter = 0
+        #self.text = pg.Surface((2,2))
         self.run()                                                              # Runs the
 
     # Method that loops until a false is passed inside the game
@@ -71,32 +87,47 @@ class Game:
         self.playing = True                                                     # Making a playing boolean that can be changed from inside the loop
         while self.playing:                                                     
             self.clock.tick(FPS)                                                # Changing our tickrate so that our frames per second will be the same as FPS from settings
-            
+            """
+            self.frames += 1
+            if (self.frames >= 60):
+                print("new frame")
+                self.frames = 0
+            print(self.clock.get_rawtime())
+            """
             # Runs all our methods on loop:
-            self.events()                                                       
-            self.update()                                                       
-            self.draw()                                                         
 
-    def isSameInteraction(self):
-        return self.intboxlist[0] == self.interactive_box
+            self.events()                                                       
+            self.update()
+            self.displayHUD()                                                       
+            self.draw()  
+
 
     # Method where we update game processesd
     def update(self):
-        self.player.touchPickUp(self.player, self.pickups)
-        self.player.touchEnemy(self.player, self.damager)
-        activated_button = self.button.buttonPress(self.button, self.surfaces)
+        self.moveScreen()
+
+        self.level_goal.endGoal(self.player)
+        self.player.touchPickUp(self.pickups)
+        self.player.touchEnemy(self.damager)
         
+        for button in self.buttons:
+            activated_button = button.buttonPress(self.weight_act)
+        
+        print(self.weight_act)
+    
+        self.turn = self.counter > self.prev_counter
         if self.interactive_box:
-            self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
-                                                                   # Updates all the sprites and their positions
+            for lever in self.levers:
+                lever.leverPull(self.interactive_boxes, self.turn)
+        
+        
+        self.pushSprite()
+
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
-        self.moveScreen()
-        self.pushSprite()
-        self.all_sprites.update() 
-        
-        
+        self.all_sprites.update()
+        self.prev_counter = self.counter
 
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
@@ -105,11 +136,24 @@ class Game:
         if self.player.rect.right >= CAMERA_BORDER_R:                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 for sprite in self.all_sprites:
+                    """
+                    if not isinstance(sprite, Player):
+                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                    else:
+                    #if isinstance(sprite, Player):
+                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                    """
                     sprite.pos.x       -= abs(self.player.vel.x)  
         
         if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
             if self.player.vel.x < 0:
                 for sprite in self.all_sprites:
+                    """
+                    if not isinstance(sprite, Player):
+                        sprite.relativePosition.x +=  abs(self.player.vel.x)
+                    else:
+                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                    """
                     sprite.pos.x       += abs(self.player.vel.x) 
 
 
@@ -131,15 +175,12 @@ class Game:
 
                 if event.key == pg.K_e:                                    # checks if the uses presses the escape key                               
                     self.new()
-                if event.key == pg.K_d:
-                    
+                if event.key == pg.K_d:  
+                    self.prev_counter = self.counter
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
+                    self.counter += 1
                     self.intboxlist[0] = self.interactive_box
-                    print(self.interactive_box == self.intboxlist[0])
-          
-                    
-
-                                
+                                           
             if event.type == pg.KEYUP:
                 if event.key == pg.K_d:
                     self.interactive_box.kill()
@@ -151,8 +192,32 @@ class Game:
     # Method for drawing everything to the screen
     def draw(self):                                                             
         self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
+        #for sprite in self.all_sprites:
+         #   if not isinstance(sprite, Player):
+          #      sprite.updateRect()
+        
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+        self.screen.blit(self.lives_display,  (100, 100))
+        self.screen.blit(self.points_display,  (100, 150))
+        
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
+        #for sprite in self.all_sprites:
+            #if not isinstance(sprite, Player):
+         #   sprite.resetRects()
+
+    def displayHUD(self):
+        self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
+        self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
+        #font = pg.font.SysFont('Algerian', 40, True, False)
+        #self.text = font.render(f'Lives: {self.player.lives}', True, (255, 255, 255))
+        #self.text.blit(self.screen, (500, 100))
+        #pg.displat.update()
+        #pg.display.blit(text, (500, 100))
+
+    def textToDisplay(self, text, font = 'Algerian', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
+        font = pg.font.SysFont(font, fontsize, bold, italic)
+        return font.render(text, True, color)
+
 
     # pushes a sprite (such as a box)
 
@@ -223,5 +288,6 @@ in Player:
 g = Game()                                                                      # Creates a game instance
                                                              # While loop checking the Game.running boolean
 g.new()                                                                     # Creates a new running process, if broken without stopping the game from running it will restart
+#g.run()
 pg.quit()                                                                       # Exits the pygame program
 sys.exit()                                                                      # Makes sure the process is terminated (Linux issue mostly)
