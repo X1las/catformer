@@ -136,25 +136,26 @@ class Game:
         if self.player.rect.right >= CAMERA_BORDER_R:                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 for sprite in self.all_sprites:
-                    """
+                    
                     if not isinstance(sprite, Player):
-                        sprite.relativePosition.x -= abs(self.player.vel.x)
+                        sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
                     else:
                     #if isinstance(sprite, Player):
-                        sprite.relativePosition.x -= abs(self.player.vel.x)
-                    """
+                        sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
+                    
                     sprite.pos.x       -= abs(self.player.vel.x)  
         
         if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
             if self.player.vel.x < 0:
                 for sprite in self.all_sprites:
-                    """
                     if not isinstance(sprite, Player):
-                        sprite.relativePosition.x +=  abs(self.player.vel.x)
+                        sprite.relativePosition.x = sprite.pos.x + abs(self.player.vel.x)
                     else:
-                        sprite.relativePosition.x -= abs(self.player.vel.x)
-                    """
-                    sprite.pos.x       += abs(self.player.vel.x) 
+                    #if isinstance(sprite, Player):
+                        sprite.relativePosition.x = sprite.pos.x + abs(self.player.vel.x)
+                    
+                    sprite.pos.x       += abs(self.player.vel.x)  
+                    #sprite.pos.x       += abs(self.player.vel.x) 
 
 
 
