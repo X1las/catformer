@@ -80,6 +80,8 @@ class Game:
         self.counter = 0
         self.prev_counter = 0
         #self.text = pg.Surface((2,2))
+        self.relposx = 0
+        self.realposp = 0
         self.run()                                                              # Runs the
 
     # Method that loops until a false is passed inside the game
@@ -104,8 +106,13 @@ class Game:
 
     # Method where we update game processesd
     def update(self):
+        
         self.moveScreen()
 
+        self.relativePos()
+        #for i in self.all_sprites:
+         #   print(f'pos: {i}, {i.pos}')
+          #  print(f'rel pos: {i}, {i.relativePosition}')
         self.level_goal.endGoal(self.player)
         self.player.touchPickUp(self.pickups)
         self.player.touchEnemy(self.damager)
@@ -113,8 +120,7 @@ class Game:
         for button in self.buttons:
             activated_button = button.buttonPress(self.weight_act)
         
-        print(self.weight_act)
-    
+        print(self.relposx)
         self.turn = self.counter > self.prev_counter
         if self.interactive_box:
             for lever in self.levers:
@@ -126,37 +132,54 @@ class Game:
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
+
         self.all_sprites.update()
+        
         self.prev_counter = self.counter
 
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
         
-        if self.player.rect.right >= CAMERA_BORDER_R:                                               # If the player moves to or above the right border of the screen
+        if self.player.right_x()-self.relposx >= CAMERA_BORDER_R:                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
-                for sprite in self.all_sprites:
-                    
-                    if not isinstance(sprite, Player):
-                        sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
-                    else:
+                #for sprite in self.all_sprites:
+                self.relposx += self.player.vel.x
+                self.relposp = 0
+                print("right")
+                    #sprite.relativePosition.x -= abs(self.player.vel.x)
+                    #if not isinstance(sprite, Player):
+                     #   sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
+                    #else:
                     #if isinstance(sprite, Player):
-                        sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
+                        #sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
                     
-                    sprite.pos.x       -= abs(self.player.vel.x)  
+                    #sprite.pos.x       -= abs(self.player.vel.x)  
         
-        if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
+        #if self.player.rect.left <= CAMERA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
+        if self.player.left_x()-self.relposx <= CAMERA_BORDER_L:
             if self.player.vel.x < 0:
-                for sprite in self.all_sprites:
-                    if not isinstance(sprite, Player):
-                        sprite.relativePosition.x = sprite.pos.x + abs(self.player.vel.x)
-                    else:
+                #for sprite in self.all_sprites:
+                self.relposx += self.player.vel.x
+                print("left")
+                self.relposp = 0
+                    #sprite.relativePosition.x += abs(self.player.vel.x)
+                    #if not isinstance(sprite, Player):
+                     #   sprite.relativePosition = sprite.pos + vec(abs(self.player.vel.x),0)
+                    #else:
                     #if isinstance(sprite, Player):
-                        sprite.relativePosition.x = sprite.pos.x + abs(self.player.vel.x)
+                     #   sprite.relativePosition = sprite.pos + abs(self.player.vel)
                     
-                    sprite.pos.x       += abs(self.player.vel.x)  
+                    #sprite.pos.x       += abs(self.player.vel.x)  
                     #sprite.pos.x       += abs(self.player.vel.x) 
 
+    def relativePos(self):
+        for sprite in self.all_sprites:
+            sprite.relativePosition = sprite.pos.copy()
+            #if isinstance(sprite, Player):
+            #sprite.relativePosition.x -= self.realposp
+            #else:
+            sprite.relativePosition.x -= self.relposx
 
 
     # Method that checks for events in pygame
@@ -193,18 +216,19 @@ class Game:
     # Method for drawing everything to the screen
     def draw(self):                                                             
         self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
-        #for sprite in self.all_sprites:
-         #   if not isinstance(sprite, Player):
-          #      sprite.updateRect()
+        #
+        for sprite in self.all_sprites:
+            #if not isinstance(sprite, Player):
+            sprite.updateRect()
         
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         self.screen.blit(self.lives_display,  (100, 100))
         self.screen.blit(self.points_display,  (100, 150))
         
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
-        #for sprite in self.all_sprites:
+        for sprite in self.all_sprites:
             #if not isinstance(sprite, Player):
-         #   sprite.resetRects()
+            sprite.resetRects()
 
     def displayHUD(self):
         self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')

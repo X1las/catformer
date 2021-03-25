@@ -21,9 +21,11 @@ class CustomSprite(pg.sprite.Sprite):
     friction = FRICTION
 
     def updateRect(self):
+        round(self.relativePosition)
         self.rect.midbottom = self.relativePosition.asTuple()
 
     def resetRects(self):
+        #round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 
     def top_y(self):

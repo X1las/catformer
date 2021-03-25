@@ -58,6 +58,10 @@ class Vec(object):
         return f'({self.x},{self.y})'
         #return f'({round(self.x)},{round(self.y)})'
 
+    def __abs__(self):
+        newx = abs(self.x)
+        newy = abs(self.y)
+        return Vec(newx, newy)
 
     def setList(self, x, y):
         self.lis = [x,y]
