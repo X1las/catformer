@@ -93,7 +93,6 @@ class Game:
           #  print(f'box itself: {self.interactive_box}')
         if self.interactive_box:
             self.lever.leverPull(self.lever, self.interactive_boxes, self.isSameInteraction())
-        self.player.collisions_rayIntersect(self.rayIntersecters)
                                                                    # Updates all the sprites and their positions
 
         for box in self.boxes:
@@ -106,10 +105,6 @@ class Game:
             print(f'{counter} : {i}')
         """
         
-        #self.all_sprites.update()                                               # Updates all the sprites and their positions
-        #self.player.update_pos()                                    
-
-        #self.all_sprites.update() 
         self.all_sprites.update()
         self.pushSprite()
 

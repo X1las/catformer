@@ -45,6 +45,4 @@ YELLOW = (255, 255, 0)
 LIGHTBLUE = (0, 155, 155)
 BGCOLOR = LIGHTBLUE
 
-#Level 1
-length = 5000
 

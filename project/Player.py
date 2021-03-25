@@ -51,11 +51,7 @@ class Player(CustomSprite):
         return self.catnip_level
 
     def interact(self):
-
-        
         pass
-
-
 
     def initKeys(self,jump, left, right, crouch):
         self.jump_key = jump

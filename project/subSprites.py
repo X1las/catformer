@@ -40,10 +40,6 @@ class Interactive(CustomSprite):
     def draw(self):
         pass
        
-
-
-
-
 # Classes
 class Platform(CustomSprite):
     def __init__(self, game, x, y, width, height, name, typ = None, *args, **kwargs):
