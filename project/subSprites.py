@@ -50,7 +50,7 @@ class Platform(CustomSprite):
         self.vel = kwargs.get('vel',None)
         self.solid = True
         self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
-        self.groups = game.all_sprites, game.non_player, game.platforms, game.obstacles, game.non_moveable, game.rayIntersecters
+        self.groups = game.all_sprites, game.non_player, game.platforms, game.obstacles, game.non_moveable, game.rayIntersecters, game.surfaces
 
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
