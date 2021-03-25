@@ -214,10 +214,9 @@ class Game:
         #pg.displat.update()
         #pg.display.blit(text, (500, 100))
 
-    def textToDisplay(self, text, font = 'Algerian', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
+    def textToDisplay(self, text, font = 'Comic Sans MS', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
         font = pg.font.SysFont(font, fontsize, bold, italic)
         return font.render(text, True, color)
-
 
     # pushes a sprite (such as a box)
 
