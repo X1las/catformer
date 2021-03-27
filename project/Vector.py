@@ -58,6 +58,10 @@ class Vec(object):
         return f'({self.x},{self.y})'
         #return f'({round(self.x)},{round(self.y)})'
 
+    def __abs__(self):
+        newx = abs(self.x)
+        newy = abs(self.y)
+        return Vec(newx, newy)
 
     def setList(self, x, y):
         self.lis = [x,y]
@@ -67,6 +71,12 @@ class Vec(object):
 
     def __round__(self):
         self.x, self.y = round(self.x), round(self.y)
+
+    def rounded(self):
+        roundedx = round(self.x)
+        roundedy = round(self.y)
+        return Vec(roundedx,roundedy)
+
 
     def printExact(self):
         print(f'({self.x},{self.y})')

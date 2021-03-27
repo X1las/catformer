@@ -2,6 +2,7 @@
 import pygame as pg
 from Vector import *
 from settings import *
+
 vec = Vec
 
 # Classes
@@ -19,11 +20,18 @@ class CustomSprite(pg.sprite.Sprite):
     relativePosition = vec()
     gravity = GRAVITY
     friction = FRICTION
+    isPlayer = False
 
     def updateRect(self):
-        self.rect.midbottom = self.relativePosition.asTuple()
+        roundedvec = self.relativePosition.rounded()
+        if self.isPlayer:
+            print(roundedvec)
+            print(self.relativePosition)
+        self.rect.midbottom = roundedvec.asTuple()
+        #self.rect.midbottom = self.relativePosition.asTuple()
 
     def resetRects(self):
+        #round(self.pos)
         self.rect.midbottom = self.pos.asTuple()
 
     def top_y(self):

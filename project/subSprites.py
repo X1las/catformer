@@ -17,6 +17,7 @@ class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
 
         # anchor depends on which way player faces
+        pg.sprite.Sprite.__init__(self, game.all_sprites, game.interactive_boxes)  
         self.player = player
         width = self.player.width/2 + 50
         height = self.player.height       
@@ -30,7 +31,7 @@ class Interactive(CustomSprite):
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
 
-        pg.sprite.Sprite.__init__(self, game.all_sprites, game.interactive_boxes)  
+        
     
     def update(self):
         if self.player.facing == "left":
@@ -39,8 +40,8 @@ class Interactive(CustomSprite):
         else: 
             self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
 
-    def draw(self):
-        pass
+    #def draw(self):
+     #   pass
 
 # ---------------- LEVEL GOAL---------------------------------------------------------------------------------------------------------------------------------
 
@@ -248,7 +249,7 @@ class Button(CustomSprite):
             self.deactivated = True
             self.activated = False
             #if self.prevActivated:
-            print("anything")
+          
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
             #    self.prevActivated = False
         # whatever else it needs to deactivate

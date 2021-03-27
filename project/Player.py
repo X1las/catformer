@@ -33,6 +33,7 @@ class Player(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.lives = 9
         self.catnip_level = 0
+        self.isPlayer = True
 
     def takeDamage(self):
         self.lives -= 1
@@ -59,6 +60,7 @@ class Player(CustomSprite):
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
+
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT]:                                             # If it's left arrow
             if self.locked == False:
@@ -74,7 +76,7 @@ class Player(CustomSprite):
 
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)
-        print(hitObject,hitPosition)
+        #print(hitObject,hitPosition)
 
     """def testNextFrame(self,sprite):
 
