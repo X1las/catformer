@@ -60,8 +60,10 @@ class LevelGoal(CustomSprite):
 
 
     def update(self):
-        round(self.pos)
-        self.rect.midbottom = self.pos.asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
+        #round(self.pos)
+        #self.rect.midbottom = self.pos.asTuple()
 
     def activate(self):
         # Whatever it does
@@ -88,16 +90,14 @@ class Platform(CustomSprite):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
-        #print(self.pos)
-        #print(self.relativePosition)
+ 
     
 
 
     def update(self):
-        round(self.pos)
-        self.rect.midbottom = self.pos.asTuple()
-        #print(self.pos)
-        #print(self.relativePosition)
+        #round(self.pos)
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
 # ---------------- BOX ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -119,8 +119,9 @@ class Box(CustomSprite):
    
     def update(self):
         self.applyPhysics(self.game.rayIntersecters)
-        round(self.pos)
-        self.rect.midbottom = self.pos.asTuple()
+        #round(self.pos)
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
 
 
@@ -146,8 +147,9 @@ class Vase(CustomSprite):
 
     def update(self):
         
-        round(self.pos)
-        self.rect.midbottom = self.pos.asTuple()
+        #round(self.pos)
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
         if self.fall == True:
             self.applyPhysics(self.game.rayIntersecters)
     
@@ -216,8 +218,9 @@ class Lever(CustomSprite):
     
 
     def update(self):
-        round(self.pos) 
-        self.rect.midbottom = self.pos.asTuple()
+        #round(self.pos) 
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
 # ---------------- BUTTON ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -259,8 +262,9 @@ class Button(CustomSprite):
             
         self.activated = False
 
-        round(self.pos) 
-        self.rect.midbottom = self.pos.asTuple()
+        #round(self.pos) 
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
 
 # ---------------- PICKUP ---------------------------------------------------------------------------------------------------------------------------------
@@ -288,8 +292,9 @@ class PickUp(CustomSprite):
         self.relativePosition = self.pos.copy()
 
     def update(self):
-        round(self.pos) 
-        self.rect.midbottom = self.pos.asTuple()
+        #round(self.pos) 
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
 # ---------------- HOStiLE ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -312,8 +317,9 @@ class Water(Hostile):
         self.relativePosition = self.pos.copy()
         
     def update(self):
-        round(self.pos) 
-        self.rect.midbottom = self.pos.asTuple()
+
+        #round(self.pos) 
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
         

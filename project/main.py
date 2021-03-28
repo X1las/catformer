@@ -118,7 +118,6 @@ class Game:
         for button in self.buttons:
             activated_button = button.buttonPress(self.weight_act)
         
-        print(self.relposx)
         self.turn = self.counter > self.prev_counter
         if self.interactive_box:
             for lever in self.levers:
@@ -141,14 +140,18 @@ class Game:
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
-        print(f'relpos: {self.relposp}')
-        if self.player.right_x()>= CAMERA_BORDER_R + self.relposx :                                               # If the player moves to or above the right border of the screen
+        print(f'relpos: {self.relposx}')
+        print(f'Player pos: {self.player.pos.x}')
+        print(f'Player vel: {self.player.vel.x}')
+        
+    
+        if self.player.right_x()>= round(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             print("BEFORE RIGHT -----------------------")
             if self.player.vel.x > 0:
                 #for sprite in self.all_sprites:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-                print("right")
+                
                     #sprite.relativePosition.x -= abs(self.player.vel.x)
                     #if not isinstance(sprite, Player):
                      #   sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
@@ -159,7 +162,7 @@ class Game:
                     #sprite.pos.x       -= abs(self.player.vel.x)  
         
         #if self.player.rect.left <= CAMERRA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
-        if self.player.left_x()<= CAMERA_BORDER_L+self.relposx:
+        if self.player.left_x()<= round(CAMERA_BORDER_L+self.relposx):
             if self.player.vel.x < 0:
                 #for sprite in self.all_sprites:
                 self.relposx += self.player.vel.x
@@ -268,11 +271,11 @@ class Game:
                 self.hitbox = boxHits[0]
                 
                 if self.hitbox.moveable == True:
-                    #print("something")
+                    
                     #self.hitbox.vel.x = self.player.vel.x
                     #self.somebool = True
                     self.hitbox.change_vel = vec(self.player.vel.x, self.hitbox.vel.y)
-                    #print(self.hitbox.change_vel)
+                    
                     #self.hitbox.change_vel.x = self.player.vel.x
                     #self.hitbox.shouldApplyPhysics = True
                     self.player.locked = True

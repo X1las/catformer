@@ -17,8 +17,9 @@ vec = Vec
 class Player(CustomSprite):
     def __init__(self, game, x, y, name = None):
         self.groups = game.all_sprites,  game.players, game.weight_act
+        
+        self.game           = game; self.name = name; self._layer = 10
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.game           = game; self.name = name; self._layer = 1
         self.facing = None
         self.solid          = True
         self.width          = 30; self.height = 40
@@ -55,8 +56,9 @@ class Player(CustomSprite):
     def update(self):                                                         # Updating pos, vel and acc.
         self.move()
         self.applyPhysics(self.game.rayIntersecters) 
-        round(self.pos)
-        self.rect.midbottom = self.pos.asTuple()
+        #round(self.pos)
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -76,14 +78,3 @@ class Player(CustomSprite):
 
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)
-        #print(hitObject,hitPosition)
-
-    """def testNextFrame(self,sprite):
-
-        temp_pos = copy.copy(self.pos)
-        temp_vel = copy.copy(self.vel)
-        self.pos += temp_vel
-        possibleHits = pg.sprite.collide_rect(self,sprite, False)
-        self.pos = temp_pos
-        return possibleHits
-    """
