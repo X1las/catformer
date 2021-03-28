@@ -25,8 +25,9 @@ class CustomSprite(pg.sprite.Sprite):
     def updateRect(self):
         roundedvec = self.relativePosition.rounded()
         if self.isPlayer:
+            print("player")
             print(roundedvec)
-            print(self.relativePosition)
+            #print(self.relativePosition)
         self.rect.midbottom = roundedvec.asTuple()
         #self.rect.midbottom = self.relativePosition.asTuple()
 

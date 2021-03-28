@@ -107,9 +107,7 @@ class Game:
     # Method where we update game processesd
     def update(self):
         
-        self.moveScreen()
-
-        self.relativePos()
+       
         #for i in self.all_sprites:
          #   print(f'pos: {i}, {i.pos}')
           #  print(f'rel pos: {i}, {i.relativePosition}')
@@ -132,16 +130,20 @@ class Game:
         if self.hitbox != None:
             self.hitbox.vel.x = 0
 
-
         self.all_sprites.update()
-        
+
+        self.moveScreen()
+
+        self.relativePos()
+
         self.prev_counter = self.counter
 
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
-        
+        print(f'relpos: {self.relposp}')
         if self.player.right_x()>= CAMERA_BORDER_R + self.relposx :                                               # If the player moves to or above the right border of the screen
+            print("BEFORE RIGHT -----------------------")
             if self.player.vel.x > 0:
                 #for sprite in self.all_sprites:
                 self.relposx += self.player.vel.x
