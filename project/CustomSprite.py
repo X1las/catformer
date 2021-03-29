@@ -21,6 +21,7 @@ class CustomSprite(pg.sprite.Sprite):
     gravity = GRAVITY
     friction = FRICTION
     isPlayer = False
+    rayPos = vec()
 
     def updateRect(self):
         roundedvec = self.relativePosition.rounded()
@@ -108,6 +109,7 @@ class CustomSprite(pg.sprite.Sprite):
     #groups = game.all_sprites
     def rayIntersect(self,local_origin,collidables):   
 
+        #original_pos = self.rayPos + local_origin     # Origin vector for calculations
         
         original_pos = self.pos + local_origin     # Origin vector for calculations
         vel = self.vel                    # X and Y vector
@@ -211,6 +213,7 @@ class CustomSprite(pg.sprite.Sprite):
         
         if hitObject:
             intersection += original_pos # Adding the origin's vector in the end to return the global coordinates instead of the local
+            
             return [hitObject,intersection]
         else:
             return False
@@ -248,7 +251,7 @@ class CustomSprite(pg.sprite.Sprite):
     #
     def collisions_rayIntersect(self,Intersecters):  
         corner = self.quadrupleRayIntersect(Intersecters)
-
+        self.rayPos = self.pos.copy()
         if corner:
             hitObject = corner['hitsobject']
             
@@ -289,12 +292,12 @@ class CustomSprite(pg.sprite.Sprite):
         offsetX = 0
         if hitPosition.x == hitObject.left_x() and betweenTB:
             offsetX = -1
-            offsetX = -0.5
+            #offsetX = -0.5
             self.vel.x = 0
             self.acc.x = 0
         elif hitPosition.x == hitObject.right_x() and betweenTB:
             offsetX = 1
-            offsetX = 0.5
+            #offsetX = 0.5
             self.vel.x = 0
             self.acc.x = 0
         
@@ -309,31 +312,10 @@ class CustomSprite(pg.sprite.Sprite):
             self.vel.y = 0
             self.acc.y = 0
 
-        self.pos += relativeHitPos + vec(offsetX,offsetY)                                  
+        self.pos += relativeHitPos + vec(offsetX,offsetY) 
+        #self.pos += relativeHitPos       
+        self.rayPos = self.pos + vec(offsetX, offsetY)                        
 
-    """def applyGravity(self , Intersecters):
-    
-        if self.inAir:
-            self.gravity = GRAVITY
-        else:
-            self.gravity = 0
-            tempVelY = self.vel.y
-            self.vel.y = 1
-            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
-            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
-            self.vel.y = tempVelY
-            if (not intersect) and (not intersect2):
-                self.inAir = True
-        
-        self.acc += vec(0, self.gravity)       # Gravity
-        self.vel += self.acc
-        
-        if self.change_vel:
-            self.vel = self.change_vel
-        
-        self.change_vel = None
-        self.pos += self.vel
-        self.acc *= 0"""
 
     def applyPhysics(self,Intersecters):
 
@@ -351,13 +333,6 @@ class CustomSprite(pg.sprite.Sprite):
             self.vel = tempVel
             if (not intersect) and (not intersect2):
                 self.inAir = True           
-            """
-            try:
-                if (round(intersect[0].top_y()) != round(self.bot_y())) or (round(intersect2[0].top_y()) != round(self.bot_y())): 
-                 self.inAir = True
-            except:
-                pass
-            """
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
@@ -369,8 +344,11 @@ class CustomSprite(pg.sprite.Sprite):
             self.vel = self.change_vel
         self.change_vel = None  
 
-        self.collisions_rayIntersect(Intersecters) 
+        tester = self.collisions_rayIntersect(Intersecters) 
+        
 
         self.pos += self.vel +  self.acc * 0.5     
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
+    def hitdot(self):
+        pass

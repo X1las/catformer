@@ -12,6 +12,33 @@ from random import choice, randrange, uniform
 # Variables
 vec = Vec
 
+
+
+# ------------------------------ collision detection --------------------------------------------------------------------
+class Tester(CustomSprite):
+    def __init__(self, game,  pos):
+
+        # anchor depends on which way player faces
+        pg.sprite.Sprite.__init__(self, game.all_sprites)  
+        self.player = player
+        width = self.player.width/2 + 50
+        height = self.player.height       
+        self.facing = facing
+        self.image = pg.Surface((width,height)); 
+        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
+        self.image.fill((255,255,255)) 
+        self.relativePosition = self.pos.copy()
+        self.midbottom = pos
+
+        
+    
+    #def update(self):
+     #   self.midbottom = player.pos.asTuple()
+
+
+
+
+
 # ---------------- INTERACTIVE ---------------------------------------------------------------------------------------------------------------------------------
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):

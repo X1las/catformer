@@ -140,10 +140,7 @@ class Game:
   
     # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
     def moveScreen(self):
-        print(f'relpos: {self.relposx}')
-        print(f'Player pos: {self.player.pos.x}')
-        print(f'Player vel: {self.player.vel.x}')
-        
+       
     
         if self.player.right_x()>= round(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             print("BEFORE RIGHT -----------------------")
