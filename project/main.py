@@ -45,7 +45,7 @@ class Game:
         self.weight_act         = pg.sprite.Group()      
         self.buttons            = pg.sprite.Group()       
         self.levers             = pg.sprite.Group()
-        self.level_goals         = pg.sprite.Group()
+        self.level_goals        = pg.sprite.Group()
 
 
     # Method that creates a new game

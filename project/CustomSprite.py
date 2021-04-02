@@ -43,9 +43,17 @@ class CustomSprite(pg.sprite.Sprite):
     def left_x(self):
         return self.pos.x - self.width/2 - 1
     def right_x(self): 
-        #if self.isPlayer:
-         #   print(f'RIGHT SIDE: {self.pos.x + self.width/2}')
         return self.pos.x + self.width/2
+
+    def set_top(self, ypos):
+        self.pos.y = ypos + self.height
+    def set_bot(self, ypos):
+        self.pos.y = ypos
+    def set_left(self, xpos):
+        self.pos.x = xpos + self.width
+    def set_right(self, xpos):
+        self.pos.x = xpos - self.width
+
 
     def bottomleft(self):
         return vec(self.left_x(), self.bot_y())
@@ -96,7 +104,7 @@ class CustomSprite(pg.sprite.Sprite):
                 self.takeDamage()         
         
     def touchPickUp(self, pickups):
-        collided = pg.sprite.spritecollide (self, pickups, False)
+        collided = pg.sprite.spritecollide(self, pickups, False)
         if collided: 
             for collided_obj in collided:
                 if collided_obj.type == 'health' and self.lives < 9:
@@ -105,6 +113,47 @@ class CustomSprite(pg.sprite.Sprite):
                 if collided_obj.type == 'catnip':
                     self.addCatnip()
                     collided_obj.kill()
+
+
+    def pygamecoll(self, group):
+        collideds = pg.sprite.spritecollide(self, group, False)
+        print(collideds)
+        for collided in collideds:
+            if collided:
+                leftcoll = abs(abs(self.right_x()) - abs(collided.left_x()))
+                rightcoll = abs(abs(self.left_x()) - abs(collided.right_x()))
+                topcoll   = abs(abs(self.bot_y()) - abs(collided.top_y()))
+                botcoll   = abs(abs(self.top_y()) - abs(collided.bot_y()))
+
+                mins = min(leftcoll, rightcoll, topcoll, botcoll)
+                print(mins)
+                print("lsie")
+                print(self.pos)
+                if mins == leftcoll:
+    
+                    print("leftcoll")
+                    self.set_right(collided.left_x())
+                    self.vel.x = 0
+                elif mins == rightcoll:
+                    print("rightcoll")
+                    print(collided.right_x())
+                    print(self.width)
+                    self.pos.x = collided.right_x() - self.width
+                    #self.set_left(collided.right_x())
+                    self.vel.x = 0
+                elif mins == topcoll:
+                    print("topcoll")
+                    print(f'top plat: {collided.top_y()}')
+                    self.set_bot(collided.top_y())
+                    self.vel.y = 0
+                elif mins == botcoll:
+
+                    print("botcoll")
+                    print(f'top plat {collided.top_y()}')
+                    self.pos.y = collided.top_y() - self.height
+                    self.set_top(collided.bot_y())
+                    self.vel.y = 0
+                print(self.pos)
 
     #groups = game.all_sprites
     def rayIntersect(self,local_origin,collidables):   
@@ -344,10 +393,12 @@ class CustomSprite(pg.sprite.Sprite):
             self.vel = self.change_vel
         self.change_vel = None  
 
-        tester = self.collisions_rayIntersect(Intersecters) 
-        
-
+        #tester = self.collisions_rayIntersect(Intersecters) 
+    
         self.pos += self.vel +  self.acc * 0.5     
+        if self.isPlayer:
+            self.pygamecoll(Intersecters)
+
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
     def hitdot(self):

@@ -134,7 +134,7 @@ class Box(CustomSprite):
         self._layer = 5
         self.solid = True
         self.moveable = True
-        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.rayIntersecters, game.interactables, game.weight_act
+        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.interactables, game.weight_act # , game.rayIntersecters
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
