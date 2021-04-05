@@ -29,7 +29,7 @@ class Player(CustomSprite):
         self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
         self.on_collided_surface = False; self.stop_falling = False
         self.locked = False
-        
+        self.can_fall_and_move = True
         self.relativePosition = self.pos.copy()
         self.lives = 9
         self.catnip_level = 0
@@ -56,8 +56,6 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.rayIntersecters) 
         self.rect.midbottom = self.pos.rounded().asTuple()
-        print(f"right side: {self.rect.right}")
-        print(f"left side: {self.rect.left}")
 
 
     # ---> Checks for pressed keys to move left/right and jump

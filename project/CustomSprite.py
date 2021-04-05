@@ -30,8 +30,11 @@ class CustomSprite(pg.sprite.Sprite):
     relativePosition = vec()
     on_platform = False 
     gravity = GRAVITY
+    has_collided = False
+    new_vel = vec(0,0)
     friction = FRICTION
     isPlayer = False
+    can_fall_and_move = False
     rayPos = vec()
 
     def updateRect(self):
@@ -120,7 +123,24 @@ class CustomSprite(pg.sprite.Sprite):
                     self.addCatnip()
                     collided_obj.kill()
 
-
+    def pickupSprite(self,  agents, turn):
+        # should ckeck which box is closest
+        #collided = None
+        #if not self.has_collided:
+        print(agents)
+        collided = pg.sprite.spritecollide(self, agents, False)
+        print(collided)
+        if collided: 
+            
+            print(turn)
+            print(self.vel)
+            if turn:
+                self.has_collided = True
+                for collided_obj in collided:
+                        collided_obj.pickUp(self)
+                    
+        else:
+            self.has_collided = False
 
     def pygamecoll(self, group):
         inflation = 10
@@ -132,23 +152,23 @@ class CustomSprite(pg.sprite.Sprite):
  
         if collideds:
             for collided in collideds:
-            
-                coll_side = self.determineSide(collided)
-    
-                if coll_side == "top":
+                if collided != self:
+                    coll_side = self.determineSide(collided)
+        
+                    if coll_side == "top":
 
-                    self.set_bot(collided.top_y())
-                    self.vel.y = 0
-                else:
-                    if coll_side == "left":
-                        self.pos.x = collided.left_x() - self.width/2
-                        self.vel.x = 0
-                    if coll_side == "right":
-                        self.pos.x = collided.right_x() + self.width/2
-                        self.vel.x = 0
-                    if coll_side == "bot":
-                        self.pos.y = collided.top_y() - self.height
+                        self.set_bot(collided.top_y())
                         self.vel.y = 0
+                    else:
+                        if coll_side == "left":
+                            self.pos.x = collided.left_x() - self.width/2
+                            self.vel.x = 0
+                        if coll_side == "right":
+                            self.pos.x = collided.right_x() + self.width/2
+                            self.vel.x = 0
+                        if coll_side == "bot":
+                            self.pos.y = collided.top_y() - self.height
+                            self.vel.y = 0
         
         self.rect.inflate(-inflation, -inflation)
 
@@ -177,7 +197,6 @@ class CustomSprite(pg.sprite.Sprite):
                 self.on_platform = True
                 result = True
         self.rect.bottom -= 5 
-        
         return result
         
 
@@ -216,7 +235,8 @@ class CustomSprite(pg.sprite.Sprite):
         if self.change_vel:
             self.vel = self.change_vel
         self.change_vel = None  
-        if self.isPlayer:
+
+        if self.can_fall_and_move:
             self.pygamecoll(Intersecters)
 
         self.pos += self.vel +  self.acc * 0.5     
@@ -440,8 +460,3 @@ class CustomSprite(pg.sprite.Sprite):
         self.pos += relativeHitPos + vec(offsetX,offsetY) 
         #self.pos += relativeHitPos       
         self.rayPos = self.pos + vec(offsetX, offsetY)                        
-
-
-
-    def hitdot(self):
-        pass

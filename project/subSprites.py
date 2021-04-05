@@ -50,22 +50,31 @@ class Interactive(CustomSprite):
         height = self.player.height       
         self.facing = facing
         self.image = pg.Surface((width,height)); 
-        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
         self.image.fill((0,200,0)) 
+        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
+        
         self.relativePosition = self.pos.copy()
+        self.vel = self.player.vel
         if self.facing == "left":
             self.rect.bottomright = (player.pos.x,player.pos.y)   
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
 
-        
-    
-    def update(self):
+    def intUpdate(self):
         if self.player.facing == "left":
-
             self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
         else: 
             self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
+    
+    def update(self):
+        if self.player.facing == "left":
+            self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
+        else: 
+            self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
+        self.vel = self.player.vel
+    
+    def updateRect(self):
+        self.intUpdate()
 
     #def draw(self):
      #   pass
@@ -134,21 +143,26 @@ class Box(CustomSprite):
         self._layer = 5
         self.solid = True
         self.moveable = True
-        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.interactables, game.weight_act # , game.rayIntersecters
+        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.interactables, game.weight_act  , game.rayIntersecters
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
         self.rect = self.image.get_rect()
-        
+        self.can_fall_and_move = True
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
    
     def update(self):
+        if self.has_collided:
+            self.vel.x = self.new_vel.x
         self.applyPhysics(self.game.rayIntersecters)
-        #round(self.pos)
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+    def pickUp(self, interacter):
+        print(f'interacter vel: {interacter.vel}')
+        self.new_vel.x = interacter.vel.x
+       
 
 
 

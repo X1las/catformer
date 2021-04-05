@@ -72,6 +72,7 @@ class Game:
         self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')
         self.water = Water(self, 500, 400, 10, 10)
         self.turn = False
+        self.boxpicked = False
         self.intboxlist = [None]
         self.interactive_box    = None
         self.hitbox             = None
@@ -113,11 +114,16 @@ class Game:
             activated_button = button.buttonPress(self.weight_act)
         
         self.turn = self.counter > self.prev_counter
+        self.boxpicked = self.counter >= self.prev_counter
         if self.interactive_box:
             for lever in self.levers:
                 lever.leverPull(self.interactive_boxes, self.turn)
         
+            self.interactive_box.pickupSprite(self.boxes, self.boxpicked)
+            #for box in self.boxes:
+             #   box.
         
+       
         #self.pushSprite()
         self.all_sprites.update()
         self.moveScreen()
@@ -126,7 +132,7 @@ class Game:
         self.prev_counter = self.counter
 
   
-    # Method for making a "camera" effect, moves everything on the screen relative to where the player is moving
+    # Method for making a "camera" effect, movesR everything on the screen relative to where the player is moving
     def moveScreen(self):
        
     
@@ -137,7 +143,6 @@ class Game:
         if self.player.left_x()<= round(CAMERA_BORDER_L+self.relposx):
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
-                print("left")
                 self.relposp = 0
        
 
@@ -182,7 +187,6 @@ class Game:
         for sprite in self.all_sprites:
        
             sprite.updateRect()
-        print(self.player.pos)
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         self.screen.blit(self.lives_display,  (100, 100))
         self.screen.blit(self.points_display,  (100, 150))
