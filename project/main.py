@@ -20,7 +20,6 @@ class Game:
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TTLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
-        #self.create()
 
     def create(self):
     
@@ -79,7 +78,6 @@ class Game:
         self.frames = 0
         self.counter = 0
         self.prev_counter = 0
-        #self.text = pg.Surface((2,2))
         self.relposx = 0
         self.realposp = 0
         self.run()                                                              # Runs the
@@ -106,11 +104,7 @@ class Game:
 
     # Method where we update game processesd
     def update(self):
-        
-       
-        #for i in self.all_sprites:
-         #   print(f'pos: {i}, {i.pos}')
-          #  print(f'rel pos: {i}, {i.relativePosition}')
+
         self.level_goal.endGoal(self.player)
         self.player.touchPickUp(self.pickups)
         self.player.touchEnemy(self.damager)
@@ -124,15 +118,9 @@ class Game:
                 lever.leverPull(self.interactive_boxes, self.turn)
         
         
-        self.pushSprite()
-
-        if self.hitbox != None:
-            self.hitbox.vel.x = 0
-
+        #self.pushSprite()
         self.all_sprites.update()
-
         self.moveScreen()
-
         self.relativePos()
 
         self.prev_counter = self.counter
@@ -143,44 +131,19 @@ class Game:
        
     
         if self.player.right_x()>= round(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
-            print("BEFORE RIGHT -----------------------")
             if self.player.vel.x > 0:
-                #for sprite in self.all_sprites:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-                
-                    #sprite.relativePosition.x -= abs(self.player.vel.x)
-                    #if not isinstance(sprite, Player):
-                     #   sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
-                    #else:
-                    #if isinstance(sprite, Player):
-                        #sprite.relativePosition.x = sprite.pos.x - abs(self.player.vel.x)
-                    
-                    #sprite.pos.x       -= abs(self.player.vel.x)  
-        
-        #if self.player.rect.left <= CAMERRA_BORDER_L:                                                # If the player moves to or above the left border of the screen                      
         if self.player.left_x()<= round(CAMERA_BORDER_L+self.relposx):
             if self.player.vel.x < 0:
-                #for sprite in self.all_sprites:
                 self.relposx += self.player.vel.x
                 print("left")
                 self.relposp = 0
-                    #sprite.relativePosition.x += abs(self.player.vel.x)
-                    #if not isinstance(sprite, Player):
-                     #   sprite.relativePosition = sprite.pos + vec(abs(self.player.vel.x),0)
-                    #else:
-                    #if isinstance(sprite, Player):
-                     #   sprite.relativePosition = sprite.pos + abs(self.player.vel)
-                    
-                    #sprite.pos.x       += abs(self.player.vel.x)  
-                    #sprite.pos.x       += abs(self.player.vel.x) 
+       
 
     def relativePos(self):
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
-            #if isinstance(sprite, Player):
-            #sprite.relativePosition.x -= self.realposp
-            #else:
             sprite.relativePosition.x -= self.relposx
 
 
@@ -211,16 +174,13 @@ class Game:
                 if event.key == pg.K_d:
                     self.interactive_box.kill()
                     self.interactive_box = None
-                    
-                    #print(self.interactive_box)
-                    # delete interactive
+         
                      
     # Method for drawing everything to the screen
     def draw(self):                                                             
-        self.screen.fill(BGCOLOR)                                               # Sets background color to BGCOLOR from settings
-        #
+        self.screen.fill(BGCOLOR)         #
         for sprite in self.all_sprites:
-            #if not isinstance(sprite, Player):
+       
             sprite.updateRect()
         print(self.player.pos)
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
@@ -229,7 +189,7 @@ class Game:
         
         pg.display.update()                                                     # Updates the drawings to the screen object and flips it
         for sprite in self.all_sprites:
-            #if not isinstance(sprite, Player):
+    
             sprite.resetRects()
 
     def displayHUD(self):

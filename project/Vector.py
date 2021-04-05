@@ -53,10 +53,7 @@ class Vec(object):
 
 
     def __str__(self):
-        #print(f'rounding: {round(self.x)},{round(self.y)}')
-        #print(f'exact: ({self.x},{self.y})')
         return f'({self.x},{self.y})'
-        #return f'({round(self.x)},{round(self.y)})'
 
     def __abs__(self):
         newx = abs(self.x)
@@ -83,14 +80,13 @@ class Vec(object):
         return Vec(roundedx,roundedy)    
 
     def normRound(self, number):
-        neg = False
-        if number < 0:
-            neg = True
-        rounded_num = number
-        rounded_num = round(abs(rounded_num))
-        if neg:
-            rounded_num *= -1
-        return rounded_num       
+        inte = math.floor(number)
+        dec = number - inte
+        if dec*10 >= 5:
+            result = 1
+        else:
+            result = 0
+        return inte + result
 
     def rounding(self, number):
         neg = False
