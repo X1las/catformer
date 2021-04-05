@@ -58,6 +58,8 @@ class Player(CustomSprite):
         self.applyPhysics(self.game.rayIntersecters) 
         #round(self.pos)
         self.rect.midbottom = self.pos.rounded().asTuple()
+        print(f"right side: {self.rect.right}")
+        print(f"left side: {self.rect.left}")
 
 
     # ---> Checks for pressed keys to move left/right and jump

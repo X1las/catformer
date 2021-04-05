@@ -73,10 +73,34 @@ class Vec(object):
         self.x, self.y = round(self.x), round(self.y)
 
     def rounded(self):
-        roundedx = round(self.x)
-        roundedy = round(self.y)
+        roundedx = self.normRound(self.x)
+        roundedy = self.normRound(self.y)
         return Vec(roundedx,roundedy)
 
+    def realRound(self):
+        roundedx = self.rounding(self.x)
+        roundedy = self.rounding(self.y)
+        return Vec(roundedx,roundedy)    
+
+    def normRound(self, number):
+        neg = False
+        if number < 0:
+            neg = True
+        rounded_num = number
+        rounded_num = round(abs(rounded_num))
+        if neg:
+            rounded_num *= -1
+        return rounded_num       
+
+    def rounding(self, number):
+        neg = False
+        if number < 0:
+            neg = True
+        rounded_num = number
+        rounded_num = math.floor(abs(rounded_num))
+        if neg:
+            rounded_num *= -1
+        return rounded_num        
 
     def printExact(self):
         print(f'({self.x},{self.y})')

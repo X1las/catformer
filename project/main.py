@@ -222,7 +222,7 @@ class Game:
         for sprite in self.all_sprites:
             #if not isinstance(sprite, Player):
             sprite.updateRect()
-        
+        print(self.player.pos)
         self.all_sprites.draw(self.screen)                                      # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         self.screen.blit(self.lives_display,  (100, 100))
         self.screen.blit(self.points_display,  (100, 150))
@@ -235,11 +235,7 @@ class Game:
     def displayHUD(self):
         self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
-        #font = pg.font.SysFont('Algerian', 40, True, False)
-        #self.text = font.render(f'Lives: {self.player.lives}', True, (255, 255, 255))
-        #self.text.blit(self.screen, (500, 100))
-        #pg.displat.update()
-        #pg.display.blit(text, (500, 100))
+ 
 
     def textToDisplay(self, text, font = 'Comic Sans MS', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
         font = pg.font.SysFont(font, fontsize, bold, italic)
@@ -247,8 +243,6 @@ class Game:
 
     # pushes a sprite (such as a box)
 
-    def interactWithSprite(self):
-        pass
 
     def pushSprite(self):
         """

@@ -2,8 +2,17 @@
 import pygame as pg
 from Vector import *
 from settings import *
+import math
 
 vec = Vec
+
+def r(number):
+    rounded_num = number
+    rounded_num = abs(rounded_num)
+    rounded_num = math.ceil(rounded_num)
+    if number < 0:
+        rounded_num *= -1
+    return rounded_num
 
 # Classes
 class CustomSprite(pg.sprite.Sprite):
@@ -17,7 +26,9 @@ class CustomSprite(pg.sprite.Sprite):
     breakable = False
     pickup = False
     inAir = True
+    collided_right_side = False; collided_left_side = False; collided_bottom = False; collided_top = False
     relativePosition = vec()
+    on_platform = False 
     gravity = GRAVITY
     friction = FRICTION
     isPlayer = False
@@ -30,6 +41,7 @@ class CustomSprite(pg.sprite.Sprite):
             #print(roundedvec)
             #print(self.relativePosition)
         self.rect.midbottom = roundedvec.asTuple()
+        
         #self.rect.midbottom = self.relativePosition.asTuple()
 
     def resetRects(self):
@@ -41,7 +53,7 @@ class CustomSprite(pg.sprite.Sprite):
     def bot_y(self):
         return self.pos.y
     def left_x(self):
-        return self.pos.x - self.width/2 - 1
+        return self.pos.x - self.width/2 #- 1
     def right_x(self): 
         return self.pos.x + self.width/2
 
@@ -50,9 +62,9 @@ class CustomSprite(pg.sprite.Sprite):
     def set_bot(self, ypos):
         self.pos.y = ypos
     def set_left(self, xpos):
-        self.pos.x = xpos + self.width
+        self.pos.x = xpos - self.width/2
     def set_right(self, xpos):
-        self.pos.x = xpos - self.width
+        self.pos.x = xpos - self.width/2
 
 
     def bottomleft(self):
@@ -115,45 +127,176 @@ class CustomSprite(pg.sprite.Sprite):
                     collided_obj.kill()
 
 
+
     def pygamecoll(self, group):
+        inflation = 10
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        #self.rect.midbottom = self.rect.midbottom + self.vel.asTuple()
         collideds = pg.sprite.spritecollide(self, group, False)
-        print(collideds)
-        for collided in collideds:
-            if collided:
+        #print(collideds)
+        #self.inAir = True
+        if collideds:
+            for collided in collideds:
+            
+                coll_side = self.determineSide(collided)
+                """
                 leftcoll = abs(abs(self.right_x()) - abs(collided.left_x()))
                 rightcoll = abs(abs(self.left_x()) - abs(collided.right_x()))
                 topcoll   = abs(abs(self.bot_y()) - abs(collided.top_y()))
                 botcoll   = abs(abs(self.top_y()) - abs(collided.bot_y()))
 
                 mins = min(leftcoll, rightcoll, topcoll, botcoll)
-                print(mins)
-                print("lsie")
-                print(self.pos)
-                if mins == leftcoll:
-    
-                    print("leftcoll")
-                    self.set_right(collided.left_x())
-                    self.vel.x = 0
-                elif mins == rightcoll:
-                    print("rightcoll")
-                    print(collided.right_x())
-                    print(self.width)
-                    self.pos.x = collided.right_x() - self.width
-                    #self.set_left(collided.right_x())
-                    self.vel.x = 0
-                elif mins == topcoll:
+                """
+                #elif mins == topcoll:
+                if coll_side == "top":
                     print("topcoll")
                     print(f'top plat: {collided.top_y()}')
+                    #self.inAir = False
                     self.set_bot(collided.top_y())
                     self.vel.y = 0
-                elif mins == botcoll:
+                else:
+                    #if mins == leftcoll:
+                    if coll_side == "left":
+                        print("leftcoll")
+                        print(f'left side of platform: {collided.left_x()}')
+                        
+                        self.collided_left_side = True
+                        self.pos.x = collided.left_x() - self.width/2
+                        print(f'right side of player: {self.right_x()}')
+                        #self.set_right(collided.left_x())
+                        self.vel.x = 0
+                    #elif mins == rightcoll:
+                    if coll_side == "right":
+                        print("rightcoll")
+                        print(f'right side of platform: {collided.right_x()}')
+                        print(f'left side of player: {self.left_x()}')
 
-                    print("botcoll")
-                    print(f'top plat {collided.top_y()}')
-                    self.pos.y = collided.top_y() - self.height
-                    self.set_top(collided.bot_y())
-                    self.vel.y = 0
-                print(self.pos)
+                        self.collided_right_side = True
+                        self.pos.x = collided.right_x() + self.width/2
+                        #self.set_left(collided.right_x())
+                        self.vel.x = 0
+                    
+
+                    #elif mins == botcoll:
+                    if coll_side == "bot":
+                        print("botcoll")
+                        print(f'top plat {collided.top_y()}')
+                        self.pos.y = collided.top_y() - self.height
+                        self.set_top(collided.bot_y())
+                        self.vel.y = 0
+        
+                    #self.inAir = True
+        self.rect.inflate(-inflation, -inflation)
+
+    def determineSide(self, collided):
+        leftcoll = abs(self.right_x() - collided.left_x())
+        rightcoll = abs(abs(self.left_x()) - abs(collided.right_x()))
+        topcoll   = abs(abs(self.bot_y()) - abs(collided.top_y()))
+        botcoll   = abs(abs(self.top_y()) - abs(collided.bot_y()))
+        mins = min(leftcoll, rightcoll, topcoll, botcoll)
+        if mins == leftcoll: 
+            return "left"
+        if mins == rightcoll:
+            return "right"
+        if mins == topcoll:
+            return "top"
+        if mins == botcoll:
+            return "bot"
+
+    def on_solid(self, group):
+        self.rect.bottom += 5
+        collideds = pg.sprite.spritecollide(self, group, False)
+        self.on_platform = False
+        result = False
+        for collided in collideds:
+            if self.determineSide(collided) == "top":
+                self.on_platform = True
+                result = True
+        self.rect.bottom -= 5 
+        
+        return result
+        
+
+
+    def correctPos(self, collided_obj, side):
+        if self.collided_right_side:
+            self.collided_right_side = True
+            self.pos.x = collided_obj.right_x() + self.width/2
+        if self.collided_left_side:
+            self.set_right(collided_obj.left_x())
+            self.vel.x = 0
+        if self.collided_top:
+            self.inAir = False
+            self.set_bot(collided_obj.top_y())
+            self.vel.y = 0
+        if self.collided_top:
+            pass
+
+
+
+    def applyPhysics(self,Intersecters):
+        
+        #platforms = pg.sprite.spritecollide(self, Intersecters, False)
+        
+        if self.on_solid(Intersecters):
+            self.inAir = False
+        else:
+            self.inAir = True
+            """
+            for platform in platforms:
+                coll_side = self.determineSide(platform)
+                if coll_side == "top":
+                    self.inAir = False
+                else: 
+                    self.inAir = True
+            """
+
+        #self.inAir = True
+        if self.inAir:
+            self.gravity = GRAVITY
+        else:
+
+            self.gravity = 0
+            tempVel = self.vel.copy()
+            
+            #self.vel.y = 2
+            
+            #self.vel.x = 0
+            """
+            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
+            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
+            self.vel = tempVel
+            if (not intersect) and (not intersect2):
+                self.inAir = True
+            """           
+        self.acc   += vec(0, self.gravity)                  # Gravity
+        self.acc.x += self.vel.x * self.friction            # Friction
+        self.vel   += self.acc                              # equations of motion
+   
+        if abs(self.vel.x) < 0.25:                          
+            self.vel.x = 0                                  
+
+        if self.change_vel:
+            self.vel = self.change_vel
+        self.change_vel = None  
+        if self.isPlayer:
+            self.pygamecoll(Intersecters)
+        #tester = self.collisions_rayIntersect(Intersecters) 
+    
+        self.pos += self.vel +  self.acc * 0.5     
+      
+        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+
+
+
+
+
+
+
+
 
     #groups = game.all_sprites
     def rayIntersect(self,local_origin,collidables):   
@@ -366,40 +509,6 @@ class CustomSprite(pg.sprite.Sprite):
         self.rayPos = self.pos + vec(offsetX, offsetY)                        
 
 
-    def applyPhysics(self,Intersecters):
-
-        if self.inAir:
-            self.gravity = GRAVITY
-        else:
-            self.gravity = 0
-            tempVel = self.vel.copy()
-            
-            self.vel.y = 10
-            
-            self.vel.x = 0
-            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
-            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
-            self.vel = tempVel
-            if (not intersect) and (not intersect2):
-                self.inAir = True           
-        self.acc   += vec(0, self.gravity)                  # Gravity
-        self.acc.x += self.vel.x * self.friction            # Friction
-        self.vel   += self.acc                              # equations of motion
-   
-        if abs(self.vel.x) < 0.25:                          
-            self.vel.x = 0                                  
-
-        if self.change_vel:
-            self.vel = self.change_vel
-        self.change_vel = None  
-
-        #tester = self.collisions_rayIntersect(Intersecters) 
-    
-        self.pos += self.vel +  self.acc * 0.5     
-        if self.isPlayer:
-            self.pygamecoll(Intersecters)
-
-        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
     def hitdot(self):
         pass
