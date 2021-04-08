@@ -254,14 +254,14 @@ class CustomSprite(pg.sprite.Sprite):
     #groups = game.all_sprites
     def rayIntersect(self,local_origin,collidables):   
 
-        #original_pos = self.rayPos + local_origin     # Origin vector for calculations
-        
-        original_pos = self.pos + local_origin     # Origin vector for calculations
-        vel = self.vel                    # X and Y vector
-        #collidables = col_objects               # Array of collideable objects
+        #original_pos = self.rayPos + local_origin      # Origin vector for calculations
+    
+        original_pos = self.pos + local_origin          # Origin vector for calculations
+        vel = self.vel                                  # X and Y vector
+        #collidables = col_objects                      # Array of collideable objects
 
-        intersection = vel.copy()         # Default intersection vector for comparison
-        hitObject = False               # Hit object as false by default
+        intersection = vel.copy()                       # Default intersection vector for comparison
+        hitObject = False                               # Hit object as false by default
 
         # Will check if the x and y vectors are not equal to 0 and assign a to their quotient if they are not
         slope = False                                               
@@ -277,38 +277,39 @@ class CustomSprite(pg.sprite.Sprite):
             for collidable in collidables:
                 if collidable != self:
                     # Vertical intersections:
-                    y_temp_intersection = collidable.pos.y - collidable.height                                # y equals the tops if moving down
+                    y_temp_intersection = collidable.pos.y - collidable.height                              # y equals the tops if moving down
                
-                    if vel.y < 0:                                                             # If jumping
-                        y_temp_intersection = collidable.pos.y                                       # y equals the bottoms if moving up
+                    if vel.y < 0:                                                                           # If jumping
+                        y_temp_intersection = collidable.pos.y                                              # y equals the bottoms if moving up
 
-                    y_local_temp = y_temp_intersection - original_pos.y                                # Making a local y coordinate which is the y intersection - the origin's y position
-                    x_local_temp = y_local_temp / slope                                         # Making a local x coordinate from the local y divided by a
+                    y_local_temp = y_temp_intersection - original_pos.y                                     # Making a local y coordinate which is the y intersection - the origin's y position
+                    x_local_temp = y_local_temp / slope                                                     # Making a local x coordinate from the local y divided by a
                     
 
-                    x_temp_intersection = original_pos.x + x_local_temp                                # Using the local x and adding the origin's x to get global x coordinates of the intersection point
+                    x_temp_intersection = original_pos.x + x_local_temp                                     # Using the local x and adding the origin's x to get global x coordinates of the intersection point
               
-                    if collidable.left_x() <= x_temp_intersection <= collidable.right_x():     # Check if collision's x is between the collision object's left and right sides
-                        tempVec = vec(x_local_temp , y_local_temp)                          # Making a temporary vector be equal to the intersection
-                        if tempVec.length() <= intersection.length():                        # Checking if the temporary is shorter than the current intersection vector
-                            intersection = tempVec                                          # If it's true, the intersection will be equal to the temporary
-                            hitObject    = collidable                                                   # Hit object will be defined as c
+                    if collidable.left_x() <= x_temp_intersection <= collidable.right_x():                  # Check if collision's x is between the collision object's left and right sides
+                        tempVec = vec(x_local_temp , y_local_temp)                                          # Making a temporary vector be equal to the intersection
+                        if tempVec.length() <= intersection.length():                                       # Checking if the temporary is shorter than the current intersection vector
+                            intersection = tempVec                                                          # If it's true, the intersection will be equal to the temporary
+                            hitObject    = collidable                                                       # Hit object will be defined as c
                     
                     # Horizontal intersections:
-                    x_temp_intersection = collidable.left_x()                               # x equals left side if moving right
+                    x_temp_intersection = collidable.left_x()                                               # x equals left side if moving right
                     if vel.x < 0:
-                        x_temp_intersection = collidable.right_x()                           # x equals right side if moving left
+                        x_temp_intersection = collidable.right_x()                                          # x equals right side if moving left
                     
-                    x_local_temp = x_temp_intersection - original_pos.x                                # Making a local x coordinate which is the x intersection - origin's x position
-                    y_local_temp = x_local_temp * slope                                         # Making a local y coordinate from the local x multiplied by a        
+                    x_local_temp = x_temp_intersection - original_pos.x                                     # Making a local x coordinate which is the x intersection - origin's x position
+                    y_local_temp = x_local_temp * slope                                                     # Making a local y coordinate from the local x multiplied by a        
 
-                    y_temp_intersection = original_pos.y + y_local_temp                                # Global y position is the same as the origin's y + the local intersection's y position
+                    y_temp_intersection = original_pos.y + y_local_temp                                     # Global y position is the same as the origin's y + the local intersection's y position
                     
-                    if collidable.top_y() <= y_temp_intersection <= collidable.bot_y():                  # check if collision's y is between the collision object's top and bottom sides
+                    if collidable.top_y() <= y_temp_intersection <= collidable.bot_y():                     # check if collision's y is between the collision object's top and bottom sides
                         tempVec = vec(x_local_temp,y_local_temp)
                         if tempVec.length() <= intersection.length():
                             intersection = tempVec
                             hitObject = collidable 
+        
         # When we have cases where one side is 0
         # Reduce it later, when we can boil it down more
         # Refer to the bit above if confused, there's a lot of repitition
@@ -357,7 +358,7 @@ class CustomSprite(pg.sprite.Sprite):
  
         
         if hitObject:
-            intersection += original_pos # Adding the origin's vector in the end to return the global coordinates instead of the local
+            intersection += original_pos            # Adding the origin's vector in the end to return the global coordinates instead of the local
             
             return [hitObject,intersection]
         else:
@@ -393,18 +394,16 @@ class CustomSprite(pg.sprite.Sprite):
                         
         return finalResult
 
-    #
     def collisions_rayIntersect(self,Intersecters):  
         corner = self.quadrupleRayIntersect(Intersecters)
         self.rayPos = self.pos.copy()
         if corner:
-            hitObject = corner['hitsobject']
-            
-            hitPos = corner['hit pos']
-            relHitPos = corner['relative hit pos']
+            hitObject   = corner['hitsobject']
+            hitPos      = corner['hit pos']
+            relHitPos   = corner['relative hit pos']
             if hitObject.solid:
                 self.hitsSolid(hitObject,  hitPos, relHitPos)
-
+    
         # making vase break
         """if self.hitbox:
             vase_intersect = self.hitbox.rayIntersect(self.hitbox.topleft() - self.hitbox.pos, self.obstacles)
@@ -427,9 +426,6 @@ class CustomSprite(pg.sprite.Sprite):
 
     # Moves the object when it's about to collide with a solid object
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
-        
-        #print(hitObject)
-
         betweenLR = hitObject.right_x() >= hitPosition.x >= hitObject.left_x()
         betweenTB = hitObject.bot_y()   >= hitPosition.y >= hitObject.top_y()
         print(hitObject.name)
@@ -458,5 +454,4 @@ class CustomSprite(pg.sprite.Sprite):
             self.acc.y = 0
 
         self.pos += relativeHitPos + vec(offsetX,offsetY) 
-        #self.pos += relativeHitPos       
         self.rayPos = self.pos + vec(offsetX, offsetY)                        

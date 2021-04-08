@@ -63,24 +63,23 @@ class Game:
  
 
 
-        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")      # Creates player object
-        self.level.setSurfaces()                                                # Sets surfaces?
-        self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')
-        
+        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
+        self.level.setSurfaces()                                                                        # Sets surfaces?
+        self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
-        self.health = PickUp(self, 400, 400, 10, 10, 'health')
-        self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')
-        self.water = Water(self, 500, 400, 10, 10)
-        self.turn = False
-        self.boxpicked = False
-        self.intboxlist = [None]
-        self.interactive_box    = None
-        self.hitbox             = None
-        self.frames = 0
-        self.counter = 0
-        self.prev_counter = 0
-        self.relposx = 0
-        self.realposp = 0
+        self.health = PickUp(self, 400, 400, 10, 10, 'health')                  
+        self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')                  
+        self.water = Water(self, 500, 400, 10, 10)                              
+        self.turn = False                                                       
+        self.boxpicked = False                                                  
+        self.intboxlist = [None]                                                
+        self.interactive_box    = None                                          
+        self.hitbox             = None                                          
+        self.frames = 0                                                         
+        self.counter = 0                                                        
+        self.prev_counter = 0                                                   
+        self.relposx = 0                                                        
+        self.realposp = 0                                                       
         self.run()                                                              # Runs the
 
     # Method that loops until a false is passed inside the game
@@ -264,10 +263,8 @@ in Player:
 - atPressurePlate() -> whether something is on a button of sorts          - pygame collision
 
 - levelCompletion() -> When you "collide" with the flag pole at the end of the level
-
-
-
 """
+
 # Game Loop
 g = Game()                                                                      # Creates a game instance
                                                              # While loop checking the Game.running boolean
