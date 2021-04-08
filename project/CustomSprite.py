@@ -143,7 +143,7 @@ class CustomSprite(pg.sprite.Sprite):
             self.has_collided = False
 
     def pygamecoll(self, group):
-        inflation = 10
+        inflation = 2
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.x += r(self.vel.x)
