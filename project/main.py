@@ -180,7 +180,7 @@ class Game:
                      
     # Method for drawing everything to the screen
     def draw(self):                                                             
-        self.screen.fill(BGCOLOR)         #
+        self.screen.fill(BGCOLOR)      
         for sprite in self.all_sprites:
        
             sprite.updateRect()
