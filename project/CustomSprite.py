@@ -167,7 +167,7 @@ class CustomSprite(pg.sprite.Sprite):
                             self.pos.x = collided.right_x() + self.width/2
                             self.vel.x = 0
                         if coll_side == "bot":
-                            self.pos.y = collided.top_y() - self.height
+                            self.pos.y = collided.bot_y() + self.height
                             self.vel.y = 0
         
         self.rect.inflate(-inflation, -inflation)
