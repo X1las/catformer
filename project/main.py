@@ -120,8 +120,6 @@ class Game:
                 lever.leverPull(self.interactive_boxes, self.turn)
         
             self.interactive_box.pickupSprite(self.boxes, self.boxpicked)
-            #for box in self.boxes:
-             #   box.
         
        
         #self.pushSprite()

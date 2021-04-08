@@ -11,7 +11,7 @@ H: Platforms
 900 , 400 , 150 , 40 , p_5
 
 H: Boxes
-150 , 350 , 45 , 45 , box_1
+150 , 350 , 44 , 44 , box_1
 
 H: Buttons
 400 , 550 , 30 , 20 , button1
