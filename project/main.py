@@ -52,7 +52,7 @@ class Game:
         # Here is where we would need filewrite for loading multiple levels
         self.create()
         self.level       = Level(self)                                          # Makes a Level instance
-        self.level.load("level1")                                               # Loads the level
+        self.level.load("level" + str(1))                                               # Loads the level
         if pg.mixer.music.get_busy:
             pg.mixer.music.stop
             pg.mixer.music.unload
@@ -96,7 +96,8 @@ class Game:
             """
             # Runs all our methods on loop:
 
-            self.events()                                                       
+            self.events()  
+                                                                 
             self.update()
             self.displayHUD()                                                       
             self.draw()  

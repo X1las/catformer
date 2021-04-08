@@ -326,6 +326,7 @@ class Button(CustomSprite):
 # ---------------- PICKUP ---------------------------------------------------------------------------------------------------------------------------------
 
 class PickUp(CustomSprite):
+
     def __init__(self,game,x,y, width, height, type_, name = None): 
         self.game = game
         self.width = width; self.height = height
