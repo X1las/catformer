@@ -101,7 +101,6 @@ class Game:
             self.displayHUD()                                                       
             self.draw()  
 
-
     # Method where we update game processesd
     def update(self):
 
@@ -120,18 +119,15 @@ class Game:
         
             self.interactive_box.pickupSprite(self.boxes, self.boxpicked)
         
-       
         #self.pushSprite()
         self.all_sprites.update()
         self.moveScreen()
         self.relativePos()
 
         self.prev_counter = self.counter
-
   
     # Method for making a "camera" effect, movesR everything on the screen relative to where the player is moving
     def moveScreen(self):
-       
     
         if self.player.right_x()>= round(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
@@ -141,13 +137,11 @@ class Game:
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-       
 
     def relativePos(self):
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x -= self.relposx
-
 
     # Method that checks for events in pygame
     def events(self):
@@ -176,7 +170,6 @@ class Game:
                 if event.key == pg.K_d:
                     self.interactive_box.kill()
                     self.interactive_box = None
-         
                      
     # Method for drawing everything to the screen
     def draw(self):                                                             

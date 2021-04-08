@@ -12,8 +12,6 @@ from random import choice, randrange, uniform
 # Variables
 vec = Vec
 
-
-
 # ------------------------------ collision detection --------------------------------------------------------------------
 class Tester(CustomSprite):
     def __init__(self, game,  pos):
@@ -60,21 +58,35 @@ class Interactive(CustomSprite):
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
 
-    def intUpdate(self):
-        if self.player.facing == "left":
-            self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
+    def intUpdate(self, facing, pos):
+        if facing == "left":
+            if pos == "global":
+                self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
+            else: 
+                self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
         else: 
-            self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
+            if pos == "global":
+                self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
+            else: 
+                self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
     
     def update(self):
+        
+        """
         if self.player.facing == "left":
             self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
         else: 
-            self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
+            self.rect.bottomleft = (self.player.pos.x,self.player.pos.y) 
+        """  
         self.vel = self.player.vel
     
     def updateRect(self):
-        self.intUpdate()
+        self.intUpdate(self.player.facing, "rel")
+
+        
+    
+    def resetRects(self):
+        self.intUpdate(self.player.facing, "global")
 
     #def draw(self):
      #   pass
@@ -98,12 +110,15 @@ class LevelGoal(CustomSprite):
     def update(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
-        #round(self.pos)
-        #self.rect.midbottom = self.pos.asTuple()
-
     def activate(self):
         # Whatever it does
-        self.game.new()
+        for sprite in self.game.all_sprites:
+            self.game.relposx = 0
+            self.game.relposp = 0
+            sprite.relativePosition = sprite.pos.copy()
+            sprite.relativePosition.x -= self.game.relposx
+            
+        #self.game.new()
         
 
 # ---------------- PLATFORM ---------------------------------------------------------------------------------------------------------------------------------
