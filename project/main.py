@@ -64,6 +64,7 @@ class Game:
 
 
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
+        
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
@@ -81,6 +82,7 @@ class Game:
         self.relposx = 0                                                        
         self.realposp = 0                                                       
         self.run()                                                              # Runs the
+
 
     # Method that loops until a false is passed inside the game
     def run(self):                       
@@ -143,6 +145,16 @@ class Game:
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x -= self.relposx
+
+    def resetCamera(self):
+        for sprite in self.all_sprites:
+            self.relposx = 0
+            self.relposp = 0
+            sprite.relativePosition = sprite.pos.copy()
+            sprite.relativePosition.x -= self.relposx
+        self.player.respawn()
+
+
 
     # Method that checks for events in pygame
     def events(self):

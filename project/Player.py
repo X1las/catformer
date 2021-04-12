@@ -34,6 +34,13 @@ class Player(CustomSprite):
         self.lives = 9
         self.catnip_level = 0
         self.isPlayer = True
+        self.respawnx = x
+        self.respawny = y
+        self.respawnPos = Vec(x,y)
+
+    def respawn(self):
+        self.pos = self.respawnPos       
+
 
     def takeDamage(self):
         self.lives -= 1

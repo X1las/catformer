@@ -125,8 +125,6 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pickupSprite(self,  agents, turn):
         # should ckeck which box is closest
-        #collided = None
-        #if not self.has_collided:
         print(agents)
         collided = pg.sprite.spritecollide(self, agents, False)
         print(collided)
