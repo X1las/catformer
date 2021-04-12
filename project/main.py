@@ -13,7 +13,118 @@ from Vector import Vec
 
 # Classes
 class Game:
+    """
     # initializes the game class, runs once when the Game class gets instantialized
+    def __init__(self):
+        pg.init()                                                               # Initializes the pygame module
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
+        pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TTLE in settings
+        self.clock = pg.time.Clock()                                            # Creates a pygame clock object
+        self.running = True                                                     # Creates a boolean for running the game
+        
+        self.level          = Level(self)                                       # Makes a Level instance
+        #self.player        = Player(self)
+        
+        data = self.getPlayerData()
+        if data:
+            self.level.name = data[0]     
+            self.player.lives = data[1]
+            self.player.catnip_level = data[2]                                
+        else:
+            self.level.name = DEFAULT_LEVEL
+
+    def create(self):
+    
+        self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        
+
+        # Assigning spritegroups with LayeredUpdates
+        self.platforms          = pg.sprite.LayeredUpdates()              
+        self.boxes              = pg.sprite.LayeredUpdates()
+        self.surfaces           = pg.sprite.LayeredUpdates()
+        self.obstacles          = pg.sprite.LayeredUpdates()
+        self.non_moveable       = pg.sprite.LayeredUpdates()
+        self.vases              = pg.sprite.LayeredUpdates()
+        self.non_player         = pg.sprite.LayeredUpdates()
+        self.rayIntersecters    = pg.sprite.Group()
+        self.interactables      = pg.sprite.Group()
+        self.players            = pg.sprite.Group()
+        self.pickups            = pg.sprite.Group()
+        self.damager            = pg.sprite.Group()
+        self.activator          = pg.sprite.Group()
+        self.interactive_boxes  = pg.sprite.Group()
+        self.weight_act         = pg.sprite.Group()      
+        self.buttons            = pg.sprite.Group()       
+        self.levers             = pg.sprite.Group()
+        self.level_goals        = pg.sprite.Group()
+
+    
+    
+    
+
+    def savePlayerData(self):
+        file = open("/playerData/player","w")
+
+        levelName = self.level.name
+        lives = str(self.player.lives)
+        catnip = str(self.player.catnip_level)
+
+        file.write("{levelName},{lives},{catnip}")
+        file.close()
+
+    def getPlayerData(self):
+        try:
+            file = open("/playerData/player","r")
+            data = file.read().split(",")
+            return data
+        except IOError:
+            print("No file found, creating new from player data")
+            return False
+
+    # Method that creates a new game
+    def new(self):
+        # Here is where we would need filewrite for loading multiple levels
+        self.create()                                         
+        self.level.load(self.level.name) 
+        self.play.setSpawn(level.spawn)
+        self.player.respawn()
+        
+        if self.player.getPlayerData:
+            self.level.load(self.level.name + ".txt")                                               # Loads the level
+        else:
+            self.level.load(self.level.name + ".txt")
+        if pg.mixer.music.get_busy:
+            pg.mixer.music.stop
+            pg.mixer.music.unload
+
+        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
+        pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(VOLUME)
+
+        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
+        
+        self.level.setSurfaces()                                                                        # Sets surfaces?
+        self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
+
+        self.health = PickUp(self, 400, 400, 10, 10, 'health')                  
+        self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')                  
+        self.water = Water(self, 500, 400, 10, 10)                              
+        self.turn = False                                                       
+        self.boxpicked = False                                                  
+        self.intboxlist = [None]                                                
+        self.interactive_box    = None                                          
+        self.hitbox             = None     
+        self.currbox = vec(0,0)    
+        self.currplayer = vec(0,0)         
+        self.intWasCreated = False                        
+        self.frames = 0                                                         
+        self.counter = 0                                                        
+        self.prev_counter = 0                                                   
+        self.relposx = 0                                                        
+        self.realposp = 0                                                       
+        self.run()                                                              # Runs the
+        """
+
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
@@ -52,7 +163,7 @@ class Game:
         # Here is where we would need filewrite for loading multiple levels
         self.create()
         self.level       = Level(self)                                          # Makes a Level instance
-        self.level.load("level" + str(1))                                               # Loads the level
+        self.level.load("level1")                                               # Loads the level
         if pg.mixer.music.get_busy:
             pg.mixer.music.stop
             pg.mixer.music.unload
@@ -64,7 +175,6 @@ class Game:
 
 
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
-        
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
@@ -82,6 +192,7 @@ class Game:
         self.relposx = 0                                                        
         self.realposp = 0                                                       
         self.run()                                                              # Runs the
+
 
 
     # Method that loops until a false is passed inside the game
@@ -119,14 +230,16 @@ class Game:
         if self.interactive_box:
             for lever in self.levers:
                 lever.leverPull(self.interactive_boxes, self.turn)
-        
+    
             self.interactive_box.pickupSprite(self.boxes, self.boxpicked)
+            self.interactive_box.knockOver(self.vases, self.intWasCreated)
         
         #self.pushSprite()
         self.all_sprites.update()
         self.moveScreen()
         self.relativePos()
 
+        self.intWasCreated = False    
         self.prev_counter = self.counter
   
     # Method for making a "camera" effect, movesR everything on the screen relative to where the player is moving
@@ -176,6 +289,7 @@ class Game:
                 if event.key == pg.K_d:  
                     self.prev_counter = self.counter
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
+                    self.intWasCreated = True
                     self.counter += 1
                     self.intboxlist[0] = self.interactive_box
                                            

@@ -43,6 +43,7 @@ class Interactive(CustomSprite):
 
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites, game.interactive_boxes)  
+        self._layer = 1
         self.player = player
         width = self.player.width/2 + 50
         height = self.player.height       
@@ -50,7 +51,8 @@ class Interactive(CustomSprite):
         self.image = pg.Surface((width,height)); 
         self.image.fill((0,200,0)) 
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
-        
+        self.colliding = False
+        self.faceinput = self.player.facing
         self.relativePosition = self.pos.copy()
         self.vel = self.player.vel
         if self.facing == "left":
@@ -59,10 +61,18 @@ class Interactive(CustomSprite):
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
 
     def intUpdate(self, facing, pos):
+
+        #bob = self.rect.bottomleft
+        #bob = self.rect.bottomright
+
         if facing == "left":
             if pos == "global":
+                #bob = (self.player.pos.x,self.player.pos.y)   
+
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
-            else: 
+            else:
+                #bob = self.player.relativePosition.rounded().asTuple()
+
                 self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
         else: 
             if pos == "global":
@@ -81,12 +91,14 @@ class Interactive(CustomSprite):
         self.vel = self.player.vel
     
     def updateRect(self):
-        self.intUpdate(self.player.facing, "rel")
+        if not self.colliding:
+            self.faceinput = self.player.facing
+        self.intUpdate(self.faceinput, "rel")
 
         
     
     def resetRects(self):
-        self.intUpdate(self.player.facing, "global")
+        self.intUpdate(self.faceinput, "global")
 
     #def draw(self):
      #   pass
@@ -170,15 +182,21 @@ class Box(CustomSprite):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
+        self.friction = 0
    
     def update(self):
+        
         if self.has_collided:
             self.vel.x = self.new_vel.x
+        else:
+            self.vel.x = 0
+        self.has_collided = False
         self.applyPhysics(self.game.rayIntersecters)
+        #self.pos += self.vel
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pickUp(self, interacter):
-        print(f'interacter vel: {interacter.vel}')
+        
         self.new_vel.x = interacter.vel.x
        
 
@@ -193,7 +211,7 @@ class Vase(CustomSprite):
         self.width = 20
         self.height = 30
         self.game = game
-        self.groups = game.all_sprites, game.vases, game.non_player, game.interactables
+        self.groups = game.all_sprites, game.vases, game.non_player, game.interactables, game.rayIntersecters
         
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
@@ -202,15 +220,23 @@ class Vase(CustomSprite):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.fall = False
+        self.gravity = PLAYER_GRAV
+        #self.can_fall_and_move = True
         self.relativePosition = self.pos.copy()
+        self.isVase = True
 
     def update(self):
         
         #round(self.pos)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        
 
         if self.fall == True:
+            print("should fall")
+            self.inAir = True
             self.applyPhysics(self.game.rayIntersecters)
+        if self.on_solid(self.game.rayIntersecters) != self.ignoreSol:
+            self.breaks()
+        self.rect.midbottom = self.pos.rounded().asTuple()
     
     @classmethod
     def on_platform(cls, game, plat : Platform, placement : str , name = None):
@@ -228,7 +254,8 @@ class Vase(CustomSprite):
             return cls(game = game, x = pos.x+ push, y = pos.y, name = name)
         except:
             print("Must choose left, right or mid")    
-            return cls(game = game, x = plat.rect.midtop[0] , y = plat.rect.midtop[1])
+            return cls(game = game, x = plat.rect.midtop[0] , y = plat.rect.midtop[1], ignoreSol = plat)
+        self.ignoreSol = plat
 
     def breaks(self):
         self.image.fill((250,250,250))

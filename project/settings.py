@@ -1,3 +1,5 @@
+from Vector import *
+
 # Description: 
 
 # game options/settings
@@ -6,6 +8,7 @@ WIDTH = 600
 HEIGHT = 600
 FPS = 60
 FONT_NAME = 'arial'
+DEFAULT_LEVEL = "level1"
 
 # Camera Options
 CAMERA_BORDER_R = WIDTH * 2/3
@@ -21,6 +24,9 @@ PLAYER_ACC = 0.4
 PLAYER_FRICTION = -0.12
 PLAYER_GRAV = 0.7
 PLAYER_JUMP = 13
+PLAYER_LIVES = 9
+PLAYER_CATNIP = 0
+PLAYER_SPAWN = Vec()
 
 # Game properties
 GRAVITY = 0.7

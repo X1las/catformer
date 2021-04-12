@@ -15,6 +15,39 @@ vec = Vec
 
 # Classes
 class Player(CustomSprite):
+    """
+    spawn               = PLAYER_SPAWN
+    catnip_level        = PLAYER_CATNIP
+    lives               = PLAYER_LIVES
+
+    isPlayer            = True
+    facing              = None
+    solid               = True
+    on_collided_surface = False 
+    stop_falling        = False
+    locked              = False
+    can_fall_and_move   = True
+
+    width               = 30 
+    height              = 40
+    rect.midbottom      = (spawn.x,spawn.y)
+    vel                 = vec(0, 0)   
+    acc                 = vec(0, 0)
+    pos                 = spawn
+    dist_from_right     = 0
+    dslopest_from_left  = 0
+    dist_from_top       = 0
+    dist_from_bottom    = 0
+
+    def __init__(self, game):
+        self.game       = game; self.name = name; self._layer = 1
+
+        groups = game.all_sprites, game.players, game.weight_act
+        pg.sprite.Sprite.__init__(self, self.groups)
+
+        self.image      =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
+    """
+
     def __init__(self, game, x, y, name = None):
         self.groups = game.all_sprites,  game.players, game.weight_act
         
@@ -34,13 +67,15 @@ class Player(CustomSprite):
         self.lives = 9
         self.catnip_level = 0
         self.isPlayer = True
-        self.respawnx = x
-        self.respawny = y
-        self.respawnPos = Vec(x,y)
+
+
 
     def respawn(self):
-        self.pos = self.respawnPos       
+        self.relativePosition = self.pos.copy()
+        self.pos        = self.spawn
 
+    def setSpawn(self,spawn):
+        self.spawn      = spawn
 
     def takeDamage(self):
         self.lives -= 1
@@ -53,7 +88,6 @@ class Player(CustomSprite):
     def addCatnip(self):
         self.catnip_level += 1
         return self.catnip_level
-
 
     def initKeys(self,jump, left, right, crouch):
         self.jump_key = jump

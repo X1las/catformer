@@ -109,4 +109,5 @@ class Level:
         self.levers = levers
         self.length = length
         self.musicTrack = track
+        self.name = filename
         print("Level loaded successfully!")
