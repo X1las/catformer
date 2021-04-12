@@ -112,12 +112,15 @@ class LevelGoal(CustomSprite):
 
     def activate(self):
         # Whatever it does
+        self.game.resetCamera()
+        """
         for sprite in self.game.all_sprites:
             self.game.relposx = 0
             self.game.relposp = 0
+            self.game.player.pos = self.game.level.spawn
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x -= self.game.relposx
-            
+        """ 
         #self.game.new()
         
 
