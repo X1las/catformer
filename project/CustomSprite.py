@@ -42,7 +42,6 @@ class CustomSprite(pg.sprite.Sprite):
     def updateRect(self):
         roundedvec = self.relativePosition.rounded()
         self.rect.midbottom = roundedvec.asTuple()
-        
 
     def resetRects(self):
         self.rect.midbottom = self.pos.asTuple()
@@ -250,14 +249,6 @@ class CustomSprite(pg.sprite.Sprite):
         self.pos += self.vel +  self.acc * 0.5     
       
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
-
-
-
-
-
-
-
-
 
     #groups = game.all_sprites
     def rayIntersect(self,local_origin,collidables):   
