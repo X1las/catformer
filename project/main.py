@@ -21,10 +21,7 @@ class Game:
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
         
-        self.level          = Level(self)                                       # Makes a Level instance
-        self.player         = Player(self)
-        
-        data = self.getPlayerData()
+        self.data = self.getPlayerData()
         if data:
             self.level.name = data[0]     
             self.player.lives = data[1]
@@ -79,9 +76,17 @@ class Game:
     # Method that creates a new game
     def new(self):
         # Here is where we would need filewrite for loading multiple levels
-        self.create()                                         
+        if self.level:
+            self.level  = Level(self)                                           # Makes a Level instance
+        self.create()                            
         self.level.load(self.level.name)
-        self.player.group()
+        self.player.setSpawn(self.level.spawn)
+        
+        if not self.player:
+            self.player = Player(self)
+        else:
+            self.player.respawn()
+
         self.player.setSpawn(self.level.spawn)
         self.player.respawn()
         
