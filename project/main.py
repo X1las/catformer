@@ -22,12 +22,6 @@ class Game:
         self.running = True                                                     # Creates a boolean for running the game
         
         self.data = self.getPlayerData()
-        if data:
-            self.level.name = data[0]     
-            self.player.lives = data[1]
-            self.player.catnip_level = data[2]                                
-        else:
-            self.level.name = DEFAULT_LEVEL
 
     def create(self):
     
@@ -75,28 +69,36 @@ class Game:
 
     # Method that creates a new game
     def new(self):
-        # Here is where we would need filewrite for loading multiple levels
-        if self.level:
+        
+        self.create()  
+        
+        try:
+            self.level
+        except:
             self.level  = Level(self)                                           # Makes a Level instance
-        self.create()                            
+            self.level.name = DEFAULT_LEVEL
+
         self.level.load(self.level.name)
-        self.player.setSpawn(self.level.spawn)
         
-        if not self.player:
-            self.player = Player(self)
+        try:
+            self.player
+        except: 
+            self.player = Player(self,self.level.spawn)
         else:
+            self.player.setSpawn(self.level.spawn)
             self.player.respawn()
+ 
+        try:
+            if pg.mixer.music.get_busy:
+                pg.mixer.music.stop
+                pg.mixer.music.unload
+            
+            pg.mixer.music.load(self.level.musicTrack)                
+            pg.mixer.music.play(-1)
+            pg.mixer.music.set_volume(VOLUME)
+        except:
+            pass
 
-        self.player.setSpawn(self.level.spawn)
-        self.player.respawn()
-        
-        if pg.mixer.music.get_busy:
-            pg.mixer.music.stop
-            pg.mixer.music.unload
-
-        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
-        pg.mixer.music.play(-1)
-        pg.mixer.music.set_volume(VOLUME)
         
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 

@@ -15,7 +15,6 @@ vec = Vec
 
 # Classes
 class Player(CustomSprite):
-    spawn               = PLAYER_SPAWN
     catnip_level        = PLAYER_CATNIP
     lives               = PLAYER_LIVES
 
@@ -31,19 +30,19 @@ class Player(CustomSprite):
     height              = 40
     vel                 = vec(0, 0)   
     acc                 = vec(0, 0)
-    pos                 = spawn
     dist_from_right     = 0
     dslopest_from_left  = 0
     dist_from_top       = 0
     dist_from_bottom    = 0
 
-    def __init__(self, game, spawn = self.spawn, pdata = False):
+    def __init__(self, game, spawn):
         
-        self.game       = game; 
+        self.game       = game
         self._layer     = 1
-        self.spawn = spawn
+        self.spawn      = spawn
+        self.pos = spawn
 
-        groups = game.all_sprites, game.players, game.weight_act
+        self.groups = game.all_sprites, game.players, game.weight_act
         pg.sprite.Sprite.__init__(self, self.groups)
 
         self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
