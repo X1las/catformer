@@ -22,7 +22,7 @@ class Level:
 
     def setVases(self):
         #Vase(self.game, 100, 100, name = "vase_1")
-        vase = Vase.on_platform(self.game, self.plats[1], "left", name = "vase 2")
+        vase = Vase(self.game, self.plats[1], "left", name = "vase 2")
         
 
     def setLevers(self):
@@ -55,7 +55,11 @@ class Level:
         spawn = Vec(0,0)                                # Define a spawnpoint vector as 0,0
         category = "none"                               # Define a category string as none 
 
-        file = open(f"levels/{filename}.txt" , "r")     # Loading level file in levels directory with the given filename
+        try:
+            file = open(f"levels/{filename}.txt" , "r")     # Loading level file in levels directory with the given filename
+        except:
+            print("Error, no level found")
+            return False
         lines = file.read().splitlines()                # Split the file into an array of string lines
         
         # Iterating through the lines:
@@ -109,4 +113,6 @@ class Level:
         self.levers = levers
         self.length = length
         self.musicTrack = track
+        self.name = filename
         print("Level loaded successfully!")
+        return True

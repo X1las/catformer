@@ -36,6 +36,8 @@ class CustomSprite(pg.sprite.Sprite):
     isPlayer = False
     can_fall_and_move = False
     rayPos = vec()
+    isVase = False
+    ignoreSol = None
 
     def updateRect(self):
         roundedvec = self.relativePosition.rounded()
@@ -48,6 +50,7 @@ class CustomSprite(pg.sprite.Sprite):
     def top_y(self):
         return self.pos.y - self.height
     def bot_y(self):
+        
         return self.pos.y
     def left_x(self):
         return self.pos.x - self.width/2 #- 1
@@ -80,7 +83,7 @@ class CustomSprite(pg.sprite.Sprite):
         has_collided = pg.sprite.collide_rect(self, player)
         if has_collided:
             self.activate()
- 
+
     def buttonPress(self, agents):
         collided = pg.sprite.spritecollide(self, agents, False)
         if collided: 
@@ -106,6 +109,19 @@ class CustomSprite(pg.sprite.Sprite):
                 self.prevActivated = True
                 return self
 
+    
+    def knockOver(self,  agents, turn):
+        
+        collided = pg.sprite.spritecollide(self, agents, False)
+        if collided: 
+            for collided_obj in collided:
+                if turn:
+                    collided_obj.fall = True
+                    collided_obj.gravity = PLAYER_GRAV
+
+
+
+
     def touchEnemy(self, damager):
         collided = pg.sprite.spritecollide(self, damager, False)
         if collided: 
@@ -125,34 +141,31 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pickupSprite(self,  agents, turn):
         # should ckeck which box is closest
-        #collided = None
-        #if not self.has_collided:
-        print(agents)
+        
         collided = pg.sprite.spritecollide(self, agents, False)
-        print(collided)
+        
         if collided: 
-            
-            print(turn)
-            print(self.vel)
             if turn:
-                self.has_collided = True
+                self.colliding = True
                 for collided_obj in collided:
+                        collided_obj.has_collided = True
                         collided_obj.pickUp(self)
-                    
-        else:
-            self.has_collided = False
+            else:
+                self.colliding = False
 
-    def pygamecoll(self, group):
+    def pygamecoll(self, group, ignoredSol = None):
         inflation = 2
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.x += r(self.vel.x)
         self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
- 
+
         if collideds:
             for collided in collideds:
-                if collided != self:
+                if collided != self and collided != ignoredSol:
+
+
                     coll_side = self.determineSide(collided)
         
                     if coll_side == "top":
@@ -187,31 +200,39 @@ class CustomSprite(pg.sprite.Sprite):
         if mins == botcoll:
             return "bot"
 
-    def on_solid(self, group):
+    def on_solid(self, group, ignoredSol = None):
         self.rect.bottom += 5
         collideds = pg.sprite.spritecollide(self, group, False)
         self.on_platform = False
-        result = False
+        result = None
         for collided in collideds:
-            if self.determineSide(collided) == "top":
-                self.on_platform = True
-                result = True
+            if collided != self.ignoreSol:
+                if self.isVase:
+                    print(f'ONSOLID')
+                    print("foisjf")
+                    print(f'collided: {collided} ')
+                    print(f'ignored: {self.ignoreSol} ')
+                if self.determineSide(collided) == "top":
+                    self.on_platform = True
+                    result = collided
         self.rect.bottom -= 5 
         return result
         
 
-    def applyPhysics(self,Intersecters):
+    def applyPhysics(self,Intersecters, ignoreSol = None):
         
-        if self.on_solid(Intersecters):
+        if self.on_solid(Intersecters, ignoredSol = ignoreSol):
             self.inAir = False
         else:
+            if self.isVase:
+                print("falllll")
             self.inAir = True
 
         #self.inAir = True
         if self.inAir:
             self.gravity = GRAVITY
         else:
-
+            #if not self.isVase:
             self.gravity = 0
             tempVel = self.vel.copy()
             
@@ -225,22 +246,28 @@ class CustomSprite(pg.sprite.Sprite):
             if (not intersect) and (not intersect2):
                 self.inAir = True
             """           
+        
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-   
+
+        """
         if abs(self.vel.x) < 0.25:                          
             self.vel.x = 0                                  
-
+        
         if self.change_vel:
             self.vel = self.change_vel
         self.change_vel = None  
-
+        """
         if self.can_fall_and_move:
-            self.pygamecoll(Intersecters)
+            self.pygamecoll(Intersecters, ignoredSol=ignoreSol)
+        if self.isVase:
+            print(f'vel: {self.vel}')
+            print(f'acc: {self.acc}')
+            print(f'grav: {self.gravity}')
 
         self.pos += self.vel +  self.acc * 0.5     
-      
+    
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
 
@@ -278,7 +305,7 @@ class CustomSprite(pg.sprite.Sprite):
                 if collidable != self:
                     # Vertical intersections:
                     y_temp_intersection = collidable.pos.y - collidable.height                              # y equals the tops if moving down
-               
+            
                     if vel.y < 0:                                                                           # If jumping
                         y_temp_intersection = collidable.pos.y                                              # y equals the bottoms if moving up
 
@@ -287,7 +314,7 @@ class CustomSprite(pg.sprite.Sprite):
                     
 
                     x_temp_intersection = original_pos.x + x_local_temp                                     # Using the local x and adding the origin's x to get global x coordinates of the intersection point
-              
+            
                     if collidable.left_x() <= x_temp_intersection <= collidable.right_x():                  # Check if collision's x is between the collision object's left and right sides
                         tempVec = vec(x_local_temp , y_local_temp)                                          # Making a temporary vector be equal to the intersection
                         if tempVec.length() <= intersection.length():                                       # Checking if the temporary is shorter than the current intersection vector
@@ -355,7 +382,7 @@ class CustomSprite(pg.sprite.Sprite):
                             if tempVec.length() <= intersection.length():                        
                                 intersection = tempVec                                          
                                 hitObject = collidable 
- 
+
         
         if hitObject:
             intersection += original_pos            # Adding the origin's vector in the end to return the global coordinates instead of the local

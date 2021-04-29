@@ -13,13 +13,19 @@ from Vector import Vec
 
 # Classes
 class Game:
-    # initializes the game class, runs once when the Game class gets instantialized
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TTLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
+
+        self.data = self.getPlayerData()
+        if not self.data:
+            self.data = []
+            self.data.append(DEFAULT_LEVEL)
+            self.data.append(PLAYER_LIVES)
+            self.data.append(PLAYER_CATNIP)
 
     def create(self):
     
@@ -46,30 +52,77 @@ class Game:
         self.levers             = pg.sprite.Group()
         self.level_goals        = pg.sprite.Group()
 
+    def updateData(self):
+        try:
+            file = open("playerData/player.txt","x")
+        except:
+            file = open("playerData/player.txt","w")
+
+        levelName = self.level.name
+        lives = str(self.player.lives)
+        catnip = str(self.player.catnip_level)
+
+        file.write(f"{levelName},{lives},{catnip}")
+        file.close()
+
+        return [levelName,int(lives),int(catnip)]
+
+    def getPlayerData(self):
+        try:
+            file = open("playerData/player.txt","r")
+            data = file.read().split(",")
+            data[1] = int(data[1])
+            data[2] = int(data[2])
+            print(data)
+            return data
+        except IOError:
+            print("No playerdata found")
+            return None
 
     # Method that creates a new game
     def new(self):
-        # Here is where we would need filewrite for loading multiple levels
-        self.create()
-        self.level       = Level(self)                                          # Makes a Level instance
-        self.level.load("level1")                                               # Loads the level
-        if pg.mixer.music.get_busy:
-            pg.mixer.music.stop
-            pg.mixer.music.unload
+        try:
+            self.level
+        except:
+            pass
+        else:
+            self.data = self.updateData()
+        
+        self.create()  
+        
+        self.level  = Level(self)                                           # Makes a Level instance
+        
+        if self.data:
+            self.level.name = self.data[0]
+        
+        if not self.level.load(self.level.name):
+            self.level.load(DEFAULT_LEVEL)
 
-        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
-        pg.mixer.music.play(-1)
-        pg.mixer.music.set_volume(VOLUME)
+        self.player = Player(self,self.level.spawn)
+
+        if self.data:
+            self.player.lives = self.data[1]
+            self.player.catnip_level = self.data[2]    
  
+        try:
+            if pg.mixer.music.get_busy:
+                pg.mixer.music.stop
+                pg.mixer.music.unload
+            
+            pg.mixer.music.load(self.level.musicTrack)                
+            pg.mixer.music.play(-1)
+            pg.mixer.music.set_volume(VOLUME)
+        except:
+            pass
 
-
-        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
+        self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 100, name =  "pat1")                           
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
         self.health = PickUp(self, 400, 400, 10, 10, 'health')                  
         self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')                  
-        self.water = Water(self, 500, 400, 10, 10)                              
+        self.water = Water(self, 500, 400, 10, 10)         
+
         self.turn = False                                                       
         self.boxpicked = False                                                  
         self.intboxlist = [None]                                                
@@ -81,6 +134,8 @@ class Game:
         self.relposx = 0                                                        
         self.realposp = 0                                                       
         self.run()                                                              # Runs the
+
+
 
     # Method that loops until a false is passed inside the game
     def run(self):                       
@@ -96,11 +151,11 @@ class Game:
             """
             # Runs all our methods on loop:
 
-            self.events()                                                       
+            self.events()  
+                                                                 
             self.update()
             self.displayHUD()                                                       
             self.draw()  
-
 
     # Method where we update game processesd
     def update(self):
@@ -117,21 +172,20 @@ class Game:
         if self.interactive_box:
             for lever in self.levers:
                 lever.leverPull(self.interactive_boxes, self.turn)
-        
+    
             self.interactive_box.pickupSprite(self.boxes, self.boxpicked)
+            self.interactive_box.knockOver(self.vases, self.intWasCreated)
         
-       
-        #self.pushSprite()
+        #self.pushSprite()q
         self.all_sprites.update()
         self.moveScreen()
         self.relativePos()
 
+        self.intWasCreated = False    
         self.prev_counter = self.counter
-
   
     # Method for making a "camera" effect, movesR everything on the screen relative to where the player is moving
     def moveScreen(self):
-       
     
         if self.player.right_x()>= round(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
@@ -141,12 +195,20 @@ class Game:
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-       
 
     def relativePos(self):
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x -= self.relposx
+
+    def resetCamera(self):
+        for sprite in self.all_sprites:
+            self.relposx = 0
+            self.relposp = 0
+            sprite.relativePosition = sprite.pos.copy()
+            sprite.relativePosition.x -= self.relposx
+        self.player.respawn()
+
 
 
     # Method that checks for events in pygame
@@ -159,7 +221,7 @@ class Game:
                 self.running = False                                            # Sets running to false
             
             if event.type == pg.KEYDOWN:                                        # Checks if the user presses the down arrow
-                if event.key == pg.K_ESCAPE:                                    # checks if the uses presses the escape key
+                if event.key == pg.K_q:                                    # checks if the uses presses the escape key
                     if self.playing:                                            # Does the same as before
                         self.playing = False                                        
                     self.running = False        
@@ -169,6 +231,7 @@ class Game:
                 if event.key == pg.K_d:  
                     self.prev_counter = self.counter
                     self.interactive_box = Interactive(self,self.player, self.player.facing)
+                    self.intWasCreated = True
                     self.counter += 1
                     self.intboxlist[0] = self.interactive_box
                                            
@@ -176,11 +239,10 @@ class Game:
                 if event.key == pg.K_d:
                     self.interactive_box.kill()
                     self.interactive_box = None
-         
                      
     # Method for drawing everything to the screen
     def draw(self):                                                             
-        self.screen.fill(BGCOLOR)         #
+        self.screen.fill(BGCOLOR)      
         for sprite in self.all_sprites:
        
             sprite.updateRect()
