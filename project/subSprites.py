@@ -494,64 +494,128 @@ class PatrollingEnemy(Hostile):
         self.x = x
         self.groups = game.all_sprites, game.damager
         pg.sprite.Sprite.__init__(self, self.groups)
-
         self.width          = width; self.height = height
         self.image          =  pg.Surface((self.width,self.height)); self.image.fill((145,12,0)); self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
-        self.pos            = vec(x,y);     self.vel =  vec(3, 0);     self.acc = vec(0, 0)
+        self.pos            = vec(x,y);     self.vel =  vec(1, 0);     self.acc = vec(0, 0)
         self.maxDist = maxDist
         self.game = game
         self.relativePosition = self.pos.copy()
+        self.area = "mid"
+        self.collides_right = False
+        self.dontmove = False
+        self.collides_left = False
 
-
-
-        # Initial vel != 0
     
     def checkDist(self):
-        if abs(self.pos.x) - self.x >= self.maxDist:
-            self.vel *= -1
+        if  self.pos.x - self.x >= self.maxDist: # right boundary
+            self.area = "right"
+            self.vel.x = -1 * abs(self.vel.x)
+        elif self.pos.x - self.x <= -1*self.maxDist:
+            self.vel.x = abs(self.vel.x)
+            self.area = "left"
+
 
     def update(self):
-        self.checkDist()
-        self.collidingWithWall()
         self.pos += self.vel  
         self.rect.midbottom = self.pos.rounded().asTuple()
+        self.area = "mid"
 
-    def pygamecoll(self, group, ignoredSol = None):
-        inflation = 2
+        self.checkDist()
+        self.collidingWithWall()
+
+    def pygamecolls(self, group, ignoredSol = None):
+        inflation = 6
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
+        #self.rect.x += r(self.vel.x)
+        #self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
             for collided in collideds:
                 if collided != self and collided != ignoredSol:
-
-
                     coll_side = self.determineSide(collided)
-        
-               
-            
-                    if coll_side == "left":
+                    if coll_side == "left": # left side of collidedd obj
                         self.pos.x = collided.left_x() - self.width/2
+                        
                         self.vel.x *= -1
+                        #self.vel.x = -1 * abs(self.vel.x)
                     if coll_side == "right":
+                        print("detected right")
                         self.pos.x = collided.right_x() + self.width/2
+                        #self.vel.x = abs(self.vel.x)
+                
                         self.vel.x *= -1
+        
+        #self.rect.x -= r(self.vel.x)
+        #self.rect.y -= r(self.vel.y)
+    def pygamecolls2(self, group):
+        inflation = 2
+        self.rect = self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        collideds = pg.sprite.spritecollide(self, group, False)
 
+        if collideds:
+            for collided in collideds:
+                if collided != self:
+                    coll_side = self.determineSide(collided)
+                    if coll_side == "left": # left side of collidedd obj
+                        if self.collides_left:
+                            self.vel.x *= 0
+                            print(collided)
+                            try:
+                                collided.vel.x = 0
+                            except:
+                                pass
+                            print(self)
+                            self.add(self.game.rayIntersecters)
+                            self.dontmove = True
 
+                        else: 
+                            self.vel.x *= -1
+                        self.collides_right = True
+                        #self.vel.x = -1 * abs(self.vel.x)
+                    elif coll_side == "right":
+                        if self.collides_right:
+                            self.add(self.game.rayIntersecters)
+                    
+                            self.vel.x *= 0
+                            try:
+                                collided.vel.x = 0
+                            except:
+                                pass
+                            self.dontmove = True
 
+                        else: 
+                            self.vel.x *= -1
+                        #self.vel.x = abs(self.vel.x)
+                        self.collides_left = True
+                    else:
 
+                            self.dontmove = False
+
+        if self.dontmove == False:
+            self.collides_right = False
+            self.collides_left = False
+        
+            self.game.rayIntersecters.remove(self)
+
+            
+    
+    
+        self.rect = self.rect.inflate(-inflation, -inflation)
+        
+        
 
     def collidingWithWall(self):
-        self.pygamecoll(self.game.rayIntersecters)
+        if not self.dontmove:
+            self.pygamecolls(self.game.rayIntersecters)
+        else: 
+            self.vel.x = 0
         
-    #def collision
-        # check collision with sides only
-
-
+        self.pygamecolls2(self.game.rayIntersecters)
+ 
 
 
 class AiEnemy(Hostile):
