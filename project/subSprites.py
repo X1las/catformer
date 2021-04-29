@@ -135,6 +135,11 @@ class LevelGoal(CustomSprite):
     def activate(self):
         # Whatever it does
         self.game.resetCamera()
+        current = self.game.level.name
+        level = int(current[5:6])
+        level+=1
+        self.game.level.name = "level"+str(level)
+        self.game.new()
         """
         for sprite in self.game.all_sprites:
             self.game.relposx = 0

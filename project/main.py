@@ -20,6 +20,13 @@ class Game:
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
 
+        self.data = self.getPlayerData()
+        if not self.data:
+            self.data = []
+            self.data.append(DEFAULT_LEVEL)
+            self.data.append(PLAYER_LIVES)
+            self.data.append(PLAYER_CATNIP)
+
     def create(self):
     
         self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
@@ -45,23 +52,70 @@ class Game:
         self.levers             = pg.sprite.Group()
         self.level_goals        = pg.sprite.Group()
 
+    def updateData(self):
+        try:
+            file = open("playerData/player.txt","x")
+        except:
+            file = open("playerData/player.txt","w")
+
+        levelName = self.level.name
+        lives = str(self.player.lives)
+        catnip = str(self.player.catnip_level)
+
+        file.write(f"{levelName},{lives},{catnip}")
+        file.close()
+
+        return [levelName,int(lives),int(catnip)]
+
+    def getPlayerData(self):
+        try:
+            file = open("playerData/player.txt","r")
+            data = file.read().split(",")
+            data[1] = int(data[1])
+            data[2] = int(data[2])
+            print(data)
+            return data
+        except IOError:
+            print("No playerdata found")
+            return None
 
     # Method that creates a new game
     def new(self):
-        # Here is where we would need filewrite for loading multiple levels
-        self.create()
-        self.level       = Level(self)                                          # Makes a Level instance
-        self.level.load("level1")                                               # Loads the level
-        if pg.mixer.music.get_busy:
-            pg.mixer.music.stop
-            pg.mixer.music.unload
+        try:
+            self.level
+        except:
+            pass
+        else:
+            self.data = self.updateData()
+        
+        self.create()  
+        
+        self.level  = Level(self)                                           # Makes a Level instance
+        
+        if self.data:
+            self.level.name = self.data[0]
+        
+        if not self.level.load(self.level.name):
+            self.level.load(DEFAULT_LEVEL)
 
-        pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
-        pg.mixer.music.play(-1)
-        pg.mixer.music.set_volume(VOLUME)
+        self.player = Player(self,self.level.spawn)
+
+        if self.data:
+            self.player.lives = self.data[1]
+            self.player.catnip_level = self.data[2]    
+ 
+        try:
+            if pg.mixer.music.get_busy:
+                pg.mixer.music.stop
+                pg.mixer.music.unload
+            
+            pg.mixer.music.load(self.level.musicTrack)                
+            pg.mixer.music.play(-1)
+            pg.mixer.music.set_volume(VOLUME)
+        except:
+            pass
 
         self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 100, name =  "pat1")                           
-        self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
