@@ -43,6 +43,10 @@ class Player(CustomSprite):
         self._layer     = 1
         self.spawn = spawn
 
+        if pdata:
+            
+            pass
+
         groups = game.all_sprites, game.players, game.weight_act
         pg.sprite.Sprite.__init__(self, self.groups)
 
