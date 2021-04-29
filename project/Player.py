@@ -15,6 +15,7 @@ vec = Vec
 
 # Classes
 class Player(CustomSprite):
+    """
     spawn               = PLAYER_SPAWN
     catnip_level        = PLAYER_CATNIP
     lives               = PLAYER_LIVES
@@ -29,6 +30,7 @@ class Player(CustomSprite):
 
     width               = 30 
     height              = 40
+    rect.midbottom      = (spawn.x,spawn.y)
     vel                 = vec(0, 0)   
     acc                 = vec(0, 0)
     pos                 = spawn
@@ -37,21 +39,36 @@ class Player(CustomSprite):
     dist_from_top       = 0
     dist_from_bottom    = 0
 
-    def __init__(self, game, spawn = self.spawn, pdata = False):
-        
-        self.game       = game; 
-        self._layer     = 1
-        self.spawn = spawn
-
-        if pdata:
-            
-            pass
+    def __init__(self, game):
+        self.game       = game; self.name = name; self._layer = 1
 
         groups = game.all_sprites, game.players, game.weight_act
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
-        self.rect.midbottom         = (spawn.x,spawn.y)
+        self.image      =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
+    """
+
+    def __init__(self, game, x, y, name = None):
+        self.groups = game.all_sprites,  game.players, game.weight_act
+        
+        self.game           = game; self.name = name; self._layer = 10
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.facing = None
+        self.solid          = True
+        self.width          = 30; self.height = 40
+        self.image          =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
+        self.rect.midbottom = (x, y)
+        self.pos            = vec(x,y);     self.vel =  vec(0, 0);     self.acc = vec(0, 0)
+        self.dist_from_right = 0; self.dslopest_from_left = 0; self.dist_from_top = 0; self.dist_from_bottom = 0
+        self.on_collided_surface = False; self.stop_falling = False
+        self.locked = False
+        self.can_fall_and_move = True
+        self.relativePosition = self.pos.copy()
+        self.lives = 9
+        self.catnip_level = 0
+        self.isPlayer = True
+
+
 
     def respawn(self):
         self.relativePosition = self.pos.copy()
