@@ -174,6 +174,7 @@ class Game:
  
 
 
+        self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 100, name =  "pat1")                           
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
@@ -181,7 +182,6 @@ class Game:
         self.health = PickUp(self, 400, 400, 10, 10, 'health')                  
         self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')                  
         self.water = Water(self, 500, 400, 10, 10)         
-        self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 50, name =  "pat1")                           
 
         self.turn = False                                                       
         self.boxpicked = False                                                  
@@ -236,7 +236,7 @@ class Game:
             self.interactive_box.pickupSprite(self.boxes, self.boxpicked)
             self.interactive_box.knockOver(self.vases, self.intWasCreated)
         
-        #self.pushSprite()
+        #self.pushSprite()q
         self.all_sprites.update()
         self.moveScreen()
         self.relativePos()
