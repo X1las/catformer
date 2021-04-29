@@ -4,6 +4,8 @@
 import pygame as pg
 import sys
 
+from pygame.sndarray import array
+
 from settings import *
 from subSprites import *
 
@@ -22,6 +24,11 @@ class Game:
         self.running = True                                                     # Creates a boolean for running the game
         
         self.data = self.getPlayerData()
+        if not self.data:
+            self.data = []
+            self.data.append(DEFAULT_LEVEL)
+            self.data.append(PLAYER_LIVES)
+            self.data.append(PLAYER_CATNIP)
 
     def create(self):
     
@@ -48,45 +55,57 @@ class Game:
         self.levers             = pg.sprite.Group()
         self.level_goals        = pg.sprite.Group()
 
-    def savePlayerData(self):
-        file = open("/playerData/player","w")
+    def updateData(self):
+        try:
+            file = open("playerData/player.txt","x")
+        except:
+            file = open("playerData/player.txt","w")
 
         levelName = self.level.name
         lives = str(self.player.lives)
         catnip = str(self.player.catnip_level)
 
-        file.write("{levelName},{lives},{catnip}")
+        file.write(f"{levelName},{lives},{catnip}")
         file.close()
+
+        return [levelName,int(lives),int(catnip)]
 
     def getPlayerData(self):
         try:
-            file = open("/playerData/player","r")
+            file = open("playerData/player.txt","r")
             data = file.read().split(",")
+            data[1] = int(data[1])
+            data[2] = int(data[2])
+            print(data)
             return data
         except IOError:
             print("No playerdata found")
-            return False
+            return None
 
     # Method that creates a new game
     def new(self):
-        
-        self.create()  
-        
         try:
             self.level
         except:
-            self.level  = Level(self)                                           # Makes a Level instance
-            self.level.name = DEFAULT_LEVEL
-
-        self.level.load(self.level.name)
-        
-        try:
-            self.player
-        except: 
-            self.player = Player(self,self.level.spawn)
+            pass
         else:
-            self.player.setSpawn(self.level.spawn)
-            self.player.respawn()
+            self.data = self.updateData()
+        
+        self.create()  
+        
+        self.level  = Level(self)                                           # Makes a Level instance
+        
+        if self.data:
+            self.level.name = self.data[0]
+        
+        if not self.level.load(self.level.name):
+            self.level.load(DEFAULT_LEVEL)
+
+        self.player = Player(self,self.level.spawn)
+
+        if self.data:
+            self.player.lives = self.data[1]
+            self.player.catnip_level = self.data[2]    
  
         try:
             if pg.mixer.music.get_busy:

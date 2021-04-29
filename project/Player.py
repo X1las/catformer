@@ -40,7 +40,7 @@ class Player(CustomSprite):
         self.game       = game
         self._layer     = 1
         self.spawn      = spawn
-        self.pos = spawn
+        self.pos        = spawn
 
         self.groups = game.all_sprites, game.players, game.weight_act
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -49,7 +49,6 @@ class Player(CustomSprite):
         self.rect.midbottom         = (spawn.x,spawn.y)
 
     def respawn(self):
-        self.relativePosition = self.pos.copy()
         self.pos        = self.spawn
 
     def setSpawn(self,spawn):
@@ -75,7 +74,6 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.rayIntersecters) 
         self.rect.midbottom = self.pos.rounded().asTuple()
-
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
