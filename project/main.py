@@ -180,7 +180,9 @@ class Game:
 
         self.health = PickUp(self, 400, 400, 10, 10, 'health')                  
         self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')                  
-        self.water = Water(self, 500, 400, 10, 10)                              
+        self.water = Water(self, 500, 400, 10, 10)         
+        self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 50, name =  "pat1")                           
+
         self.turn = False                                                       
         self.boxpicked = False                                                  
         self.intboxlist = [None]                                                
@@ -279,7 +281,7 @@ class Game:
                 self.running = False                                            # Sets running to false
             
             if event.type == pg.KEYDOWN:                                        # Checks if the user presses the down arrow
-                if event.key == pg.K_ESCAPE:                                    # checks if the uses presses the escape key
+                if event.key == pg.K_q:                                    # checks if the uses presses the escape key
                     if self.playing:                                            # Does the same as before
                         self.playing = False                                        
                     self.running = False        

@@ -12,6 +12,16 @@ from random import choice, randrange, uniform
 # Variables
 vec = Vec
 
+def r(number):
+    rounded_num = number
+    rounded_num = abs(rounded_num)
+    rounded_num = math.ceil(rounded_num)
+    if number < 0:
+        rounded_num *= -1
+    return rounded_num
+
+
+
 # ------------------------------ collision detection --------------------------------------------------------------------
 class Tester(CustomSprite):
     def __init__(self, game,  pos):
@@ -156,6 +166,7 @@ class Platform(CustomSprite):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
+        self._layer = 2
  
     
 
@@ -205,14 +216,35 @@ class Box(CustomSprite):
 # ---------------- VASE ---------------------------------------------------------------------------------------------------------------------------------
 
 class Vase(CustomSprite):
-    def __init__(self,game,x,y, name = None):
+    
+    #def __init__(self,game,x,y, name = None, ignoreSol = None):
+    def __init__(self, game, plat : Platform, placement : str , name = None):
+        
+        try:
+            if placement == "left":
+                pos = plat.topleft()
+             
+                push = 20   
+            elif placement == "right":
+                pos = plat.rect.topright
+                push = -20
+            elif placement == "mid":
+                push = 0
+                pos.x, pos.y = plat.rect.midtop.x, plat.rect.midtop.y 
+            game = game; x = pos.x+ push; y = pos.y; name = name; ignoreSol = plat
+            
+        except:
+            print("Must choose left, right or mid")    
+            game = game; x = plat.rect.midtop[0]; y = plat.rect.midtop[1]; ignoreSol = plat
+
+
         self.broken = False; self.name = name
         self.breakable = True
         self.width = 20
         self.height = 30
         self.game = game
-        self.groups = game.all_sprites, game.vases, game.non_player, game.interactables, game.rayIntersecters
-        
+        self.groups = game.all_sprites, game.vases, game.non_player, game.interactables #, game.rayIntersecters
+        self._layer = 3
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((120,100,0))
@@ -221,22 +253,63 @@ class Vase(CustomSprite):
         self.pos = vec(x,y)
         self.fall = False
         self.gravity = PLAYER_GRAV
-        #self.can_fall_and_move = True
+        self.can_fall_and_move = True
+        self.ignoreSol = plat
         self.relativePosition = self.pos.copy()
         self.isVase = True
 
     def update(self):
         
         #round(self.pos)
-        
-
+        self.touchplat(self.game.rayIntersecters)
         if self.fall == True:
             print("should fall")
             self.inAir = True
-            self.applyPhysics(self.game.rayIntersecters)
-        if self.on_solid(self.game.rayIntersecters) != self.ignoreSol:
-            self.breaks()
+            self.applyGrav()
+        
+        
+        #if self.on_solid(self.game.rayIntersecters) != self.ignoreSol:
+         #   self.breaks()
+          #  self.fall = False
         self.rect.midbottom = self.pos.rounded().asTuple()
+
+    def breaks(self):
+        self.image.fill((250,250,250))
+        self.broken = True
+
+    def applyGrav(self):
+        self.acc   += vec(0, self.gravity)                  # Gravity
+        self.acc.x += self.vel.x * self.friction            # Friction
+        self.vel   += self.acc                              # equations of motion
+        self.pos += self.vel +  self.acc * 0.5     
+        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+
+    def touchplat(self, group):
+        inflation = 2
+
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+                if collided != self and collided != self.ignoreSol:
+                    print(f'collded: {collided.name}')
+                    print(f'ignore: {self.ignoreSol.name}')
+
+                    self.set_bot(collided.top_y())
+                    self.breaks()
+                    self.fall = False
+                    self.gravity = 0
+                    self.vel.y = 0
+                  
+        self.rect.inflate(-inflation, -inflation)
+
+
+
+
     
     @classmethod
     def on_platform(cls, game, plat : Platform, placement : str , name = None):
@@ -251,16 +324,12 @@ class Vase(CustomSprite):
             elif placement == "mid":
                 push = 0
                 pos.x, pos.y = plat.rect.midtop.x, plat.rect.midtop.y 
-            return cls(game = game, x = pos.x+ push, y = pos.y, name = name)
+            return cls(game = game, x = pos.x+ push, y = pos.y, name = name, ignoreSol = plat)
         except:
             print("Must choose left, right or mid")    
             return cls(game = game, x = plat.rect.midtop[0] , y = plat.rect.midtop[1], ignoreSol = plat)
+        #print(plat)
         self.ignoreSol = plat
-
-    def breaks(self):
-        self.image.fill((250,250,250))
-        self.broken = True
-
 
 
 # ---------------- LEVER ---------------------------------------------------------------------------------------------------------------------------------
@@ -388,6 +457,7 @@ class PickUp(CustomSprite):
 class Hostile(CustomSprite):
     pass
 
+
 # ---------------- WATER ---------------------------------------------------------------------------------------------------------------------------------
 
 class Water(Hostile):
@@ -420,8 +490,68 @@ class Water(Hostile):
 # ---------------- PATrOLLING ENEMY ---------------------------------------------------------------------------------------------------------------------------------
 
 class PatrollingEnemy(Hostile):
-    def __init__(self,game,x,y, name = None):
-        pass
+    def __init__(self,game,x,y, width, height, maxDist, name = None):
+        self.x = x
+        self.groups = game.all_sprites, game.damager
+        pg.sprite.Sprite.__init__(self, self.groups)
+
+        self.width          = width; self.height = height
+        self.image          =  pg.Surface((self.width,self.height)); self.image.fill((145,12,0)); self.rect = self.image.get_rect()
+        self.rect.midbottom = (x, y)
+        self.pos            = vec(x,y);     self.vel =  vec(3, 0);     self.acc = vec(0, 0)
+        self.maxDist = maxDist
+        self.game = game
+        self.relativePosition = self.pos.copy()
+
+
+
+        # Initial vel != 0
+    
+    def checkDist(self):
+        if abs(self.pos.x) - self.x >= self.maxDist:
+            self.vel *= -1
+
+    def update(self):
+        self.checkDist()
+        self.collidingWithWall()
+        self.pos += self.vel  
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
+    def pygamecoll(self, group, ignoredSol = None):
+        inflation = 2
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+                if collided != self and collided != ignoredSol:
+
+
+                    coll_side = self.determineSide(collided)
+        
+               
+            
+                    if coll_side == "left":
+                        self.pos.x = collided.left_x() - self.width/2
+                        self.vel.x *= -1
+                    if coll_side == "right":
+                        self.pos.x = collided.right_x() + self.width/2
+                        self.vel.x *= -1
+
+
+
+
+
+    def collidingWithWall(self):
+        self.pygamecoll(self.game.rayIntersecters)
+        
+    #def collision
+        # check collision with sides only
+
+
 
 
 class AiEnemy(Hostile):
