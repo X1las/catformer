@@ -171,8 +171,6 @@ class Game:
         pg.mixer.music.load(self.level.musicTrack)                              # Loads music track designated in level file
         pg.mixer.music.play(-1)
         pg.mixer.music.set_volume(VOLUME)
- 
-
 
         self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 100, name =  "pat1")                           
         self.player      = Player(self,self.level.spawn.x, self.level.spawn.y, name = "player")         # Creates player object
