@@ -15,7 +15,7 @@ H: Boxes
 
 H: Buttons
 400 , 550 , 30 , 20 , button1
-300 , 550 , 30 , 20 , button1
+300 , 550 , 30 , 20 , button2
 
 H: Levers
 450 , 550 , 10 , 40 , lever1

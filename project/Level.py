@@ -3,17 +3,15 @@ import pygame as pg
 from settings import *
 from subSprites import *
 
-# Classes
+# Level Class
 class Level:
     def __init__(self, game):
-        self.surfaces = pg.sprite.Group()
         self.game = game
 
     # --> Just makes the list of platforms in "settings" to actual platforms. creates the objects
     def setPlatforms(self):
         self.plats = []
         for plat in self.platforms:
-
             self.plats.append(Platform(self.game, *plat))
 
     def setBoxes(self):
@@ -34,13 +32,11 @@ class Level:
             Button(self.game, *button)
 
     def setSurfaces(self):
-        #self.surfaces = Surface
-
         platforms = self.setPlatforms()
-        boxes = self.setBoxes()
-        vases = self.setVases()
-        buttons = self.setButtons()
-        levers = self.setLevers()
+        boxes     = self.setBoxes()
+        vases     = self.setVases()
+        buttons   = self.setButtons()
+        levers    = self.setLevers()
     
     # Function to load level files
     def load(self , filename): 
@@ -103,8 +99,6 @@ class Level:
                 if category == "Levers" and line!= "":
                     linesplit = line.split(" , ")
                     levers+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
-
-
 
         self.platforms = plats
         self.spawn = spawn

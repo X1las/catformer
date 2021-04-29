@@ -42,7 +42,7 @@ class Player(CustomSprite):
         self.spawn      = spawn
         self.pos        = spawn
 
-        self.groups = game.all_sprites, game.players, game.weight_act
+        self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
 
         self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
@@ -72,12 +72,11 @@ class Player(CustomSprite):
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
         self.move()
-        self.applyPhysics(self.game.rayIntersecters) 
+        self.applyPhysics(self.game.group_solid) 
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
-
         keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
         if keys[pg.K_LEFT]:                                             # If it's left arrow
             if self.locked == False:

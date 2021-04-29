@@ -12,6 +12,7 @@ from random import choice, randrange, uniform
 # Variables
 vec = Vec
 
+# Functions
 def r(number):
     rounded_num = number
     rounded_num = abs(rounded_num)
@@ -21,8 +22,7 @@ def r(number):
     return rounded_num
 
 
-
-# ------------------------------ collision detection --------------------------------------------------------------------
+# Tester SubClass - Inherits from CustomSprite
 class Tester(CustomSprite):
     def __init__(self, game,  pos):
 
@@ -38,21 +38,13 @@ class Tester(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.midbottom = pos
 
-        
-    
-    #def update(self):
-     #   self.midbottom = player.pos.asTuple()
 
-
-
-
-
-# ---------------- INTERACTIVE ---------------------------------------------------------------------------------------------------------------------------------
+# Interactive Field SubClass - Inherits from CustomSprite
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
 
         # anchor depends on which way player faces
-        pg.sprite.Sprite.__init__(self, game.all_sprites, game.interactive_boxes)  
+        pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
         self._layer = 1
         self.player = player
         width = self.player.width/2 + 50
@@ -91,35 +83,32 @@ class Interactive(CustomSprite):
                 self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
     
     def update(self):
-        
         """
         if self.player.facing == "left":
             self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
         else: 
             self.rect.bottomleft = (self.player.pos.x,self.player.pos.y) 
-        """  
+        """
         self.vel = self.player.vel
     
     def updateRect(self):
         if not self.colliding:
             self.faceinput = self.player.facing
         self.intUpdate(self.faceinput, "rel")
-
-        
     
     def resetRects(self):
         self.intUpdate(self.faceinput, "global")
 
-    #def draw(self):
-     #   pass
 
-# ---------------- LEVEL GOAL---------------------------------------------------------------------------------------------------------------------------------
+# ------- OBJECTS ------- #
 
+
+# LevelGoal SubClass - Inherits from CustomSprite
 class LevelGoal(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.level_goals
+        self.groups = game.all_sprites, game.group_levelGoals
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((255, 165, 0))
@@ -132,34 +121,23 @@ class LevelGoal(CustomSprite):
     def update(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+    # Function that gets called whenever the player reaches a goal
     def activate(self):
-        # Whatever it does
         self.game.resetCamera()
         current = self.game.level.name
         level = int(current[5:6])
         level+=1
         self.game.level.name = "level"+str(level)
-        self.game.new()
-        """
-        for sprite in self.game.all_sprites:
-            self.game.relposx = 0
-            self.game.relposp = 0
-            self.game.player.pos = self.game.level.spawn
-            sprite.relativePosition = sprite.pos.copy()
-            sprite.relativePosition.x -= self.game.relposx
-        """ 
-        #self.game.new()
-        
+        self.game.new()  
 
-# ---------------- PLATFORM ---------------------------------------------------------------------------------------------------------------------------------
 
-# Classes
+# Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
     def __init__(self, game, x, y, width, height, name, typ = None, *args, **kwargs):
         self.vel = kwargs.get('vel',None)
         self.solid = True
         self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
-        self.groups = game.all_sprites, game.non_player, game.platforms, game.obstacles, game.non_moveable, game.rayIntersecters, game.surfaces
+        self.groups = game.all_sprites, game.group_platforms, game.group_solid
         
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
@@ -181,15 +159,15 @@ class Platform(CustomSprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
-# ---------------- BOX ---------------------------------------------------------------------------------------------------------------------------------
-
+# Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
         self._layer = 5
         self.solid = True
         self.moveable = True
-        self.groups = game.all_sprites, game.non_player, game.boxes, game.surfaces, game.obstacles, game.interactables, game.weight_act  , game.rayIntersecters
+        self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
+    
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((width,height))
         self.image.fill((50,50,50))
@@ -207,22 +185,17 @@ class Box(CustomSprite):
         else:
             self.vel.x = 0
         self.has_collided = False
-        self.applyPhysics(self.game.rayIntersecters)
+        self.applyPhysics(self.game.group_solid)
         #self.pos += self.vel
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pickUp(self, interacter):
         
         self.new_vel.x = interacter.vel.x
-       
 
 
-
-# ---------------- VASE ---------------------------------------------------------------------------------------------------------------------------------
-
+# Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
-    
-    #def __init__(self,game,x,y, name = None, ignoreSol = None):
     def __init__(self, game, plat : Platform, placement : str , name = None):
         
         try:
@@ -248,8 +221,7 @@ class Vase(CustomSprite):
         self.width = 20
         self.height = 30
         self.game = game
-        self.groups = game.all_sprites, game.vases, game.non_player, game.interactables #, game.rayIntersecters
-        self._layer = 3
+        self.groups = game.all_sprites, game.group_vases
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((120,100,0))
@@ -266,14 +238,14 @@ class Vase(CustomSprite):
     def update(self):
         
         #round(self.pos)
-        self.touchplat(self.game.rayIntersecters)
+        self.touchplat(self.game.group_solid)
         if self.fall == True:
             print("should fall")
             self.inAir = True
             self.applyGrav()
         
         
-        #if self.on_solid(self.game.rayIntersecters) != self.ignoreSol:
+        #if self.on_solid(self.game.group_solid) != self.ignoreSol:
          #   self.breaks()
           #  self.fall = False
         self.rect.midbottom = self.pos.rounded().asTuple()
@@ -337,13 +309,12 @@ class Vase(CustomSprite):
         self.ignoreSol = plat
 
 
-# ---------------- LEVER ---------------------------------------------------------------------------------------------------------------------------------
-
+# Lever SubClass - Inherits from CustomSprite
 class Lever(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.interactables, game.levers
+        self.groups = game.all_sprites, game.group_levers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,200,200))
@@ -382,13 +353,12 @@ class Lever(CustomSprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
-# ---------------- BUTTON ---------------------------------------------------------------------------------------------------------------------------------
-
+# Button SubClass - Inherits from CustomSprite
 class Button(CustomSprite):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.activator, game.buttons
+        self.groups = game.all_sprites, game.group_buttons
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((200,0,0))
@@ -426,15 +396,13 @@ class Button(CustomSprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
-
-# ---------------- PICKUP ---------------------------------------------------------------------------------------------------------------------------------
-
+# Pickup SubClass - Inherits from CustomSprite
 class PickUp(CustomSprite):
 
     def __init__(self,game,x,y, width, height, type_, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.pickups
+        self.groups = game.all_sprites, game.group_pickups
         self.type = type_
         self.pickup = True
         
@@ -457,19 +425,19 @@ class PickUp(CustomSprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
-# ---------------- HOStiLE ---------------------------------------------------------------------------------------------------------------------------------
+# ------- HOSTILES ------- #
 
+
+# Hostile UpperClass - Inherits from CustomSprite
 class Hostile(CustomSprite):
     pass
 
-
-# ---------------- WATER ---------------------------------------------------------------------------------------------------------------------------------
-
+# Water SubClass - Inherits from Hostile
 class Water(Hostile):
     def __init__(self,game,x,y, width, height, name = None): 
         self.game = game
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.damager
+        self.groups = game.all_sprites, game.group_damager
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,0,200))
@@ -490,14 +458,11 @@ class Water(Hostile):
     # Zoomies (yarn)
 
 
-
-
-# ---------------- PATrOLLING ENEMY ---------------------------------------------------------------------------------------------------------------------------------
-
+# Patrolling Enemy SubClass - Inherits from Hostile
 class PatrollingEnemy(Hostile):
     def __init__(self,game,x,y, width, height, maxDist, name = None):
         self.x = x
-        self.groups = game.all_sprites, game.damager
+        self.groups = game.all_sprites, game.group_damager
         pg.sprite.Sprite.__init__(self, self.groups)
         self.width          = width; self.height = height
         self.image          =  pg.Surface((self.width,self.height)); self.image.fill((145,12,0)); self.rect = self.image.get_rect()
@@ -574,7 +539,7 @@ class PatrollingEnemy(Hostile):
                             except:
                                 pass
                             print(self)
-                            self.add(self.game.rayIntersecters)
+                            self.add(self.game.group_solid)
                             self.dontmove = True
 
                         else: 
@@ -583,7 +548,7 @@ class PatrollingEnemy(Hostile):
                         #self.vel.x = -1 * abs(self.vel.x)
                     elif coll_side == "right":
                         if self.collides_right:
-                            self.add(self.game.rayIntersecters)
+                            self.add(self.game.group_solid)
                     
                             self.vel.x *= 0
                             try:
@@ -597,32 +562,25 @@ class PatrollingEnemy(Hostile):
                         #self.vel.x = abs(self.vel.x)
                         self.collides_left = True
                     else:
-
-                            self.dontmove = False
+                        self.dontmove = False
 
         if self.dontmove == False:
             self.collides_right = False
             self.collides_left = False
-        
-            self.game.rayIntersecters.remove(self)
-
-            
-    
-    
+            self.game.group_solid.remove(self)
         self.rect = self.rect.inflate(-inflation, -inflation)
         
         
 
     def collidingWithWall(self):
         if not self.dontmove:
-            self.pygamecolls(self.game.rayIntersecters)
+            self.pygamecolls(self.game.group_solid)
         else: 
             self.vel.x = 0
-        
-        self.pygamecolls2(self.game.rayIntersecters)
- 
+        self.pygamecolls2(self.game.group_solid)
 
 
+# AI Enemy SubClass 
 class AiEnemy(Hostile):
     def __init__(self,game,x,y, name = None):
         pass
