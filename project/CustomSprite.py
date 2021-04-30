@@ -38,6 +38,7 @@ class CustomSprite(pg.sprite.Sprite):
     rayPos = vec()
     isVase = False
     ignoreSol = None
+    solidstrength = 0
 
     def updateRect(self):
         roundedvec = self.relativePosition.rounded()
@@ -155,7 +156,7 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pygamecoll(self, group, ignoredSol = None):
         inflation = 2
-        self.rect.inflate(inflation,inflation)
+        self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.x += r(self.vel.x)
         self.rect.y += r(self.vel.y)
@@ -163,7 +164,7 @@ class CustomSprite(pg.sprite.Sprite):
 
         if collideds:
             for collided in collideds:
-                if collided != self and collided != ignoredSol:
+                if collided != self and collided != ignoredSol and collided.solidstrength >= self.solidstrength:
 
 
                     coll_side = self.determineSide(collided)
@@ -174,16 +175,20 @@ class CustomSprite(pg.sprite.Sprite):
                         self.vel.y = 0
                     else:
                         if coll_side == "left":
-                            self.pos.x = collided.left_x() - self.width/2
-                            self.vel.x = 0
+                            newpos = collided.left_x() - self.width/2
+                            if newpos < self.pos.x:
+                                self.pos.x = collided.left_x() - self.width/2
+                                self.vel.x = 0
                         if coll_side == "right":
-                            self.pos.x = collided.right_x() + self.width/2
-                            self.vel.x = 0
+                            newpos = collided.right_x() + self.width/2
+                            if newpos > self.pos.x:
+                                self.pos.x = collided.right_x() + self.width/2
+                                self.vel.x = 0
                         if coll_side == "bot":
                             self.pos.y = collided.bot_y() + self.height
                             self.vel.y = 0
         
-        self.rect.inflate(-inflation, -inflation)
+        self.rect = self.rect.inflate(-inflation, -inflation)
 
     def determineSide(self, collided):
         leftcoll = abs(self.right_x() - collided.left_x())
@@ -207,11 +212,7 @@ class CustomSprite(pg.sprite.Sprite):
         result = None
         for collided in collideds:
             if collided != self.ignoreSol:
-                if self.isVase:
-                    print(f'ONSOLID')
-                    print("foisjf")
-                    print(f'collided: {collided} ')
-                    print(f'ignored: {self.ignoreSol} ')
+                
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
                     result = collided
@@ -224,8 +225,6 @@ class CustomSprite(pg.sprite.Sprite):
         if self.on_solid(Intersecters, ignoredSol = ignoreSol):
             self.inAir = False
         else:
-            if self.isVase:
-                print("falllll")
             self.inAir = True
 
         #self.inAir = True
