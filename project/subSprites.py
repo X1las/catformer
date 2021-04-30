@@ -171,15 +171,21 @@ class Box(CustomSprite):
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         self.solidstrength = 5
 
+        
+        image = pg.image.load("resources/box.png")              # load box image
+        self.image = pg.Surface((width, height))                # create box size
+        pg.transform.scale(image, (width, height), self.image)  # scale image to size
+
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((width,height))
-        self.image.fill((50,50,50))
+        #self.image = pg.Surface((width,height))
+        #self.image.fill((50,50,50))
         self.rect = self.image.get_rect()
         self.can_fall_and_move = True
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.friction = 0
+
    
     def update(self):
         print(f'box vel: {self.vel}')
@@ -195,6 +201,7 @@ class Box(CustomSprite):
     def pickUp(self, interacter):
         
         self.new_vel.x = interacter.vel.x
+    
 
 
 # Case SubClass - Inherits from CustomSprite

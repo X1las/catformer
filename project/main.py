@@ -196,9 +196,15 @@ class Game:
         for sprite in self.all_sprites:
             sprite.updateRect()
         
-        self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+        for sprite in self.all_sprites:
+            if sprite in self.group_boxes:
+                self.screen.blit(sprite.image, sprite.rect)
+            else:
+                self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+            
         self.screen.blit(self.lives_display,  (100, 100))
         self.screen.blit(self.points_display,  (100, 150))
+        
         
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
         
