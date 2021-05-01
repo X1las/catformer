@@ -32,6 +32,8 @@ class CustomSprite(pg.sprite.Sprite):
     gravity = GRAVITY
     has_collided = False
     new_vel = vec(0,0)
+    new_acc = vec(0,0)
+
     friction = FRICTION
     isPlayer = False
     can_fall_and_move = False
@@ -42,6 +44,8 @@ class CustomSprite(pg.sprite.Sprite):
     originalsolidstrength = 0
     overwritevel = vec()
     overwrite = False
+    update_order = 5
+    name = ""
 
 
     def init(self):

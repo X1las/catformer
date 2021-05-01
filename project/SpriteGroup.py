@@ -12,11 +12,13 @@ class Sprites(pg.sprite.LayeredUpdates):
         lis = []
         for i in self:
             lis.append(i)
-        lis.sort()
+        lis.sort(key = lambda x: x.update_order, reverse = False)
         for i in lis:
             i.update()
 
-
+    def updatePos(self, solid):
+        for i in self:
+            i.updatePos()
 
 
 

@@ -10,6 +10,7 @@ from subSprites import *
 from Player import Player
 from Level import Level
 from Vector import Vec
+from SpriteGroup import *
 
 # Game Class
 class Game:
@@ -34,7 +35,8 @@ class Game:
     # Creates Sprite Groups
     def createSGroups(self):
     
-        self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        #self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        self.all_sprites = Sprites()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         self.group_platforms          = pg.sprite.Group() #Only applied  to platforms
         self.group_boxes              = pg.sprite.Group() #Only applied to boxes
@@ -140,6 +142,10 @@ class Game:
         self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
         self.refreshedInt_box = self.refreshCount >= self.refreshCount_prev       #
         
+        
+        self.player.touchPickUp(self.group_pickups)
+        # Updating Functions
+        self.all_sprites.update()
         #
         if self.interactive_field:
             for lever in self.group_levers:
@@ -147,17 +153,9 @@ class Game:
     
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
-        
-        # Updating Functions
-        self.all_sprites.update()
-        print(f'player: {self.player.vel}')
-        try:
-            print(f'intfield: {self.interactive_field.vel}')
-        except:
-            pass
-        self.player.touchPickUp(self.group_pickups)
-        for i in self.all_sprites:
-            i.updatePos(self.group_solid)
+        #for i in self.all_sprites:
+        self.all_sprites.updatePos(self.group_solid)
+
 
         self.moveScreen()
         self.relativePos()

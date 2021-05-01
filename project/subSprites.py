@@ -47,6 +47,7 @@ class Interactive(CustomSprite):
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
         self._layer = 2
+        self.update_order = 2
         self.player = player
         width = self.player.width/2 + 50
         height = self.player.height       
@@ -93,6 +94,7 @@ class Interactive(CustomSprite):
             self.rect.bottomleft = (self.player.pos.x,self.player.pos.y) 
         """
         self.vel = self.player.vel
+        self.acc = self.player.acc
     
     def updateRect(self):
         if not self.colliding:
@@ -176,7 +178,7 @@ class Box(CustomSprite):
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         self.solidstrength = 5
         self.originalsolidstrength = self.solidstrength
-
+        self.update_order = 3
         
         image = pg.image.load("resources/box.png")              # load box image
         self.image = pg.Surface((width, height))                # create box size
@@ -197,11 +199,6 @@ class Box(CustomSprite):
    
     def update(self):
         self.applyPhysics(self.game.group_solid)
-        if self.has_collided:
-            self.vel.x = self.new_vel.x
-        else:
-            self.vel.x = 0
-        self.has_collided = False
         #self.vel.x = self.overwritevel.x
         #self.pos += self.vel
         self.rect.midbottom = self.pos.rounded().asTuple()
@@ -209,10 +206,22 @@ class Box(CustomSprite):
     def pickUp(self, interacter):
         
         self.new_vel.x = interacter.vel.x
+        self.new_acc.x = interacter.acc.x
+
     
 
     def updatePos(self, Intersecters):
-        self.pos += self.vel 
+        if self.has_collided:
+            self.vel.x = self.new_vel.x
+            self.acc.x = self.new_acc.x
+        else:
+            self.vel.x = 0
+            self.acc.x = 0
+        self.has_collided = False
+        self.pos += self.vel +  self.acc * 0.5
+
+        #self.pos += self.vel 
+
         
         
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)

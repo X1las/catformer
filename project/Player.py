@@ -34,6 +34,7 @@ class Player(CustomSprite):
     dslopest_from_left  = 0
     dist_from_top       = 0
     dist_from_bottom    = 0
+    
     name = "player"
 
     def __init__(self, game, spawn):
@@ -42,6 +43,7 @@ class Player(CustomSprite):
         self._layer     = 1
         self.spawn      = spawn
         self.pos        = spawn
+        self.update_order        = 1
 
         self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
