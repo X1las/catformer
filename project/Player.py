@@ -40,7 +40,7 @@ class Player(CustomSprite):
     def __init__(self, game, spawn):
         
         self.game       = game
-        self._layer     = 1
+        self._layer     = 2
         self.spawn      = spawn
         self.pos        = spawn
         self.update_order        = 1
@@ -88,6 +88,7 @@ class Player(CustomSprite):
         if keys[pg.K_RIGHT]:
             if self.locked == False:
                 self.facing = "right"
+                print(f'RIGHT---------------------')
             self.acc.x = PLAYER_ACC                                          
         if keys[pg.K_SPACE] and not self.inAir:                                                 
             self.inAir = True                                                    

@@ -92,7 +92,7 @@ class Game:
         except:
             pass
 
-        self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 100, name =  "pat1")                       #      
+        self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 200, name =  "pat1")                       #      
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 

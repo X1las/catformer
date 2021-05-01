@@ -205,10 +205,11 @@ class CustomSprite(pg.sprite.Sprite):
 
     def determineSide(self, collided):
         leftcoll = abs(self.right_x() - collided.left_x())
-        rightcoll = abs(abs(self.left_x()) - abs(collided.right_x()))
+        rightcoll = abs(collided.right_x() - self.left_x() )
         topcoll   = abs(abs(self.bot_y()) - abs(collided.top_y()))
         botcoll   = abs(abs(self.top_y()) - abs(collided.bot_y()))
         mins = min(leftcoll, rightcoll, topcoll, botcoll)
+
         if mins == leftcoll: 
             return "left"
         if mins == rightcoll:

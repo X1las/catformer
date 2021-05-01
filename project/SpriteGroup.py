@@ -18,7 +18,7 @@ class Sprites(pg.sprite.LayeredUpdates):
 
     def updatePos(self, solid):
         for i in self:
-            i.updatePos()
+            i.updatePos(solid)
 
 
 
