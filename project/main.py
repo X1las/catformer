@@ -46,13 +46,14 @@ class Game:
         self.group_solid              = pg.sprite.Group()          # solid objects (formerly rayIntersecters)
         self.group_pickups            = pg.sprite.Group()       # All things that can get picked up by player
         self.group_damager            = pg.sprite.Group()       # All hostiles
-        
+
         self.group_pressureActivator  = pg.sprite.Group()        # Things that can activate a button
  
     # Method that creates a new level
     def new(self):
         
         # takshdkawd
+        self.createSGroups()                #
         try:
             self.level
         except:
@@ -60,7 +61,6 @@ class Game:
         else:
             self.data = self.updateData()
         
-        self.createSGroups()                #
         self.level = Level(self)            #                                     
         
         #
@@ -90,7 +90,7 @@ class Game:
         except:
             pass
 
-        self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 100, name =  "pat1")                       #      
+        self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 100, name =  "pat1")                       #      
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
@@ -150,10 +150,18 @@ class Game:
         
         # Updating Functions
         self.all_sprites.update()
+        print(f'player: {self.player.vel}')
+        try:
+            print(f'intfield: {self.interactive_field.vel}')
+        except:
+            pass
+        self.player.touchPickUp(self.group_pickups)
+        for i in self.all_sprites:
+            i.updatePos(self.group_solid)
+
         self.moveScreen()
         self.relativePos()
         self.level_goal.endGoal(self.player)
-        self.player.touchPickUp(self.group_pickups)
         self.player.touchEnemy(self.group_damager)
 
         # Updating Variables

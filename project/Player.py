@@ -34,6 +34,7 @@ class Player(CustomSprite):
     dslopest_from_left  = 0
     dist_from_top       = 0
     dist_from_bottom    = 0
+    name = "player"
 
     def __init__(self, game, spawn):
         
@@ -89,6 +90,14 @@ class Player(CustomSprite):
         if keys[pg.K_SPACE] and not self.inAir:                                                 
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP 
+
+    def updatePos(self, Intersecters):
+        self.pos += self.vel +  self.acc * 0.5
+        
+        
+        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+        if self.can_fall_and_move:
+            self.pygamecoll(Intersecters)
 
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
         super().hitsSolid(hitObject, hitPosition , relativeHitPos)

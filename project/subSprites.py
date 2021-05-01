@@ -46,7 +46,7 @@ class Interactive(CustomSprite):
 
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
-        self._layer = 1
+        self._layer = 2
         self.player = player
         width = self.player.width/2 + 50
         height = self.player.height       
@@ -62,6 +62,8 @@ class Interactive(CustomSprite):
             self.rect.bottomright = (player.pos.x,player.pos.y)   
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
+
+        
 
     def intUpdate(self, facing, pos):
 
@@ -140,6 +142,7 @@ class Platform(CustomSprite):
         self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
         self.groups = game.all_sprites, game.group_platforms, game.group_solid
         self.solidstrength = 10
+        self.originalsolidstrength = self.solidstrength
         
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
@@ -152,6 +155,8 @@ class Platform(CustomSprite):
         self.pos = vec(x,y); self.vel = vec(0,0)
         self.relativePosition = self.pos.copy()
         self._layer = 2
+        self.init()
+
  
     
 
@@ -170,6 +175,7 @@ class Box(CustomSprite):
         self.moveable = True
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         self.solidstrength = 5
+        self.originalsolidstrength = self.solidstrength
 
         
         image = pg.image.load("resources/box.png")              # load box image
@@ -185,16 +191,18 @@ class Box(CustomSprite):
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.friction = 0
+        self.init()
+
 
    
     def update(self):
-        print(f'box vel: {self.vel}')
+        self.applyPhysics(self.game.group_solid)
         if self.has_collided:
             self.vel.x = self.new_vel.x
         else:
             self.vel.x = 0
         self.has_collided = False
-        self.applyPhysics(self.game.group_solid)
+        #self.vel.x = self.overwritevel.x
         #self.pos += self.vel
         self.rect.midbottom = self.pos.rounded().asTuple()
 
@@ -203,6 +211,13 @@ class Box(CustomSprite):
         self.new_vel.x = interacter.vel.x
     
 
+    def updatePos(self, Intersecters):
+        self.pos += self.vel 
+        
+        
+        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+        if self.can_fall_and_move:
+            self.pygamecoll(Intersecters)
 
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
@@ -244,6 +259,8 @@ class Vase(CustomSprite):
         self.ignoreSol = plat
         self.relativePosition = self.pos.copy()
         self.isVase = True
+        self.init()
+
 
     def update(self):
         
@@ -469,7 +486,7 @@ class Water(Hostile):
 
 # Patrolling Enemy SubClass - Inherits from Hostile
 class PatrollingEnemy(Hostile):
-    def __init__(self,game,x,y, width, height, maxDist, name = None):
+    def __init__(self,game,x,y, width, height, maxDist, name = "enemy"):
         self.x = x
         self.groups = game.all_sprites, game.group_damager, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -484,6 +501,12 @@ class PatrollingEnemy(Hostile):
         self.collides_right = False
         self.dontmove = False
         self.collides_left = False
+        self.solidstrength = 3
+        self.originalsolidstrength = self.solidstrength
+
+        self.name = name
+        self.init()
+
 
     
     def checkDist(self):
@@ -499,6 +522,7 @@ class PatrollingEnemy(Hostile):
         self.pos += self.vel  
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.area = "mid"
+        self.solidstrength = 3
         if self.vel.x > 0:
             self.vel.x = 1
         else: 
@@ -516,7 +540,9 @@ class PatrollingEnemy(Hostile):
 
         if collideds:
             for collided in collideds:
-                if collided != self and collided.name != "p_floor":
+                if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
+                    if collided.solidstrength > self.solidstrength:
+                        self.solidstrength = collided.solidstrength - 1
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
                         self.pos.x = collided.left_x() - self.width/2
@@ -525,6 +551,11 @@ class PatrollingEnemy(Hostile):
                         elif collided.vel.x == 0:
                             self.vel.x = 1
                             self.vel.x *= -1
+                        if self.collides_left:
+                            self.vel.x *= 0
+                        
+                            #self.add(self.game.group_solid)
+                            self.dontmove = True
                         #self.vel.x = -1 * abs(self.vel.x)
                     if coll_side == "right":
                         print("detected right")
@@ -534,10 +565,19 @@ class PatrollingEnemy(Hostile):
                         elif collided.vel.x == 0:
                             self.vel.x = 1
                             self.vel.x *= -1
+                        if self.collides_right:
+                            #self.add(self.game.group_solid)
+                    
+                            self.vel.x *= 0
+                        
+                            self.dontmove = True
                         #self.vel.x = abs(self.vel.x)
                 
                         self.vel.x *= -1
-        
+                elif collided.name == "p_floor":
+                    self.solidstrength = 3
+        else: 
+            self.solidstrength = 3
         #self.rect.x -= r(self.vel.x)
         #self.rect.y -= r(self.vel.y)
     def pygamecolls2(self, group):
@@ -551,17 +591,8 @@ class PatrollingEnemy(Hostile):
                 if collided != self and collided.name != "p_floor":
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
-                        if self.collides_left:
-                            self.vel.x *= 0
-                            print(collided)
-                            try:
-                                collided.vel.x = 0
-                            except:
-                                pass
-                            print(self)
-                            #self.add(self.game.group_solid)
-                            self.dontmove = True
-
+                        if True:
+                            pass
                         else: 
                             self.vel.x = 1
                             self.vel.x *= -1
