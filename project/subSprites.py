@@ -126,12 +126,9 @@ class Box(CustomSprite):
         self.originalsolidstrength = self.solidstrength
         self.update_order = 3
         
-        self.image = pg.image.load("resources/box.png").convert()     # load box image as a Surface
-        self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
+        self.getImageFromFile('box.png', width, height)
 
         pg.sprite.Sprite.__init__(self, self.groups)
-        #self.image = pg.Surface((width,height))
-        #self.image.fill((50,50,50))
         self.rect = self.image.get_rect()
         self.can_fall_and_move = True
         self.rect.midbottom = (x,y)
@@ -438,7 +435,7 @@ class PickUp(CustomSprite):
             self.image.fill((255,0, 200))
         
         if self.type == 'catnip':
-            self.image.fill((165, 42, 42))
+            self.getImageFromFile('catnip.png',width,height)
 
         
         self.rect = self.image.get_rect()
