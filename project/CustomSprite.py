@@ -14,6 +14,16 @@ def r(number):
         rounded_num *= -1
     return rounded_num
 
+def re(number):
+    inte = math.floor(number)
+    dec = number - inte
+    if dec*10 >= 5:
+        result = 1
+    else:
+        result = 0
+    return inte + result
+
+
 # Classes
 class CustomSprite(pg.sprite.Sprite):
     #attributes:
@@ -55,16 +65,18 @@ class CustomSprite(pg.sprite.Sprite):
 
 
     def updateRect(self):
-        roundedvec = self.relativePosition.realRound()
+        #roundedvec = self.relativePosition.realRound()
+        roundedvec = self.relativePosition.rounded()
+
         self.rect.midbottom = roundedvec.asTuple()
+        self.acc = vec(0,0)
         
 
     def resetRects(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         if self.count < 0:
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
-        self.acc = vec(0,0)
 
     def top_y(self):
         return self.pos.y - self.height
@@ -180,18 +192,23 @@ class CustomSprite(pg.sprite.Sprite):
         inflation = 0
         self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
+
         self.rect.x += r(self.vel.x)
         self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
             for collided in collideds:
+
+                #print(f"{self.name} collided with: {collided.name}")
+                #print(f'solid less? {collided.solidstrength > self.solidstrength}')
+                #print(f'1 - acc in coll for {self.name} with {self.acc}')
                 if collided != self and collided != ignoredSol and collided.solidstrength > self.solidstrength:
                     if group.has(self):
                         self.solidstrength = collided.solidstrength -1
-                    self.count = 5
+                    self.count = 2
                     coll_side = self.determineSide(collided)
-        
+                    #print(f'coll side {coll_side}')
                     if coll_side == "top":
 
                         self.set_bot(collided.top_y())
@@ -199,14 +216,14 @@ class CustomSprite(pg.sprite.Sprite):
                     else:
                         if coll_side == "left":
                             newpos = collided.left_x() - self.width/2
-                            if newpos < self.pos.x:
+                            if newpos <= self.pos.x:
                                 self.pos.x = collided.left_x() - self.width/2
                                 self.vel.x = 0
                                 self.acc.x = 0
 
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
-                            if newpos > self.pos.x:
+                            if newpos >= self.pos.x:
                                 self.pos.x = collided.right_x() + self.width/2
                                 self.vel.x = 0
                                 self.acc.x = 0
@@ -214,6 +231,8 @@ class CustomSprite(pg.sprite.Sprite):
                         if coll_side == "bot":
                             self.pos.y = collided.bot_y() + self.height + 2
                             self.vel.y = 0
+                    #print(f'2 - acc in coll for {self.name} with {self.acc}')
+                    
         
         self.rect = self.rect.inflate(-inflation, -inflation)
 
@@ -277,7 +296,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x) < 0.2:
+        if abs(self.vel.x) < 0.01:
             self.vel.x = 0
 
         #if self.can_fall_and_move:

@@ -23,6 +23,17 @@ def r(number):
     return rounded_num
 
 
+def re(number):
+    inte = math.floor(number)
+    dec = number - inte
+    if dec*10 >= 5:
+        result = 1
+    else:
+        result = 0
+    return inte + result
+
+
+
 # Tester SubClass - Inherits from CustomSprite
 class Tester(CustomSprite):
     def __init__(self, game,  pos):
@@ -133,6 +144,11 @@ class Box(CustomSprite):
         self.lift = vec()
 
 
+    def resetRects(self):
+        super().resetRects()
+        self.pos -= self.lift
+    
+
    
     def update(self):
         self.applyPhysics(self.game.group_solid)
@@ -141,13 +157,14 @@ class Box(CustomSprite):
         #self.pygamecoll(self.game.group_solid)
         #self.pos += self.vel 
 
-        self.rect.midbottom = self.pos.rounded().asTuple()
-        self.pos -= self.lift
         #wself.pos.y -= self.lift.y
+        self.rect.midbottom = self.pos.rounded().asTuple()
         #self.pos -= self.lift
 
     def posCorrection(self):
+        self.rect.midbottom = self.pos.rounded().asTuple()
         self.pygamecoll(self.game.group_solid)
+
     def pickUp(self, interacter):
         self.has_collided = True
 
@@ -161,6 +178,7 @@ class Box(CustomSprite):
          #   self.new_vel.x = 0
         self.new_acc.x = interacter.acc.x
 
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     
 
@@ -181,8 +199,6 @@ class Box(CustomSprite):
             
         self.has_collided = False
         self.pos += self.lift
-        print(f'vel: {self.name}: {self.vel}')
-        print(f'acc: {self.name}: {self.acc}')
         self.pos += self.vel +  self.acc * 0.5
         self.rect.midbottom = self.pos.rounded().asTuple()
 
@@ -200,6 +216,8 @@ class Box(CustomSprite):
     def posCorrection(self):
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        
 
 
 # Case SubClass - Inherits from CustomSprite
@@ -506,6 +524,7 @@ class PatrollingEnemy(Hostile):
 
 
 
+
     def update(self):
         #self.pos += self.vel  
         self.area = "mid"
@@ -526,11 +545,11 @@ class PatrollingEnemy(Hostile):
         self.pygamecoll(self.game.group_solid)
 
     def pygamecolls(self, group, ignoredSol = None):
-        inflation = 1
+        inflation = 0
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        #self.rect.x += r(self.vel.x)
-        #self.rect.y += r(self.vel.y)
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
@@ -539,7 +558,7 @@ class PatrollingEnemy(Hostile):
                 if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
                     #if collided.solidstrength > self.solidstrength:
                     self.solidstrength = collided.solidstrength - 1
-                    self.count = 5
+                    self.count = 2
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
                         newpos = collided.left_x() - self.width/2

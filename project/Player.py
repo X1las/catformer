@@ -53,6 +53,11 @@ class Player(CustomSprite):
         self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
         self.rect.midbottom         = (spawn.x,spawn.y)
 
+        self.prevpos = vec() # delete
+        self.prevvel = vec()
+        self.prevrelpos = vec()
+        self.prevrelvel = vec()
+
     def respawn(self):
         self.pos        = self.spawn
 
@@ -81,7 +86,7 @@ class Player(CustomSprite):
         self.applyPhysics(self.game.group_solid) 
         self.pygamecoll(self.game.group_solid)
 
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -89,10 +94,13 @@ class Player(CustomSprite):
         if keys[pg.K_LEFT]:                                             # If it's left arrow
             if self.locked == False:
                 self.facing = "left"
+                #print("WALKING LEFT")
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if self.locked == False:
                 self.facing = "right"
+                #print("WALKING RIGHT")
+
             self.acc.x = PLAYER_ACC                                          
         if keys[pg.K_SPACE] and not self.inAir:                                                 
             self.inAir = True                                                    
@@ -109,6 +117,18 @@ class Player(CustomSprite):
         #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
         #self.vel = tempvel
         #self.new_vel = self.vel.copy()
+       # print((self.pos - self.prevpos + self.prevvel).x)
+        print((self.relativePosition - self.prevrelpos + self.prevrelvel).x)
+        
+        #print(f'player pos diff: {self.pos - self.prevpos + self.prevvel}')
+        #print(f'player pos: {self.pos}')
+        self.prevrelvel = self.relativePosition - self.prevrelpos
+        self.prevrelpos = self.relativePosition.copy()
+
+        self.prevvel = self.pos - self.prevpos
+        self.prevpos = self.pos.copy()
+
+
 
     def posCorrection(self):
         if self.can_fall_and_move:

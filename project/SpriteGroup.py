@@ -15,11 +15,11 @@ class Sprites(pg.sprite.LayeredUpdates):
         lis.sort(key = lambda x: x.update_order, reverse = False)
         for i in lis:
             i.update()
-            i.posCorrection()
 
     def updatePos(self, solid):
         for i in self:
             i.updatePos(solid)
+            i.posCorrection()
         #self.correctPositions()
 
     def correctPositions(self):

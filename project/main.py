@@ -12,6 +12,18 @@ from Level import Level
 from Vector import Vec
 from SpriteGroup import *
 
+def r(number):
+    rounded_num = number
+    rounded_num = abs(rounded_num)
+    rounded_num = math.ceil(rounded_num)
+    if number < 0:
+        rounded_num *= -1
+    return rounded_num
+
+
+
+
+
 # Game Class
 class Game:
     # Class Variables
@@ -107,7 +119,8 @@ class Game:
         self.frames = 0                                                         
         self.refreshCount = 0                                                        
         self.refreshCount_prev = 0                                                   
-        self.relposx = 0                                                        
+        self.relposx = 0    
+        self.relposp = 0                                                    
         self.realposp = 0                                                       
         self.run()                                  # Runs the game
 
@@ -134,7 +147,7 @@ class Game:
 
     # Method where we update game processesd
     def update(self):
-
+        #print(f'NEW RUN')
         #
         for button in self.group_buttons:
             activated_button = button.buttonPress(self.group_pressureActivator)
@@ -155,10 +168,10 @@ class Game:
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
         #for i in self.all_sprites:
         self.all_sprites.updatePos(self.group_solid)
-
-        #self.all_sprites.correctPositions()
         self.moveScreen()
         self.relativePos()
+
+        #self.all_sprites.correctPositions()
         self.level_goal.endGoal(self.player)
         self.player.touchEnemy(self.group_damager)
 
@@ -220,11 +233,11 @@ class Game:
   
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
-        if self.player.right_x()>= round(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
+        if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-        if self.player.left_x()<= round(CAMERA_BORDER_L+self.relposx):
+        if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
@@ -233,6 +246,10 @@ class Game:
     def relativePos(self):
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
+                
+            #if sprite.isPlayer:
+             #   sprite.relativePosition.x -= self.relposp
+            #else:
             sprite.relativePosition.x -= self.relposx
 
     # Respawns the player and resets the camera
