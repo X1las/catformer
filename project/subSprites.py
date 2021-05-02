@@ -126,9 +126,8 @@ class Box(CustomSprite):
         self.originalsolidstrength = self.solidstrength
         self.update_order = 3
         
-        image = pg.image.load("resources/box.png")              # load box image
-        self.image = pg.Surface((width, height))                # create box size
-        pg.transform.scale(image, (width, height), self.image)  # scale image to size
+        self.image = pg.image.load("resources/box.png").convert()     # load box image as a Surface
+        self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
 
         pg.sprite.Sprite.__init__(self, self.groups)
         #self.image = pg.Surface((width,height))
