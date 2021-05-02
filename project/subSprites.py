@@ -10,6 +10,9 @@ from Vector import Vec
 from random import choice, randrange, uniform
 import copy
 
+import spritesheet as ss
+
+
 # Variables
 vec = Vec
 
@@ -96,8 +99,15 @@ class Platform(CustomSprite):
             self.groups = self.groups, game.moving_plats
         
 
-        pg.sprite.Sprite.__init__(self, self.groups)                                                          # Making sure the
-        self.image = pg.Surface((width,height)); self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
+        pg.sprite.Sprite.__init__(self, self.groups)
+
+        platformSheet = ss.Spritesheet('resources\platforms.png')
+        self.image = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))#.convert_alpha()
+        self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
+
+
+        #self.image = pg.Surface((width,height))
+        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.typed = "platform"    
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y); self.vel = vec(0,0)

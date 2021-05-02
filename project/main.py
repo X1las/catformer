@@ -214,13 +214,16 @@ class Game:
         # Loop that updates rectangles?
         for sprite in self.all_sprites:
             sprite.updateRect()
-        
+        '''
         for sprite in self.all_sprites:
             if sprite in self.group_boxes:
                 self.screen.blit(sprite.image, sprite.rect)
             else:
                 self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
-            
+        '''
+
+        self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+
         self.screen.blit(self.lives_display,  (100, 100))
         self.screen.blit(self.points_display,  (100, 150))
         

@@ -4,6 +4,8 @@ from Vector import *
 from settings import *
 import math
 
+#import spritesheet as ss
+
 vec = Vec
 
 def r(number):
