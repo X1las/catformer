@@ -257,8 +257,9 @@ class Game:
                                            
             if event.type == pg.KEYUP:
                 if event.key == pg.K_d:
-                    self.interactive_field.kill()
-                    self.interactive_field = None
+                    if self.interactive_field:
+                        self.interactive_field.kill()
+                        self.interactive_field = None
     
     # Method for drawing everything to the screen
     def draw(self):                                                             
