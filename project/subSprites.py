@@ -40,71 +40,6 @@ class Tester(CustomSprite):
         self.midbottom = pos
 
 
-# Interactive Field SubClass - Inherits from CustomSprite
-class Interactive(CustomSprite):
-    def __init__(self, game,  player, facing):
-
-        # anchor depends on which way player faces
-        pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
-        self._layer = 2
-        self.update_order = 2
-        self.player = player
-        width = self.player.width/2 + 50
-        height = self.player.height       
-        self.facing = facing
-        self.image = pg.Surface((width,height)); 
-        self.image.fill((0,200,0)) 
-        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
-        self.colliding = False
-        self.faceinput = self.player.facing
-        self.relativePosition = self.pos.copy()
-        self.vel = self.player.vel
-        if self.facing == "left":
-            self.rect.bottomright = (player.pos.x,player.pos.y)   
-        else: 
-            self.rect.bottomleft = (player.pos.x,player.pos.y)   
-
-        
-
-    def intUpdate(self, facing, pos):
-
-        #bob = self.rect.bottomleft
-        #bob = self.rect.bottomright
-
-        if facing == "left":
-            if pos == "global":
-                #bob = (self.player.pos.x,self.player.pos.y)   
-
-                self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
-            else:
-                #bob = self.player.relativePosition.rounded().asTuple()
-
-                self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
-        else: 
-            if pos == "global":
-                self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
-            else: 
-                self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
-    
-    def update(self):
-        """
-        if self.player.facing == "left":
-            self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
-        else: 
-            self.rect.bottomleft = (self.player.pos.x,self.player.pos.y) 
-        """
-        self.vel = self.player.vel
-        self.acc = self.player.acc
-    
-    def updateRect(self):
-        if not self.colliding:
-            self.faceinput = self.player.facing
-        self.intUpdate(self.faceinput, "rel")
-    
-    def resetRects(self):
-        self.intUpdate(self.faceinput, "global")
-
-
 # ------- OBJECTS ------- #
 
 
@@ -194,6 +129,8 @@ class Box(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.friction = 0
         self.init()
+        self.isPickedUp = False
+        self.lift = vec()
 
 
    
@@ -201,32 +138,69 @@ class Box(CustomSprite):
         self.applyPhysics(self.game.group_solid)
         #self.vel.x = self.overwritevel.x
         #self.pos += self.vel
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        #self.pygamecoll(self.game.group_solid)
+        #self.pos += self.vel 
 
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.pos -= self.lift
+        #wself.pos.y -= self.lift.y
+        #self.pos -= self.lift
+
+    def posCorrection(self):
+        self.pygamecoll(self.game.group_solid)
     def pickUp(self, interacter):
-        
+        self.has_collided = True
+
         self.new_vel.x = interacter.vel.x
+        if interacter.pos.x <self.pos.x:
+            self.lift.x = 2
+        else:
+            self.lift.x = -2
+        self.lift.y = -3
+        #if self.new_vel.x <= 0.0000000000000000001:
+         #   self.new_vel.x = 0
         self.new_acc.x = interacter.acc.x
+
 
     
 
     def updatePos(self, Intersecters):
         if self.has_collided:
+            if not self.isPickedUp:
+                self.lift.x = 0
             self.vel.x = self.new_vel.x
             self.acc.x = self.new_acc.x
+            self.isPickedUp = True
         else:
+            if self.isPickedUp == True:
+                self.pos.x += self.lift.x 
+                self.lift = vec(0,0)
             self.vel.x = 0
             self.acc.x = 0
+            self.isPickedUp = False
+            
         self.has_collided = False
+        self.pos += self.lift
+        print(f'vel: {self.name}: {self.vel}')
+        print(f'acc: {self.name}: {self.acc}')
         self.pos += self.vel +  self.acc * 0.5
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
-        #self.pos += self.vel 
-
-        
+        """
+        try:
+            self.pos -= vec(addx, lift)
+        except:
+            pass
+        """
         
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+        #if self.can_fall_and_move:
+         #   self.pygamecoll(Intersecters)
+
+    def posCorrection(self):
         if self.can_fall_and_move:
-            self.pygamecoll(Intersecters)
+            self.pygamecoll(self.game.group_solid)
+
 
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
@@ -480,7 +454,6 @@ class Water(Hostile):
         self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
-        
     def update(self):
 
         #round(self.pos) 
@@ -515,6 +488,7 @@ class PatrollingEnemy(Hostile):
         self.originalsolidstrength = self.solidstrength
 
         self.name = name
+        self.count = 5
         self.init()
 
 
@@ -528,17 +502,16 @@ class PatrollingEnemy(Hostile):
             self.area = "left"
 
     def updatePos(self, group):
-        self.pos += self.vel +  self.acc * 0.5
-        self.collidingWithWall()
+        self.pos = self.pos + self.vel +  self.acc * 0.5
 
 
 
     def update(self):
         #self.pos += self.vel  
         self.area = "mid"
-        self.solidstrength = 3
-        print(f'pos1: {self.pos}')
-
+        self.count -= 1
+        if self.count <= 0:
+            self.solidstrength = 3
         if self.vel.x > 0:
             self.vel.x = 1
         else: 
@@ -546,12 +519,14 @@ class PatrollingEnemy(Hostile):
         self.checkDist()
         
         self.acc = vec(0,0)    
-        self.rect.midbottom = self.pos.rounded().asTuple()
-        print(f'pos2: {self.pos}')
+        self.collidingWithWall()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
+    def posCorrection(self):
+        self.pygamecoll(self.game.group_solid)
 
     def pygamecolls(self, group, ignoredSol = None):
-        inflation = 5
+        inflation = 1
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.rect.x += r(self.vel.x)
@@ -560,15 +535,17 @@ class PatrollingEnemy(Hostile):
 
         if collideds:
             for collided in collideds:
+
                 if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
-                    if collided.solidstrength > self.solidstrength:
-                        self.solidstrength = collided.solidstrength - 1
+                    #if collided.solidstrength > self.solidstrength:
+                    self.solidstrength = collided.solidstrength - 1
+                    self.count = 5
                     coll_side = self.determineSide(collided)
-                    print(f'collside: {coll_side}')
                     if coll_side == "left": # left side of collidedd obj
                         newpos = collided.left_x() - self.width/2
                         if newpos <= self.pos.x:
                             if collided.vel.x != 0:
+                                self.pos.x = newpos
                                 self.vel.x = copy.copy(collided.vel.x)
                                 self.acc.x = collided.acc.x
                             if collided.vel.x == 0:
@@ -578,13 +555,14 @@ class PatrollingEnemy(Hostile):
                                 self.vel.x *= 0
                             
                                 #self.add(self.game.group_solid)
-                                self.dontmove = True
+                                #self.dontmove = True
                         #self.vel.x = -1 * abs(self.vel.x)
                     if coll_side == "right":
                         newpos = collided.right_x() + self.width/2
 
                         if newpos >= self.pos.x:
                             if collided.vel.x !=  0:
+                                self.pos.x = newpos
                                 self.vel.x = copy.copy(collided.vel.x)
                                 self.acc.x = collided.acc.x
 
@@ -596,14 +574,14 @@ class PatrollingEnemy(Hostile):
                         
                                 self.vel.x *= 0
                             
-                                self.dontmove = True
+                                #self.dontmove = True
                             #self.vel.x = abs(self.vel.x)
                     
                         self.vel.x *= -1
-                elif collided.name == "p_floor":
-                    self.solidstrength = 3
-        else: 
-            self.solidstrength = 3
+                #elif collided.name == "p_floor":
+                 #   self.solidstrength = 3
+        #else: 
+         #   self.solidstrength = 3
         #self.rect.x -= r(self.vel.x)
         #self.rect.y -= r(self.vel.y)
  
@@ -611,10 +589,10 @@ class PatrollingEnemy(Hostile):
         
 
     def collidingWithWall(self):
-        if not self.dontmove:
-            self.pygamecolls(self.game.group_solid)
-        else: 
-            self.vel.x = 0
+        #if not self.dontmove:
+        self.pygamecolls(self.game.group_solid)
+        #else: 
+         #   self.vel.x = 0
         #self.pygamecolls2(self.game.group_solid)
 
 

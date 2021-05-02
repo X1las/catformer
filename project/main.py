@@ -7,7 +7,7 @@ import sys
 from settings import *
 from subSprites import *
 
-from Player import Player
+from Player import *
 from Level import Level
 from Vector import Vec
 from SpriteGroup import *
@@ -103,7 +103,7 @@ class Game:
         #
         self.refreshedInt_lever = False                                                       
         self.refreshedInt_box = False                                                  
-        self.interactive_field    = None                                          
+        self.interactive_field    = None                                       
         self.frames = 0                                                         
         self.refreshCount = 0                                                        
         self.refreshCount_prev = 0                                                   
@@ -144,19 +144,19 @@ class Game:
         
         
         self.player.touchPickUp(self.group_pickups)
-        # Updating Functions
-        self.all_sprites.update()
+        # Updating Functionsdd
         #
+        self.all_sprites.update()
         if self.interactive_field:
             for lever in self.group_levers:
                 lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
     
-            self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box)
+            self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
         #for i in self.all_sprites:
         self.all_sprites.updatePos(self.group_solid)
 
-
+        #self.all_sprites.correctPositions()
         self.moveScreen()
         self.relativePos()
         self.level_goal.endGoal(self.player)

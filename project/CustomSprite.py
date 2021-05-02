@@ -46,9 +46,11 @@ class CustomSprite(pg.sprite.Sprite):
     overwrite = False
     update_order = 5
     name = ""
+    count = 5
 
 
     def init(self):
+        self.new_vel = self.vel.copy()
         self.overwritevel = self.vel.copy()
 
 
@@ -59,7 +61,10 @@ class CustomSprite(pg.sprite.Sprite):
 
     def resetRects(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.solidstrength = self.originalsolidstrength
+        if self.count < 0:
+            self.solidstrength = self.originalsolidstrength
+        self.count -= 1
+        self.acc = vec(0,0)
 
     def top_y(self):
         return self.pos.y - self.height
@@ -153,7 +158,7 @@ class CustomSprite(pg.sprite.Sprite):
                     self.addCatnip()
                     collided_obj.kill()
 
-    def pickupSprite(self,  agents, turn):
+    def pickupSprite(self,  agents, turn, justPickedUp):
         # should ckeck which box is closest
         
         collided = pg.sprite.spritecollide(self, agents, False)
@@ -162,10 +167,14 @@ class CustomSprite(pg.sprite.Sprite):
             if turn:
                 self.colliding = True
                 for collided_obj in collided:
-                        collided_obj.has_collided = True
+                        #collided_obj.has_collided = True
                         collided_obj.pickUp(self)
             else:
                 self.colliding = False
+
+    def posCorrection(self):
+        pass
+
 
     def pygamecoll(self, group, ignoredSol = None):
         inflation = 0
@@ -178,8 +187,9 @@ class CustomSprite(pg.sprite.Sprite):
         if collideds:
             for collided in collideds:
                 if collided != self and collided != ignoredSol and collided.solidstrength > self.solidstrength:
-                    self.solidstrength = collided.solidstrength -1
-
+                    if group.has(self):
+                        self.solidstrength = collided.solidstrength -1
+                    self.count = 5
                     coll_side = self.determineSide(collided)
         
                     if coll_side == "top":
@@ -192,13 +202,17 @@ class CustomSprite(pg.sprite.Sprite):
                             if newpos < self.pos.x:
                                 self.pos.x = collided.left_x() - self.width/2
                                 self.vel.x = 0
+                                self.acc.x = 0
+
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
                             if newpos > self.pos.x:
                                 self.pos.x = collided.right_x() + self.width/2
                                 self.vel.x = 0
+                                self.acc.x = 0
+
                         if coll_side == "bot":
-                            self.pos.y = collided.bot_y() + self.height
+                            self.pos.y = collided.bot_y() + self.height + 2
                             self.vel.y = 0
         
         self.rect = self.rect.inflate(-inflation, -inflation)
@@ -263,7 +277,8 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-
+        if abs(self.vel.x) < 0.2:
+            self.vel.x = 0
 
         #if self.can_fall_and_move:
           #  self.pygamecoll(Intersecters)
