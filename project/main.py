@@ -35,6 +35,8 @@ class Game:
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
         self.running = True                                                     # Creates a boolean for running the game
+        self.paused = False
+        self.click = False
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -121,8 +123,53 @@ class Game:
         self.refreshCount_prev = 0                                                   
         self.relposx = 0    
         self.relposp = 0                                                    
-        self.realposp = 0                                                       
+        self.realposp = 0                     
+        self.paused = False                                  
         self.run()                                  # Runs the game
+
+
+    def mainMenu(self):
+        self.inMenu = True
+        while self.inMenu:
+            self.screen.fill(BLACK)
+            self.clock.tick(FPS)
+            self.menuEvents()
+            mx, my = pg.mouse.get_pos()
+            startButton = pg.Rect(40, 100, 220, 100)
+            pg.draw.rect(self.screen, (255, 0, 0), startButton)
+            if startButton.collidepoint((mx, my)):
+                if self.click:
+                    self.new()
+            self.click = False
+            self.drawMenuText("Start Game", 150, 150)
+            
+            pg.display.update()
+  
+    
+    def menuEvents(self):
+        for event in pg.event.get():                                
+            
+            if event.type == (pg.QUIT):                                   
+                 if self.inMenu:                                               
+                   self.inMenu = False                                        
+                 self.running = False  
+
+            if event.type == pg.KEYDOWN:                                        # Checks if the user presses the down arrow
+                if event.key == pg.K_q:                                    # checks if the uses presses the escape key
+                    if self.inMenu:                                            # Does the same as before
+                        self.inMenu = False                                        
+                    self.running = False  
+
+             
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.click = True                                       
+
+    def drawMenuText(self, text, x, y):
+        drawText = self.textToDisplay(text)
+        textRect = drawText.get_rect()
+        textRect.center = (x,y)
+        self.screen.blit(drawText, textRect)
 
     # Method that loops until a false is passed inside the game
     def run(self):                       
@@ -140,9 +187,12 @@ class Game:
             """
             
             # Runs all our methods on loop:
-            self.events()                                                
-            self.update()
-            self.displayHUD()                                                       
+            self.events()  
+            if self.paused:
+                self.displayPauseScreen()
+            if not self.paused:                                              
+                self.update()
+                self.displayHUD()                                                       
             self.draw()  
 
     # Method where we update game processesd
@@ -187,6 +237,7 @@ class Game:
                 if self.playing:                                                # Sets playing to false if it's running (for safety measures)
                     self.playing = False                                        
                 self.running = False                                            # Sets running to false
+                self.inMenu = False
             
             if event.type == pg.KEYDOWN:                                        # Checks if the user presses the down arrow
                 if event.key == pg.K_q:                                         # checks if the uses presses the escape key
@@ -201,6 +252,8 @@ class Game:
                     self.interactive_field = Interactive(self,self.player, self.player.facing)
                     self.intWasCreated = True
                     self.refreshCount += 1
+                if event.key  == pg.K_p:
+                    self.paused = not self.paused
                                            
             if event.type == pg.KEYUP:
                 if event.key == pg.K_d:
@@ -224,8 +277,12 @@ class Game:
 
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
 
-        self.screen.blit(self.lives_display,  (100, 100))
-        self.screen.blit(self.points_display,  (100, 150))
+        self.screen.blit(self.lives_display,  (50, 50))
+        self.screen.blit(self.points_display,  (400, 50))
+        if self.paused:
+            pauseRect = self.pauseText.get_rect()
+            pauseRect.center = (300, 150)
+            self.screen.blit(self.pauseText, pauseRect)
         
         
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
@@ -297,6 +354,8 @@ class Game:
         self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
  
+    def displayPauseScreen(self):
+        self.pauseText = self.textToDisplay("Game is paused")
 
     def textToDisplay(self, text, font = 'Comic Sans MS', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
         font = pg.font.SysFont(font, fontsize, bold, italic)
@@ -304,7 +363,8 @@ class Game:
 
 # Game Loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
-g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
+#g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
+g.mainMenu()
 #g.run()
 pg.quit()                                                                       # Exits the pygame program
 sys.exit()                                                                      # Makes sure the process is terminated (Linux issue mostly)
