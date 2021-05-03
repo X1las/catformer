@@ -100,8 +100,7 @@ class Game:
             print("Error loading music!")
             pass
 
-        self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 200, name =  "pat1")                       #      
-        self.level.setSurfaces()                                                                        # Sets surfaces?
+        self.enemy = PatrollingEnemy( self, 170, 550, 26, 36, 200, name =  "pat1")                       #      
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
         self.health = PickUp(self, 400, 400, 16, 16, 'health')                                          #

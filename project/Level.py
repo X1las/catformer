@@ -1,4 +1,5 @@
 # Imports
+from sys import platform
 import pygame as pg
 from settings import *
 from subSprites import *
@@ -7,60 +8,57 @@ from subSprites import *
 class Level:
     def __init__(self, game):
         self.game = game
-
-    # --> Just makes the list of platforms in "settings" to actual platforms. creates the objects
-    def setPlatforms(self):
-        self.plats = []
-        for plat in self.platforms:
-            self.plats.append(Platform(self.game, *plat))
-
-    def setBoxes(self):
-        for plot in self.boxes:
-            Box(self.game, *plot).name = "box1"
-
-    def setVases(self):
-        #Vase(self.game, 100, 100, name = "vase_1")
-        vase = Vase(self.game, self.plats[1], "left", name = "vase 2")
-        
-
-    def setLevers(self):
-        for lever in self.levers:
-            Lever(self.game, *lever)
-
-    def setButtons(self):
-        for button in self.buttons:
-            Button(self.game, *button)
-
-    def setSurfaces(self):
-        platforms = self.setPlatforms()
-        boxes     = self.setBoxes()
-        vases     = self.setVases()
-        buttons   = self.setButtons()
-        levers    = self.setLevers()
     
     # Function to load level files
     def load(self , filename): 
 
-        # Define empty obstacle arrays:   
-        plats = []                                      
-        boxes = []                                      
-        vases = []  
-        buttons = [] 
-        levers = []
+        # Define empty obstacle arrays and default values:   
+        self.platforms = []
+        self.boxes = []
+        self.vases = []
+        self.buttons = []
+        self.levers = []
+        self.goals = []
+        self.enemies = []
+        self.health = []
+        self.water = []
 
-        spawn = Vec(0,0)                                # Define a spawnpoint vector as 0,0
+        self.spawn = Vec(0,0)                                # Define a spawnpoint vector as 0,0
+        self.musicTrack = "default.mp3"
+        self.name = filename
+
         category = "none"                               # Define a category string as none 
 
+        # Switch function for level loading, using 'regex' to compare dictionary and runs connected function
+        def level_switch(regex , args):
+
+            # Defining dictionary to choose from
+            switch = {
+                "Platforms" : self.setPlatforms,
+                "Boxes" : self.setBoxes,
+                "Vases" : self.setVases,
+                "Buttons" : self.setButtons,
+                "Levers" : self.setLevers,
+                "Settings" : self.setSettings
+            }
+
+            # Sets function equal to function related to the regex and runs it
+            setFunc = switch.get(regex)
+            if setFunc:
+                setFunc(args)
+
+
+        # Attempt to load level by filename
         try:
             file = open(f"levels/{filename}.txt" , "r")     # Loading level file in levels directory with the given filename
+            lines = file.read().splitlines()                # Split the file into an array of string lines
         except:
             print("Error, no level found")
             return False
-        lines = file.read().splitlines()                # Split the file into an array of string lines
-        
-        # Iterating through the lines:
+
+
+        # Iterating through the lines of the level file:
         for line in lines:
-            #print(line)                                # Prints the current line for bugfixing
             header = line.split(" ")
 
             # Looks for a line starting with H. header indicator, then changes the category to the following word
@@ -68,46 +66,41 @@ class Level:
                 category = header[1]
                 print("Reading " + category)
             else:
-                # If the category is Settings, then we check the following lines for settings data we need:
-                if category == "Settings" and line!= "":
-                    # Using the header to check if it's a spawn point option
-                    if header[0] == "Spawn:":
-                        linesplit = line.replace("Spawn: " , "").split(" , ")
-                        spawn.x = int(linesplit[0])
-                        spawn.y = int(linesplit[1])
-                    # Using the header to check if it's a level lenght option
-                    if header[0] == "Length:":
-                        length = header[1]
-                    if header[0] == "Track:":
-                        track = "resources/"+header[1]
-                    else:
-                        track = "resources/default.mp3"
-
-                # If the category is Platforms, then we check the following lines for platform data
-                if category == "Platforms" and line!= "":
+                if line != "":
                     linesplit = line.split(" , ")
-                    plats+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
-                
-                if category == "Boxes" and line!= "":
-                    linesplit = line.split(" , ")
-                    boxes+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
+                    level_switch(category,linesplit)
 
-                if category == "Buttons" and line!= "":
-                    linesplit = line.split(" , ")
-                    buttons+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
-
-                if category == "Levers" and line!= "":
-                    linesplit = line.split(" , ")
-                    levers+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
-
-        self.platforms = plats
-        self.spawn = spawn
-        self.boxes = boxes
-        self.buttons = buttons
-        self.levers = levers
-        self.length = length
-        self.musicTrack = track
-        self.name = filename
         print("Level loaded successfully!")
-        print("Playing track " + track)
         return True
+
+    # Functions for switch
+    def setSettings(self,args):
+        
+        if args[0] == "Spawn":
+            self.spawn = Vec(int(args[1]),int(args[2]))
+        
+        if args[0] == "Length":
+            self.length = int(args[1])
+        
+        if args[0] == "Track":
+            self.musicTrack = str(args[1])
+
+    def setPlatforms(self,args):
+        self.platforms.append(Platform(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        
+    def setBoxes(self,args):
+        self.boxes.append(Box(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+    
+    def setButtons(self,args):
+        self.buttons.append(Button(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+
+    def setLevers(self,args):
+        self.levers.append(Lever(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+
+    def setVases(self,args):
+        
+        for platform in self.platforms:
+            if platform.name == str(args[0]):
+                plat = platform
+                    
+        self.vases.append(Vase(self.game, plat, str(args[1]), str(args[2])))

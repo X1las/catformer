@@ -1,6 +1,6 @@
 H: Settings
-Spawn: 170 , 350
-Length: 5000
+Spawn , 170 , 350
+Length , 5000
 
 H: Platforms
 -200 , 600 , 6000 , 50 , p_floor
