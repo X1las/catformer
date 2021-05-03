@@ -104,30 +104,35 @@ class Platform(CustomSprite):
 
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        # get sprite sheet
+         # get sprite sheet
         platformSheet = ss.Spritesheet('resources/platforms.png')
         # get individual sprites
         #prettyPlatform = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
-        end_left = platformSheet.image_at((47,51,34,26), colorkey=(0,0,0))
-        end_right = platformSheet.image_at((175,51,34,26), colorkey=(0,0,0))
-        mid = platformSheet.image_at((303,51,35,26), colorkey=(0,0,0))
+        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=BLACK)
+        end_right  = platformSheet.image_at((175,51, 34,26), colorkey=(0,0,0))
+        mid        = platformSheet.image_at((303,51, 35,26), colorkey=(0,0,0))
+        brownPiece = platformSheet.image_at((303,176,34,32), colorkey=(0,0,0))
         
-    
-        #images = platformSheet.images_at([(47,51,34,26),(303,51,35,26),(175,51,34,26)])
-        
-        # create surface with right size
+        # create surface with correct size
         self.image = pg.Surface((width,height))
+        fill = 0
         # blit left end
         self.image.blit(end_left,(0,0))
+        fill += end_left.get_height()
         # blit middle parts depending on platform width
         numOfMidParts = math.ceil(width/mid.get_width()-2)
         for i in range(numOfMidParts):
             self.image.blit(mid, ((i+1)*end_left.get_width(),0))
         # blit right end
         self.image.blit(end_right,(width-end_right.get_width(),0))
+        # blit bottom layers until fully filled
+        numOfBrownParts_h = math.ceil(width/mid.get_width())
+        while fill < height:
+            for i in range(numOfBrownParts_h):
+                self.image.blit(brownPiece, (i*end_left.get_width(),fill))
+            fill += brownPiece.get_height()
 
-
-        #self.image = pg.Surface((width,height))
+            
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.typed = "platform"    
         self.pos = vec(x,y);
