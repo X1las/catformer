@@ -498,7 +498,9 @@ class PatrollingEnemy(Hostile):
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
         # get individual sprites and add to list
         self.images = []
-        self.images.append(wormSheet.image_at((4, 37, 23, 27), colorkey=(0,0,0)))
+        self.images.append(wormSheet.image_at((4,  37, 23, 27)))
+        self.images.append(wormSheet.image_at((36, 37, 23, 27), colorkey=(0,0,0)))
+
             # add rest
 
         self.imageIndex = 0
