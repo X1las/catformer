@@ -15,10 +15,21 @@ from SpriteGroup import *
 def r(number):
     rounded_num = number
     rounded_num = abs(rounded_num)
-    rounded_num = math.ceil(rounded_num)
+    rounded_num = math.floor(rounded_num)
     if number < 0:
         rounded_num *= -1
     return rounded_num
+
+def re(number):
+    inte = math.floor(number)
+    dec = number - inte
+    if dec*10 >= 5:
+        result = 1
+    else:
+        result = 0
+    return inte + result
+
+
 
 # Game Class
 class Game:
@@ -121,7 +132,9 @@ class Game:
         self.refreshCount_prev = 0                                                   
         self.relposx = 0    
         self.relposp = 0                                                    
-        self.realposp = 0                     
+        self.realposp = 0       
+        self.rel_fitToPlayer = - WIDTH/2 + self.player.pos.x #half screen - pos         
+        self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
         self.run()                                  # Runs the game
 
@@ -477,6 +490,16 @@ class Game:
   
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
+        #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
+        if self.player.vel.x > 0:
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+            self.relposp = 0
+        #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
+        if self.player.vel.x < 0:
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+            self.relposp = 0
+
+        """
         if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 self.relposx += self.player.vel.x
@@ -485,15 +508,12 @@ class Game:
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-
+        """
     # 
     def relativePos(self):
         for sprite in self.all_sprites:
+            
             sprite.relativePosition = sprite.pos.copy()
-                
-            #if sprite.isPlayer:
-             #   sprite.relativePosition.x -= self.relposp
-            #else:
             sprite.relativePosition.x -= self.relposx
 
     # Respawns the player and resets the camera

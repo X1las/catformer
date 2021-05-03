@@ -85,9 +85,8 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.pygamecoll(self.game.group_solid)
-        self.vel += self.addedVel
 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -116,6 +115,7 @@ class Player(CustomSprite):
         #self.vel = self.new_vel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
+        self.vel += self.addedVel
         self.pos += self.vel +  self.acc * 0.5
         #self.vel -= self.addedVel
         #if self.vel.x < 0.001:
@@ -185,14 +185,14 @@ class Interactive(CustomSprite):
 
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
             else:
-                #bob = self.player.relativePosition.rounded().asTuple()
+                #bob = self.player.relativePosition.realRound().asTuple()
 
-                self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
+                self.rect.bottomright = self.player.relativePosition.realRound().asTuple()
         else: 
             if pos == "global":
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
-                self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
+                self.rect.bottomleft = self.player.relativePosition.realRound().asTuple()
     
     def update(self):
         """

@@ -74,7 +74,7 @@ class LevelGoal(CustomSprite):
 
 
     def update(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     # Function that gets called whenever the player reaches a goal
     def activate(self):
@@ -107,27 +107,32 @@ class Platform(CustomSprite):
         # get sprite sheet
         platformSheet = ss.Spritesheet('resources/platforms.png')
         # get individual sprites
+        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=(0,0,0))
+        end_right  = platformSheet.image_at((175,51, 34,26), colorkey=(0,0,0))
+        mid        = platformSheet.image_at((303,51, 35,26), colorkey=(0,0,0))
+        brownPiece = platformSheet.image_at((303,176,34,32), colorkey=(0,0,0))
         #prettyPlatform = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
-        end_left = platformSheet.image_at((47,51,34,26), colorkey=(0,0,0))
-        end_right = platformSheet.image_at((175,51,34,26), colorkey=(0,0,0))
-        mid = platformSheet.image_at((303,51,35,26), colorkey=(0,0,0))
         
-    
-        #images = platformSheet.images_at([(47,51,34,26),(303,51,35,26),(175,51,34,26)])
-        
-        # create surface with right size
-        self.image = pg.Surface((width,height))
+        # create surface with correct size
+        self.image = pg.Surface((width,height),pg.SRCALPHA)
+        fill = 0
         # blit left end
         self.image.blit(end_left,(0,0))
+        fill += end_left.get_height()
         # blit middle parts depending on platform width
         numOfMidParts = math.ceil(width/mid.get_width()-2)
         for i in range(numOfMidParts):
             self.image.blit(mid, ((i+1)*end_left.get_width(),0))
         # blit right end
         self.image.blit(end_right,(width-end_right.get_width(),0))
+        # blit bottom layers until fully filled
+        numOfBrownParts_h = math.ceil(width/mid.get_width())
+        while fill < height:
+            for i in range(numOfBrownParts_h):
+                self.image.blit(brownPiece, (i*end_left.get_width(),fill))
+            fill += brownPiece.get_height()
 
-
-        #self.image = pg.Surface((width,height))
+            
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.typed = "platform"    
         self.pos = vec(x,y);
@@ -149,7 +154,7 @@ class Platform(CustomSprite):
     def update(self):
         #round(self.pos)
         self.checkDist()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # Box SubClass - Inherits from CustomSprite
@@ -186,10 +191,10 @@ class Box(CustomSprite):
 
     def update(self):
         self.applyPhysics(self.game.group_solid)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     def posCorrection(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
         self.pygamecoll(self.game.group_solid)
 
     def pickUp(self, interacter):
@@ -210,7 +215,7 @@ class Box(CustomSprite):
         # Grapping vel and acc from the interactive field
         self.new_vel.x = interacter.vel.x
         self.new_acc.x = interacter.acc.x
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     
 
@@ -234,7 +239,7 @@ class Box(CustomSprite):
 
         self.pos += self.vel +  self.acc * 0.5
         
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
  
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
@@ -242,7 +247,7 @@ class Box(CustomSprite):
         # I am not sure this is needed
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
         
 
 
@@ -301,7 +306,7 @@ class Vase(CustomSprite):
         if self.fall == True:
             self.inAir = True
             self.applyGrav()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
         self.image.fill((250,250,250))
@@ -371,7 +376,7 @@ class Lever(CustomSprite):
 
     def update(self):
         #round(self.pos) 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # Button SubClass - Inherits from CustomSprite
@@ -411,7 +416,7 @@ class Button(CustomSprite):
             
         self.activated = False
 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # Pickup SubClass - Inherits from CustomSprite
@@ -446,7 +451,7 @@ class PickUp(CustomSprite):
 
     def update(self):
         #round(self.pos) 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # ------- HOSTILES ------- #
@@ -472,7 +477,7 @@ class Water(Hostile):
     def update(self):
 
         #round(self.pos) 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
         
