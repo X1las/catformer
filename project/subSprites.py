@@ -176,12 +176,16 @@ class Box(CustomSprite):
 
         self.new_vel.x = interacter.vel.x
         
-        if interacter.pos.x <self.pos.x:
-            if abs(abs(interacter.player.right_x()) - abs(self.left_x())) < 3: 
+        if interacter.pos.x < self.pos.x: # if box is right of player
+            if abs(interacter.player.right_x() - self.left_x()) < 2: 
+                print(f'player right: {interacter.player.right_x()}')
+                print(f'box left: {self.left_x()}')
+                print(f'pop to right')
                 self.pos.x = interacter.player.right_x() + self.width/2 + 2
         else:
-            if abs(abs(interacter.player.left_x()) - abs(self.right_x())) < 3: 
-
+            if abs(interacter.player.left_x() - self.right_x()) < 2: 
+                print(f'pop to left')
+                
                 self.pos.x = interacter.player.left_x() - self.width/2 - 2
 
             #self.lift.x = -2
@@ -554,8 +558,8 @@ class PatrollingEnemy(Hostile):
         #self.pos += self.vel  
         self.area = "mid"
         #self.count -= 1
-        if self.count <= 0:
-            self.solidstrength = 3
+        #if self.count <= 0:
+         #   self.solidstrength = 3
         if self.vel.x > 0:
             self.vel.x = 1
         else: 
@@ -675,7 +679,6 @@ class PatrollingEnemy(Hostile):
     def collidingWithWall(self):
         #if not self.dontmove:
         self.stopMoving = self.inbetweenSolids()
-        print(f'solid strength: {self.solidstrength}')
         self.pygamecolls(self.game.group_solid)
         self.collides_left = False
         self.collides_right = False
