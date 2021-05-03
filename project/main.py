@@ -100,7 +100,7 @@ class Game:
             print("Error loading music!")
             pass
 
-        self.movingPlat = Platform(self, 500 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
+        self.movingPlat = Platform(self, 300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
 
         self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 200, name =  "pat1")                       #      
         self.level.setSurfaces()                                                                        # Sets surfaces?

@@ -208,8 +208,10 @@ class Box(CustomSprite):
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
+            self.vel += self.addedVel
         self.has_collided = False
         self.pos.y += self.lift.y       # Adding the pick UP effect
+
         self.pos += self.vel +  self.acc * 0.5
         
         self.rect.midbottom = self.pos.rounded().asTuple()
