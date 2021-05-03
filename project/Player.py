@@ -151,7 +151,7 @@ class Interactive(CustomSprite):
         self._layer = 2
         self.update_order = 2
         self.player = player
-        width = self.player.width/2 + 50
+        width = self.player.width/2 + 30
         height = self.player.height       
         self.facing = facing
         self.image = pg.Surface((width,height)); 

@@ -178,14 +178,9 @@ class Box(CustomSprite):
         
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 2: 
-                print(f'player right: {interacter.player.right_x()}')
-                print(f'box left: {self.left_x()}')
-                print(f'pop to right')
                 self.pos.x = interacter.player.right_x() + self.width/2 + 2
         else:
             if abs(interacter.player.left_x() - self.right_x()) < 2: 
-                print(f'pop to left')
-                
                 self.pos.x = interacter.player.left_x() - self.width/2 - 2
 
             #self.lift.x = -2
@@ -243,7 +238,7 @@ class Box(CustomSprite):
 
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
-    def __init__(self, game, plat : Platform, placement : str , name = None):
+    def __init__(self, game, plat : Platform, placement : str, name = None):
         
         try:
             if placement == "left":
@@ -281,13 +276,17 @@ class Vase(CustomSprite):
         self.ignoreSol = plat
         self.relativePosition = self.pos.copy()
         self.isVase = True
+        self.fell_fast_enough = False
         self.init()
 
 
     def update(self):
-        
+        if self.vel.y > 1:
+            self.fell_fast_enough = True
         #round(self.pos)
         self.touchplat(self.game.group_solid)
+        
+
         if self.fall == True:
             print("should fall")
             self.inAir = True
@@ -301,6 +300,8 @@ class Vase(CustomSprite):
 
     def breaks(self):
         self.image.fill((250,250,250))
+        newPickup = PickUp(self.game, self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
+        self.kill()
         self.broken = True
 
     def applyGrav(self):
@@ -315,20 +316,20 @@ class Vase(CustomSprite):
 
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
+        #self.rect.x += r(self.vel.x)
+        #self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
             for collided in collideds:
                 if collided != self and collided != self.ignoreSol:
-                  
-
-                    self.set_bot(collided.top_y())
-                    self.breaks()
-                    self.fall = False
-                    self.gravity = 0
-                    self.vel.y = 0
+                    if self.fell_fast_enough:
+                        print(f'fell fast enough?? {self.vel.y}')
+                        self.set_bot(collided.top_y())
+                        self.breaks()
+                        self.fall = False
+                        self.gravity = 0
+                        self.vel.y = 0
                   
         self.rect.inflate(-inflation, -inflation)
 
