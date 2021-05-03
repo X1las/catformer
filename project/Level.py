@@ -109,4 +109,5 @@ class Level:
         self.musicTrack = track
         self.name = filename
         print("Level loaded successfully!")
+        print("Playing track " + track)
         return True

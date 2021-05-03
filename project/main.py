@@ -18,6 +18,7 @@ class Game:
     # Initializer
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
+        pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
@@ -80,14 +81,11 @@ class Game:
 
         #
         try:
-            if pg.mixer.music.get_busy:
-                pg.mixer.music.stop
-                pg.mixer.music.unload
-            
             pg.mixer.music.load(self.level.musicTrack)                
-            pg.mixer.music.play(-1)
+            pg.mixer.msuic.play(-1)
             pg.mixer.music.set_volume(VOLUME)
         except:
+            print("Error loading music!")
             pass
 
         self.enemy = PatrollingEnemy( self, 170, 550,25, 35, 100, name =  "pat1")                       #      
