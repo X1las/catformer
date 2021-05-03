@@ -218,7 +218,7 @@ class Box(CustomSprite):
         self.pos += self.vel +  self.acc * 0.5
         
         self.rect.midbottom = self.pos.rounded().asTuple()
-
+        # imt@studieadministation@ruc.dk
         """
         try:
             self.pos -= vec(addx, lift)
@@ -527,10 +527,12 @@ class PatrollingEnemy(Hostile):
         self.collides_left = False
         self.solidstrength = 3
         self.originalsolidstrength = self.solidstrength
-
+        
         self.name = name
         self.count = 5
         self.init()
+        self.isEnemy = True
+        self.stopMoving = False
 
 
     
@@ -551,7 +553,7 @@ class PatrollingEnemy(Hostile):
     def update(self):
         #self.pos += self.vel  
         self.area = "mid"
-        self.count -= 1
+        #self.count -= 1
         if self.count <= 0:
             self.solidstrength = 3
         if self.vel.x > 0:
@@ -565,7 +567,8 @@ class PatrollingEnemy(Hostile):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def posCorrection(self):
-        self.pygamecoll(self.game.group_solid)
+        pass
+        #self.pygamecolls(self.game.group_solid)
 
     def pygamecolls(self, group, ignoredSol = None):
         inflation = 0
@@ -581,58 +584,101 @@ class PatrollingEnemy(Hostile):
                 if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
                     #if collided.solidstrength > self.solidstrength:
                     self.solidstrength = collided.solidstrength - 1
-                    self.count = 2
+                    self.count = 5
+                    if not self.stopMoving:
+                        coll_side = self.determineSide(collided)
+                        if coll_side == "left": # left side of collidedd obj
+                            newpos = collided.left_x() - self.width/2
+                            if newpos <= self.pos.x:
+                                if collided.vel.x != 0:
+                                    self.pos.x = newpos
+                                    self.vel.x = copy.copy(collided.vel.x)
+                                    self.acc.x = collided.acc.x
+                                if collided.vel.x == 0:
+                                    self.vel.x = 1
+                                    self.vel.x *= -1
+                                if self.collides_left:
+                                    self.vel.x *= 0
+                                
+                                    #self.add(self.game.group_solid)
+                                    #self.dontmove = True
+                            #self.vel.x = -1 * abs(self.vel.x)
+                        if coll_side == "right":
+                            newpos = collided.right_x() + self.width/2
+
+                            if newpos >= self.pos.x:
+                                if collided.vel.x !=  0:
+                                    self.pos.x = newpos
+                                    self.vel.x = copy.copy(collided.vel.x)
+                                    self.acc.x = collided.acc.x
+
+                                if collided.vel.x == 0:
+                                    self.vel.x = 1
+                                    self.vel.x *= -1
+                                if self.collides_right:
+                                    #self.add(self.game.group_solid)
+                            
+                                    self.vel.x *= 0
+                                
+                                    #self.dontmove = True
+                                #self.vel.x = abs(self.vel.x)
+                        
+                            self.vel.x *= -1
+ 
+    def inbetweenSolids(self):
+        inflation = 4
+        self.rect = self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        #self.rect.x += r(self.vel.x)
+        #self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
+        result = False
+        if collideds:
+            for collided in collideds:
+
+                if collided != self and collided.name != "p_floor":
+                    if self.solidstrength < collided.solidstrength:
+                        self.solidstrength = collided.solidstrength -1
+                        count = 2
+                    #if collided.solidstrength > self.solidstrength:
+                    #self.solidstrength = collided.solidstrength - 1
+                    #self.count = 2
+                    #self.count = 3
+
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
-                        newpos = collided.left_x() - self.width/2
-                        if newpos <= self.pos.x:
-                            if collided.vel.x != 0:
-                                self.pos.x = newpos
-                                self.vel.x = copy.copy(collided.vel.x)
-                                self.acc.x = collided.acc.x
-                            if collided.vel.x == 0:
-                                self.vel.x = 1
-                                self.vel.x *= -1
-                            if self.collides_left:
-                                self.vel.x *= 0
-                            
+       
+                        if self.collides_left:
+                            self.vel.x *= 0
+                            result = True
                                 #self.add(self.game.group_solid)
                                 #self.dontmove = True
                         #self.vel.x = -1 * abs(self.vel.x)
+                        self.collides_right = True
+
                     if coll_side == "right":
-                        newpos = collided.right_x() + self.width/2
-
-                        if newpos >= self.pos.x:
-                            if collided.vel.x !=  0:
-                                self.pos.x = newpos
-                                self.vel.x = copy.copy(collided.vel.x)
-                                self.acc.x = collided.acc.x
-
-                            if collided.vel.x == 0:
-                                self.vel.x = 1
-                                self.vel.x *= -1
-                            if self.collides_right:
-                                #self.add(self.game.group_solid)
+                        if self.collides_right:
+                            result = True
+                            #self.add(self.game.group_solid)
+                    
+                            self.vel.x *= 0
                         
-                                self.vel.x *= 0
-                            
                                 #self.dontmove = True
                             #self.vel.x = abs(self.vel.x)
-                    
-                        self.vel.x *= -1
-                #elif collided.name == "p_floor":
-                 #   self.solidstrength = 3
-        #else: 
-         #   self.solidstrength = 3
-        #self.rect.x -= r(self.vel.x)
-        #self.rect.y -= r(self.vel.y)
+                        self.collides_left = True
+        self.rect = self.rect.inflate(-inflation,-inflation)
+          
+        return result           
  
-        
         
 
     def collidingWithWall(self):
         #if not self.dontmove:
+        self.stopMoving = self.inbetweenSolids()
+        print(f'solid strength: {self.solidstrength}')
         self.pygamecolls(self.game.group_solid)
+        self.collides_left = False
+        self.collides_right = False
         #else: 
          #   self.vel.x = 0
         #self.pygamecolls2(self.game.group_solid)

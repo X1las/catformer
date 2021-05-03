@@ -118,7 +118,7 @@ class Player(CustomSprite):
         #self.vel = tempvel
         #self.new_vel = self.vel.copy()
        # print((self.pos - self.prevpos + self.prevvel).x)
-        print((self.relativePosition - self.prevrelpos + self.prevrelvel).x)
+        #print((self.relativePosition - self.prevrelpos + self.prevrelvel).x)
         
         #print(f'player pos diff: {self.pos - self.prevpos + self.prevvel}')
         #print(f'player pos: {self.pos}')

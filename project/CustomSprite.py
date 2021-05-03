@@ -59,6 +59,7 @@ class CustomSprite(pg.sprite.Sprite):
     update_order = 5
     name = ""
     count = 5
+    isEnemy = False
 
 
     def init(self):
@@ -208,9 +209,11 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collideds:
 
                 #print(f"{self.name} collided with: {collided.name}")
+                #print(f'Strength: {self.solidstrength} ---- {collided.solidstrength}')
+                
                 #print(f'solid less? {collided.solidstrength > self.solidstrength}')
                 #print(f'1 - acc in coll for {self.name} with {self.acc}')
-                if collided != self and collided != ignoredSol and collided.solidstrength > self.solidstrength:
+                if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength > self.solidstrength:
                     if group.has(self):
                         self.solidstrength = collided.solidstrength -1
                     self.count = 2
