@@ -493,7 +493,21 @@ class PatrollingEnemy(Hostile):
         self.groups = game.all_sprites, game.group_damager, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
         self.width          = width; self.height = height
-        self.image          =  pg.Surface((self.width,self.height)); self.image.fill((145,12,0)); self.rect = self.image.get_rect()
+        
+        # get spritesheet
+        wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
+        # get individual sprites and add to list
+        self.images = []
+        self.images.append(wormSheet.image_at((4, 37, 23, 27), colorkey=(0,0,0)))
+            # add rest
+
+        self.imageIndex = 0
+        self.image = self.images[self.imageIndex]
+
+        # scale image to correct size
+        self.image = pg.transform.scale(self.image, (width, height))
+        
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(1, 0);     self.acc = vec(0, 0)
         self.maxDist = maxDist
