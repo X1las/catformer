@@ -104,17 +104,17 @@ class Platform(CustomSprite):
 
         pg.sprite.Sprite.__init__(self, self.groups)
 
-         # get sprite sheet
+        # get sprite sheet
         platformSheet = ss.Spritesheet('resources/platforms.png')
         # get individual sprites
-        #prettyPlatform = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
-        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=BLACK)
+        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=(0,0,0))
         end_right  = platformSheet.image_at((175,51, 34,26), colorkey=(0,0,0))
         mid        = platformSheet.image_at((303,51, 35,26), colorkey=(0,0,0))
         brownPiece = platformSheet.image_at((303,176,34,32), colorkey=(0,0,0))
+        #prettyPlatform = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
         
         # create surface with correct size
-        self.image = pg.Surface((width,height))
+        self.image = pg.Surface((width,height),pg.SRCALPHA)
         fill = 0
         # blit left end
         self.image.blit(end_left,(0,0))
