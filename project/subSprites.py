@@ -222,7 +222,6 @@ class Box(CustomSprite):
 
     def updatePos(self, Intersecters):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
-        print(f'new stuff')
         if self.has_collided:
             #if not self.isPickedUp:
             """ DO NOT DELETE """
@@ -239,7 +238,6 @@ class Box(CustomSprite):
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
-            print(f'VEL ADDED')
             self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
 
