@@ -86,18 +86,23 @@ class Level:
         if args[0] == "Track":
             self.musicTrack = str(args[1])
 
+    # Switch function to create platforms
     def setPlatforms(self,args):
         self.platforms.append(Platform(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
-        
+    
+    # Switch function to create boxes
     def setBoxes(self,args):
         self.boxes.append(Box(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
     
+    # Switch function to create buttons
     def setButtons(self,args):
         self.buttons.append(Button(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
 
+    # Switch function to create levers
     def setLevers(self,args):
         self.levers.append(Lever(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
 
+    # Switch function to create vases
     def setVases(self,args):
         
         for platform in self.platforms:
