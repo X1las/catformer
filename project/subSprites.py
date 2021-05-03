@@ -224,7 +224,7 @@ class Box(CustomSprite):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         if self.has_collided:
             #if not self.isPickedUp:
-            """
+            """ DO NOT DELETE
             #self.vel.x = self.new_vel.x
             #self.acc.x = self.new_acc.x
             """
@@ -243,7 +243,7 @@ class Box(CustomSprite):
         self.vel += self.addedVel
         self.pos.y += self.lift.y       # Adding the pick UP effect
         self.pos.y += self.vel.y +  self.acc.y * 0.5
-        """
+        """DO NOT DELETE
         #self.pos += self.vel +  self.acc * 0.5
         """
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -252,8 +252,8 @@ class Box(CustomSprite):
 
     def posCorrection(self):
         # I am not sure this is needed
-        if self.can_fall_and_move:
-            self.pygamecoll(self.game.group_solid)
+        #if self.can_fall_and_move:
+        self.pygamecoll(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
         
 
