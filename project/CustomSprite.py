@@ -272,7 +272,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.on_platform = False
         result = None
         for collided in collideds:
-            if collided != self.ignoreSol:
+            if collided != self.ignoreSol and collided != self:
                 
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
@@ -311,7 +311,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x) < 0.01:
+        if self.isPlayer and abs(self.vel.x) < 0.0001:
             self.vel.x = 0
 
         #if self.can_fall_and_move:

@@ -207,13 +207,14 @@ class Box(CustomSprite):
             self.vel.x = self.new_vel.x
             self.acc.x = self.new_acc.x
             self.isPickedUp = True
+            self.addedVel = vec(0,0)
         else:
             if self.isPickedUp == True:
                 self.lift.y = 0
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
-            self.vel += self.addedVel
+        self.vel += self.addedVel
         self.has_collided = False
         self.pos.y += self.lift.y       # Adding the pick UP effect
 
