@@ -190,6 +190,7 @@ class Box(CustomSprite):
     
 
     def update(self):
+        self.has_collided = False
         self.applyPhysics(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -223,8 +224,12 @@ class Box(CustomSprite):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         if self.has_collided:
             #if not self.isPickedUp:
-            self.vel.x = self.new_vel.x
-            self.acc.x = self.new_acc.x
+            """
+            #self.vel.x = self.new_vel.x
+            #self.acc.x = self.new_acc.x
+            """
+            self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
+            
             self.isPickedUp = True
             self.addedVel = vec(0,0)
         else:
@@ -233,12 +238,14 @@ class Box(CustomSprite):
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
-        self.vel += self.addedVel
-        self.has_collided = False
-        self.pos.y += self.lift.y       # Adding the pick UP effect
+            self.pos.x += self.vel.x +  self.acc.x * 0.5
 
-        self.pos += self.vel +  self.acc * 0.5
-        
+        self.vel += self.addedVel
+        self.pos.y += self.lift.y       # Adding the pick UP effect
+        self.pos.y += self.vel.y +  self.acc.y * 0.5
+        """
+        #self.pos += self.vel +  self.acc * 0.5
+        """
         self.rect.midbottom = self.pos.realRound().asTuple()
  
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
