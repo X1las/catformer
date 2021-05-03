@@ -104,7 +104,12 @@ class Platform(CustomSprite):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         platformSheet = ss.Spritesheet('resources/platforms.png')
-        self.image = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))#.convert_alpha()
+        #self.image = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
+        images = platformSheet.images_at([(47,51,34,26),(303,51,35,26),(175,51,34,26)])
+        self.image = pg.Surface((width,height))
+
+        for i in range(len(images)):
+            self.image.blit(images[i], (i*images[0].get_width(),0))
         self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
 
 
