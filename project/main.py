@@ -435,7 +435,7 @@ class Game:
     # 
     def relativePos(self):
         for sprite in self.all_sprites:
-
+            
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x -= self.relposx
 
