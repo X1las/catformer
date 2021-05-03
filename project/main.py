@@ -110,8 +110,8 @@ class Game:
         self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
-        self.health = PickUp(self, 400, 400, 10, 10, 'health')                                          #
-        self.catnip = PickUp(self, 600, 370, 10, 10, 'catnip')                                                           
+        self.health = PickUp(self, 400, 400, 16, 16, 'health')                                          #
+        self.catnip = PickUp(self, 600, 370, 16, 16, 'catnip')                                                           
         self.water = Water(self, 500, 400, 10, 10)         
 
         #

@@ -449,7 +449,13 @@ class PickUp(CustomSprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         if self.type == 'health':
-            self.image.fill((255,0, 200))
+            
+            healthSheet = ss.Spritesheet('resources/heart2.png')
+            #self.image = healthSheet.image_at((11,11,27,30), colorkey=(255,255,255))       # for heart1.png
+            self.image = healthSheet.image_at((0,0,16,16), colorkey=(0,255,0))          # for heart2.png
+            self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
+            
+            #self.getImageFromFile('heart.png',width,height)
         
         if self.type == 'catnip':
             self.getImageFromFile('catnip.png',width,height)
