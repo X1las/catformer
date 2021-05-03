@@ -86,7 +86,7 @@ class Player(CustomSprite):
         self.applyPhysics(self.game.group_solid) 
         self.pygamecoll(self.game.group_solid)
 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -106,12 +106,18 @@ class Player(CustomSprite):
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP 
 
+    def resetRects(self):
+        super().resetRects()
+
+
     def updatePos(self, Intersecters):
         #tempvel = self.vel.copy()
         #self.vel = self.new_vel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
+        self.vel += self.addedVel
         self.pos += self.vel +  self.acc * 0.5
+        #self.vel -= self.addedVel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
         #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
@@ -133,9 +139,9 @@ class Player(CustomSprite):
     def posCorrection(self):
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
-        self.count -= 1
-        if self.count <= 0:
-            self.solidstrength = 0
+        #self.count -= 1
+        #if self.count <= 0:
+         #   self.solidstrength = 0
         
 
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
@@ -179,14 +185,14 @@ class Interactive(CustomSprite):
 
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
             else:
-                #bob = self.player.relativePosition.rounded().asTuple()
+                #bob = self.player.relativePosition.realRound().asTuple()
 
-                self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
+                self.rect.bottomright = self.player.relativePosition.realRound().asTuple()
         else: 
             if pos == "global":
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
-                self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
+                self.rect.bottomleft = self.player.relativePosition.realRound().asTuple()
     
     def update(self):
         """

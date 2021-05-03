@@ -15,10 +15,21 @@ from SpriteGroup import *
 def r(number):
     rounded_num = number
     rounded_num = abs(rounded_num)
-    rounded_num = math.ceil(rounded_num)
+    rounded_num = math.floor(rounded_num)
     if number < 0:
         rounded_num *= -1
     return rounded_num
+
+def re(number):
+    inte = math.floor(number)
+    dec = number - inte
+    if dec*10 >= 5:
+        result = 1
+    else:
+        result = 0
+    return inte + result
+
+
 
 # Game Class
 class Game:
@@ -34,6 +45,8 @@ class Game:
         self.running = True                                                     # Creates a boolean for running the game
         self.paused = False
         self.click = False
+        self.userName = ""
+        self.inNameMenu = False
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -100,7 +113,10 @@ class Game:
             print("Error loading music!")
             pass
 
-        self.enemy = PatrollingEnemy( self, 170, 550, 26, 36, 200, name =  "pat1")                       #      
+        self.movingPlat = Platform(self, 300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
+
+        self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 200, name =  "pat1")                       #      
+        self.level.setSurfaces()                                                                        # Sets surfaces?
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
         self.health = PickUp(self, 400, 400, 16, 16, 'health')                                          #
@@ -116,50 +132,228 @@ class Game:
         self.refreshCount_prev = 0                                                   
         self.relposx = 0    
         self.relposp = 0                                                    
-        self.realposp = 0                     
+        self.realposp = 0       
+        self.rel_fitToPlayer = - WIDTH/2 + self.player.pos.x #half screen - pos         
+        self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
         self.run()                                  # Runs the game
 
 
     def mainMenu(self):
         self.inMenu = True
+        selectedButton  = pg.Rect(75, 50, 50, 50)
+        self.selectedState = 0
+        self.activateSelected = False
+
         while self.inMenu:
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
             self.menuEvents()
             mx, my = pg.mouse.get_pos()
-            startButton = pg.Rect(40, 100, 220, 100)
-            pg.draw.rect(self.screen, (255, 0, 0), startButton)
-            if startButton.collidepoint((mx, my)):
+            newGameButton   = pg.Rect(190, 25, 220, 100)
+            loadGameButton  = pg.Rect(190, 175, 220, 100)
+            tutorialButton  = pg.Rect(190, 325, 220, 100)
+            exitButton      = pg.Rect(190, 475, 220, 100)
+
+
+            pg.draw.rect(self.screen, (0, 125, 255), newGameButton)
+            pg.draw.rect(self.screen, (0, 125, 255), loadGameButton)
+            pg.draw.rect(self.screen, (0, 125, 255), tutorialButton)
+            pg.draw.rect(self.screen, (0, 125, 255), exitButton)
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+
+            if (self.selectedState %4) == 0:
+                selectedButton  = pg.Rect(75, 50, 50, 50)
+                if self.activateSelected:
+                    self.nameInput()
+            elif (self.selectedState %4) == 1:
+                selectedButton  = pg.Rect(75, 200, 50, 50)
+                if self.activateSelected:
+                    self.new()
+            elif (self.selectedState %4) == 2:
+                selectedButton  = pg.Rect(75, 350, 50, 50)
+                if self.activateSelected:
+                    self.tutorialScreen()
+            else:
+                selectedButton  = pg.Rect(75, 500, 50, 50)
+                if self.activateSelected:
+                    self.inMenu = False
+                    self.running = False
+            
+            if newGameButton.collidepoint((mx, my)):
+                self.selectedState = 0
+                if self.click:
+                    self.nameInput()
+            if loadGameButton.collidepoint((mx, my)):
+                self.selectedState = 1
                 if self.click:
                     self.new()
+            if tutorialButton.collidepoint((mx, my)):
+                self.selectedState = 2
+                if self.click:
+                    self.tutorialScreen()
+            if exitButton.collidepoint((mx, my)):
+                self.selectedState = 3
+                if self.click:
+                    self.inMenu = False
+                    self.running = False
+            
+            self.activateSelected = False
             self.click = False
-            self.drawMenuText("Start Game", 150, 150)
+            self.drawMenuText("New Game", 300, 75)
+            self.drawMenuText("Load Game", 300, 225)
+            self.drawMenuText("Tutorial", 300, 375)
+            self.drawMenuText("Quit", 300, 525)
             
             pg.display.update()
-  
+
+    def tutorialScreen(self):
+        self.inTutorial = True
+        self.activateSelected = False
+        self.selectedState = 0
+
+        while self.inTutorial:
+            self.screen.fill(BLACK)
+            self.clock.tick(FPS)
+            self.menuEvents()
+            mx, my = pg.mouse.get_pos()
+            returnButton   = pg.Rect(190, 475, 220, 100)
+            pg.draw.rect(self.screen, (0, 125, 255), returnButton)
+
+            selectedButton  = pg.Rect(75, 500, 50, 50)
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+
+            if self.activateSelected:
+                self.inTutorial = False
+
+            if self.click:
+                if returnButton.collidepoint((mx, my)):
+                    self.inTutorial = False
+            self.activateSelected = False
+            
+            self.click = False
+            self.drawMenuText("Return", 300, 525)
+            self.drawMenuText("Use arrow keys to move left/right", 300, 50, 30)
+            self.drawMenuText("Press space to jump", 300, 100, 30)
+            self.drawMenuText("Press P to pause", 300, 150, 30)
+            self.drawMenuText("Press Q to quit", 300, 200, 30)
+            self.drawMenuText("Press D to interact", 300, 250, 30)
+
+            pg.display.update()
+
+    def nameInput(self):
+        self.inNameMenu = True
+        self.userName = ""
+        self.nameError = False
+        self.activateSelected = False
+        self.selectedState = 0
+        while self.inNameMenu:
+            self.screen.fill(BLACK)
+            self.clock.tick(FPS)
+
+            mx, my = pg.mouse.get_pos()
+            startButton   = pg.Rect(190, 325, 220, 100)
+            returnButton  = pg.Rect(190, 475, 220, 100)
+            pg.draw.rect(self.screen, (0, 125, 255), startButton)
+            pg.draw.rect(self.screen, (0, 125, 255), returnButton)
+            self.drawMenuText("Return", 300, 525)
+            self.drawMenuText("Start", 300, 375)
+            self.drawMenuText("Please enter a name", 300, 100)
+            if self.nameError:
+                self.drawMenuText("Invalid name entered", 300, 300)
+
+
+            if (self.selectedState %2) == 0:
+                selectedButton  = pg.Rect(75, 350, 50, 50)
+                if self.activateSelected:
+                    if not self.userName == "":
+                        self.new()
+                    else:
+                        self.nameError = True
+                        self.activateSelected = False
+            elif (self.selectedState %2) == 1:
+                selectedButton  = pg.Rect(75, 500, 50, 50)
+                if self.activateSelected:
+                    self.inNameMenu = False
+                    self.selectedState = 0
+
+
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+            
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:                                   
+                    self.inMenu = False
+                    self.running = False
+                    self.inTutorial = False  
+                    self.inNameMenu = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.click = True 
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_BACKSPACE:
+                        self.userName = self.userName[:-1]
+                    elif event.key == pg.K_RETURN:
+                        self.activateSelected = True
+                    elif event.key == pg.K_UP:
+                        self.selectedState += 1
+                    elif event.key == pg.K_DOWN:
+                        self.selectedState -= 1
+                    else:
+                        self.userName += event.unicode
+            self.drawMenuText(self.userName, 300, 150)
+
+            
+            if returnButton.collidepoint((mx, my)):
+                self.selectedState = 1
+                if self.click:
+                    self.inNameMenu = False
+                    self.selectedState = 0
+            if startButton.collidepoint((mx, my)):
+                self.selectedState = 0
+                if self.click:
+                    if not self.userName == "":
+                        self.new()
+                    else:
+                        self.nameError = True
+
+
+
+            self.click = False
+            pg.display.update()
+
+            
+
     
     def menuEvents(self):
         for event in pg.event.get():                                
             
             if event.type == (pg.QUIT):                                   
-                 if self.inMenu:                                               
-                   self.inMenu = False                                        
-                 self.running = False  
+                self.inMenu = False
+                self.running = False
+                self.inTutorial = False  
+                self.inNameMenu = False
 
-            if event.type == pg.KEYDOWN:                                        # Checks if the user presses the down arrow
+
+            if event.type == pg.KEYDOWN:
                 if event.key == pg.K_q:                                    # checks if the uses presses the escape key
-                    if self.inMenu:                                            # Does the same as before
-                        self.inMenu = False                                        
-                    self.running = False  
-
+                    self.inMenu = False                                        
+                    self.running = False
+                    self.inTutorial = False  
+                    self.inNameMenu = False
+                if event.key == pg.K_RETURN:
+                    self.activateSelected = True
+                if event.key == pg.K_DOWN:
+                    self.selectedState += 1
+                if event.key == pg.K_UP:
+                    self.selectedState -= 1
              
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click = True                                       
 
-    def drawMenuText(self, text, x, y):
-        drawText = self.textToDisplay(text)
+    def drawMenuText(self, text, x, y, fontsize = 40):
+        drawText = self.textToDisplay(text, fontsize = fontsize)
         textRect = drawText.get_rect()
         textRect.center = (x,y)
         self.screen.blit(drawText, textRect)
@@ -187,7 +381,10 @@ class Game:
                 self.update()
                 self.displayHUD()                                                       
             self.draw()  
-
+            
+    """    ------------------- UPDATE ----------------------------------------------------------------"""
+    """    ------------------- UPDATE ----------------------------------------------------------------"""
+    """    ------------------- UPDATE ----------------------------------------------------------------"""
     # Method where we update game processesd
     def update(self):
         #print(f'NEW RUN')
@@ -231,12 +428,14 @@ class Game:
                     self.playing = False                                        
                 self.running = False                                            # Sets running to false
                 self.inMenu = False
+                self.inNameMenu = False
             
-            if event.type == pg.KEYDOWN:                                        # Checks if the user presses the down arrow
+            if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
                 if event.key == pg.K_q:                                         # checks if the uses presses the escape key
                     if self.playing:                                            # Does the same as before
                         self.playing = False                                        
                     self.running = False        
+                    self.inNameMenu = False
 
                 if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
                     self.new()
@@ -277,6 +476,13 @@ class Game:
             pauseRect = self.pauseText.get_rect()
             pauseRect.center = (300, 150)
             self.screen.blit(self.pauseText, pauseRect)
+            pauseRect2 = self.pauseText2.get_rect()
+            pauseRect2.center = (300, 250)
+            self.screen.blit(self.pauseText2, pauseRect2)
+            pauseRect3 = self.pauseText3.get_rect()
+            pauseRect3.center = (300, 350)
+            self.screen.blit(self.pauseText3, pauseRect3)
+            
         
         
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
@@ -287,6 +493,16 @@ class Game:
   
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
+        #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
+        if self.player.vel.x > 0:
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+            self.relposp = 0
+        #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
+        if self.player.vel.x < 0:
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+            self.relposp = 0
+
+        """
         if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 self.relposx += self.player.vel.x
@@ -295,15 +511,12 @@ class Game:
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-
+        """
     # 
     def relativePos(self):
         for sprite in self.all_sprites:
+            
             sprite.relativePosition = sprite.pos.copy()
-                
-            #if sprite.isPlayer:
-             #   sprite.relativePosition.x -= self.relposp
-            #else:
             sprite.relativePosition.x -= self.relposx
 
     # Respawns the player and resets the camera
@@ -349,7 +562,11 @@ class Game:
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
  
     def displayPauseScreen(self):
-        self.pauseText = self.textToDisplay("Game is paused")
+        self.pauseText = self.textToDisplay("Game is paused", color= (0,0,0), bold= True)
+        self.pauseText2 = self.textToDisplay("Press P to resume", color= (0,0,0), bold= True)
+        self.pauseText3 = self.textToDisplay("Press Q to quit", color= (0,0,0), bold= True)
+
+
 
     def textToDisplay(self, text, font = 'Comic Sans MS', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
         font = pg.font.SysFont(font, fontsize, bold, italic)

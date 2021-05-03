@@ -3,6 +3,7 @@ from sys import platform
 import pygame as pg
 from settings import *
 from subSprites import *
+from Vector import *
 
 # Level Class
 class Level:
