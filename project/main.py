@@ -128,6 +128,10 @@ class Game:
 
     def mainMenu(self):
         self.inMenu = True
+        selectedButton  = pg.Rect(75, 50, 50, 50)
+        self.selectedState = 0
+        self.activateSelected = False
+
         while self.inMenu:
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
@@ -138,22 +142,50 @@ class Game:
             tutorialButton  = pg.Rect(190, 325, 220, 100)
             exitButton      = pg.Rect(190, 475, 220, 100)
 
+
             pg.draw.rect(self.screen, (0, 125, 255), newGameButton)
             pg.draw.rect(self.screen, (0, 125, 255), loadGameButton)
             pg.draw.rect(self.screen, (0, 125, 255), tutorialButton)
             pg.draw.rect(self.screen, (0, 125, 255), exitButton)
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
 
-            if self.click:
-                if newGameButton.collidepoint((mx, my)):
+            if (self.selectedState %4) == 0:
+                selectedButton  = pg.Rect(75, 50, 50, 50)
+                if self.activateSelected:
                     self.nameInput()
-                if loadGameButton.collidepoint((mx, my)):
+            elif (self.selectedState %4) == 1:
+                selectedButton  = pg.Rect(75, 200, 50, 50)
+                if self.activateSelected:
                     self.new()
-                if tutorialButton.collidepoint((mx, my)):
+            elif (self.selectedState %4) == 2:
+                selectedButton  = pg.Rect(75, 350, 50, 50)
+                if self.activateSelected:
                     self.tutorialScreen()
-                if exitButton.collidepoint((mx, my)):
+            else:
+                selectedButton  = pg.Rect(75, 500, 50, 50)
+                if self.activateSelected:
                     self.inMenu = False
                     self.running = False
             
+            if newGameButton.collidepoint((mx, my)):
+                self.selectedState = 0
+                if self.click:
+                    self.nameInput()
+            if loadGameButton.collidepoint((mx, my)):
+                self.selectedState = 1
+                if self.click:
+                    self.new()
+            if tutorialButton.collidepoint((mx, my)):
+                self.selectedState = 2
+                if self.click:
+                    self.tutorialScreen()
+            if exitButton.collidepoint((mx, my)):
+                self.selectedState = 3
+                if self.click:
+                    self.inMenu = False
+                    self.running = False
+            
+            self.activateSelected = False
             self.click = False
             self.drawMenuText("New Game", 300, 75)
             self.drawMenuText("Load Game", 300, 225)
@@ -164,6 +196,9 @@ class Game:
 
     def tutorialScreen(self):
         self.inTutorial = True
+        self.activateSelected = False
+        self.selectedState = 0
+
         while self.inTutorial:
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
@@ -171,9 +206,17 @@ class Game:
             mx, my = pg.mouse.get_pos()
             returnButton   = pg.Rect(190, 475, 220, 100)
             pg.draw.rect(self.screen, (0, 125, 255), returnButton)
+
+            selectedButton  = pg.Rect(75, 500, 50, 50)
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+
+            if self.activateSelected:
+                self.inTutorial = False
+
             if self.click:
                 if returnButton.collidepoint((mx, my)):
                     self.inTutorial = False
+            self.activateSelected = False
             
             self.click = False
             self.drawMenuText("Return", 300, 525)
@@ -189,6 +232,8 @@ class Game:
         self.inNameMenu = True
         self.userName = ""
         self.nameError = False
+        self.activateSelected = False
+        self.selectedState = 0
         while self.inNameMenu:
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
@@ -205,6 +250,24 @@ class Game:
                 self.drawMenuText("Invalid name entered", 300, 300)
 
 
+            if (self.selectedState %2) == 0:
+                selectedButton  = pg.Rect(75, 350, 50, 50)
+                if self.activateSelected:
+                    if not self.userName == "":
+                        self.new()
+                    else:
+                        self.nameError = True
+                        self.activateSelected = False
+            elif (self.selectedState %2) == 1:
+                selectedButton  = pg.Rect(75, 500, 50, 50)
+                if self.activateSelected:
+                    self.inNameMenu = False
+                    self.selectedState = 0
+
+
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+            
+
             for event in pg.event.get():
                 if event.type == pg.QUIT:                                   
                     self.inMenu = False
@@ -217,14 +280,25 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_BACKSPACE:
                         self.userName = self.userName[:-1]
+                    elif event.key == pg.K_RETURN:
+                        self.activateSelected = True
+                    elif event.key == pg.K_UP:
+                        self.selectedState += 1
+                    elif event.key == pg.K_DOWN:
+                        self.selectedState -= 1
                     else:
                         self.userName += event.unicode
             self.drawMenuText(self.userName, 300, 150)
 
-            if self.click:
-                if returnButton.collidepoint((mx, my)):
+            
+            if returnButton.collidepoint((mx, my)):
+                self.selectedState = 1
+                if self.click:
                     self.inNameMenu = False
-                if startButton.collidepoint((mx, my)):
+                    self.selectedState = 0
+            if startButton.collidepoint((mx, my)):
+                self.selectedState = 0
+                if self.click:
                     if not self.userName == "":
                         self.new()
                     else:
@@ -249,14 +323,17 @@ class Game:
 
 
             if event.type == pg.KEYDOWN:
-                if not self.inNameMenu:
-                    if event.key == pg.K_q:                                    # checks if the uses presses the escape key
-                        self.inMenu = False                                        
-                        self.running = False
-                        self.inTutorial = False  
-                        self.inNameMenu = False
-                    if event.key == pg.K_RETURN:
-                        self.new()
+                if event.key == pg.K_q:                                    # checks if the uses presses the escape key
+                    self.inMenu = False                                        
+                    self.running = False
+                    self.inTutorial = False  
+                    self.inNameMenu = False
+                if event.key == pg.K_RETURN:
+                    self.activateSelected = True
+                if event.key == pg.K_DOWN:
+                    self.selectedState += 1
+                if event.key == pg.K_UP:
+                    self.selectedState -= 1
              
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
