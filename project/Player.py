@@ -45,7 +45,7 @@ class Player(CustomSprite):
         self._layer     = 2
         self.spawn      = spawn
         self.pos        = spawn
-        self.update_order        = 1
+        self.update_order        = 2
 
         self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -85,6 +85,7 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.pygamecoll(self.game.group_solid)
+        self.vel += self.addedVel
 
         self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -115,7 +116,7 @@ class Player(CustomSprite):
         #self.vel = self.new_vel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
-        self.vel += self.addedVel
+
         self.pos += self.vel +  self.acc * 0.5
         #self.vel -= self.addedVel
         #if self.vel.x < 0.001:
@@ -155,7 +156,7 @@ class Interactive(CustomSprite):
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
         self._layer = 2
-        self.update_order = 2
+        self.update_order = 3
         self.player = player
         width = self.player.width/2 + 30
         height = self.player.height       

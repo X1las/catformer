@@ -97,7 +97,7 @@ class Platform(CustomSprite):
         self.solidstrength = 10
         self.originalsolidstrength = self.solidstrength
         self.x = x
-        
+        self.update_order = 1
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
         
@@ -167,7 +167,7 @@ class Box(CustomSprite):
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         self.solidstrength = 5
         self.originalsolidstrength = self.solidstrength
-        self.update_order = 3
+        self.update_order = 4
         
         self.getImageFromFile('box.png', width, height)
 
@@ -222,13 +222,14 @@ class Box(CustomSprite):
 
     def updatePos(self, Intersecters):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
+        print(f'new stuff')
         if self.has_collided:
             #if not self.isPickedUp:
-            """ DO NOT DELETE
-            #self.vel.x = self.new_vel.x
-            #self.acc.x = self.new_acc.x
-            """
-            self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
+            """ DO NOT DELETE """
+            self.vel.x = self.new_vel.x
+            self.acc.x = self.new_acc.x
+            """"""
+            #self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
             
             self.isPickedUp = True
             self.addedVel = vec(0,0)
@@ -238,14 +239,15 @@ class Box(CustomSprite):
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
-            self.pos.x += self.vel.x +  self.acc.x * 0.5
+            print(f'VEL ADDED')
+            self.vel += self.addedVel 
+            #self.pos.x += self.vel.x +  self.acc.x * 0.5
 
-        self.vel += self.addedVel
         self.pos.y += self.lift.y       # Adding the pick UP effect
-        self.pos.y += self.vel.y +  self.acc.y * 0.5
-        """DO NOT DELETE
-        #self.pos += self.vel +  self.acc * 0.5
-        """
+        #self.pos.y += self.vel.y +  self.acc.y * 0.5
+        """DO NOT DELETE """
+        self.pos += self.vel +  self.acc * 0.5
+        """"""
         self.rect.midbottom = self.pos.realRound().asTuple()
  
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
