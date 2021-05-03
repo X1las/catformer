@@ -2,6 +2,7 @@
 import pygame as pg
 from settings import *
 from subSprites import *
+from Vector import *
 
 # Level Class
 class Level:
@@ -86,7 +87,10 @@ class Level:
                 # If the category is Platforms, then we check the following lines for platform data
                 if category == "Platforms" and line!= "":
                     linesplit = line.split(" , ")
-                    plats+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
+                    try:
+                        plats+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4], linesplit[5])]
+                    except:
+                        plats+= [(int(linesplit[0]),int(linesplit[1]),int(linesplit[2]),int(linesplit[3]),linesplit[4])]
                 
                 if category == "Boxes" and line!= "":
                     linesplit = line.split(" , ")

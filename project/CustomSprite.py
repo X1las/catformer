@@ -59,6 +59,8 @@ class CustomSprite(pg.sprite.Sprite):
     update_order = 5
     name = ""
     count = 5
+    isEnemy = False
+    addedVel = Vec(0,0)
 
 
     def init(self):
@@ -84,6 +86,8 @@ class CustomSprite(pg.sprite.Sprite):
         if self.count < 0:
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
+        self.vel -= self.addedVel
+        self.addedVel = Vec(0,0)
 
     def top_y(self):
         return self.pos.y - self.height
@@ -151,6 +155,7 @@ class CustomSprite(pg.sprite.Sprite):
     def knockOver(self,  agents, turn):
         
         collided = pg.sprite.spritecollide(self, agents, False)
+
         if collided: 
             for collided_obj in collided:
                 if turn:
@@ -208,9 +213,11 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collideds:
 
                 #print(f"{self.name} collided with: {collided.name}")
+                #print(f'Strength: {self.solidstrength} ---- {collided.solidstrength}')
+                
                 #print(f'solid less? {collided.solidstrength > self.solidstrength}')
                 #print(f'1 - acc in coll for {self.name} with {self.acc}')
-                if collided != self and collided != ignoredSol and collided.solidstrength > self.solidstrength:
+                if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength > self.solidstrength:
                     if group.has(self):
                         self.solidstrength = collided.solidstrength -1
                     self.count = 2
@@ -265,10 +272,11 @@ class CustomSprite(pg.sprite.Sprite):
         self.on_platform = False
         result = None
         for collided in collideds:
-            if collided != self.ignoreSol:
+            if collided != self.ignoreSol and collided != self:
                 
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
+                    self.addedVel = collided.vel
                     result = collided
         self.rect.bottom -= 5 
         return result
@@ -303,7 +311,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x) < 0.01:
+        if self.isPlayer and abs(self.vel.x) < 0.0001:
             self.vel.x = 0
 
         #if self.can_fall_and_move:

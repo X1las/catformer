@@ -85,6 +85,7 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.pygamecoll(self.game.group_solid)
+        self.vel += self.addedVel
 
         self.rect.midbottom = self.pos.rounded().asTuple()
 
@@ -106,19 +107,24 @@ class Player(CustomSprite):
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP 
 
+    def resetRects(self):
+        super().resetRects()
+
+
     def updatePos(self, Intersecters):
         #tempvel = self.vel.copy()
         #self.vel = self.new_vel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
         self.pos += self.vel +  self.acc * 0.5
+        #self.vel -= self.addedVel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
         #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
         #self.vel = tempvel
         #self.new_vel = self.vel.copy()
        # print((self.pos - self.prevpos + self.prevvel).x)
-        print((self.relativePosition - self.prevrelpos + self.prevrelvel).x)
+        #print((self.relativePosition - self.prevrelpos + self.prevrelvel).x)
         
         #print(f'player pos diff: {self.pos - self.prevpos + self.prevvel}')
         #print(f'player pos: {self.pos}')
@@ -133,9 +139,9 @@ class Player(CustomSprite):
     def posCorrection(self):
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
-        self.count -= 1
-        if self.count <= 0:
-            self.solidstrength = 0
+        #self.count -= 1
+        #if self.count <= 0:
+         #   self.solidstrength = 0
         
 
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
@@ -151,7 +157,7 @@ class Interactive(CustomSprite):
         self._layer = 2
         self.update_order = 2
         self.player = player
-        width = self.player.width/2 + 50
+        width = self.player.width/2 + 30
         height = self.player.height       
         self.facing = facing
         self.image = pg.Surface((width,height)); 
