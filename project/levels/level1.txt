@@ -19,4 +19,3 @@ H: Buttons
 
 H: Levers
 450 , 550 , 10 , 40 , lever1
-500 , 550 , 10 , 40 , lever2

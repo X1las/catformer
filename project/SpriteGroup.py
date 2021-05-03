@@ -25,6 +25,11 @@ class Sprites(pg.sprite.LayeredUpdates):
     def correctPositions(self):
         for i in self:
             i.posCorrection()
+    
+    def getObject(self, name):
+        for i in self:
+            if i.name == name:
+                return i
 
 
 

@@ -114,12 +114,23 @@ class Game:
             pass
 
         self.movingPlat = Platform(self, 300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
-
+        self.tallplat   = Platform(self, 650, 550, 20, 100, "tallplat")
         self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 200, name =  "pat1")                       #      
         self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
 
         self.health = PickUp(self, 400, 400, 16, 16, 'health')                                          #
-        self.catnip = PickUp(self, 600, 370, 16, 16, 'catnip')                                                           
+        self.catnip = PickUp(self, 600, 370, 16, 16, 'catnip')   
+        #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
+
+        self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
+        self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
+        self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
+        self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,2),  target = self.all_sprites.getObject("tallplat"))                                          #
+
+        self.lever1 = Lever(self, 450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"))
+        self.lever1 = Lever(self, 500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
+        
+
         self.water = Water(self, 500, 400, 10, 10)         
 
         #
@@ -133,7 +144,7 @@ class Game:
         self.relposp = 0                                                    
         self.realposp = 0       
         self.rel_fitToPlayer = - WIDTH/2 + self.player.pos.x #half screen - pos         
-        self.relposx = self.rel_fitToPlayer     
+        #self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
         self.run()                                  # Runs the game
 
@@ -492,6 +503,7 @@ class Game:
   
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
+        """
         #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
         if self.player.vel.x > 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
@@ -510,7 +522,7 @@ class Game:
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x
                 self.relposp = 0
-        """
+        
     # 
     def relativePos(self):
         for sprite in self.all_sprites:

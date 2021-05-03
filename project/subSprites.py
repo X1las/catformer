@@ -88,7 +88,7 @@ class LevelGoal(CustomSprite):
 
 # Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
-    def __init__(self, game, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 0):
+    def __init__(self, game, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000):
         self.solid = True
         self.vel = vel
         self.maxDist = maxDist
@@ -161,6 +161,7 @@ class Platform(CustomSprite):
 class Box(CustomSprite):
     def __init__(self, game, x, y, width, height, name):
         self.game   = game;  self.width  = width; self.height = height; self.name = name
+        self.initX = x; self.initY = y
         self._layer = 5
         self.solid = True
         self.moveable = True
@@ -182,6 +183,9 @@ class Box(CustomSprite):
         self.isPickedUp = False
         self.lift = vec()
 
+    def respawn(self):
+        self.pos = vec(self.initX, self.initY)
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     def resetRects(self):
         super().resetRects()
@@ -347,9 +351,11 @@ class Vase(CustomSprite):
 
 # Lever SubClass - Inherits from CustomSprite
 class Lever(CustomSprite):
-    def __init__(self,game,x,y, width, height, name = None): 
+    def __init__(self,game,x,y, width, height, name = None, effect = None, movespeed = None, target = None): 
         self.game = game
         self.width = width; self.height = height
+        self.effect = effect; self.target = target; self.movespeed = movespeed
+
         self.groups = game.all_sprites, game.group_levers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
@@ -368,6 +374,11 @@ class Lever(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.image.fill((255,255,255))
+            if self.effect == "respawn":
+                self.target.respawn()
+            if self.effect == "move":
+                self.target.vel.x = self.movespeed
+
         # whatever else it needs to activate
      
 
@@ -377,6 +388,8 @@ class Lever(CustomSprite):
             self.activated = False
           
             self.image.fill((0,200,200))
+            if self.effect == "move":
+                self.target.vel.x = 0
         # whatever else it needs to deactivate
             
     
@@ -388,8 +401,9 @@ class Lever(CustomSprite):
 
 # Button SubClass - Inherits from CustomSprite
 class Button(CustomSprite):
-    def __init__(self,game,x,y, width, height, name = None): 
+    def __init__(self,game,x,y, width, height, name = None, effect = [None], movespeed = None, target = None): 
         self.game = game
+        self.effect = effect; self.target = target; self.movespeed = movespeed
         self.width = width; self.height = height
         self.groups = game.all_sprites, game.group_buttons
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -402,11 +416,23 @@ class Button(CustomSprite):
         self.activated = False
         self.deactivated = True
 
+
+    #def moveTarget(self, movespeed):
+
+
+
     def activate(self):
         if self.activated != True:
             self.activated = True
             self.deactivated = False
             self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
+            
+            for e in self.effect:
+                if e == "respawn":
+                    self.target.respawn()
+                if e == "move":
+                    self.target.vel = self.movespeed
+            
         # whatever else it needs to activate
         
 
@@ -417,6 +443,10 @@ class Button(CustomSprite):
           
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
         # whatever else it needs to deactivate
+            for e in self.effect: 
+                if e == "move":
+                    self.target.vel = vec()
+            
 
     def update(self):
        
