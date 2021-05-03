@@ -255,7 +255,8 @@ class Game:
                         self.running = False
                         self.inTutorial = False  
                         self.inNameMenu = False
-
+                    if event.key == pg.K_RETURN:
+                        self.new()
              
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
