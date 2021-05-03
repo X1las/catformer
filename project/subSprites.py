@@ -152,7 +152,7 @@ class Box(CustomSprite):
 
     def resetRects(self):
         super().resetRects()
-        self.pos -= self.lift
+        #self.pos -= self.lift
     
 
    
@@ -175,10 +175,16 @@ class Box(CustomSprite):
         self.has_collided = True
 
         self.new_vel.x = interacter.vel.x
+        
         if interacter.pos.x <self.pos.x:
-            self.lift.x = 2
+            if abs(abs(interacter.player.right_x()) - abs(self.left_x())) < 3: 
+                self.lift.x = interacter.player.right_x() + self.width/2 + 2
         else:
-            self.lift.x = -2
+            if abs(abs(interacter.player.left_x()) - abs(self.right_x())) < 3: 
+
+                self.lift.x = interacter.player.left_x() - self.width/2 - 2
+
+            #self.lift.x = -2
         self.lift.y = -3
         #if self.new_vel.x <= 0.0000000000000000001:
          #   self.new_vel.x = 0
@@ -191,21 +197,22 @@ class Box(CustomSprite):
     def updatePos(self, Intersecters):
         if self.has_collided:
             if not self.isPickedUp:
-                self.lift.x = 0
+                #self.lift.x = 0
+                self.pos.x = self.lift.x 
             self.vel.x = self.new_vel.x
             self.acc.x = self.new_acc.x
             self.isPickedUp = True
         else:
-            if self.isPickedUp == True:
-                self.pos.x += self.lift.x 
-                self.lift = vec(0,0)
+            #if self.isPickedUp == True:
+                #self.lift = vec(0,0)
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
             
         self.has_collided = False
-        self.pos += self.lift
+        #self.pos += self.lift
         self.pos += self.vel +  self.acc * 0.5
+        
         self.rect.midbottom = self.pos.rounded().asTuple()
 
         """
