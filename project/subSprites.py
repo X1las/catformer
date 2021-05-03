@@ -74,7 +74,7 @@ class LevelGoal(CustomSprite):
 
 
     def update(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     # Function that gets called whenever the player reaches a goal
     def activate(self):
@@ -149,7 +149,7 @@ class Platform(CustomSprite):
     def update(self):
         #round(self.pos)
         self.checkDist()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # Box SubClass - Inherits from CustomSprite
@@ -186,10 +186,10 @@ class Box(CustomSprite):
 
     def update(self):
         self.applyPhysics(self.game.group_solid)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     def posCorrection(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
         self.pygamecoll(self.game.group_solid)
 
     def pickUp(self, interacter):
@@ -210,7 +210,7 @@ class Box(CustomSprite):
         # Grapping vel and acc from the interactive field
         self.new_vel.x = interacter.vel.x
         self.new_acc.x = interacter.acc.x
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     
 
@@ -234,7 +234,7 @@ class Box(CustomSprite):
 
         self.pos += self.vel +  self.acc * 0.5
         
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
  
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
@@ -242,7 +242,7 @@ class Box(CustomSprite):
         # I am not sure this is needed
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
         
 
 
@@ -301,7 +301,7 @@ class Vase(CustomSprite):
         if self.fall == True:
             self.inAir = True
             self.applyGrav()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
         self.image.fill((250,250,250))
@@ -371,7 +371,7 @@ class Lever(CustomSprite):
 
     def update(self):
         #round(self.pos) 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # Button SubClass - Inherits from CustomSprite
@@ -411,7 +411,7 @@ class Button(CustomSprite):
             
         self.activated = False
 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # Pickup SubClass - Inherits from CustomSprite
@@ -446,7 +446,7 @@ class PickUp(CustomSprite):
 
     def update(self):
         #round(self.pos) 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 # ------- HOSTILES ------- #
@@ -472,7 +472,7 @@ class Water(Hostile):
     def update(self):
 
         #round(self.pos) 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
 
         
