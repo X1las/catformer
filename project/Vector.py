@@ -93,7 +93,7 @@ class Vec(object):
         if number < 0:
             neg = True
         rounded_num = number
-        rounded_num = math.floor(abs(rounded_num))
+        rounded_num = math.ceil(abs(rounded_num))
         if neg:
             rounded_num *= -1
         return rounded_num        
