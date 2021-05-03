@@ -106,12 +106,18 @@ class Player(CustomSprite):
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP 
 
+    def resetRects(self):
+        super().resetRects()
+
+
     def updatePos(self, Intersecters):
         #tempvel = self.vel.copy()
         #self.vel = self.new_vel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
+        self.vel += self.addedVel
         self.pos += self.vel +  self.acc * 0.5
+        #self.vel -= self.addedVel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
         #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
@@ -133,9 +139,9 @@ class Player(CustomSprite):
     def posCorrection(self):
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
-        self.count -= 1
-        if self.count <= 0:
-            self.solidstrength = 0
+        #self.count -= 1
+        #if self.count <= 0:
+         #   self.solidstrength = 0
         
 
     def hitsSolid(self, hitObject, hitPosition , relativeHitPos):

@@ -60,6 +60,7 @@ class CustomSprite(pg.sprite.Sprite):
     name = ""
     count = 5
     isEnemy = False
+    addedVel = Vec(0,0)
 
 
     def init(self):
@@ -85,6 +86,8 @@ class CustomSprite(pg.sprite.Sprite):
         if self.count < 0:
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
+        self.vel -= self.addedVel
+        self.addedVel = Vec(0,0)
 
     def top_y(self):
         return self.pos.y - self.height
@@ -273,6 +276,7 @@ class CustomSprite(pg.sprite.Sprite):
                 
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
+                    self.addedVel = collided.vel
                     result = collided
         self.rect.bottom -= 5 
         return result
