@@ -20,10 +20,6 @@ def r(number):
         rounded_num *= -1
     return rounded_num
 
-
-
-
-
 # Game Class
 class Game:
     # Class Variables
