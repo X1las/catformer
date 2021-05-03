@@ -415,11 +415,11 @@ class Game:
     def moveScreen(self):
         #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
         if self.player.vel.x > 0:
-            self.relposx += self.player.vel.x
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
             self.relposp = 0
         #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
         if self.player.vel.x < 0:
-            self.relposx += self.player.vel.x
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
             self.relposp = 0
 
         """
