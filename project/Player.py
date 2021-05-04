@@ -87,9 +87,9 @@ class Player(CustomSprite):
     def update(self):                                                         # Updating pos, vel and acc.
         self.move()
         self.applyPhysics(self.game.group_solid) 
-        self.pygamecoll(self.game.group_solid)
         self.vel += self.addedVel
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.pygamecoll(self.game.group_solid)
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):

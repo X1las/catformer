@@ -370,6 +370,33 @@ class Box(CustomSprite):
         #print(f'vel: {self.vel}')
         self.applyPhysics(self.game.group_solid)
         self.vel += self.addedVel 
+        if self.has_collided:
+            #if not self.isPickedUp:
+            """ DO NOT DELETE """
+            self.new_vel.x = self.interacter.vel.x
+            self.new_acc.x = self.interacter.acc.x
+            self.rect.midbottom = self.pos.realRound().asTuple()
+            if self.beingHeld:
+                self.vel.x = self.new_vel.x
+                self.acc.x = self.new_acc.x
+                self.gravity = 0
+            """"""
+            #self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
+            
+            self.isPickedUp = True
+            #self.addedVel = vec(0,0)
+        else:
+            if self.isPickedUp == True:
+                self.lift.y = 0
+            self.isPickedUp = False
+            #print(f'addedVel: {self.addedVel}')
+            #self.vel.x = 0
+            #self.acc.x = 0
+            self.beingHeld = False
+        if self.beingHeld == False:
+            #self.addedVel = vec(0,0)
+            self.gravity = GRAVITY
+        self.pygamecoll(self.game.group_solid)
     
 
 
@@ -383,7 +410,6 @@ class Box(CustomSprite):
 
     def posCorrection(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.pygamecoll(self.game.group_solid)
 
     def liftedBy(self,interacter):
         if interacter.pos.x < self.pos.x: # if box is right of player
@@ -426,32 +452,6 @@ class Box(CustomSprite):
 
     def updatePos(self, Intersecters):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
-        if self.has_collided:
-            #if not self.isPickedUp:
-            """ DO NOT DELETE """
-            self.new_vel.x = self.interacter.vel.x
-            self.new_acc.x = self.interacter.acc.x
-            self.rect.midbottom = self.pos.realRound().asTuple()
-            if self.beingHeld:
-                self.vel.x = self.new_vel.x
-                self.acc.x = self.new_acc.x
-                self.gravity = 0
-            """"""
-            #self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
-            
-            self.isPickedUp = True
-            #self.addedVel = vec(0,0)
-        else:
-            if self.isPickedUp == True:
-                self.lift.y = 0
-            self.isPickedUp = False
-            #print(f'addedVel: {self.addedVel}')
-            #self.vel.x = 0
-            #self.acc.x = 0
-            self.beingHeld = False
-        if self.beingHeld == False:
-            #self.addedVel = vec(0,0)
-            self.gravity = GRAVITY
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """

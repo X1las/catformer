@@ -234,12 +234,14 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pygamecoll(self, group, ignoredSol = None):
-        inflation = 0
-        self.rect = self.rect.inflate(inflation,inflation)
+        inflationW = 10
+        inflationH = 0
+
+        self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
         self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
+        self.rect.y += r(self.vel.y) 
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
@@ -264,7 +266,7 @@ class CustomSprite(pg.sprite.Sprite):
                         if coll_side == "left":
                             newpos = collided.left_x() - self.width/2
                             if newpos <= self.pos.x:
-                                self.pos.x = collided.left_x() - self.width/2
+                                self.pos.x = collided.left_x() - self.width/2-1
                                 self.vel.x = 0
                                 self.acc.x = 0
 
@@ -281,7 +283,7 @@ class CustomSprite(pg.sprite.Sprite):
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
                     
         
-        self.rect = self.rect.inflate(-inflation, -inflation)
+        self.rect = self.rect.inflate(-inflationW, -inflationH)
 
     def determineSide(self, collided):
         leftcoll = abs(self.right_x() - collided.left_x())
