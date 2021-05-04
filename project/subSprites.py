@@ -287,6 +287,7 @@ class Box(CustomSprite):
         self.rect = self.image.get_rect()
         self.can_fall_and_move = True
         self.pos = vec(x,y)
+        self.savedPos = self.pos.copy()
         self.relativePosition = self.pos.copy()
         self.friction = 0
         self.init()
@@ -311,9 +312,13 @@ class Box(CustomSprite):
         # Currently, trying to add a "pick UP" effect. This reverses it so it can be added again next time lol
 
     def update(self):
+        #self.pos.y = self.savedPos.y
         self.has_collided = False
         self.applyPhysics(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
+    
+    def resets(self):
+        self.pos.y -= self.lift.y # MOVE AWAY
 
     def posCorrection(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -333,6 +338,7 @@ class Box(CustomSprite):
 
         # Setting how much box should be lifted
         self.lift.y = -3
+        self.pos.y += self.lift.y       # Adding the pick UP effect
 
         # Grapping vel and acc from the interactive field
         self.new_vel.x = interacter.vel.x
@@ -362,11 +368,9 @@ class Box(CustomSprite):
             self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
 
-        self.pos.y += self.lift.y       # Adding the pick UP effect
         print(f'lift: {self.lift.y}')
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
-        self.pos.y -= self.lift.y # MOVE AWAY
         self.pos += self.vel +  self.acc * 0.5
         """"""
         self.rect.midbottom = self.pos.realRound().asTuple()
