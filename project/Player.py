@@ -39,7 +39,7 @@ class Player(CustomSprite):
     
 
 
-    def __init__(self, spawn, name=None):
+    def __init__(self, spawn, name="player"):
         
         self._layer     = 2
         self.spawn      = spawn
@@ -155,7 +155,7 @@ class Player(CustomSprite):
 # Interactive Field SubClass - Inherits from CustomSprite
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
-
+        self.game = game
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
         self._layer = 2
@@ -213,7 +213,7 @@ class Interactive(CustomSprite):
         if not self.colliding:
             self.faceinput = self.player.facing
         else: 
-            self.player.solidstrength = 6
+            self.player.solidstrength = 3
             self.player.count = 10
             
         self.colliding = False

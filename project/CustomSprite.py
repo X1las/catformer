@@ -56,7 +56,7 @@ class CustomSprite(pg.sprite.Sprite):
     originalsolidstrength = 0
     overwritevel = vec()
     overwrite = False
-    update_order = 5
+    update_order = 10
     name = ""
     count = 5
     isEnemy = False
@@ -204,6 +204,34 @@ class CustomSprite(pg.sprite.Sprite):
     def posCorrection(self):
         pass
 
+    def collisionEffect(self):
+        inflation = 2
+        self.rect = self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
+        self.rect.x += r(self.vel.x)
+        self.rect.y -= 1
+        collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
+
+        if collideds:
+            for collided in collideds:
+                try: 
+                    if collided != self and collided.solidstrength < self.solidstrength and collided not in self.game.group_interactiveFields:
+                        #print(f'solid: {self.name} affecting {collided.name}')
+                        #print(f'solidvel : {self.vel}')
+
+                        coll_side = collided.determineSide(self)
+                        if coll_side == "top":
+                            #collided.vel += self.vel
+                            collided.addedVel = self.vel + self.addedVel
+                except:
+                    pass
+                    #print(f'2 - acc in coll for {self.name} with {self.acc}')
+                    
+        
+        self.rect.y += 1
+        self.rect = self.rect.inflate(-inflation, -inflation)
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pygamecoll(self, group, ignoredSol = None):
         inflation = 0

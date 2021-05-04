@@ -432,7 +432,10 @@ class Game:
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
         
-        for plat in self.group_platforms:
+        for plat in self.group_solid:
+            plat.collisionEffect()
+        
+        for plat in self.group_solid:
             plat.collisionEffect()
         #self.player.vel += self.player.addedVel
         self.all_sprites.update()

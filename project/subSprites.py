@@ -212,7 +212,7 @@ class Platform(CustomSprite):
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.midbottom = (self.x,self.y)
 
-
+    """
     def collisionEffect(self):
         inflation = 0
         self.rect = self.rect.inflate(inflation,inflation)
@@ -236,7 +236,7 @@ class Platform(CustomSprite):
                     
         
         self.rect = self.rect.inflate(-inflation, -inflation)
-
+    """
 
   # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
@@ -264,7 +264,7 @@ class Box(CustomSprite):
         self.moveable = True
         self.solidstrength = 5
         self.originalsolidstrength = self.solidstrength
-        self.update_order = 4
+        self.update_order = 5
         
         self.can_fall_and_move = True
         self.pos = vec(x,y)
@@ -323,7 +323,6 @@ class Box(CustomSprite):
         #self.acc = vec(0,0)                   
     def update(self):
         #self.pos.y = self.savedPos.y
-        self.vel.x *= 0
         if not self.inAir:
             self.pickupStarted = False
         self.savedpos = self.pos.copy()
@@ -430,6 +429,7 @@ class Box(CustomSprite):
         #if self.can_fall_and_move:
         self.pygamecoll(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.vel.x = self.addedVel.x
         
 
 
