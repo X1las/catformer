@@ -217,7 +217,7 @@ class Platform(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
         self.rect.x += r(self.vel.x)
-        self.rect.y -= 10
+        self.rect.y -= 1
         collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
 
         if collideds:
@@ -231,10 +231,10 @@ class Platform(CustomSprite):
                 try: 
                     if collided != self and collided.solidstrength < self.solidstrength:
                     
-                        coll_side = self.determineSide(collided)
+                        coll_side = collided.determineSide(self)
                         #print(f'coll side {coll_side}')
                         if coll_side == "top":
-                            collided.addedVel += self.vel
+                            collided.addedVel = self.vel
 
                         else:
                             if coll_side == "left":
@@ -308,7 +308,6 @@ class Box(CustomSprite):
     def resetRects(self):
         super().resetRects()
         # Currently, trying to add a "pick UP" effect. This reverses it so it can be added again next time lol
-        self.pos.y -= self.lift.y # MOVE AWAY
 
     def update(self):
         self.has_collided = False
@@ -362,7 +361,9 @@ class Box(CustomSprite):
             self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
 
+        self.pos.y -= self.lift.y # MOVE AWAY
         self.pos.y += self.lift.y       # Adding the pick UP effect
+        print(f'lift: {self.lift.y}')
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
         self.pos += self.vel +  self.acc * 0.5
