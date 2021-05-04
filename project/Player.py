@@ -88,7 +88,7 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.pygamecoll(self.game.group_solid)
-
+        self.vel += self.addedVel
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     # ---> Checks for pressed keys to move left/right and jump
@@ -119,7 +119,7 @@ class Player(CustomSprite):
         #if self.vel.x < 0.001:
          #   self.vel.x = 0
 
-        self.vel += self.addedVel
+        #self.vel += self.addedVel
         self.pos += self.vel +  self.acc * 0.5
         #self.vel -= self.addedVel
         #if self.vel.x < 0.001:

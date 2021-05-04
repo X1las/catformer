@@ -219,34 +219,17 @@ class Platform(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
         self.rect.x += r(self.vel.x)
-        self.rect.y -= 1
+        self.rect.y -= 2
         collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
 
         if collideds:
             for collided in collideds:
-
-                #print(f"{self.name} collided with: {collided.name}")
-                #print(f'Strength: {self.solidstrength} ---- {collided.solidstrength}')
-                
-                #print(f'solid less? {collided.solidstrength > self.solidstrength}')
-                #print(f'1 - acc in coll for {self.name} with {self.acc}')
                 try: 
                     if collided != self and collided.solidstrength < self.solidstrength:
                     
                         coll_side = collided.determineSide(self)
-                        #print(f'coll side {coll_side}')
                         if coll_side == "top":
                             collided.addedVel = self.vel
-
-                        else:
-                            if coll_side == "left":
-                                pass
-
-                            if coll_side == "right":
-                                pass
-
-                            if coll_side == "bot":
-                                pass
                 except:
                     pass
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
@@ -293,6 +276,7 @@ class Box(CustomSprite):
         self.isPickedUp = False
         self.lift = vec()
         self.beingHeld = False
+        self.interacter = None
         
 
     def startGame(self, game):
@@ -339,14 +323,20 @@ class Box(CustomSprite):
         #self.acc = vec(0,0)                   
     def update(self):
         #self.pos.y = self.savedPos.y
-        self.has_collided = False
-        self.applyPhysics(self.game.group_solid)
+        self.vel.x *= 0
         if not self.inAir:
             self.pickupStarted = False
         self.savedpos = self.pos.copy()
 
         self.rect.midbottom = self.pos.realRound().asTuple()
+        print(f'vel: {self.vel}')
+        self.applyPhysics(self.game.group_solid)
+        self.vel += self.addedVel 
     
+
+
+
+
     def resets(self):
         pass
         #self.pos.y -= self.lift.y # MOVE AWAY
@@ -357,11 +347,7 @@ class Box(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.pygamecoll(self.game.group_solid)
 
-    def pickUp(self, interacter):
-        # Technically if is IS COLLIDING* but ye
-        self.has_collided = True
-        
-        # Checking which side the box is on. If the box is too close to player upon pickup, most the box away a bit
+    def liftedBy(self,interacter):
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 2: 
                 self.pos.x = interacter.player.right_x() + self.width/2 + 2
@@ -376,6 +362,17 @@ class Box(CustomSprite):
             self.pos.y = interacter.player.pos.y - 5
         else: 
             self.beingHeld = False
+        self.interacter = interacter
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
+
+
+
+    def pickUp(self, interacter):
+        # Technically if is IS COLLIDING* but ye
+        #self.has_collided = True
+        
+        # Checking which side the box is on. If the box is too close to player upon pickup, most the box away a bit
             #self.gravity = GRAVITY
         #else:   
          #   self.inAir = True
@@ -383,9 +380,8 @@ class Box(CustomSprite):
          #   self.pos.y = interacter.player.pos.y - 3
           #  self.inAir = True
         # Grapping vel and acc from the interactive field
-        self.new_vel.x = interacter.vel.x
-        self.new_acc.x = interacter.acc.x
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        pass
+       
 
     
 
@@ -394,6 +390,9 @@ class Box(CustomSprite):
         if self.has_collided:
             #if not self.isPickedUp:
             """ DO NOT DELETE """
+            self.new_vel.x = self.interacter.vel.x
+            self.new_acc.x = self.interacter.acc.x
+            self.rect.midbottom = self.pos.realRound().asTuple()
             if self.beingHeld:
                 self.vel.x = self.new_vel.x
                 self.acc.x = self.new_acc.x
@@ -402,24 +401,24 @@ class Box(CustomSprite):
             #self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
             
             self.isPickedUp = True
-            self.addedVel = vec(0,0)
+            #self.addedVel = vec(0,0)
         else:
             if self.isPickedUp == True:
                 self.lift.y = 0
             self.isPickedUp = False
             #print(f'addedVel: {self.addedVel}')
-            self.vel.x = 0
-            self.acc.x = 0
+            #self.vel.x = 0
+            #self.acc.x = 0
             self.beingHeld = False
         if self.beingHeld == False:
-            self.addedVel = vec(0,0)
+            #self.addedVel = vec(0,0)
             self.gravity = GRAVITY
-        self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
         self.pos += self.vel +  self.acc * 0.5
         """"""
+        self.has_collided = False
         self.rect.midbottom = self.pos.realRound().asTuple()
  
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)

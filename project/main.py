@@ -116,9 +116,9 @@ class Game:
         except:
             print("Error loading music!")
             pass
-        '''
         self.movingPlat = Platform(300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
         self.movingPlat.startGame(self)
+        '''
         self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
         self.tallplat.startGame(self)
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
@@ -425,18 +425,22 @@ class Game:
         self.player.touchPickUp(self.group_pickups)
         # Updating Functionsdd
         #
-        self.all_sprites.update()
-
-        for box in self.group_boxes:
-            box.resets()
         if self.interactive_field:
             for lever in self.group_levers:
                 lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
     
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
+        
         for plat in self.group_platforms:
             plat.collisionEffect()
+        #self.player.vel += self.player.addedVel
+        self.all_sprites.update()
+
+        for box in self.group_boxes:
+            box.resets()
+        #for plat in self.group_platforms:
+         #   plat.collisionEffect()
         #for i in self.all_sprites:
         self.all_sprites.updatePos(self.group_solid)
         self.moveScreen()

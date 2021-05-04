@@ -195,8 +195,9 @@ class CustomSprite(pg.sprite.Sprite):
                 for collided_obj in collided:
                     if justPickedUp:
                         collided_obj.pickupStarted = True
-                        #collided_obj.has_collided = True
-                    collided_obj.pickUp(self)
+                    collided_obj.has_collided = True
+                    #collided_obj.pickUp(self)
+                    collided_obj.liftedBy(self)
             else:
                 self.colliding = False
 
