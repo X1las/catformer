@@ -192,8 +192,7 @@ class Box(CustomSprite):
     def resetRects(self):
         super().resetRects()
         # Currently, trying to add a "pick UP" effect. This reverses it so it can be added again next time lol
-        self.pos.y -= self.lift.y
-    
+        self.pos.y -= self.lift.y # MOVE AWAY
 
     def update(self):
         self.has_collided = False
