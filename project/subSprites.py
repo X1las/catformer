@@ -64,9 +64,6 @@ class Tester(CustomSprite):
 class LevelGoal(CustomSprite):
     def __init__(self,x,y, width, height, name = None): 
         self.width = width; self.height = height
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((255, 165, 0))
-        self.rect = self.image.get_rect()
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
 
@@ -74,6 +71,9 @@ class LevelGoal(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_levelGoals
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((255, 165, 0))
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
     def update(self):
@@ -282,9 +282,6 @@ class Box(CustomSprite):
         self.originalsolidstrength = self.solidstrength
         self.update_order = 4
         
-        self.getImageFromFile('box.png', width, height)
-
-        self.rect = self.image.get_rect()
         self.can_fall_and_move = True
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
@@ -297,6 +294,8 @@ class Box(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.getImageFromFile('box.png', self.width, self.height)
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.initX,self.initY)
 
         
@@ -384,35 +383,18 @@ class Box(CustomSprite):
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
     def __init__(self, plat : Platform, placement : str, name = None):
-        
-        try:
-            if placement == "left":
-                pos = plat.topleft()
-             
-                push = 20   
-            elif placement == "right":
-                pos = plat.rect.topright
-                push = -20
-            elif placement == "mid":
-                push = 0
-                pos.x, pos.y = plat.rect.midtop.x, plat.rect.midtop.y 
-            game = game; x = pos.x+ push; y = pos.y; name = name; ignoreSol = plat
-            
-        except:
-            print("Must choose left, right or mid")    
-            game = game; x = plat.rect.midtop[0]; y = plat.rect.midtop[1]; ignoreSol = plat
-
-
-        self.broken = False; self.name = name
+        self.placement = placement
+        self.plat = plat
+        self.broken = False
+        self.name = name
         self.breakable = True
         self.width = 20
         self.height = 30
-        self.game = game
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((120,100,0))
         self.rect = self.image.get_rect()
-        self.pos = vec(x,y)
         self.fall = False
+        #self.pos = vec(x,y)
         self.gravity = PLAYER_GRAV
         self.can_fall_and_move = True
         self.ignoreSol = plat
@@ -425,6 +407,23 @@ class Vase(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_vases
         pg.sprite.Sprite.__init__(self, self.groups)
+
+        try:
+            if self.placement == "left":
+                pos = self.plat.topleft()
+             
+                push = 20   
+            elif self.placement == "right":
+                pos = self.plat.rect.topright
+                push = -20
+            elif self.placement == "mid":
+                push = 0
+                self.pos.x, self.pos.y = self.plat.rect.midtop.x, self.plat.rect.midtop.y 
+            x = pos.x+ push; y = pos.y; self.ignoreSol = self.plat
+            
+        except:
+            print("Must choose left, right or mid")    
+            x = self.plat.rect.midtop[0]; y = self.plat.rect.midtop[1]; self.ignoreSol = self.plat
         self.rect.midbottom = (x,y)
 
 
@@ -477,9 +476,6 @@ class Lever(CustomSprite):
         self.width = width; self.height = height
         self.effect = effect; self.target = target; self.movespeed = movespeed
         self.auto_deactivate = autodeactivate
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((0,200,200))
-        self.rect = self.image.get_rect()
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.deactivate_counter = 30
@@ -491,6 +487,9 @@ class Lever(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_levers
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((0,200,200))
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x,self.y)
 
 
@@ -534,9 +533,6 @@ class Button(CustomSprite):
         self.x = x; self.y = y
         self.effect = effect; #self.target = target; self.movespeed = movespeed
         self.width = width; self.height = height
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((200,0,0))
-        self.rect = self.image.get_rect()
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.activated = False
@@ -546,6 +542,9 @@ class Button(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_buttons
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((200,0,0))
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x,self.y)
 
 
@@ -612,21 +611,6 @@ class PickUp(CustomSprite):
         self.type = type_
         self.pickup = True
         
-        self.image = pg.Surface((self.width,self.height))
-        if self.type == 'health':
-            
-            healthSheet = ss.Spritesheet('resources/heart2.png')
-            #self.image = healthSheet.image_at((11,11,27,30), colorkey=(255,255,255))       # for heart1.png
-            self.image = healthSheet.image_at((0,0,16,16), colorkey=(0,255,0))          # for heart2.png
-            self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
-            
-            #self.getImageFromFile('heart.png',width,height)
-        
-        if self.type == 'catnip':
-            self.getImageFromFile('catnip.png',width,height)
-
-        
-        self.rect = self.image.get_rect()
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
 
@@ -634,6 +618,19 @@ class PickUp(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_pickups
         pg.sprite.Sprite.__init__(self, self.groups)
+
+        self.image = pg.Surface((self.width,self.height))
+        if self.type == 'health':
+            
+            healthSheet = ss.Spritesheet('resources/heart2.png')
+            #self.image = healthSheet.image_at((11,11,27,30), colorkey=(255,255,255))       # for heart1.png
+            self.image = healthSheet.image_at((0,0,16,16), colorkey=(0,255,0))          # for heart2.png
+            self.image = pg.transform.scale(self.image, (self.width, self.height))  # scale Surface to size
+        
+        if self.type == 'catnip':
+            self.getImageFromFile('catnip.png',self.width,self.height)
+
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
 
@@ -654,9 +651,6 @@ class Hostile(CustomSprite):
 class Water(Hostile):
     def __init__(self,x,y, width, height, name = None): 
         self.width = width; self.height = height
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((0,0,200))
-        self.rect = self.image.get_rect()
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
     def update(self):
@@ -669,6 +663,9 @@ class Water(Hostile):
         self.game = game
         self.groups = game.all_sprites, game.group_damager
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((0,0,200))
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
         
@@ -683,22 +680,6 @@ class PatrollingEnemy(Hostile):
         self.x = x
         self.width          = width; self.height = height
         
-        # get spritesheet
-        wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
-        # get individual sprites and add to list
-        self.images = []
-        self.images.append(wormSheet.image_at((4,  37, 23, 27)))
-        self.images.append(wormSheet.image_at((36, 37, 23, 27), colorkey=(0,0,0)))
-
-            # add rest
-
-        self.imageIndex = 0
-        self.image = self.images[self.imageIndex]
-
-        # scale image to correct size
-        self.image = pg.transform.scale(self.image, (width, height))
-        
-        self.rect = self.image.get_rect()
         self.pos            = vec(x,y);     self.vel =  vec(1, 0);     self.acc = vec(0, 0)
         self.maxDist = maxDist
         self.relativePosition = self.pos.copy()
@@ -719,6 +700,22 @@ class PatrollingEnemy(Hostile):
         self.game = game
         self.groups = game.all_sprites, game.group_damager, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
+        # get spritesheet
+        wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
+        # get individual sprites and add to list
+        self.images = []
+        self.images.append(wormSheet.image_at((4,  37, 23, 27)))
+        self.images.append(wormSheet.image_at((36, 37, 23, 27), colorkey=(0,0,0)))
+
+            # add rest
+
+        self.imageIndex = 0
+        self.image = self.images[self.imageIndex]
+
+        # scale image to correct size
+        self.image = pg.transform.scale(self.image, (self.width, self.height))
+        
+        self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
 
 
