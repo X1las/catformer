@@ -238,6 +238,41 @@ class Platform(CustomSprite):
         self.rect = self.rect.inflate(-inflation, -inflation)
     """
 
+
+    def pygamecolls(self, group, ignoredSol = None):
+        inflation = 0
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+
+                if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
+                    #if collided.solidstrength > self.solidstrength:
+                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
+                    #self.count = 5
+
+                    #if not self.stopMoving: # If it was inbetween solids
+                    coll_side = self.determineSide(collided)
+                    if coll_side == "left": # left side of collidedd obj
+                        newpos = collided.left_x() - self.width/2
+                        if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                            if collided.vel.x == 0: # If collided object is not moving, just turn around
+                                self.vel.x = 1
+                                self.vel.x *= -1
+                    if coll_side == "right":
+                        newpos = collided.right_x() + self.width/2
+                        if newpos >= self.pos.x:
+                            if collided.vel.x == 0:
+                                self.vel.x = 1
+                                self.vel.x *= -1
+                        self.vel.x *= -1
+ 
+
+
   # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
         if  self.pos.x - self.x >= self.maxDist: # right boundary
@@ -249,6 +284,10 @@ class Platform(CustomSprite):
 
     def update(self):
         #round(self.pos)
+        if self.vel.x != 0 or self.vel.y != 0:
+            self.originalsolidstrength = 9
+            self.solidstrength = 9
+        self.pygamecolls(self.game.group_solid)
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -328,7 +367,7 @@ class Box(CustomSprite):
         self.savedpos = self.pos.copy()
 
         self.rect.midbottom = self.pos.realRound().asTuple()
-        print(f'vel: {self.vel}')
+        #print(f'vel: {self.vel}')
         self.applyPhysics(self.game.group_solid)
         self.vel += self.addedVel 
     
@@ -348,11 +387,11 @@ class Box(CustomSprite):
 
     def liftedBy(self,interacter):
         if interacter.pos.x < self.pos.x: # if box is right of player
-            if abs(interacter.player.right_x() - self.left_x()) < 2: 
-                self.pos.x = interacter.player.right_x() + self.width/2 + 2
+            if abs(interacter.player.right_x() - self.left_x()) < 3: 
+                self.pos.x = interacter.player.right_x() + self.width/2 + 3
         else:
-            if abs(interacter.player.left_x() - self.right_x()) < 2: 
-                self.pos.x = interacter.player.left_x() - self.width/2 - 2
+            if abs(interacter.player.left_x() - self.right_x()) < 3: 
+                self.pos.x = interacter.player.left_x() - self.width/2 - 3
         # Setting how much box should be lifted
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
