@@ -39,12 +39,13 @@ class Player(CustomSprite):
     
 
 
-    def __init__(self, spawn):
+    def __init__(self, spawn, name=None):
         
         self._layer     = 2
         self.spawn      = spawn
         self.pos        = spawn
         self.update_order        = 2
+        self.name = name
 
 
         self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()

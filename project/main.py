@@ -144,16 +144,16 @@ class Game:
         self.water.startGame(self)     
 
         #
-        self.refreshedInt_lever = False                                                       
-        self.refreshedInt_box = False                                                  
-        self.interactive_field    = None                                       
-        self.frames = 0                                                         
-        self.refreshCount = 0                                                        
-        self.refreshCount_prev = 0                                                   
-        self.relposx = 0    
-        self.relposp = 0                                                    
-        self.realposp = 0       
-        self.rel_fitToPlayer = - WIDTH/2 + self.player.pos.x #half screen - pos         
+        self.refreshedInt_lever     = False                                                       
+        self.refreshedInt_box       = False                                                  
+        self.interactive_field      = None                                       
+        self.frames                 = 0                                                         
+        self.refreshCount           = 0                                                        
+        self.refreshCount_prev      = 0                                                   
+        self.relposx                = 0    
+        self.relposp                = 0                                                    
+        self.realposp               = 0       
+        self.rel_fitToPlayer        = - WIDTH/2 + self.player.pos.x #half screen - pos         
         #self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
         self.run()                                  # Runs the game
