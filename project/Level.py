@@ -88,8 +88,13 @@ class Level:
 
     # Switch function to create platforms
     def setPlatforms(self,args):
-        self.platforms.append(Platform(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
-    
+        #pass
+        #self.platforms.append(Platform(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        platform = Platform(int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4]))
+        self.platforms.append(platform)
+        platform.startGame(self.game)
+
+
     # Switch function to create boxes
     def setBoxes(self,args):
         self.boxes.append(Box(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))

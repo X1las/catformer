@@ -414,6 +414,8 @@ class Game:
         # Updating Functionsdd
         #
         self.all_sprites.update()
+        for plat in self.group_platforms:
+            plat.collisionEffect()
         if self.interactive_field:
             for lever in self.group_levers:
                 lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
