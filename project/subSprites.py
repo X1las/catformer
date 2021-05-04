@@ -62,18 +62,19 @@ class Tester(CustomSprite):
 
 # LevelGoal SubClass - Inherits from CustomSprite
 class LevelGoal(CustomSprite):
-    def __init__(self,game,x,y, width, height, name = None): 
-        self.game = game
+    def __init__(self,x,y, width, height, name = None): 
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.group_levelGoals
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((255, 165, 0))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
 
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_levelGoals
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.pos.x,self.pos.y)
 
     def update(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -269,29 +270,36 @@ class Platform(CustomSprite):
 
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
-    def __init__(self, game, x, y, width, height, name):
-        self.game   = game;  self.width  = width; self.height = height; self.name = name
+    game = None
+    def __init__(self, x, y, width, height, name):
+        self.width  = width; self.height = height; self.name = name
         self.initX = x; self.initY = y
         self._layer = 5
         self.solid = True
         self.moveable = True
-        self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         self.solidstrength = 5
         self.originalsolidstrength = self.solidstrength
         self.update_order = 4
         
         self.getImageFromFile('box.png', width, height)
 
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.rect = self.image.get_rect()
         self.can_fall_and_move = True
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.friction = 0
         self.init()
         self.isPickedUp = False
         self.lift = vec()
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.initX,self.initY)
+
+        
+
 
     def respawn(self):
         self.pos = vec(self.initX, self.initY)
@@ -373,7 +381,7 @@ class Box(CustomSprite):
 
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
-    def __init__(self, game, plat : Platform, placement : str, name = None):
+    def __init__(self, plat : Platform, placement : str, name = None):
         
         try:
             if placement == "left":
@@ -398,12 +406,9 @@ class Vase(CustomSprite):
         self.width = 20
         self.height = 30
         self.game = game
-        self.groups = game.all_sprites, game.group_vases
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((120,100,0))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.fall = False
         self.gravity = PLAYER_GRAV
@@ -413,6 +418,12 @@ class Vase(CustomSprite):
         self.isVase = True
         self.fell_fast_enough = False
         self.init()
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_vases
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (x,y)
 
 
     def update(self):
@@ -460,23 +471,26 @@ class Vase(CustomSprite):
 
 # Lever SubClass - Inherits from CustomSprite
 class Lever(CustomSprite):
-    def __init__(self,game,x,y, width, height, name = None, effect = None, movespeed = None, target = None, autodeactivate = None): 
-        self.game = game
+    def __init__(self,x,y, width, height, name = None, effect = None, movespeed = None, target = None, autodeactivate = None): 
         self.width = width; self.height = height
         self.effect = effect; self.target = target; self.movespeed = movespeed
         self.auto_deactivate = autodeactivate
-        self.groups = game.all_sprites, game.group_levers
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,200,200))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.deactivate_counter = 30
         self.activated = False
         self.deactivated = True
+        self.x = x; self.y = y
         
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_levers
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.x,self.y)
+
 
     def activate(self):
         if self.activated != True:
@@ -514,21 +528,23 @@ class Lever(CustomSprite):
 # Button SubClass - Inherits from CustomSprite
 class Button(CustomSprite):
     #def __init__(self,game,x,y, width, height, name = None, effect = [None], movespeed = None, target = None): 
-    def __init__(self,game,x,y, width, height, name = None, effect = {}): 
-
-        self.game = game
+    def __init__(self,x,y, width, height, name = None, effect = {}): 
+        self.x = x; self.y = y
         self.effect = effect; #self.target = target; self.movespeed = movespeed
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.group_buttons
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((200,0,0))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.activated = False
         self.deactivated = True
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_buttons
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.x,self.y)
 
 
 
@@ -547,7 +563,6 @@ class Button(CustomSprite):
                     if e == "move":
 
                         for move in v:
-                            print(move)
                             move['target'].vel = move["movespeed"]
             except: 
                 pass
@@ -590,14 +605,11 @@ class Button(CustomSprite):
 # Pickup SubClass - Inherits from CustomSprite
 class PickUp(CustomSprite):
 
-    def __init__(self,game,x,y, width, height, type_, name = None): 
-        self.game = game
+    def __init__(self,x,y, width, height, type_, name = None): 
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.group_pickups
         self.type = type_
         self.pickup = True
         
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         if self.type == 'health':
             
@@ -613,9 +625,16 @@ class PickUp(CustomSprite):
 
         
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_pickups
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.pos.x,self.pos.y)
+
+
 
     def update(self):
         #round(self.pos) 
@@ -631,15 +650,11 @@ class Hostile(CustomSprite):
 
 # Water SubClass - Inherits from Hostile
 class Water(Hostile):
-    def __init__(self,game,x,y, width, height, name = None): 
-        self.game = game
+    def __init__(self,x,y, width, height, name = None): 
         self.width = width; self.height = height
-        self.groups = game.all_sprites, game.group_damager
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,0,200))
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x,y)
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
     def update(self):
@@ -648,6 +663,12 @@ class Water(Hostile):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_damager
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.pos.x,self.pos.y)
+
         
     # Catnip
     # Health (fish)
@@ -655,11 +676,9 @@ class Water(Hostile):
 
 # Patrolling Enemy SubClass - Inherits from Hostile
 class PatrollingEnemy(Hostile):
-    def __init__(self,game,x,y, width, height, maxDist, name = "enemy"):
+    def __init__(self,x,y, width, height, maxDist, name = "enemy"):
         self._layer = 10
         self.x = x
-        self.groups = game.all_sprites, game.group_damager, game.group_solid
-        pg.sprite.Sprite.__init__(self, self.groups)
         self.width          = width; self.height = height
         
         # get spritesheet
@@ -678,10 +697,8 @@ class PatrollingEnemy(Hostile):
         self.image = pg.transform.scale(self.image, (width, height))
         
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (x, y)
         self.pos            = vec(x,y);     self.vel =  vec(1, 0);     self.acc = vec(0, 0)
         self.maxDist = maxDist
-        self.game = game
         self.relativePosition = self.pos.copy()
         self.area = "mid"
         self.collides_right = False
@@ -695,6 +712,12 @@ class PatrollingEnemy(Hostile):
         self.init()
         self.isEnemy = True
         self.stopMoving = False
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_damager, game.group_solid
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.pos.x, self.pos.y)
 
 
     # Checking if the enemy is outside it's patrolling area

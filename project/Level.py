@@ -97,15 +97,29 @@ class Level:
 
     # Switch function to create boxes
     def setBoxes(self,args):
-        self.boxes.append(Box(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
-    
+        #self.boxes.append(Box(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        box = Box(int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4]))
+        self.boxes.append(box)
+        box.startGame(self.game)
+
     # Switch function to create buttons
     def setButtons(self,args):
-        self.buttons.append(Button(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        #self.buttons.append(Button(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        button = Button(int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4]))
+        self.buttons.append(button)
+        button.startGame(self.game)
+
+
 
     # Switch function to create levers
     def setLevers(self,args):
-        self.levers.append(Lever(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        #Button(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4]))
+        
+        #self.levers.append(Lever(self.game, int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4])))
+        lever = Lever(int(args[0]), int(args[1]), int(args[2]), int(args[3]), str(args[4]))
+        self.levers.append(lever)
+        lever.startGame(self.game)
+
 
     # Switch function to create vases
     def setVases(self,args):
@@ -114,4 +128,7 @@ class Level:
             if platform.name == str(args[0]):
                 plat = platform
                     
-        self.vases.append(Vase(self.game, plat, str(args[1]), str(args[2])))
+        #self.vases.append(Vase(self.game, plat, str(args[1]), str(args[2])))
+        vase = Vase(plat, str(args[1]), str(args[2]))
+        self.vases.append(vase)
+        vase.startGame(self.game)

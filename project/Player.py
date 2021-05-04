@@ -39,24 +39,26 @@ class Player(CustomSprite):
     
 
 
-    def __init__(self, game, spawn):
+    def __init__(self, spawn):
         
-        self.game       = game
         self._layer     = 2
         self.spawn      = spawn
         self.pos        = spawn
         self.update_order        = 2
 
-        self.groups = game.all_sprites, game.group_pressureActivator
-        pg.sprite.Sprite.__init__(self, self.groups)
 
         self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
-        self.rect.midbottom         = (spawn.x,spawn.y)
 
         self.prevpos = vec() # delete
         self.prevvel = vec()
         self.prevrelpos = vec()
         self.prevrelvel = vec()
+
+    def startGame(self, game):    
+        self.game       = game
+        self.groups = game.all_sprites, game.group_pressureActivator
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom         = (self.spawn.x,self.spawn.y)
 
     def respawn(self):
         self.pos        = self.spawn

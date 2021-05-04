@@ -97,8 +97,8 @@ class Game:
         if not self.level.load(self.level.name):
             self.level.load(DEFAULT_LEVEL)
         
-        self.player = Player(self,self.level.spawn)                         #
-
+        self.player = Player(self.level.spawn)                         #
+        self.player.startGame(self)    
         #
         if self.data:
             self.player.lives = self.data[1]
@@ -113,13 +113,18 @@ class Game:
             print("Error loading music!")
             pass
 
-        self.movingPlat = Platform(self, 300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
-        self.tallplat   = Platform(self, 650, 550, 20, 100, "tallplat")
-        self.enemy = PatrollingEnemy( self, 170, 550,26, 36, 200, name =  "pat1")                       #      
-        self.level_goal     = LevelGoal(self, 700 , 550, 20, 100, name = 'end goal')                    # 
-
-        self.health = PickUp(self, 400, 400, 16, 16, 'health')                                          #
-        self.catnip = PickUp(self, 600, 370, 16, 16, 'catnip')   
+        self.movingPlat = Platform(300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
+        self.movingPlat.startGame(self)
+        self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
+        self.tallplat.startGame(self)
+        self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
+        self.enemy.startGame(self)
+        self.level_goal     = LevelGoal(700 , 550, 20, 100, name = 'end goal')                    # 
+        self.level_goal.startGame(self)
+        self.health = PickUp(400, 400, 16, 16, 'health')                                          #
+        self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
+        self.health.startGame(self)
+        self.catnip.startGame(self)
         #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
 
         #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
@@ -128,14 +133,15 @@ class Game:
         #self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
                              { "movespeed" : Vec(0,-2), "target" : self.all_sprites.getObject("tallplat")}]}
-        self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4  = Button(400 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4.startGame(self)
 
+        self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
+        self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
+        self.lever1.startGame(self)
 
-        self.lever1 = Lever(self, 450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
-        self.lever1 = Lever(self, 500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
-        
-
-        self.water = Water(self, 500, 400, 10, 10)         
+        self.water = Water(500, 400, 10, 10)    
+        self.water.startGame(self)     
 
         #
         self.refreshedInt_lever = False                                                       
