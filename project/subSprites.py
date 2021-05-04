@@ -387,18 +387,32 @@ class Box(CustomSprite):
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
     def __init__(self, plat : Platform, placement : str, name = None):
-        self.placement = placement
         self.plat = plat
+        self.pos = vec()
+        self.placement = placement
+        try:
+            if self.placement == "left":
+                self.pos = self.plat.topleft()
+             
+                push = 20   
+            elif self.placement == "right":
+                self.pos = self.plat.rect.topright
+                push = -20
+            elif self.placement == "mid":
+                push = 0
+                self.pos.x, self.pos.y = self.plat.rect.midtop.x, self.plat.rect.midtop.y 
+            self.pos.x = self.pos.x+ push; self.pos.y = self.pos.y; self.ignoreSol = self.plat
+            
+        except Exception as e:
+            print(e)
+            print("Must choose left, right or mid")    
+            #x = self.plat.rect.midtop[0]; y = self.plat.rect.midtop[1]; self.ignoreSol = self.plat
         self.broken = False
         self.name = name
         self.breakable = True
         self.width = 20
         self.height = 30
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((120,100,0))
-        self.rect = self.image.get_rect()
         self.fall = False
-        #self.pos = vec(x,y)
         self.gravity = PLAYER_GRAV
         self.can_fall_and_move = True
         self.ignoreSol = plat
@@ -412,23 +426,10 @@ class Vase(CustomSprite):
         self.groups = game.all_sprites, game.group_vases
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        try:
-            if self.placement == "left":
-                pos = self.plat.topleft()
-             
-                push = 20   
-            elif self.placement == "right":
-                pos = self.plat.rect.topright
-                push = -20
-            elif self.placement == "mid":
-                push = 0
-                self.pos.x, self.pos.y = self.plat.rect.midtop.x, self.plat.rect.midtop.y 
-            x = pos.x+ push; y = pos.y; self.ignoreSol = self.plat
-            
-        except:
-            print("Must choose left, right or mid")    
-            x = self.plat.rect.midtop[0]; y = self.plat.rect.midtop[1]; self.ignoreSol = self.plat
-        self.rect.midbottom = (x,y)
+        self.image = pg.Surface((self.width,self.height))
+        self.image.fill((120,100,0))
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (self.pos.x,self.pos.y)
 
 
     def update(self):
@@ -446,7 +447,8 @@ class Vase(CustomSprite):
 
     def breaks(self):
         self.image.fill((250,250,250))
-        newPickup = PickUp(self.game, self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
+        newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
+        newPickup.startGame(self.game)
         self.kill()
         self.broken = True
 

@@ -124,8 +124,8 @@ def pickleLevel(level, filename):
     outfile.close()
 
 # create objects and dicts
-level1 = createLevel1
-level2 = createLevel2
+level1 = createLevel1()
+level2 = createLevel2()
 
 # pickle levels
 pickleLevel(level1, 'level1')

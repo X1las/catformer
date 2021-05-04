@@ -19,3 +19,6 @@ H: Buttons
 
 H: Levers
 450 , 550 , 10 , 40 , lever1
+
+H: Vases -- Level Vases             [Platform label, Alignment: 'left' 'mid' 'right', Vase label]
+fatplat , left , v1
