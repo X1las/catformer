@@ -433,15 +433,17 @@ class Button(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
-            
-            for e,v in self.effect.items():
-                if e == "respawn":
-                    self.target.respawn()
-                if e == "move":
+            try:
+                for e,v in self.effect.items():
+                    if e == "respawn":
+                        self.target.respawn()
+                    if e == "move":
 
-                    for move in v:
-                        print(move)
-                        move['target'].vel = move["movespeed"]
+                        for move in v:
+                            print(move)
+                            move['target'].vel = move["movespeed"]
+            except: 
+                pass
                     #self.target.vel = self.movespeed
             
         # whatever else it needs to activate
@@ -454,15 +456,17 @@ class Button(CustomSprite):
           
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
         # whatever else it needs to deactivate
-            for e,v in self.effect.items():
-                if e == "respawn":
-                    self.target.respawn()
-                if e == "move":
+            try:
+                for e,v in self.effect.items():
+                    if e == "respawn":
+                        self.target.respawn()
+                    if e == "move":
 
-                    for move in v:
-                        print(move)
-                        move['target'].vel = move["movespeed"] * (-1)
-           
+                        for move in v:
+                            print(move)
+                            move['target'].vel = move["movespeed"] * (-1)
+            except: 
+                pass
             #for e in self.effect: 
              #   if e == "move":
               #      self.target.vel = vec()
