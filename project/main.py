@@ -121,9 +121,9 @@ class Game:
         '''
         self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
         self.tallplat.startGame(self)
+        '''
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
         self.enemy.startGame(self)
-        '''
         self.level_goal     = LevelGoal(700 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         '''

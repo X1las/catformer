@@ -387,20 +387,21 @@ class Box(CustomSprite):
 
     def liftedBy(self,interacter):
         if interacter.pos.x < self.pos.x: # if box is right of player
-            if abs(interacter.player.right_x() - self.left_x()) < 3: 
-                self.pos.x = interacter.player.right_x() + self.width/2 + 3
+            if abs(interacter.player.right_x() - self.left_x()) < 4: 
+                self.pos.x = interacter.player.right_x() + self.width/2 + 4
         else:
-            if abs(interacter.player.left_x() - self.right_x()) < 3: 
-                self.pos.x = interacter.player.left_x() - self.width/2 - 3
+            if abs(interacter.player.left_x() - self.right_x()) < 4: 
+                self.pos.x = interacter.player.left_x() - self.width/2 - 4
         # Setting how much box should be lifted
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
+        self.interacter = interacter
+        #self.interacter.player.solidstrength = 6
         if not interacter.player.inAir:
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 5
         else: 
             self.beingHeld = False
-        self.interacter = interacter
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
