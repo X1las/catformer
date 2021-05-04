@@ -276,7 +276,7 @@ class CustomSprite(pg.sprite.Sprite):
                 
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
-                    self.addedVel = collided.vel
+                    #self.addedVel = collided.vel
                     result = collided
         self.rect.bottom -= 5 
         return result
@@ -320,7 +320,8 @@ class CustomSprite(pg.sprite.Sprite):
         #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
        
     def updatePos(self, group):
-        self.pos += self.vel
+        #self.pos += self.vel
+        self.pos +=  self.vel +  self.acc * 0.5
 
 
 

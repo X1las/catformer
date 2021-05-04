@@ -90,6 +90,7 @@ class LevelGoal(CustomSprite):
 
 # Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
+    """
     def __init__(self, game, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000):
         self.solid = True
         self.vel = vel
@@ -103,6 +104,9 @@ class Platform(CustomSprite):
         if self.typ == moving_plat:
             self.groups = self.groups, game.moving_plats
         
+
+
+
 
         pg.sprite.Sprite.__init__(self, self.groups)
 
@@ -142,6 +146,110 @@ class Platform(CustomSprite):
         self.relativePosition = self.pos.copy()
         self._layer = 2
         self.init()
+    """
+    game = None
+    def __init__(self, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000):
+        self.solid = True
+        self.vel = vel
+        self.x = x; self.y = y
+        self.maxDist = maxDist
+        self.height = height; self.width = width; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
+        self.solidstrength = 10
+        self.originalsolidstrength = self.solidstrength
+        self.x = x
+        self.update_order = 1
+        if self.typ == moving_plat:
+            pass
+            #self.groups = self.groups, game.moving_plats
+        
+
+
+
+
+        # get sprite sheet
+        platformSheet = ss.Spritesheet('resources/platforms.png')
+        # get individual sprites
+        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=(0,0,0))
+        end_right  = platformSheet.image_at((175,51, 34,26), colorkey=(0,0,0))
+        mid        = platformSheet.image_at((303,51, 35,26), colorkey=(0,0,0))
+        brownPiece = platformSheet.image_at((303,176,34,32), colorkey=(0,0,0))
+        #prettyPlatform = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
+        
+        # create surface with correct size
+        self.image = pg.Surface((width,height),pg.SRCALPHA)
+        fill = 0
+        # blit left end
+        self.image.blit(end_left,(0,0))
+        fill += end_left.get_height()
+        # blit middle parts depending on platform width
+        numOfMidParts = math.ceil(width/mid.get_width()-2)
+        for i in range(numOfMidParts):
+            self.image.blit(mid, ((i+1)*end_left.get_width(),0))
+        # blit right end
+        self.image.blit(end_right,(width-end_right.get_width(),0))
+        # blit bottom layers until fully filled
+        numOfBrownParts_h = math.ceil(width/mid.get_width())
+        while fill < height:
+            for i in range(numOfBrownParts_h):
+                self.image.blit(brownPiece, (i*end_left.get_width(),fill))
+            fill += brownPiece.get_height()
+
+            
+        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
+        self.typed = "platform"    
+        self.pos = vec(x,y)
+        self.relativePosition = self.pos.copy()
+        self._layer = 2
+        self.init()
+
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_platforms, game.group_solid
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.rect.midbottom = (self.x,self.y)
+
+
+    def collisionEffect(self):
+        inflation = 0
+        self.rect = self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
+        self.rect.x += r(self.vel.x)
+        self.rect.y -= 10
+        collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
+
+        if collideds:
+            for collided in collideds:
+
+                #print(f"{self.name} collided with: {collided.name}")
+                #print(f'Strength: {self.solidstrength} ---- {collided.solidstrength}')
+                
+                #print(f'solid less? {collided.solidstrength > self.solidstrength}')
+                #print(f'1 - acc in coll for {self.name} with {self.acc}')
+                try: 
+                    if collided != self and collided.solidstrength < self.solidstrength:
+                    
+                        coll_side = self.determineSide(collided)
+                        #print(f'coll side {coll_side}')
+                        if coll_side == "top":
+                            collided.addedVel += self.vel
+
+                        else:
+                            if coll_side == "left":
+                                pass
+
+                            if coll_side == "right":
+                                pass
+
+                            if coll_side == "bot":
+                                pass
+                except:
+                    pass
+                    #print(f'2 - acc in coll for {self.name} with {self.acc}')
+                    
+        
+        self.rect = self.rect.inflate(-inflation, -inflation)
 
 
   # Checking if the enemy is outside it's patrolling area
@@ -192,8 +300,7 @@ class Box(CustomSprite):
     def resetRects(self):
         super().resetRects()
         # Currently, trying to add a "pick UP" effect. This reverses it so it can be added again next time lol
-        self.pos.y -= self.lift.y
-    
+        self.pos.y -= self.lift.y # MOVE AWAY
 
     def update(self):
         self.has_collided = False

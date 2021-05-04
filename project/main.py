@@ -414,6 +414,8 @@ class Game:
         # Updating Functionsdd
         #
         self.all_sprites.update()
+        for plat in self.group_platforms:
+            plat.collisionEffect()
         if self.interactive_field:
             for lever in self.group_levers:
                 lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
@@ -454,6 +456,7 @@ class Game:
                 if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
                     self.new()
                 if event.key == pg.K_d:                                         # Checks if the uses presses 
+                    # if not paused?
                     self.refreshCount_prev = self.refreshCount
                     self.interactive_field = Interactive(self,self.player, self.player.facing)
                     self.intWasCreated = True
