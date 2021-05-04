@@ -427,8 +427,6 @@ class Game:
         #
         self.all_sprites.update()
 
-        for plat in self.group_platforms:
-            plat.collisionEffect()
         for box in self.group_boxes:
             box.resets()
         if self.interactive_field:
@@ -437,8 +435,9 @@ class Game:
     
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
-        for i in self.all_sprites:
-            print(i)
+        for plat in self.group_platforms:
+            plat.collisionEffect()
+        #for i in self.all_sprites:
         self.all_sprites.updatePos(self.group_solid)
         self.moveScreen()
         self.relativePos()

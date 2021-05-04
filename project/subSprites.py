@@ -292,6 +292,7 @@ class Box(CustomSprite):
         #self.gravity = PLAYER_GRAV
         self.isPickedUp = False
         self.lift = vec()
+        self.beingHeld = False
         
 
     def startGame(self, game):
@@ -315,7 +316,7 @@ class Box(CustomSprite):
 
     def applyPhysics(self,Intersecters, ignoreSol = None):
         
-        if self.on_solid(self.game.group_solid) or self.isPickedUp:
+        if self.on_solid(self.game.group_solid):
             self.inAir = False
         else:
             self.inAir = True
@@ -343,7 +344,7 @@ class Box(CustomSprite):
         if not self.inAir:
             self.pickupStarted = False
         self.savedpos = self.pos.copy()
-        
+
         self.rect.midbottom = self.pos.realRound().asTuple()
     
     def resets(self):
@@ -370,8 +371,11 @@ class Box(CustomSprite):
         # Setting how much box should be lifted
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
-        #if not interacter.player.inAir:
-         #   self.pos.y -= 5
+        if not interacter.player.inAir:
+            self.beingHeld = True
+            self.pos.y = interacter.player.pos.y - 5
+        else: 
+            self.beingHeld = False
             #self.gravity = GRAVITY
         #else:   
          #   self.inAir = True
@@ -390,9 +394,10 @@ class Box(CustomSprite):
         if self.has_collided:
             #if not self.isPickedUp:
             """ DO NOT DELETE """
-            self.vel.x = self.new_vel.x
-            self.acc.x = self.new_acc.x
-            self.gravity = 0
+            if self.beingHeld:
+                self.vel.x = self.new_vel.x
+                self.acc.x = self.new_acc.x
+                self.gravity = 0
             """"""
             #self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
             
@@ -401,11 +406,15 @@ class Box(CustomSprite):
         else:
             if self.isPickedUp == True:
                 self.lift.y = 0
-                
+            self.isPickedUp = False
+            #print(f'addedVel: {self.addedVel}')
             self.vel.x = 0
             self.acc.x = 0
-            self.isPickedUp = False
-            self.vel += self.addedVel 
+            self.beingHeld = False
+        if self.beingHeld == False:
+            self.addedVel = vec(0,0)
+            self.gravity = GRAVITY
+        self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
