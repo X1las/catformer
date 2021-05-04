@@ -288,8 +288,10 @@ class Box(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.friction = 0
         self.init()
+        #self.gravity = PLAYER_GRAV
         self.isPickedUp = False
         self.lift = vec()
+        
 
     def startGame(self, game):
         self.game = game
@@ -310,14 +312,44 @@ class Box(CustomSprite):
         super().resetRects()
         # Currently, trying to add a "pick UP" effect. This reverses it so it can be added again next time lol
 
+    def applyPhysics(self,Intersecters, ignoreSol = None):
+        
+        if self.on_solid(self.game.group_solid) or self.isPickedUp:
+            self.inAir = False
+        else:
+            self.inAir = True
+
+        #if self.inAir:
+         #   self.gravity = GRAVITY
+        #else:
+         #   self.gravity = 0
+
+        
+        self.acc   += vec(0, self.gravity)                  # Gravity
+        self.acc.x += self.vel.x * self.friction            # Friction
+        self.vel   += self.acc                              # equations of motion
+        if self.isPlayer and abs(self.vel.x) < 0.0001:
+            self.vel.x = 0
+
+        #if self.can_fall_and_move:
+          #  self.pygamecoll(Intersecters)
+        #self.pos += self.vel +  self.acc * 0.5
+        #self.acc = vec(0,0)                   
     def update(self):
         #self.pos.y = self.savedPos.y
         self.has_collided = False
         self.applyPhysics(self.game.group_solid)
+        if not self.inAir:
+            self.pickupStarted = False
+        self.savedpos = self.pos.copy()
+        
         self.rect.midbottom = self.pos.realRound().asTuple()
     
     def resets(self):
-        self.pos.y -= self.lift.y # MOVE AWAY
+        pass
+        #self.pos.y -= self.lift.y # MOVE AWAY
+
+
 
     def posCorrection(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -334,11 +366,17 @@ class Box(CustomSprite):
         else:
             if abs(interacter.player.left_x() - self.right_x()) < 2: 
                 self.pos.x = interacter.player.left_x() - self.width/2 - 2
-
         # Setting how much box should be lifted
-        self.lift.y = -3
-        self.pos.y += self.lift.y       # Adding the pick UP effect
-
+        #self.lift.y = -3
+        #self.pos.y += self.lift.y       # Adding the pick UP effect
+        #if not interacter.player.inAir:
+         #   self.pos.y -= 5
+            #self.gravity = GRAVITY
+        #else:   
+         #   self.inAir = True
+        #if not interacter.player.inAir:
+         #   self.pos.y = interacter.player.pos.y - 3
+          #  self.inAir = True
         # Grapping vel and acc from the interactive field
         self.new_vel.x = interacter.vel.x
         self.new_acc.x = interacter.acc.x
@@ -353,6 +391,7 @@ class Box(CustomSprite):
             """ DO NOT DELETE """
             self.vel.x = self.new_vel.x
             self.acc.x = self.new_acc.x
+            self.gravity = 0
             """"""
             #self.pos.x += self.new_vel.x +  self.new_acc.x * 0.5
             
@@ -361,13 +400,12 @@ class Box(CustomSprite):
         else:
             if self.isPickedUp == True:
                 self.lift.y = 0
+                
             self.vel.x = 0
             self.acc.x = 0
             self.isPickedUp = False
             self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
-
-        print(f'lift: {self.lift.y}')
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
         self.pos += self.vel +  self.acc * 0.5
@@ -375,6 +413,8 @@ class Box(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
  
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+
+
 
     def posCorrection(self):
         # I am not sure this is needed
@@ -592,7 +632,6 @@ class Button(CustomSprite):
                     if e == "move":
 
                         for move in v:
-                            print(move)
                             move['target'].vel = move["movespeed"] * (-1)
             except: 
                 pass

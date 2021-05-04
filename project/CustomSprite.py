@@ -61,6 +61,8 @@ class CustomSprite(pg.sprite.Sprite):
     count = 5
     isEnemy = False
     addedVel = Vec(0,0)
+    pickupStarted = False
+    isPickedUp = False
 
 
     def init(self):
@@ -184,15 +186,17 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pickupSprite(self,  agents, turn, justPickedUp):
         # should ckeck which box is closest
-        
+            
         collided = pg.sprite.spritecollide(self, agents, False)
         
         if collided: 
             if turn:
                 self.colliding = True
                 for collided_obj in collided:
+                    if justPickedUp:
+                        collided_obj.pickupStarted = True
                         #collided_obj.has_collided = True
-                        collided_obj.pickUp(self)
+                    collided_obj.pickUp(self)
             else:
                 self.colliding = False
 
@@ -267,7 +271,7 @@ class CustomSprite(pg.sprite.Sprite):
             return "bot"
 
     def on_solid(self, group, ignoredSol = None):
-        self.rect.bottom += 5
+        self.rect.bottom += 2
         collideds = pg.sprite.spritecollide(self, group, False)
         self.on_platform = False
         result = None
@@ -278,7 +282,7 @@ class CustomSprite(pg.sprite.Sprite):
                     self.on_platform = True
                     #self.addedVel = collided.vel
                     result = collided
-        self.rect.bottom -= 5 
+        self.rect.bottom -= 2
         return result
         
 
