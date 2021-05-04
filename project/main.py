@@ -122,12 +122,16 @@ class Game:
         self.catnip = PickUp(self, 600, 370, 16, 16, 'catnip')   
         #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
 
-        self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
-        self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
-        self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
-        self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,2),  target = self.all_sprites.getObject("tallplat"))                                          #
+        #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
+        #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
+        #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
+        #self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
+        dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
+                             { "movespeed" : Vec(0,-2), "target" : self.all_sprites.getObject("tallplat")}]}
+        self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
 
-        self.lever1 = Lever(self, 450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"))
+
+        self.lever1 = Lever(self, 450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
         self.lever1 = Lever(self, 500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
         
 
