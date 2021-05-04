@@ -39,13 +39,14 @@ class Player(CustomSprite):
     
 
 
-    def __init__(self, game, spawn):
+    def __init__(self, game, spawn, name=None):
         
         self.game       = game
         self._layer     = 2
         self.spawn      = spawn
         self.pos        = spawn
         self.update_order        = 2
+        self.name = name
 
         self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
