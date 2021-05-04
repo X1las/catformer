@@ -1,7 +1,7 @@
 # importing modules
+from Vector import Vec
 import pickle
 from subSprites import Box, Button, Lever, Platform, Vase
-from spritesheet import Spritesheet
 
 ''' template '''
 def createLevel():
@@ -58,7 +58,7 @@ def createLevel1():
     level1 = {
         'name': 'level1',
         'settings': {
-            'spawn': (170, 350),
+            'spawn': Vec(170, 350),
             'length': 5000,
             'track': ''
         },
@@ -98,7 +98,7 @@ def createLevel2():
     levelName = {
         'name': 'level2',
         'settings': {
-            'spawn': (370,350),
+            'spawn': Vec(370,350),
             'length': 5000,
             'track': 'nyan.mp3'
         },

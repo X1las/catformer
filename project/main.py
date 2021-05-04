@@ -8,7 +8,7 @@ from settings import *
 from subSprites import *
 
 from Player import *
-from Level import Level
+from Level2 import Level
 from Vector import Vec
 from SpriteGroup import *
 
@@ -91,11 +91,15 @@ class Game:
         
         #
         if self.data:
+            #print(self.level.name)
             self.level.name = self.data[0]
+            print(self.level.name)
         
-        #
+        #self.level.load(self.level.name)
+        
         if not self.level.load(self.level.name):
             self.level.load(DEFAULT_LEVEL)
+            print('test')
         
         self.player = Player(self.level.spawn)                         #
         self.player.startGame(self)    
@@ -107,26 +111,28 @@ class Game:
         #
         try:
             pg.mixer.music.load(self.level.musicTrack)                
-            pg.mixer.msuic.play(-1)
+            pg.mixer.music.play(-1)
             pg.mixer.music.set_volume(VOLUME)
         except:
             print("Error loading music!")
             pass
-
+        '''
         self.movingPlat = Platform(300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
         self.movingPlat.startGame(self)
         self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
         self.tallplat.startGame(self)
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
         self.enemy.startGame(self)
+        '''
         self.level_goal     = LevelGoal(700 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
+        '''
         self.health = PickUp(400, 400, 16, 16, 'health')                                          #
         self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
         self.health.startGame(self)
         self.catnip.startGame(self)
         #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
-
+        
         #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
         #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
         #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
@@ -142,7 +148,7 @@ class Game:
 
         self.water = Water(500, 400, 10, 10)    
         self.water.startGame(self)     
-
+        '''
         #
         self.refreshedInt_lever     = False                                                       
         self.refreshedInt_box       = False                                                  
@@ -431,7 +437,8 @@ class Game:
     
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
-        #for i in self.all_sprites:
+        for i in self.all_sprites:
+            print(i)
         self.all_sprites.updatePos(self.group_solid)
         self.moveScreen()
         self.relativePos()
@@ -486,13 +493,7 @@ class Game:
         # Loop that updates rectangles?
         for sprite in self.all_sprites:
             sprite.updateRect()
-        '''
-        for sprite in self.all_sprites:
-            if sprite in self.group_boxes:
-                self.screen.blit(sprite.image, sprite.rect)
-            else:
-                self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
-        '''
+        
 
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
 
