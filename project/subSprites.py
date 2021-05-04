@@ -361,11 +361,11 @@ class Box(CustomSprite):
             self.vel += self.addedVel 
             #self.pos.x += self.vel.x +  self.acc.x * 0.5
 
-        self.pos.y -= self.lift.y # MOVE AWAY
         self.pos.y += self.lift.y       # Adding the pick UP effect
         print(f'lift: {self.lift.y}')
         #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
+        self.pos.y -= self.lift.y # MOVE AWAY
         self.pos += self.vel +  self.acc * 0.5
         """"""
         self.rect.midbottom = self.pos.realRound().asTuple()
