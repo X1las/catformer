@@ -145,10 +145,10 @@ class Game:
         self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
         self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
         self.lever1.startGame(self)
-
+        '''
         self.water = Water(500, 400, 10, 10)    
         self.water.startGame(self)     
-        '''
+        
         #
         self.refreshedInt_lever     = False                                                       
         self.refreshedInt_box       = False                                                  
