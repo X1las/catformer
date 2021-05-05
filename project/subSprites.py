@@ -794,26 +794,34 @@ class PatrollingEnemy(Hostile):
         self.game = game
         self.groups = game.all_sprites, game.group_damager, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
+
         # get spritesheet
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
         # get individual sprites and add to list
         self.images = []
-        self.images.append(wormSheet.image_at((4,  37, 23, 27)))
-        self.images.append(wormSheet.image_at((36, 37, 23, 27), colorkey=(0,0,0)))
-
-            # add rest
+        self.images.append(wormSheet.image_at((  4, 36, 29, 28), (0,0,0)))    # (x,y,width,height)
+        self.images.append(wormSheet.image_at(( 36, 36, 29, 28), (0,0,0)))
+        self.images.append(wormSheet.image_at(( 68, 36, 29, 28), (0,0,0)))
+        self.images.append(wormSheet.image_at((100, 36, 29, 28), (0,0,0)))
+        self.images.append(wormSheet.image_at((132, 36, 29, 28), (0,0,0)))
+        self.images.append(wormSheet.image_at((164, 36, 29, 28), (0,0,0)))
 
         self.imageIndex = 0
         self.image = self.images[self.imageIndex]
-
+    
         # scale image to correct size
         self.image = pg.transform.scale(self.image, (self.width, self.height))
+        #self.image = pg.Surface((self.width, self.height))
+        #self.rect = self.image.get_rect()
+        #image.convert_alpha(self.image)
+        #self.image.blit(image, self.rect)
+        
         
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
 
 
-    # Checking if the enemy is outside it's patrolling area
+    # Checking if the enemy is outside its patrolling area
     def checkDist(self):
         if  self.pos.x - self.x >= self.maxDist: # right boundary
             self.area = "right"
@@ -827,6 +835,13 @@ class PatrollingEnemy(Hostile):
 
 
     def update(self):
+        self.imageIndex += 1                        # increment image index every update
+        if self.imageIndex >= len(self.images)*10:     # reset image index to 0 when running out of images
+            self.imageIndex = 0
+        self.image = self.images[math.floor(self.imageIndex/10)]   # update current image
+        self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
+
+
         self.area = "mid" #Doesn't matter rn, but maybe later?
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         if self.vel.x > 0:
