@@ -789,6 +789,7 @@ class PatrollingEnemy(Hostile):
         self.init()
         self.isEnemy = True
         self.stopMoving = False
+        #self.facing = None
 
     def startGame(self, game):
         self.game = game
@@ -798,16 +799,19 @@ class PatrollingEnemy(Hostile):
         # get spritesheet
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
         # get individual sprites and add to list
-        self.images = []
-        self.images.append(wormSheet.image_at((  4, 36, 29, 28), (0,0,0)))    # (x,y,width,height)
-        self.images.append(wormSheet.image_at(( 36, 36, 29, 28), (0,0,0)))
-        self.images.append(wormSheet.image_at(( 68, 36, 29, 28), (0,0,0)))
-        self.images.append(wormSheet.image_at((100, 36, 29, 28), (0,0,0)))
-        self.images.append(wormSheet.image_at((132, 36, 29, 28), (0,0,0)))
-        self.images.append(wormSheet.image_at((164, 36, 29, 28), (0,0,0)))
+        self.images_right = []
+        self.images_right.append(wormSheet.image_at((  4, 36, 29, 28), (0,0,0)))    # (x,y,width,height)
+        self.images_right.append(wormSheet.image_at(( 36, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at(( 68, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at((100, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at((132, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at((164, 36, 29, 28), (0,0,0)))
+        self.images_left = []
+        for img in self.images_right:
+            self.images_left.append(pg.transform.flip(img,True,False))
 
         self.imageIndex = 0
-        self.image = self.images[self.imageIndex]
+        self.image = self.images_right[self.imageIndex]
     
         # scale image to correct size
         self.image = pg.transform.scale(self.image, (self.width, self.height))
@@ -836,23 +840,31 @@ class PatrollingEnemy(Hostile):
 
     def update(self):
         self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images)*10:     # reset image index to 0 when running out of images
+        if self.imageIndex >= len(self.images_right)*10:     # reset image index to 0 when running out of images
             self.imageIndex = 0
-        self.image = self.images[math.floor(self.imageIndex/10)]   # update current image
-        self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
+        
 
 
         self.area = "mid" #Doesn't matter rn, but maybe later?
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         if self.vel.x > 0:
             self.vel.x = 1
+            self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
         else: 
             self.vel.x = -1
-        self.checkDist()
+            self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+
         
+        self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
+        
+        self.checkDist()
         self.acc = vec(0,0)    
         self.collidingWithWall()
         self.rect.midbottom = self.pos.realRound().asTuple()
+
+        # update facing direction
+        
+
 
     def posCorrection(self):
         pass
