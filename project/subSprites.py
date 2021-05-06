@@ -94,20 +94,20 @@ class LevelGoal(CustomSprite):
 class Platform(CustomSprite):
 
     game = None
-    def __init__(self, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
+    def __init__(self, x, y, width, height, name, vel = Vec(), maxDist = 1000, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
         self.solid = True
         self.vel = vel
         self.initX = x
         self.initY = y
-        self.leftMaxDist = leftMaxDist;self.rightMaxDist = rightMaxDist;self.downMaxDist = downMaxDist;self.upMaxDist = upMaxDist
-        self.height = height; self.width = width; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
+        self.leftMaxDist = leftMaxDist
+        self.rightMaxDist = rightMaxDist
+        self.downMaxDist = downMaxDist
+        self.upMaxDist = upMaxDist
+        self.height = height; self.width = width; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
         self.solidstrength = 10
         self.originalsolidstrength = self.solidstrength
         self.x = x; self.y = y
         self.update_order = 1
-        if self.typ == moving_plat:
-            pass
-            #self.groups = self.groups, game.moving_plats
         
 
 
