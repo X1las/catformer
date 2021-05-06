@@ -118,6 +118,8 @@ class Game:
             pass
         self.movingPlat = Platform(300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
         self.movingPlat.startGame(self)
+        self.smalltest = Platform(250 , 560 , 50 , 40 , "small tester" )
+        self.smalltest.startGame(self)
         '''
         self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
         self.tallplat.startGame(self)
