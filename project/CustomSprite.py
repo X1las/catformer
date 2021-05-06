@@ -63,6 +63,7 @@ class CustomSprite(pg.sprite.Sprite):
     addedVel = Vec(0,0)
     pickupStarted = False
     isPickedUp = False
+    isPlatform = False
 
 
     def init(self):
@@ -80,12 +81,16 @@ class CustomSprite(pg.sprite.Sprite):
 
     def resetRects(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
+
+    def resetSprite(self):
         if self.count < 0:
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
 
+
+        
     def top_y(self):
         return self.pos.y - self.height
     def bot_y(self):
@@ -232,6 +237,8 @@ class CustomSprite(pg.sprite.Sprite):
                         if coll_side == "top":
                             #collided.vel += self.vel
                             #if abs(collided.vel.x) < 0.5:
+                            #if not self.isPlatform:
+                            #pass
                             collided.addedVel.x = self.vel.x + self.addedVel.x
                 except:
                     pass
@@ -334,7 +341,7 @@ class CustomSprite(pg.sprite.Sprite):
         if self.isPlayer and abs(self.vel.x) < 0.0001:
             self.vel.x = 0
        
-    def updatePos(self, group):
+    def updatePos(self, group = None):
         self.pos +=  self.vel +  self.acc * 0.5
 
 

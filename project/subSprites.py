@@ -92,73 +92,18 @@ class LevelGoal(CustomSprite):
 
 # Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
-    """
-    def __init__(self, game, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000):
-        self.solid = True
-        self.vel = vel
-        self.maxDist = maxDist
-        self.height = height; self.width = width; self.game = game; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
-        self.groups = game.all_sprites, game.group_platforms, game.group_solid
-        self.solidstrength = 10
-        self.originalsolidstrength = self.solidstrength
-        self.x = x
-        self.update_order = 1
-        if self.typ == moving_plat:
-            self.groups = self.groups, game.moving_plats
-        
 
-
-
-
-        pg.sprite.Sprite.__init__(self, self.groups)
-
-        # get sprite sheet
-        platformSheet = ss.Spritesheet('resources/platforms.png')
-        # get individual sprites
-        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=(0,0,0))
-        end_right  = platformSheet.image_at((175,51, 34,26), colorkey=(0,0,0))
-        mid        = platformSheet.image_at((303,51, 35,26), colorkey=(0,0,0))
-        brownPiece = platformSheet.image_at((303,176,34,32), colorkey=(0,0,0))
-        #prettyPlatform = platformSheet.image_at((269,435,102,26), colorkey=(0,0,0))
-        
-        # create surface with correct size
-        self.image = pg.Surface((width,height),pg.SRCALPHA)
-        fill = 0
-        # blit left end
-        self.image.blit(end_left,(0,0))
-        fill += end_left.get_height()
-        # blit middle parts depending on platform width
-        numOfMidParts = math.ceil(width/mid.get_width()-2)
-        for i in range(numOfMidParts):
-            self.image.blit(mid, ((i+1)*end_left.get_width(),0))
-        # blit right end
-        self.image.blit(end_right,(width-end_right.get_width(),0))
-        # blit bottom layers until fully filled
-        numOfBrownParts_h = math.ceil(width/mid.get_width())
-        while fill < height:
-            for i in range(numOfBrownParts_h):
-                self.image.blit(brownPiece, (i*end_left.get_width(),fill))
-            fill += brownPiece.get_height()
-
-            
-        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
-        self.typed = "platform"    
-        self.pos = vec(x,y);
-        self.rect.midbottom = (x,y)
-        self.relativePosition = self.pos.copy()
-        self._layer = 2
-        self.init()
-    """
     game = None
-    def __init__(self, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000):
+    def __init__(self, x, y, width, height, name, typ = None, vel = Vec(), maxDist = 1000, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
         self.solid = True
         self.vel = vel
-        self.x = x; self.y = y
-        self.maxDist = maxDist
+        self.initX = x
+        self.initY = y
+        self.leftMaxDist = leftMaxDist;self.rightMaxDist = rightMaxDist;self.downMaxDist = downMaxDist;self.upMaxDist = upMaxDist
         self.height = height; self.width = width; self.typ = typ; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
         self.solidstrength = 10
         self.originalsolidstrength = self.solidstrength
-        self.x = x
+        self.x = x; self.y = y
         self.update_order = 1
         if self.typ == moving_plat:
             pass
@@ -173,6 +118,7 @@ class Platform(CustomSprite):
         self.relativePosition = self.pos.copy()
         self._layer = 2
         self.init()
+        self.isPlatform = True
 
 
     def startGame(self, game):
@@ -210,7 +156,7 @@ class Platform(CustomSprite):
 
             
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
-        self.rect.midbottom = (self.x,self.y)
+        self.rect.midbottom = (self.pos.x,self.pos.y)
 
     """
     def collisionEffect(self):
@@ -261,25 +207,37 @@ class Platform(CustomSprite):
                         newpos = collided.left_x() - self.width/2
                         if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                             if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                self.vel.x = 1
+                                #self.vel.x = 1
                                 self.vel.x *= -1
                     if coll_side == "right":
                         newpos = collided.right_x() + self.width/2
                         if newpos >= self.pos.x:
                             if collided.vel.x == 0:
-                                self.vel.x = 1
+                                #self.vel.x = 1
                                 self.vel.x *= -1
                         self.vel.x *= -1
- 
+                    if coll_side == "bot": # left side of collidedd obj
+                        newpos = collided.bot_y() - self.height
+                        if newpos >= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                            if collided.vel.y == 0: # If collided object is not moving, just turn around
+                                #self.vel.x = 1
+                                self.vel.y *= -1
 
 
-  # Checking if the enemy is outside it's patrolling area
+
+# Checking if the enemy is outside it's patrolling area
     def checkDist(self):
-        if  self.pos.x - self.x >= self.maxDist: # right boundary
+        if  self.pos.x - self.x >= self.rightMaxDist: # right boundary
             self.area = "right"
             self.vel.x = -1 * abs(self.vel.x)
-        elif self.pos.x - self.x <= -1*self.maxDist:
+        elif self.pos.x - self.x <= -1*self.leftMaxDist:
             self.vel.x = abs(self.vel.x)
+            self.area = "left"
+        elif self.pos.y - self.y <= -1*self.upMaxDist:
+            self.vel.y = abs(self.vel.y)
+            self.area = "left"
+        elif self.pos.y - self.y >= -1*self.downMaxDist:
+            self.vel.y = abs(self.vel.y)
             self.area = "left"
 
     def update(self):
@@ -287,10 +245,14 @@ class Platform(CustomSprite):
         if self.vel.x != 0 or self.vel.y != 0:
             self.originalsolidstrength = 9
             self.solidstrength = 9
-        self.pygamecolls(self.game.group_solid)
+        #self.pygamecolls(self.game.group_solid)
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
+
+    def updatePos(self, solid):
+        super().updatePos(solid)
+        self.pygamecolls(self.game.group_solid)
 
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
@@ -348,9 +310,9 @@ class Box(CustomSprite):
             self.inAir = True
 
         #if self.inAir:
-         #   self.gravity = GRAVITY
+        #   self.gravity = GRAVITY
         #else:
-         #   self.gravity = 0
+        #   self.gravity = 0
 
         
         self.acc   += vec(0, self.gravity)                  # Gravity
@@ -360,7 +322,7 @@ class Box(CustomSprite):
             self.vel.x = 0
 
         #if self.can_fall_and_move:
-          #  self.pygamecoll(Intersecters)
+        #  self.pygamecoll(Intersecters)
         #self.pos += self.vel +  self.acc * 0.5
         #self.acc = vec(0,0)                   
     def update(self):
@@ -445,13 +407,13 @@ class Box(CustomSprite):
         # Checking which side the box is on. If the box is too close to player upon pickup, most the box away a bit
             #self.gravity = GRAVITY
         #else:   
-         #   self.inAir = True
+        #   self.inAir = True
         #if not interacter.player.inAir:
-         #   self.pos.y = interacter.player.pos.y - 3
-          #  self.inAir = True
+        #   self.pos.y = interacter.player.pos.y - 3
+        #  self.inAir = True
         # Grapping vel and acc from the interactive field
         pass
-       
+    
 
     
 
@@ -464,7 +426,7 @@ class Box(CustomSprite):
         """"""
         self.has_collided = False
         self.rect.midbottom = self.pos.realRound().asTuple()
- 
+
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
 
@@ -487,7 +449,7 @@ class Vase(CustomSprite):
         try:
             if self.placement == "left":
                 self.pos = self.plat.topleft()
-             
+            
                 push = 20   
             elif self.placement == "right":
                 self.pos = self.plat.rect.topright
@@ -628,13 +590,13 @@ class Lever(CustomSprite):
                 self.target.vel.x = self.movespeed
 
         # whatever else it needs to activate
-     
+    
 
     def deactivate(self):
         if self.deactivated != True:
             self.deactivated = True
             self.activated = False
-          
+        
             self.image.fill((0,200,200))
             if self.effect == "move":
                 self.target.vel.x = 0
@@ -697,26 +659,30 @@ class Button(CustomSprite):
         if self.deactivated != True:
             self.deactivated = True
             self.activated = False
-          
+        
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
         # whatever else it needs to deactivate
-            try:
+            try: # shouldn't be try except, I think
                 for e,v in self.effect.items():
                     if e == "respawn":
                         self.target.respawn()
                     if e == "move":
 
                         for move in v:
+                            target = move["target"]
+                            #nextpos = target.pos + target.vel  
+                            #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
                             move['target'].vel = move["movespeed"] * (-1)
-            except: 
+            except Exception as e:
+                print(e) 
                 pass
             #for e in self.effect: 
-             #   if e == "move":
-              #      self.target.vel = vec()
+            #   if e == "move":
+            #      self.target.vel = vec()
             
 
     def update(self):
-       
+    
             
         self.activated = False
 
@@ -972,7 +938,7 @@ class PatrollingEnemy(Hostile):
                                 self.pos.x = collided.left_x() - self.width/2
                             else: 
                                 self.pos.x = collided.right_x() + self.width/2
- 
+
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):
         inflation = 4
@@ -998,9 +964,9 @@ class PatrollingEnemy(Hostile):
                             self.vel.x *= 0
                         self.collides_left = True
         self.rect = self.rect.inflate(-inflation,-inflation)
-          
+        
         return result           
- 
+
         
 
     def collidingWithWall(self):

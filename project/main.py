@@ -122,14 +122,18 @@ class Game:
         self.smalltest = Platform(250 , 560 , 50 , 40 , "small tester" )
         self.smalltest.startGame(self)
         
-        '''
-        self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
+        
+        self.tallplat   = Platform(650, 550, 20, 70, "tallplat")
         self.tallplat.startGame(self)
-        '''
+        
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
         self.enemy.startGame(self)
         self.level_goal     = LevelGoal(700 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
+        dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
+                             { "movespeed" : Vec(0,-2), "target" : self.all_sprites.getObject("tallplat")}]}
+        self.button4  = Button(400 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4.startGame(self)
         '''
         self.health = PickUp(400, 400, 16, 16, 'health')                                          #
         self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
@@ -140,11 +144,7 @@ class Game:
         #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
         #self.button2 = Button(self,450 , 550 , 30 , 20 , na me = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
         #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
-        #self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
-        dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
-                             { "movespeed" : Vec(0,-2), "target" : self.all_sprites.getObject("tallplat")}]}
-        self.button4  = Button(400 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.button4.startGame(self)
+        self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
 
         self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
         self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
@@ -418,6 +418,7 @@ class Game:
     """    ------------------- UPDATE ----------------------------------------------------------------"""
     # Method where we update game processesd
     def update(self):
+        self.all_sprites.resetSprites()
         #print(f'NEW RUN')
         #
         for button in self.group_buttons:
@@ -437,6 +438,9 @@ class Game:
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
         
+        """Adds velocity to something when on something moving.
+        bad solution. Only works with two stacks :(
+        """
         for plat in self.group_solid:
             plat.collisionEffect()
         
