@@ -69,12 +69,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.new_vel = self.vel.copy()
         self.overwritevel = self.vel.copy()
 
-    # method for setting the sprite image from file
-    def getImageFromFile(self, filename, width, height):
-        self.image = pg.image.load(f"resources/{filename}").convert_alpha()     # load box image as a Surface
-        self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
-
-
+        
     def updateRect(self):
         #roundedvec = self.relativePosition.realRound()
         roundedvec = self.relativePosition.rounded()
