@@ -196,6 +196,10 @@ class CustomSprite(pg.sprite.Sprite):
             else:
                 self.colliding = False
 
+
+    def relativeVel(self):
+        return self.vel - self.addedVel
+
     def posCorrection(self):
         pass
 
@@ -204,7 +208,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
-        self.rect.x += r(self.vel.x)
+        #self.rect.x += r(self.vel.x)
         self.rect.y -= 1
         collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
 
@@ -218,7 +222,8 @@ class CustomSprite(pg.sprite.Sprite):
                         coll_side = collided.determineSide(self)
                         if coll_side == "top":
                             #collided.vel += self.vel
-                            collided.addedVel = self.vel + self.addedVel
+                            #if abs(collided.vel.x) < 0.5:
+                            collided.addedVel.x = self.vel.x + self.addedVel.x
                 except:
                     pass
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
@@ -229,13 +234,15 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pygamecoll(self, group, ignoredSol = None):
-        inflationW = 10
+        inflationW = 2
         inflationH = 0
 
         self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
+        
+        self.rect.x += r(self.relativeVel().x)
 
-        self.rect.x += r(self.vel.x)
+        #self.rect.x += r(self.vel.x)
         self.rect.y += r(self.vel.y) 
         collideds = pg.sprite.spritecollide(self, group, False)
 
@@ -259,17 +266,17 @@ class CustomSprite(pg.sprite.Sprite):
                         self.vel.y = 0
                     else:
                         if coll_side == "left":
-                            newpos = collided.left_x() - self.width/2
+                            newpos = collided.left_x() - self.width/2 #Left side of object being collided with
                             if newpos <= self.pos.x:
-                                self.pos.x = collided.left_x() - self.width/2-1
-                                self.vel.x = 0
+                                self.pos.x = collided.left_x() - self.width/2
+                                self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
                                 self.acc.x = 0
 
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
                             if newpos >= self.pos.x:
                                 self.pos.x = collided.right_x() + self.width/2
-                                self.vel.x = 0
+                                self.vel.x = self.addedVel.x
                                 self.acc.x = 0
 
                         if coll_side == "bot":

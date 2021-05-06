@@ -89,7 +89,7 @@ class Player(CustomSprite):
         self.applyPhysics(self.game.group_solid) 
         self.vel += self.addedVel
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.pygamecoll(self.game.group_solid)
+        #self.pygamecoll(self.game.group_solid)
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -141,6 +141,7 @@ class Player(CustomSprite):
 
 
     def posCorrection(self):
+        #pass
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
         #self.count -= 1
