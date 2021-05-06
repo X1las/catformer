@@ -755,15 +755,15 @@ class Water(Hostile):
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from water spritesheet
-        rect1 = pg.Rect( 0,0,16,16)
-        rect2 = pg.Rect(16,0,16,16)
-        rect3 = pg.Rect(32,0,16,16)
-        rect4 = pg.Rect(48,0,16,16)
-        blue  = pg.Rect( 0,4,16,10)
+        rect1 = pg.Rect( 0,117,16,16)
+        rect2 = pg.Rect(16,117,16,16)
+        rect3 = pg.Rect(32,117,16,16)
+        rect4 = pg.Rect(48,117,16,16)
+        blue  = pg.Rect( 0,121,16,10)
         rects = [rect1, rect2, rect3, rect4, blue]
         # load images from spritesheet
-        waterSheet = ss.Spritesheet('resources/water.png')
-        self.images = waterSheet.images_at(rects, colorkey=(0,0,0))
+        waterSheet = ss.Spritesheet('resources/spritesheet_green.png')
+        self.images = waterSheet.images_at(rects, colorkey=(0,255,0))
         self.imageIndex = 0
         #self.image = self.images[self.imageIndex]
 
