@@ -544,28 +544,13 @@ class Vase(CustomSprite):
                         #self.gravity = 0
                         self.vel.y = 0
                         #self.vel.x = 0
-
-        # create surface with correct size
-        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
-        # create sub-rectangles to load from spritesheet
-        pressed   = pg.Rect( 0,81,18,5)
-        unpressed = pg.Rect(18,76,18,10)
-        rects = [pressed, unpressed]
-        # load images from spritesheet
-        sheet = ss.Spritesheet('resources/spritesheet_green.png')
-        self.images = sheet.images_at(rects, (0,255,0))     
-        self.image_pressed = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
-        self.image_unpressed = pg.transform.scale(self.images[1], (self.width, self.height))
-        self.image = self.image_unpressed
-        self.rect = self.image.get_rect()
                         #self.addedVel.x = 0
 
 
 
 # Lever SubClass - Inherits from CustomSprite
-                            move['target'].vel = move["movespeed"].copy()
-            except Exception as e:
-                print(e) 
+class Lever(CustomSprite):
+    def __init__(self,x,y, width, height, name = None, effect = None, movespeed = None, target = None, autodeactivate = None): 
         self.width = width; self.height = height
         self.effect = effect; self.target = target; self.movespeed = movespeed
         self.auto_deactivate = autodeactivate
@@ -578,19 +563,16 @@ class Vase(CustomSprite):
         
     def startGame(self, game):
         self.game = game
-            try: # shouldn't be try except, I think
+        self.groups = game.all_sprites, game.group_levers
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((self.width,self.height))
         self.image.fill((0,200,200))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x,self.y)
 
-                            target = move["target"]
-                            nextpos = target.pos + target.vel  
-                            #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
+
     def activate(self):
-            except Exception as e:
-                print(e) 
+        if self.activated != True:
             self.activated = True
             self.deactivated = False
             self.image.fill((255,255,255))
@@ -610,19 +592,15 @@ class Vase(CustomSprite):
             self.deactivated = True
             self.activated = False
         
-        self.pos = vec(x,y)
-        self.relativePosition = self.pos.copy()
-
-    def startGame(self, game):
-        self.game = game
-        self.groups = game.all_sprites, game.group_pickups
-        pg.sprite.Sprite.__init__(self, self.groups)
             self.image.fill((0,200,200))
             if self.effect == "move":
                 self.target.vel.x = 0
-            healthSheet = ss.Spritesheet('resources/heart.png')
-            self.image = healthSheet.image_at((0,0,16,16), colorkey=(0,255,0))
-            self.image = pg.transform.scale(self.image, (self.width, self.height))  # scale Surface to size
+        # whatever else it needs to deactivate
+            
+    
+
+    def update(self):
+        #round(self.pos) 
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
