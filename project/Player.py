@@ -55,6 +55,7 @@ class Player(CustomSprite):
         self.prevvel = vec()
         self.prevrelpos = vec()
         self.prevrelvel = vec()
+        self.init()
 
     def startGame(self, game):    
         self.game       = game
@@ -172,6 +173,7 @@ class Player(CustomSprite):
 
     def posCorrection(self):
         #pass
+        print(f'player mass: {self.massHOR}')
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid)
         #self.count -= 1
@@ -239,17 +241,18 @@ class Interactive(CustomSprite):
         self.pos = self.player.pos
         self.vel = self.player.vel
         self.acc = self.player.acc
+        self.updateRect()
     
     def updateRect(self):
         if not self.colliding:
             self.faceinput = self.player.facing
-        else: 
-            self.player.solidstrength = 3
-            self.player.count = 10
+        #else: 
+         #   self.player.solidstrength = 3
+          #  self.player.count = 10
             
-        self.colliding = False
         self.intUpdate(self.faceinput, "rel")
     
     def resetRects(self):
+        self.colliding = False
         self.intUpdate(self.faceinput, "global")
 

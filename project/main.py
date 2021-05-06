@@ -11,6 +11,8 @@ from Player import *
 from Level2 import Level
 from Vector import Vec
 from SpriteGroup import *
+from levelCreator import *
+
 
 def r(number):
     rounded_num = number
@@ -117,8 +119,8 @@ class Game:
         except:
             print("Error loading music!")
             pass
-        self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
-        self.movingPlat.startGame(self)
+        #self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
+        #self.movingPlat.startGame(self)
         self.smalltest = Platform(250 , 560 , 50 , 40 , "small tester" )
         self.smalltest.startGame(self)
         
@@ -618,6 +620,14 @@ class Game:
         return font.render(text, True, color)
 
 # Game Loop
+# create objects and dicts
+level1 = createLevel1()
+level2 = createLevel2()
+
+# pickle levels
+pickleLevel(level1, 'level1')
+pickleLevel(level2, 'level2')
+
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 #g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
 g.mainMenu()

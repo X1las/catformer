@@ -248,8 +248,7 @@ class Platform(CustomSprite):
         if self.vel.x != 0 or self.vel.y != 0:
             self.originalsolidstrength = 29.5
             self.solidstrength = 29.5
-        if self.name == "small tester":
-            print(f'{self.solidstrength}')
+            self.init()
         #self.pygamecolls(self.game.group_solid)
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -371,8 +370,6 @@ class Box(CustomSprite):
         if self.beingHeld == False:
             #self.addedVel = vec(0,0)
             self.gravity = GRAVITY
-        print(f'box: {self.solidstrength}')
-    
 
 
 
@@ -391,19 +388,20 @@ class Box(CustomSprite):
         #if not pg.sprite.spritecollideany(self, self.game.group_solid):
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 4: 
-                self.pos.x = interacter.player.right_x() + self.width/2 + 1
+                self.pos.x = interacter.player.right_x() + self.width/2 
         else:
             if abs(interacter.player.left_x() - self.right_x()) < 4: 
-                self.pos.x = interacter.player.left_x() - self.width/2 - 1
+                self.pos.x = interacter.player.left_x() - self.width/2
         # Setting how much box should be lifted
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
         self.interacter = interacter
-        self.solidstrength = self.originalsolidstrength -1
+        #self.solidstrength = self.originalsolidstrength -1
         #self.interacter.player.solidstrength = 6
-        if not interacter.player.inAir:
+        if not interacter.player.inAir or interacter.player.vel.y > 0:
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 3
+            self.interacter.player.massHOR = self.massHOR + 1
         else: 
             self.beingHeld = False
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -674,7 +672,7 @@ class Button(CustomSprite):
                         for move in v:
                             move['target'].vel = move["movespeed"].copy()
             except Exception as e:
-                print(e) 
+                print(f'button activate: {e}') 
                 pass
                     #self.target.vel = self.movespeed
             
@@ -701,7 +699,7 @@ class Button(CustomSprite):
                             #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
                             move['target'].vel = move["movespeed"] * (-1)
             except Exception as e:
-                print(e) 
+                print(f'button deact: {e}') 
                 pass
             #for e in self.effect: 
             #   if e == "move":
@@ -928,9 +926,9 @@ class PatrollingEnemy(Hostile):
         if collideds:
             for collided in collideds:
 
-                if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
+                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
                     #if collided.solidstrength > self.solidstrength:
-                    self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
+                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
                     self.count = 5
 
                     if not self.stopMoving: # If it was inbetween solids
@@ -947,6 +945,8 @@ class PatrollingEnemy(Hostile):
                                     self.vel.x *= -1
                                 if self.collides_left: #remove?
                                     self.vel.x *= 0
+                            self.massHOR = collided.massHOR - 1
+                                
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
                             if newpos >= self.pos.x:
@@ -959,12 +959,15 @@ class PatrollingEnemy(Hostile):
                                     self.vel.x *= -1
                                 if self.collides_right: #remove?
                                     self.vel.x *= 0
+                            self.massHOR = collided.massHOR - 1
+                                
                             self.vel.x *= -1
                         elif coll_side == "bot":
                             if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
                                 self.pos.x = collided.left_x() - self.width/2
                             else: 
                                 self.pos.x = collided.right_x() + self.width/2
+                            self.massVER = collided.massVER - 1
 
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):
@@ -976,6 +979,7 @@ class PatrollingEnemy(Hostile):
         if collideds:
             for collided in collideds:
                 if collided != self and collided.name != "p_floor":
+                     
                     if self.solidstrength < collided.solidstrength:
                         self.solidstrength = collided.solidstrength -1
                         count = 2

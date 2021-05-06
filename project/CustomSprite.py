@@ -75,8 +75,11 @@ class CustomSprite(pg.sprite.Sprite):
         self.massVER = self.ori_massVER
 
     def init(self):
+        self.massHOR = self.solidstrength
+        self.massVER = self.solidstrength
+        self.ori_massHOR = self.massHOR
+        self.ori_massVER = self.massVER
         self.new_vel = self.vel.copy()
-        self.overwritevel = self.vel.copy()
 
         
     def updateRect(self):
@@ -91,8 +94,8 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def resetSprite(self):
-        self.resetMass
         if self.count < 0:
+            self.resetMass()
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
         self.vel -= self.addedVel
@@ -202,7 +205,7 @@ class CustomSprite(pg.sprite.Sprite):
             if turn:
                 for collided_obj in collided:
                     collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
-                    collided_obj.rect.y -= 4
+                    collided_obj.rect.y -= 1
                     # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
                     self.game.group_solid.remove(collided_obj)
                     testcol = pg.sprite.spritecollideany(collided_obj, self.game.group_solid)
@@ -216,7 +219,7 @@ class CustomSprite(pg.sprite.Sprite):
                         collided_obj.has_collided = True
                         #collided_obj.pickUp(self)
                         collided_obj.liftedBy(self)
-                    collided_obj.rect.y += 4   
+                    collided_obj.rect.y += 1 
             else:
                 self.colliding = False
 
@@ -238,7 +241,7 @@ class CustomSprite(pg.sprite.Sprite):
         if collideds:
             for collided in collideds:
                 try: 
-                    if collided != self and collided.solidstrength < self.solidstrength and collided not in self.game.group_interactiveFields and collided not in self.game.group_pickups:
+                    if collided != self and collided.lessMassThan(self) and collided not in self.game.group_interactiveFields and collided not in self.game.group_pickups:
                         #print(f'solid: {self.name} affecting {collided.name}')
                         #print(f'solidvel : {self.vel}')
 
@@ -258,6 +261,9 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect = self.rect.inflate(-inflation, -inflation)
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+    def lessMassThan(self, other):
+        return self.massHOR < other.massHOR or self.massVER < other.massVER
+
     def pygamecoll(self, group, ignoredSol = None):
         inflationW = 0
         inflationH = 0
@@ -271,23 +277,39 @@ class CustomSprite(pg.sprite.Sprite):
 
         if collideds:
             for collided in collideds:
-                if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength >= self.solidstrength:
-                    if group.has(self):
-                        self.solidstrength = collided.solidstrength -1
-                    self.count = 2
-                    coll_side = self.determineSide(collided)
-                    if coll_side == "top":
-                        newpos = collided.top_y()
-                        if newpos < self.pos.y:
-                            self.set_bot(collided.top_y())
-                            self.vel.y = 0
-                    else:
+                if self.isPlayer:
+                    print(f'{collided.name} mass: {collided.massHOR}')
+                if collided != self and collided != ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
+                    #if group.has(self):
+                     #   self.solidstrength = collided.solidstrength -1
+                    if self.massVER < collided.massVER:
+                        self.count = 2
+                        coll_side = self.determineSide(collided)
+                        if coll_side == "top":
+                            newpos = collided.top_y()
+                            if newpos < self.pos.y:
+                                self.set_bot(collided.top_y())
+                                self.vel.y = 0
+                            if group.has(self):
+                                self.massVER = collided.massVER - 1
+
+                        if coll_side == "bot":
+                            newpos =  collided.bot_y() + self.height 
+                            if newpos > self.pos.y:
+                                self.pos.y = newpos
+                                self.vel.y = self.addedVel.y
+                            if group.has(self):
+                                self.massVER = collided.massVER - 1
+                    if self.massHOR < collided.massHOR:
+                    
                         if coll_side == "left":
                             newpos = collided.left_x() - self.width/2 #Left side of object being collided with
                             if newpos <= self.pos.x:
                                 self.pos.x = collided.left_x() - self.width/2
                                 self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
                                 self.acc.x = 0
+                            if group.has(self):
+                                self.massHOR = collided.massHOR - 1
 
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
@@ -295,12 +317,9 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.pos.x = collided.right_x() + self.width/2
                                 self.vel.x = self.addedVel.x
                                 self.acc.x = 0
+                            if group.has(self):
+                                self.massHOR = collided.massHOR - 1
 
-                        if coll_side == "bot":
-                            newpos =  collided.bot_y() + self.height 
-                            if newpos > self.pos.y:
-                                self.pos.y = newpos
-                                self.vel.y = self.addedVel.y
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
                     
         
