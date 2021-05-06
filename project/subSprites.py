@@ -532,12 +532,15 @@ class Vase(CustomSprite):
 
     def update(self):
         # Check whether the vase has even fallen yet
-        if self.vel.y > 1:
-            self.fell_fast_enough = True
-        
-        self.touchplat(self.game.group_solid)
-        
-        # fall is set to true in knockover() if conditions are satisfied
+
+        if not self.broken:
+            if self.vel.y > 1:
+                self.fell_fast_enough = True
+            
+            self.touchplat(self.game.group_solid)
+            
+            # fall is set to true in knockover() if conditions are satisfied
+        self.vel += self.addedVel
         if self.fall == True:
             self.inAir = True
             self.applyGrav()
@@ -546,8 +549,12 @@ class Vase(CustomSprite):
     def breaks(self):
         #self.image.fill((250,250,250))
         self.image = self.image_broken
+        self.vel.x = 0
+        #self.addedVel.x = 0
         newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
         newPickup.startGame(self.game)
+        #self.game.all_sprites.remove(self)
+        #self.game.group_passives.add(self)
         #self.kill()
         self.broken = True
 
@@ -555,13 +562,19 @@ class Vase(CustomSprite):
     def applyGrav(self):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.vel   += self.acc                              # equations of motion
-        self.pos += self.vel +  self.acc * 0.5     
+        #self.pos += self.vel +  self.acc * 0.5     
+
+    def posCorrection(self):
+        if self.broken:
+            self.pygamecoll(self.game.group_solid)
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+
 
     # When it thouches a platform or other solid
     def touchplat(self, group):
 
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.y += r(self.vel.y + 4) 
         collideds = pg.sprite.spritecollide(self, group, False)
         if collideds:
             for collided in collideds:
@@ -570,9 +583,11 @@ class Vase(CustomSprite):
                         self.set_bot(collided.top_y())
                         if not self.broken:
                             self.breaks()
-                        self.fall = False
-                        self.gravity = 0
+                        #self.fall = False
+                        #self.gravity = 0
                         self.vel.y = 0
+                        #self.vel.x = 0
+                        #self.addedVel.x = 0
 
 
 

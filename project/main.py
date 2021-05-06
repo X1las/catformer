@@ -74,7 +74,8 @@ class Game:
         self.group_damager            = pg.sprite.Group()       # All hostiles
 
         self.group_pressureActivator  = pg.sprite.Group()        # Things that can activate a button
- 
+        self.group_passives           = pg.sprite.Group()
+
     # Method that creates a new level
     def new(self):
         
@@ -506,7 +507,7 @@ class Game:
         
 
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
-
+        self.group_passives.draw(self.screen)
         self.screen.blit(self.lives_display,  (50, 50))
         self.screen.blit(self.points_display,  (400, 50))
         if self.paused:
