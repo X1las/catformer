@@ -718,8 +718,8 @@ class PickUp(CustomSprite):
         self.image = pg.Surface((self.width,self.height))
         if self.type == 'health':
             
-            healthSheet = ss.Spritesheet('resources/heart.png')
-            self.image = healthSheet.image_at((0,0,16,16), colorkey=(0,255,0))
+            healthSheet = ss.Spritesheet('resources/spritesheet_green.png')
+            self.image = healthSheet.image_at((0,101,16,16), colorkey=(0,255,0))
             self.image = pg.transform.scale(self.image, (self.width, self.height))  # scale Surface to size
         
         if self.type == 'catnip':
