@@ -1011,6 +1011,12 @@ class AiEnemy(Hostile):
         self.stopMoving = False
         #self.facing = None
 
+    def onSameLevel(self, game):
+        result = True
+        if (abs(game.player.pos.y - self.pos.y) > 125):
+            result = False
+        return result
+
     def playerLeft(self, game):
         result = False
         if (game.player.pos.x < self.pos.x and self.pos.x - game.player.pos.x < 200):
@@ -1070,14 +1076,15 @@ class AiEnemy(Hostile):
             self.imageIndex = 0
         
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
-        if self.onPlayer(self.game):
-            self.vel.x = 0
-        elif self.playerRight(self.game):
-            self.vel.x = 1
-            self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
-        elif self.playerLeft(self.game): 
-            self.vel.x = -1
-            self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+        if self.onSameLevel(self.game):
+            if self.onPlayer(self.game):
+                self.vel.x = 0
+            elif self.playerRight(self.game):
+                self.vel.x = 1
+                self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
+            elif self.playerLeft(self.game): 
+                self.vel.x = -1
+                self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
         else:
             self.vel.x = 0
 
