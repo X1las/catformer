@@ -322,7 +322,10 @@ class Box(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.getImageFromFile('box.png', self.width, self.height)
+
+        self.image = pg.image.load("resources/cardboard_box_closed.png").convert_alpha()     # load box image as a Surface
+        self.image = pg.transform.scale(self.image, (self.width, self.height))  # scale Surface to size
+
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.initX,self.initY)
 
