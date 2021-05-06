@@ -6,7 +6,7 @@ import math
 vec = Vec
 
 
-class Sprites(pg.sprite.LayeredUpdates):
+class SpriteGroup(pg.sprite.LayeredUpdates):
 
     def update(self):
         lis = []

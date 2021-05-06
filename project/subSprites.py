@@ -12,7 +12,7 @@ import copy
 import time
 from threading import Timer
 
-import spritesheet as ss
+import Spritesheet as ss
 import math
 
 

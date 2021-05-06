@@ -60,7 +60,7 @@ class Game:
     def createSGroups(self):
     
         #self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
-        self.all_sprites = Sprites()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        self.all_sprites = SpriteGroup()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         self.group_platforms          = pg.sprite.Group() #Only applied  to platforms
         self.group_boxes              = pg.sprite.Group() #Only applied to boxes
@@ -493,8 +493,8 @@ class Game:
                         self.interactive_field.kill()
                         self.interactive_field = None
     
-    # Method for drawing everything to the screen
-    def draw(self):                                                             
+    # Method for drawing everything to the screen           
+    def draw(self):                                         
         self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
         
         # Loop that updates rectangles?
