@@ -94,15 +94,22 @@ class LevelGoal(CustomSprite):
 class Platform(CustomSprite):
 
     game = None
-    def __init__(self, x, y, width, height, name, vel = Vec(), maxDist = 1000, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
+    def __init__(self, x, y, width, height, name, vel = Vec(), maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
+        self.originalVel = vel.copy()
         self.solid = True
         self.vel = vel
         self.initX = x
         self.initY = y
-        self.leftMaxDist = leftMaxDist
-        self.rightMaxDist = rightMaxDist
-        self.downMaxDist = downMaxDist
-        self.upMaxDist = upMaxDist
+        if maxDist == None:
+            self.leftMaxDist = leftMaxDist
+            self.rightMaxDist = rightMaxDist
+            self.downMaxDist = downMaxDist
+            self.upMaxDist = upMaxDist
+        else: 
+            self.leftMaxDist = maxDist
+            self.rightMaxDist = maxDist
+            self.downMaxDist = maxDist
+            self.upMaxDist = maxDist
         self.height = height; self.width = width; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
         self.solidstrength = 10
         self.originalsolidstrength = self.solidstrength
@@ -158,31 +165,6 @@ class Platform(CustomSprite):
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
-    """
-    def collisionEffect(self):
-        inflation = 0
-        self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-
-        self.rect.x += r(self.vel.x)
-        self.rect.y -= 2
-        collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
-
-        if collideds:
-            for collided in collideds:
-                try: 
-                    if collided != self and collided.solidstrength < self.solidstrength:
-                    
-                        coll_side = collided.determineSide(self)
-                        if coll_side == "top":
-                            collided.addedVel = self.vel
-                except:
-                    pass
-                    #print(f'2 - acc in coll for {self.name} with {self.acc}')
-                    
-        
-        self.rect = self.rect.inflate(-inflation, -inflation)
-    """
 
 
     def pygamecolls(self, group, ignoredSol = None):
@@ -218,26 +200,33 @@ class Platform(CustomSprite):
                         self.vel.x *= -1
                     if coll_side == "bot": # left side of collidedd obj
                         newpos = collided.bot_y() - self.height
-                        if newpos >= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                        if newpos <= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                             if collided.vel.y == 0: # If collided object is not moving, just turn around
                                 #self.vel.x = 1
-                                self.vel.y *= -1
+                                self.vel.y = self.originalVel.y * (-1)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        
 
 
 
-# Checking if the enemy is outside it's patrolling area
+    # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
         if  self.pos.x - self.x >= self.rightMaxDist: # right boundary
             self.area = "right"
-            self.vel.x = -1 * abs(self.vel.x)
+            #self.vel.x = -1 * abs(self.vel.x)
+            self.vel.x = -1 * abs(self.originalVel.x)
+
         elif self.pos.x - self.x <= -1*self.leftMaxDist:
-            self.vel.x = abs(self.vel.x)
+            self.vel.x = abs(self.originalVel.x)
+            #self.vel.x = abs(self.vel.x)
             self.area = "left"
         elif self.pos.y - self.y <= -1*self.upMaxDist:
-            self.vel.y = abs(self.vel.y)
+            self.vel.y = -1* abs(self.originalVel.y)
+            #self.vel.y = -1* abs(self.vel.y)
             self.area = "left"
-        elif self.pos.y - self.y >= -1*self.downMaxDist:
-            self.vel.y = abs(self.vel.y)
+        elif self.pos.y - self.y >= self.downMaxDist:
+            self.vel.y = abs(self.originalVel.y)
+            #self.vel.y = abs(self.vel.y)
             self.area = "left"
 
     def update(self):
@@ -253,6 +242,7 @@ class Platform(CustomSprite):
     def updatePos(self, solid):
         super().updatePos(solid)
         self.pygamecolls(self.game.group_solid)
+        self.pygamecoll(self.game.group_solid)
 
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
@@ -652,8 +642,9 @@ class Button(CustomSprite):
                     if e == "move":
 
                         for move in v:
-                            move['target'].vel = move["movespeed"]
-            except: 
+                            move['target'].vel = move["movespeed"].copy()
+            except Exception as e:
+                print(e) 
                 pass
                     #self.target.vel = self.movespeed
             
@@ -675,7 +666,7 @@ class Button(CustomSprite):
 
                         for move in v:
                             target = move["target"]
-                            #nextpos = target.pos + target.vel  
+                            nextpos = target.pos + target.vel  
                             #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
                             move['target'].vel = move["movespeed"] * (-1)
             except Exception as e:

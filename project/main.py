@@ -123,7 +123,7 @@ class Game:
         self.smalltest.startGame(self)
         
         
-        self.tallplat   = Platform(650, 550, 20, 70, "tallplat")
+        self.tallplat   = Platform(650, 530, 20, 50, "tallplat", upMaxDist= 50, downMaxDist = 100)
         self.tallplat.startGame(self)
         
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      

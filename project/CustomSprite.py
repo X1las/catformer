@@ -266,8 +266,10 @@ class CustomSprite(pg.sprite.Sprite):
                     self.count = 2
                     coll_side = self.determineSide(collided)
                     if coll_side == "top":
-                        self.set_bot(collided.top_y())
-                        self.vel.y = 0
+                        newpos = collided.top_y()
+                        if newpos < self.pos.y:
+                            self.set_bot(collided.top_y())
+                            self.vel.y = 0
                     else:
                         if coll_side == "left":
                             newpos = collided.left_x() - self.width/2 #Left side of object being collided with
@@ -284,11 +286,14 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.acc.x = 0
 
                         if coll_side == "bot":
-                            self.pos.y = collided.bot_y() + self.height + 2
-                            self.vel.y = 0
+                            newpos =  collided.bot_y() + self.height 
+                            if newpos > self.pos.y:
+                                self.pos.y = newpos
+                                self.vel.y = self.addedVel.y
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
                     
         
+        self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect = self.rect.inflate(-inflationW, -inflationH)
 
     def determineSide(self, collided):
