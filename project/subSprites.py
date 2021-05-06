@@ -481,7 +481,7 @@ class Vase(CustomSprite):
         
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
-        # create sub-rectangles to load from water spritesheet
+        # create sub-rectangles to load from spritesheet
         whole = pg.Rect( 0,0,29,26)
         broken = pg.Rect(30,0,29,26)
         rects = [whole, broken]
@@ -626,14 +626,22 @@ class Button(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_buttons
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((200,0,0))
+
+        # create surface with correct size
+        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        # create sub-rectangles to load from spritesheet
+        pressed   = pg.Rect( 0,79,18,7)
+        unpressed = pg.Rect(19,76,18,10)
+        rects = [pressed, unpressed]
+        # load images from spritesheet
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        self.images = sheet.images_at(rects, (0,255,0))     
+        self.image_pressed = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
+        self.image_unpressed = pg.transform.scale(self.images[1], (self.width, self.height))
+        self.image = self.image_unpressed
+        #self.image.blit(self.image_unpressed,(0,0))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x,self.y)
-
-
-
-
 
 
     def activate(self):
@@ -641,6 +649,7 @@ class Button(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
+            self.image = self.image_pressed
             try:
                 for e,v in self.effect.items():
                     if e == "respawn":
@@ -660,8 +669,9 @@ class Button(CustomSprite):
         if self.deactivated != True:
             self.deactivated = True
             self.activated = False
-        
             self.rect.update(self.pos.asTuple(), (self.width, self.height))
+            self.image = self.image_unpressed
+
         # whatever else it needs to deactivate
             try: # shouldn't be try except, I think
                 for e,v in self.effect.items():
