@@ -8,22 +8,29 @@ vec = Vec
 
 class SpriteGroup(pg.sprite.LayeredUpdates):
 
-    def update(self):
+    def updateOrder(self):
         lis = []
         for i in self:
             lis.append(i)
         lis.sort(key = lambda x: x.update_order, reverse = False)
+        return lis
+
+    def update(self):
+        lis = self.updateOrder()
         for i in lis:
             i.update()
 
     def updatePos(self, solid):
-        for i in self:
+        lis = self.updateOrder()
+        for i in lis:
             i.updatePos(solid)
-            i.posCorrection()
-        #self.correctPositions()
+            #i.posCorrection()
+        self.correctPositions()
 
     def correctPositions(self):
-        for i in self:
+  
+        lis = self.updateOrder()
+        for i in lis:
             i.posCorrection()
     
     def getObject(self, name):

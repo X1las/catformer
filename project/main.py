@@ -134,7 +134,7 @@ class Game:
         #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
         
         #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
-        #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
+        #self.button2 = Button(self,450 , 550 , 30 , 20 , na me = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
         #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
         #self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
