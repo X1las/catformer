@@ -12,7 +12,7 @@ import copy
 import time
 from threading import Timer
 
-import spritesheet as ss
+import Spritesheet as ss
 import math
 
 
@@ -322,7 +322,10 @@ class Box(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.getImageFromFile('box.png', self.width, self.height)
+
+        self.image = pg.image.load("resources/cardboard_box_closed.png").convert_alpha()     # load box image as a Surface
+        self.image = pg.transform.scale(self.image, (self.width, self.height))  # scale Surface to size
+
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.initX,self.initY)
 
@@ -412,6 +415,7 @@ class Box(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def liftedBy(self,interacter):
+        #if not pg.sprite.spritecollideany(self, self.game.group_solid):
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 4: 
                 self.pos.x = interacter.player.right_x() + self.width/2 + 4
@@ -422,6 +426,7 @@ class Box(CustomSprite):
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
         self.interacter = interacter
+        self.solidstrength = self.originalsolidstrength -1
         #self.interacter.player.solidstrength = 6
         if not interacter.player.inAir:
             self.beingHeld = True
@@ -499,8 +504,7 @@ class Vase(CustomSprite):
         self.broken = False
         self.name = name
         self.breakable = True
-        self.width = 20
-        self.height = 30
+        
         self.fall = False
         self.gravity = PLAYER_GRAV
         self.can_fall_and_move = True
@@ -514,54 +518,76 @@ class Vase(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_vases
         pg.sprite.Sprite.__init__(self, self.groups)
-
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((120,100,0))
+        self.width  = 29
+        self.height = 26
+        #self.image = pg.Surface((self.width,self.height))
+        img_whole = pg.image.load("resources/whole_mug.png").convert_alpha()     # load image as a Surface
+        img_broken = pg.image.load("resources/broken_mug.png").convert_alpha()     # load image as a Surface
+        self.image_whole = pg.transform.scale(img_whole, (self.width, self.height))  # scale Surface to size
+        self.image_broken = pg.transform.scale(img_broken, (self.width, self.height))  # scale Surface to size
+        self.image = self.image_whole
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
 
     def update(self):
         # Check whether the vase has even fallen yet
-        if self.vel.y > 1:
-            self.fell_fast_enough = True
-        
-        self.touchplat(self.game.group_solid)
-        
-        # fall is set to true in knockover() if conditions are satisfied
+
+        if not self.broken:
+            if self.vel.y > 1:
+                self.fell_fast_enough = True
+            
+            self.touchplat(self.game.group_solid)
+            
+            # fall is set to true in knockover() if conditions are satisfied
+        self.vel += self.addedVel
         if self.fall == True:
             self.inAir = True
             self.applyGrav()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
-        self.image.fill((250,250,250))
+        #self.image.fill((250,250,250))
+        self.image = self.image_broken
+        self.vel.x = 0
+        #self.addedVel.x = 0
         newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
         newPickup.startGame(self.game)
-        self.kill()
+        #self.game.all_sprites.remove(self)
+        #self.game.group_passives.add(self)
+        #self.kill()
         self.broken = True
 
     # Applies basic gravity
     def applyGrav(self):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.vel   += self.acc                              # equations of motion
-        self.pos += self.vel +  self.acc * 0.5     
+        #self.pos += self.vel +  self.acc * 0.5     
+
+    def posCorrection(self):
+        if self.broken:
+            self.pygamecoll(self.game.group_solid)
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+
 
     # When it thouches a platform or other solid
     def touchplat(self, group):
 
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.y += r(self.vel.y + 4) 
         collideds = pg.sprite.spritecollide(self, group, False)
         if collideds:
             for collided in collideds:
                 if collided != self and collided != self.ignoreSol:
                     if self.fell_fast_enough:
                         self.set_bot(collided.top_y())
-                        self.breaks()
-                        self.fall = False
-                        self.gravity = 0
+                        if not self.broken:
+                            self.breaks()
+                        #self.fall = False
+                        #self.gravity = 0
                         self.vel.y = 0
+                        #self.vel.x = 0
+                        #self.addedVel.x = 0
 
 
 
@@ -941,6 +967,11 @@ class PatrollingEnemy(Hostile):
                                 if self.collides_right: #remove?
                                     self.vel.x *= 0
                             self.vel.x *= -1
+                        elif coll_side == "bot":
+                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                self.pos.x = collided.left_x() - self.width/2
+                            else: 
+                                self.pos.x = collided.right_x() + self.width/2
  
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):

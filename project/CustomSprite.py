@@ -69,12 +69,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.new_vel = self.vel.copy()
         self.overwritevel = self.vel.copy()
 
-    # method for setting the sprite image from file
-    def getImageFromFile(self, filename, width, height):
-        self.image = pg.image.load(f"resources/{filename}").convert_alpha()     # load box image as a Surface
-        self.image = pg.transform.scale(self.image, (width, height))  # scale Surface to size
-
-
+        
     def updateRect(self):
         #roundedvec = self.relativePosition.realRound()
         roundedvec = self.relativePosition.rounded()
@@ -191,15 +186,29 @@ class CustomSprite(pg.sprite.Sprite):
         
         if collided: 
             if turn:
-                self.colliding = True
                 for collided_obj in collided:
-                    if justPickedUp:
-                        collided_obj.pickupStarted = True
-                    collided_obj.has_collided = True
-                    #collided_obj.pickUp(self)
-                    collided_obj.liftedBy(self)
+                    collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
+                    collided_obj.rect.y -= 4
+                    # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
+                    self.game.group_solid.remove(collided_obj)
+                    testcol = pg.sprite.spritecollideany(collided_obj, self.game.group_solid)
+                    self.game.group_solid.add(collided_obj)
+                    
+                    if not testcol:
+                
+                        self.colliding = True
+                        if justPickedUp:
+                            collided_obj.pickupStarted = True
+                        collided_obj.has_collided = True
+                        #collided_obj.pickUp(self)
+                        collided_obj.liftedBy(self)
+                    collided_obj.rect.y += 4   
             else:
                 self.colliding = False
+
+
+    def relativeVel(self):
+        return self.vel - self.addedVel
 
     def posCorrection(self):
         pass
@@ -207,23 +216,23 @@ class CustomSprite(pg.sprite.Sprite):
     def collisionEffect(self):
         inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
 
-        self.rect.x += r(self.vel.x)
+        #self.rect.x += r(self.vel.x)
         self.rect.y -= 1
         collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
 
         if collideds:
             for collided in collideds:
                 try: 
-                    if collided != self and collided.solidstrength < self.solidstrength and collided not in self.game.group_interactiveFields:
+                    if collided != self and collided.solidstrength < self.solidstrength and collided not in self.game.group_interactiveFields and collided not in self.game.group_pickups:
                         #print(f'solid: {self.name} affecting {collided.name}')
                         #print(f'solidvel : {self.vel}')
 
                         coll_side = collided.determineSide(self)
                         if coll_side == "top":
                             #collided.vel += self.vel
-                            collided.addedVel = self.vel + self.addedVel
+                            #if abs(collided.vel.x) < 0.5:
+                            collided.addedVel.x = self.vel.x + self.addedVel.x
                 except:
                     pass
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
@@ -234,47 +243,37 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pygamecoll(self, group, ignoredSol = None):
-        inflationW = 10
+        inflationW = 2
         inflationH = 0
-
         self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
-
-        self.rect.x += r(self.vel.x)
+        self.rect.x += r(self.relativeVel().x)
         self.rect.y += r(self.vel.y) 
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
             for collided in collideds:
-
-                #print(f"{self.name} collided with: {collided.name}")
-                #print(f'Strength: {self.solidstrength} ---- {collided.solidstrength}')
-                
-                #print(f'solid less? {collided.solidstrength > self.solidstrength}')
-                #print(f'1 - acc in coll for {self.name} with {self.acc}')
                 if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength > self.solidstrength:
-                    #if group.has(self):
-                    self.solidstrength = collided.solidstrength -1
+                    if group.has(self):
+                        self.solidstrength = collided.solidstrength -1
                     self.count = 2
                     coll_side = self.determineSide(collided)
-                    #print(f'coll side {coll_side}')
                     if coll_side == "top":
-
                         self.set_bot(collided.top_y())
                         self.vel.y = 0
                     else:
                         if coll_side == "left":
-                            newpos = collided.left_x() - self.width/2
+                            newpos = collided.left_x() - self.width/2 #Left side of object being collided with
                             if newpos <= self.pos.x:
-                                self.pos.x = collided.left_x() - self.width/2-1
-                                self.vel.x = 0
+                                self.pos.x = collided.left_x() - self.width/2
+                                self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
                                 self.acc.x = 0
 
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
                             if newpos >= self.pos.x:
                                 self.pos.x = collided.right_x() + self.width/2
-                                self.vel.x = 0
+                                self.vel.x = self.addedVel.x
                                 self.acc.x = 0
 
                         if coll_side == "bot":
@@ -311,7 +310,6 @@ class CustomSprite(pg.sprite.Sprite):
                 
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
-                    #self.addedVel = collided.vel
                     result = collided
         self.rect.bottom -= 2
         return result
@@ -324,38 +322,19 @@ class CustomSprite(pg.sprite.Sprite):
         else:
             self.inAir = True
 
-        #self.inAir = True
         if self.inAir:
             self.gravity = GRAVITY
         else:
-            #if not self.isVase:
             self.gravity = 0
             tempVel = self.vel.copy()
-            
-            #self.vel.y = 2
-            
-            #self.vel.x = 0
-            """
-            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
-            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
-            self.vel = tempVel
-            if (not intersect) and (not intersect2):
-                self.inAir = True
-            """           
         
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
         if self.isPlayer and abs(self.vel.x) < 0.0001:
             self.vel.x = 0
-
-        #if self.can_fall_and_move:
-          #  self.pygamecoll(Intersecters)
-        #self.pos += self.vel +  self.acc * 0.5
-        #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
        
     def updatePos(self, group):
-        #self.pos += self.vel
         self.pos +=  self.vel +  self.acc * 0.5
 
 

@@ -60,7 +60,7 @@ class Game:
     def createSGroups(self):
     
         #self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
-        self.all_sprites = Sprites()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        self.all_sprites = SpriteGroup()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         self.group_platforms          = pg.sprite.Group() #Only applied  to platforms
         self.group_boxes              = pg.sprite.Group() #Only applied to boxes
@@ -74,7 +74,8 @@ class Game:
         self.group_damager            = pg.sprite.Group()       # All hostiles
 
         self.group_pressureActivator  = pg.sprite.Group()        # Things that can activate a button
- 
+        self.group_passives           = pg.sprite.Group()
+
     # Method that creates a new level
     def new(self):
         
@@ -118,6 +119,9 @@ class Game:
             pass
         self.movingPlat = Platform(300 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 100)
         self.movingPlat.startGame(self)
+        self.smalltest = Platform(250 , 560 , 50 , 40 , "small tester" )
+        self.smalltest.startGame(self)
+        
         '''
         self.tallplat   = Platform(650, 550, 20, 100, "tallplat")
         self.tallplat.startGame(self)
@@ -136,7 +140,7 @@ class Game:
         #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
         
         #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
-        #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
+        #self.button2 = Button(self,450 , 550 , 30 , 20 , na me = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
         #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
         #self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
@@ -147,7 +151,7 @@ class Game:
         self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
         self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
         self.lever1.startGame(self)
-        '''
+        ''' 
         self.water = Water(500, 400, 10, 10)    
         self.water.startGame(self)     
         
@@ -495,8 +499,8 @@ class Game:
                         self.interactive_field.kill()
                         self.interactive_field = None
     
-    # Method for drawing everything to the screen
-    def draw(self):                                                             
+    # Method for drawing everything to the screen           
+    def draw(self):                                         
         self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
         
         # Loop that updates rectangles?
@@ -505,7 +509,7 @@ class Game:
         
 
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
-
+        self.group_passives.draw(self.screen)
         self.screen.blit(self.lives_display,  (50, 50))
         self.screen.blit(self.points_display,  (400, 50))
         if self.paused:

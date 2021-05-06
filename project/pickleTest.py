@@ -1,7 +1,5 @@
 import pickle
-from spritesheet import *
-
-
+from Spritesheet import *
 
 # reading from pickle file
 def unpickle(filename):
