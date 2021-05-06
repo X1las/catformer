@@ -482,11 +482,18 @@ class Vase(CustomSprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.width  = 29
         self.height = 26
-        #self.image = pg.Surface((self.width,self.height))
-        img_whole = pg.image.load("resources/whole_mug.png").convert_alpha()     # load image as a Surface
-        img_broken = pg.image.load("resources/broken_mug.png").convert_alpha()     # load image as a Surface
-        self.image_whole = pg.transform.scale(img_whole, (self.width, self.height))  # scale Surface to size
-        self.image_broken = pg.transform.scale(img_broken, (self.width, self.height))  # scale Surface to size
+        
+        # create surface with correct size
+        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        # create sub-rectangles to load from water spritesheet
+        whole = pg.Rect( 0,0,29,26)
+        broken = pg.Rect(30,0,29,26)
+        rects = [whole, broken]
+        # load images from spritesheet
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        self.images = sheet.images_at(rects, (0,255,0))     
+        self.image_whole = self.images[0]
+        self.image_broken = self.images[1]
         self.image = self.image_whole
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
@@ -494,7 +501,6 @@ class Vase(CustomSprite):
 
     def update(self):
         # Check whether the vase has even fallen yet
-
         if not self.broken:
             if self.vel.y > 1:
                 self.fell_fast_enough = True
@@ -509,8 +515,7 @@ class Vase(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
-        #self.image.fill((250,250,250))
-        self.image = self.image_broken
+        self.image.blit(self.images[1],(0,0))
         self.vel.x = 0
         #self.addedVel.x = 0
         newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
@@ -979,8 +984,187 @@ class PatrollingEnemy(Hostile):
 
 # AI Enemy SubClass 
 class AiEnemy(Hostile):
-    def __init__(self,game,x,y, name = None):
-        pass
+    def __init__(self,x,y, width, height, game, name = "enemyai"):
+        self._layer = 10
+        self.x = x
+        self.width          = width; self.height = height
+        self.game = game
+        self.pos            = vec(x,y)
+        self.vel =  vec(0, 0)
+        self.acc = vec(0, 0)
+        self.relativePosition = self.pos.copy()
+        self.collides_right = False
+        self.dontmove = False
+        self.collides_left = False
+        self.solidstrength = 3
+        self.originalsolidstrength = self.solidstrength
+        
+        self.name = name
+        self.count = 5
+        self.init()
+        self.isEnemy = True
+        self.stopMoving = False
+        #self.facing = None
+
+    def playerLeft(self, game):
+        result = False
+        if (game.player.pos.x < self.pos.x and self.pos.x - game.player.pos.x < 200):
+            result = True
+        return result
+            
+    def onPlayer(self, game):
+        result = False
+        if (abs(game.player.pos.x - self.pos.x) <5):
+            result = True
+        return result
+
+    def playerRight(self, game):
+        result = False
+        if (game.player.pos.x > self.pos.x and game.player.pos.x - self.pos.x < 200):
+            result = True
+        return result
+
+    def startGame(self, game):
+        self.game = game
+        self.groups = game.all_sprites, game.group_damager, game.group_solid
+        pg.sprite.Sprite.__init__(self, self.groups)
+
+        # get spritesheet
+        wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
+        # get individual sprites and add to list
+        self.images_right = []
+        self.images_right.append(wormSheet.image_at((  4, 36, 29, 28), (0,0,0)))    # (x,y,width,height)
+        self.images_right.append(wormSheet.image_at(( 36, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at(( 68, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at((100, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at((132, 36, 29, 28), (0,0,0)))
+        self.images_right.append(wormSheet.image_at((164, 36, 29, 28), (0,0,0)))
+        self.images_left = []
+        for img in self.images_right:
+            self.images_left.append(pg.transform.flip(img,True,False))
+
+        self.imageIndex = 0
+        self.image = self.images_right[self.imageIndex]
+    
+        # scale image to correct size
+        self.image = pg.transform.scale(self.image, (self.width, self.height))
+        
+        
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = (self.pos.x, self.pos.y)
+
+
+
+    def updatePos(self, group):
+        self.pos +=  self.vel +  self.acc * 0.5
+
+
+    def update(self):
+        self.imageIndex += 1                        # increment image index every update
+        if self.imageIndex >= len(self.images_right)*10:     # reset image index to 0 when running out of images
+            self.imageIndex = 0
+        
+        # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
+        if self.onPlayer(self.game):
+            self.vel.x = 0
+        elif self.playerRight(self.game):
+            self.vel.x = 1
+            self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
+        elif self.playerLeft(self.game): 
+            self.vel.x = -1
+            self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+        else:
+            self.vel.x = 0
+
+        
+        self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
+        
+        self.acc = vec(0,0)    
+        self.collidingWithWall()
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        
+
+    # The part that checks whether to just turn around or be pushed
+    def pygamecolls(self, group, ignoredSol = None):
+        inflation = 0
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+
+                if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
+                    #if collided.solidstrength > self.solidstrength:
+                    self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
+                    self.count = 5
+
+                    if not self.stopMoving: # If it was inbetween solids
+                        coll_side = self.determineSide(collided)
+                        if coll_side == "left": # left side of collidedd obj
+                            newpos = collided.left_x() - self.width/2
+                            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                                if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                    self.pos.x = newpos
+                                    self.vel.x = copy.copy(collided.vel.x) #no copy
+                                    self.acc.x = collided.acc.x
+                                if collided.vel.x == 0: # If collided object is not moving, just turn around
+                                    self.vel.x = 1
+                                    self.vel.x *= -1
+                                if self.collides_left: #remove?
+                                    self.vel.x *= 0
+                        if coll_side == "right":
+                            newpos = collided.right_x() + self.width/2
+                            if newpos >= self.pos.x:
+                                if collided.vel.x !=  0:
+                                    self.pos.x = newpos
+                                    self.vel.x = copy.copy(collided.vel.x) # no copy
+                                    self.acc.x = collided.acc.x
+                                if collided.vel.x == 0:
+                                    self.vel.x = 1
+                                    self.vel.x *= -1
+                                if self.collides_right: #remove?
+                                    self.vel.x *= 0
+                            self.vel.x *= -1
+ 
+    # Will make the enemy stand still if inbetween solids (instead of vibrating)
+    def inbetweenSolids(self):
+        inflation = 4
+        self.rect = self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
+        result = False
+        if collideds:
+            for collided in collideds:
+                if collided != self and collided.name != "p_floor":
+                    if self.solidstrength < collided.solidstrength:
+                        self.solidstrength = collided.solidstrength -1
+                        count = 2
+                    coll_side = self.determineSide(collided)
+                    if coll_side == "left": # left side of collidedd obj
+                        if self.collides_left:
+                            self.vel.x *= 0
+                            result = True
+                        self.collides_right = True
+                    if coll_side == "right":
+                        if self.collides_right:
+                            result = True
+                            self.vel.x *= 0
+                        self.collides_left = True
+        self.rect = self.rect.inflate(-inflation,-inflation)
+          
+        return result           
+ 
+        
+
+    def collidingWithWall(self):
+
+        self.stopMoving = self.inbetweenSolids()
+        self.pygamecolls(self.game.group_solid)
+        self.collides_left = False
+        self.collides_right = False
 
 
 
