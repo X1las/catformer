@@ -92,13 +92,12 @@ class LevelGoal(CustomSprite):
 
 # Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
-
     game = None
     def __init__(self, x, y, width, height, name, vel = Vec(), maxDist = 1000, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
-        self.solid = True
-        self.vel = vel
-        self.initX = x
-        self.initY = y
+        self.solid  = True
+        self.vel    = vel
+        self.initX  = x
+        self.initY  = y
         self.leftMaxDist = leftMaxDist
         self.rightMaxDist = rightMaxDist
         self.downMaxDist = downMaxDist
@@ -108,11 +107,6 @@ class Platform(CustomSprite):
         self.originalsolidstrength = self.solidstrength
         self.x = x; self.y = y
         self.update_order = 1
-        
-
-
-
-
         self.typed = "platform"    
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
@@ -223,9 +217,7 @@ class Platform(CustomSprite):
                                 #self.vel.x = 1
                                 self.vel.y *= -1
 
-
-
-# Checking if the enemy is outside it's patrolling area
+    # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
         if  self.pos.x - self.x >= self.rightMaxDist: # right boundary
             self.area = "right"
