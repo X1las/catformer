@@ -34,6 +34,7 @@ class Player(CustomSprite):
     dslopest_from_left  = 0
     dist_from_top       = 0
     dist_from_bottom    = 0
+    collides_left = False; collides_right = False
     
     name = "player"
     
@@ -112,7 +113,33 @@ class Player(CustomSprite):
     def resetRects(self):
         super().resetRects()
 
-
+    def inbetweenSolids(self):
+        inflation = 4
+        self.rect = self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
+        result = False
+        if collideds:
+            for collided in collideds:
+                if collided != self and collided.name != "p_floor":
+                    if self.solidstrength < collided.solidstrength:
+                        self.solidstrength = collided.solidstrength -1
+                        count = 2
+                    coll_side = self.determineSide(collided)
+                    if coll_side == "left": # left side of collidedd obj
+                        if self.collides_left:
+                            self.takeDamage()
+                            result = True
+                        self.collides_right = True
+                    if coll_side == "right":
+                        if self.collides_right:
+                            self.takeDamage()
+                            result = True
+                            self.vel.x *= 0
+                        self.collides_left = True
+        self.rect = self.rect.inflate(-inflation,-inflation)
+          
+        return result           
     def updatePos(self, Intersecters):
         #tempvel = self.vel.copy()
         #self.vel = self.new_vel
@@ -121,6 +148,8 @@ class Player(CustomSprite):
 
         #self.vel += self.addedVel
         self.pos += self.vel +  self.acc * 0.5
+        self.inbetweenSolids()
+        self.collides_left = False; self.collides_right = False
         #self.vel -= self.addedVel
         #if self.vel.x < 0.001:
          #   self.vel.x = 0

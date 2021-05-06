@@ -412,6 +412,7 @@ class Box(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def liftedBy(self,interacter):
+        #if not pg.sprite.spritecollideany(self, self.game.group_solid):
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 4: 
                 self.pos.x = interacter.player.right_x() + self.width/2 + 4
@@ -422,6 +423,7 @@ class Box(CustomSprite):
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
         self.interacter = interacter
+        self.solidstrength = self.originalsolidstrength -1
         #self.interacter.player.solidstrength = 6
         if not interacter.player.inAir:
             self.beingHeld = True
@@ -941,6 +943,11 @@ class PatrollingEnemy(Hostile):
                                 if self.collides_right: #remove?
                                     self.vel.x *= 0
                             self.vel.x *= -1
+                        elif coll_side == "bot":
+                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                self.pos.x = collided.left_x() - self.width/2
+                            else: 
+                                self.pos.x = collided.right_x() + self.width/2
  
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):

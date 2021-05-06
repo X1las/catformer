@@ -191,13 +191,23 @@ class CustomSprite(pg.sprite.Sprite):
         
         if collided: 
             if turn:
-                self.colliding = True
                 for collided_obj in collided:
-                    if justPickedUp:
-                        collided_obj.pickupStarted = True
-                    collided_obj.has_collided = True
-                    #collided_obj.pickUp(self)
-                    collided_obj.liftedBy(self)
+                    collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
+                    collided_obj.rect.y -= 4
+                    # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
+                    self.game.group_solid.remove(collided_obj)
+                    testcol = pg.sprite.spritecollideany(collided_obj, self.game.group_solid)
+                    self.game.group_solid.add(collided_obj)
+                    
+                    if not testcol:
+                
+                        self.colliding = True
+                        if justPickedUp:
+                            collided_obj.pickupStarted = True
+                        collided_obj.has_collided = True
+                        #collided_obj.pickUp(self)
+                        collided_obj.liftedBy(self)
+                    collided_obj.rect.y += 4   
             else:
                 self.colliding = False
 
@@ -211,7 +221,6 @@ class CustomSprite(pg.sprite.Sprite):
     def collisionEffect(self):
         inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
 
         #self.rect.x += r(self.vel.x)
         self.rect.y -= 1

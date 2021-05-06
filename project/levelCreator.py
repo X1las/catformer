@@ -48,7 +48,9 @@ def createLevel1():
     p_4     = Platform( 700 , 450 ,  150 , 40 , 'p_4')
     p_5     = Platform( 900 , 400 ,  150 , 40 , 'p_5')
     # boxes
-    box1 = Box(150 , 400 , 44 , 44 , 'box_1')
+    box1 = Box(200 , 400 , 44 , 44 , 'box_1')
+    box2 = Box(130 , 500 , 44 , 44 , 'box_2')
+
     # buttons
     btn1 = Button(400 , 550 , 30 , 20 , 'button1')
     btn2 = Button(300 , 550 , 30 , 20 , 'button2')
@@ -68,8 +70,8 @@ def createLevel1():
             'length': 5000,
             'track': ''
         },
-        'platforms': [floor, fatplat,p_3, p_4, p_5],
-        'boxes':     [box1],
+        'platforms': [floor, fatplat, p_3, p_4, p_5],
+        'boxes':     [box1, box2],
         'buttons':   [btn1, btn2],
         'levers':    [lever1],
         'vases':     [],
