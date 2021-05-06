@@ -245,35 +245,20 @@ class CustomSprite(pg.sprite.Sprite):
     def pygamecoll(self, group, ignoredSol = None):
         inflationW = 2
         inflationH = 0
-
         self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        
         self.rect.x += r(self.relativeVel().x)
-
-        #self.rect.x += r(self.vel.x)
         self.rect.y += r(self.vel.y) 
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
             for collided in collideds:
-
-                #print(f"{self.name} collided with: {collided.name}")
-                #print(f'Strength: {self.solidstrength} ---- {collided.solidstrength}')
-                
-                #print(f'solid less? {collided.solidstrength > self.solidstrength}')
-                #print(f'1 - acc in coll for {self.name} with {self.acc}')
                 if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength > self.solidstrength:
                     if group.has(self):
-                    
                         self.solidstrength = collided.solidstrength -1
                     self.count = 2
                     coll_side = self.determineSide(collided)
-                    if self.isVase:
-                        print(f'collided with: {collided.name}')
-                    #print(f'coll side {coll_side}')
                     if coll_side == "top":
-
                         self.set_bot(collided.top_y())
                         self.vel.y = 0
                     else:
@@ -325,7 +310,6 @@ class CustomSprite(pg.sprite.Sprite):
                 
                 if self.determineSide(collided) == "top":
                     self.on_platform = True
-                    #self.addedVel = collided.vel
                     result = collided
         self.rect.bottom -= 2
         return result
@@ -338,38 +322,19 @@ class CustomSprite(pg.sprite.Sprite):
         else:
             self.inAir = True
 
-        #self.inAir = True
         if self.inAir:
             self.gravity = GRAVITY
         else:
-            #if not self.isVase:
             self.gravity = 0
             tempVel = self.vel.copy()
-            
-            #self.vel.y = 2
-            
-            #self.vel.x = 0
-            """
-            intersect = self.rayIntersect(self.pos - self.bottomleft() , Intersecters)
-            intersect2 = self.rayIntersect(self.pos - self.bottomright() , Intersecters)
-            self.vel = tempVel
-            if (not intersect) and (not intersect2):
-                self.inAir = True
-            """           
         
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
         if self.isPlayer and abs(self.vel.x) < 0.0001:
             self.vel.x = 0
-
-        #if self.can_fall_and_move:
-          #  self.pygamecoll(Intersecters)
-        #self.pos += self.vel +  self.acc * 0.5
-        #self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
        
     def updatePos(self, group):
-        #self.pos += self.vel
         self.pos +=  self.vel +  self.acc * 0.5
 
 
