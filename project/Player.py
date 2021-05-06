@@ -89,6 +89,7 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.vel += self.addedVel
+        self.pygamecoll(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.pygamecoll(self.game.group_solid)
 

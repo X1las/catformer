@@ -94,7 +94,7 @@ class LevelGoal(CustomSprite):
 class Platform(CustomSprite):
 
     game = None
-    def __init__(self, x, y, width, height, name, vel = Vec(), maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
+    def __init__(self, x, y, width, height, name, vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
         self.originalVel = vel.copy()
         self.solid = True
         self.vel = vel
@@ -111,7 +111,9 @@ class Platform(CustomSprite):
             self.downMaxDist = maxDist
             self.upMaxDist = maxDist
         self.height = height; self.width = width; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
-        self.solidstrength = 10
+        self.solidstrength = 30
+        if floorplat:
+            self.solidstrength = 50
         self.originalsolidstrength = self.solidstrength
         self.x = x; self.y = y
         self.update_order = 1
@@ -178,32 +180,44 @@ class Platform(CustomSprite):
         if collideds:
             for collided in collideds:
 
-                if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
+                if collided != self and self.solidstrength <= collided.solidstrength:
                     #if collided.solidstrength > self.solidstrength:
                     #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
                     #self.count = 5
 
                     #if not self.stopMoving: # If it was inbetween solids
                     coll_side = self.determineSide(collided)
+                    if coll_side == "top":
+                        newpos = collided.top_y()
+                        #print(f'1. {self.name}: {self.pos.y} vs new {collided.top_y()}')
+                        if newpos <= self.pos.y:
+                            #print(f'2. {self.name}: {self.pos.y} vs new {collided.top_y()}')
+                            self.pos.y = newpos
+                            #self.set_bot(collided.top_y())
+                            self.vel.y = self.originalVel.y * (-1)
                     if coll_side == "left": # left side of collidedd obj
                         newpos = collided.left_x() - self.width/2
                         if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                             if collided.vel.x == 0: # If collided object is not moving, just turn around
+                                self.pos.x = newpos
                                 #self.vel.x = 1
-                                self.vel.x *= -1
+                                #self.vel.x *= -1
+                                self.vel.x = self.originalVel.x * (-1)
                     if coll_side == "right":
                         newpos = collided.right_x() + self.width/2
                         if newpos >= self.pos.x:
                             if collided.vel.x == 0:
+                                self.pos.x = newpos
                                 #self.vel.x = 1
-                                self.vel.x *= -1
+                                self.vel.x = self.originalVel.x * (-1)
                         self.vel.x *= -1
                     if coll_side == "bot": # left side of collidedd obj
-                        newpos = collided.bot_y() - self.height
-                        if newpos <= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                            if collided.vel.y == 0: # If collided object is not moving, just turn around
-                                #self.vel.x = 1
-                                self.vel.y = self.originalVel.y * (-1)
+                        newpos = collided.bot_y() + self.height
+                        if newpos >= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                            #if collided.vel.y == 0: # If collided object is not moving, just turn around
+                            self.pos.y = newpos
+                            #self.vel.x = 1
+                            self.vel.y = self.originalVel.y * (-1)
         self.rect.midbottom = self.pos.realRound().asTuple()
         
 
@@ -232,8 +246,10 @@ class Platform(CustomSprite):
     def update(self):
         #round(self.pos)
         if self.vel.x != 0 or self.vel.y != 0:
-            self.originalsolidstrength = 9
-            self.solidstrength = 9
+            self.originalsolidstrength = 29.5
+            self.solidstrength = 29.5
+        if self.name == "small tester":
+            print(f'{self.solidstrength}')
         #self.pygamecolls(self.game.group_solid)
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -242,7 +258,7 @@ class Platform(CustomSprite):
     def updatePos(self, solid):
         super().updatePos(solid)
         self.pygamecolls(self.game.group_solid)
-        self.pygamecoll(self.game.group_solid)
+        #self.pygamecoll(self.game.group_solid)
 
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
@@ -355,7 +371,7 @@ class Box(CustomSprite):
         if self.beingHeld == False:
             #self.addedVel = vec(0,0)
             self.gravity = GRAVITY
-        self.pygamecoll(self.game.group_solid)
+        print(f'box: {self.solidstrength}')
     
 
 
@@ -367,17 +383,18 @@ class Box(CustomSprite):
 
 
 
-    def posCorrection(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+    #def posCorrection(self):
+     #   self.rect.midbottom = self.pos.realRound().asTuple()
+      #  self.pygamecoll(self.game.group_solid) # was moved down from update(). dunno if it caused problems
 
     def liftedBy(self,interacter):
         #if not pg.sprite.spritecollideany(self, self.game.group_solid):
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 4: 
-                self.pos.x = interacter.player.right_x() + self.width/2 + 4
+                self.pos.x = interacter.player.right_x() + self.width/2 + 1
         else:
             if abs(interacter.player.left_x() - self.right_x()) < 4: 
-                self.pos.x = interacter.player.left_x() - self.width/2 - 4
+                self.pos.x = interacter.player.left_x() - self.width/2 - 1
         # Setting how much box should be lifted
         #self.lift.y = -3
         #self.pos.y += self.lift.y       # Adding the pick UP effect
@@ -386,7 +403,7 @@ class Box(CustomSprite):
         #self.interacter.player.solidstrength = 6
         if not interacter.player.inAir:
             self.beingHeld = True
-            self.pos.y = interacter.player.pos.y - 5
+            self.pos.y = interacter.player.pos.y - 3
         else: 
             self.beingHeld = False
         self.rect.midbottom = self.pos.realRound().asTuple()

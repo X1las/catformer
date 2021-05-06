@@ -54,6 +54,11 @@ class CustomSprite(pg.sprite.Sprite):
     ignoreSol = None
     solidstrength = 0
     originalsolidstrength = 0
+    massHOR = 0
+    massVER = 0
+    ori_massHOR = massHOR
+    ori_massVER = massVER
+
     overwritevel = vec()
     overwrite = False
     update_order = 10
@@ -65,6 +70,9 @@ class CustomSprite(pg.sprite.Sprite):
     isPickedUp = False
     isPlatform = False
 
+    def resetMass(self):
+        self.massHOR = self.ori_massHOR
+        self.massVER = self.ori_massVER
 
     def init(self):
         self.new_vel = self.vel.copy()
@@ -83,6 +91,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def resetSprite(self):
+        self.resetMass
         if self.count < 0:
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
@@ -223,7 +232,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect = self.rect.inflate(inflation,inflation)
 
         #self.rect.x += r(self.vel.x)
-        self.rect.y -= 1
+        self.rect.y -= 2
         collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
 
         if collideds:
@@ -250,17 +259,19 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pygamecoll(self, group, ignoredSol = None):
-        inflationW = 2
+        inflationW = 0
         inflationH = 0
         self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.relativeVel().x)
-        self.rect.y += r(self.vel.y) 
+        self.rect.x += r(self.relativeVel().x*1.5)
+        self.rect.y += r(self.vel.y*1.5) 
         collideds = pg.sprite.spritecollide(self, group, False)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect = self.rect.inflate(-inflationW, -inflationH)
 
         if collideds:
             for collided in collideds:
-                if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength > self.solidstrength:
+                if collided != self and collided != ignoredSol and not self.isEnemy and collided.solidstrength >= self.solidstrength:
                     if group.has(self):
                         self.solidstrength = collided.solidstrength -1
                     self.count = 2
@@ -293,8 +304,6 @@ class CustomSprite(pg.sprite.Sprite):
                     #print(f'2 - acc in coll for {self.name} with {self.acc}')
                     
         
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect = self.rect.inflate(-inflationW, -inflationH)
 
     def determineSide(self, collided):
         leftcoll = abs(self.right_x() - collided.left_x())

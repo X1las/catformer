@@ -41,14 +41,14 @@ def createLevel():
 ''' Level 1 '''
 def createLevel1():
     # platforms
-    floor   = Platform(-200 , 600 , 6000 , 50 , 'p_floor')
+    floor   = Platform(-200 , 600 , 6000 , 50 ,'p_floor', floorplat = True )
     fatplat = Platform( 100 , 450 ,  150 , 40 , 'fatplat')
     p_2     = Platform( 300 , 590 ,  150 , 70 , 'p_2')
     p_3     = Platform( 500 , 300 ,  150 , 40 , 'p_3')
     p_4     = Platform( 700 , 450 ,  150 , 40 , 'p_4')
     p_5     = Platform( 900 , 400 ,  150 , 40 , 'p_5')
     # boxes
-    box1 = Box(200 , 400 , 44 , 44 , 'box_1')
+    box1 = Box(170 , 400 , 44 , 44 , 'box_1')
     #box2 = Box(130 , 500 , 44 , 44 , 'box_2')
 
     # buttons
@@ -79,7 +79,7 @@ def createLevel1():
         'vases':     [vase1],
         'goals':     [],
         'enemies':   [],
-        'water':     [water1],
+        'water':     [],#water1],
         'health':    [],
         'catnip':    []
     }
@@ -88,7 +88,7 @@ def createLevel1():
 ''' Level 2 '''
 def createLevel2():
     # platforms
-    floor   = Platform(-200 , 600 , 6000 , 50 , 'p_floor')
+    floor   = Platform(-200 , 600 , 6000 , 50 ,'p_floor', floorplat = True )
     fatplat = Platform( 100 , 500 ,  150 , 40 , 'fatplat')
     # boxes
     box1 = Box(150 , 400 , 44 , 44 , 'box_1')
