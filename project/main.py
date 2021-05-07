@@ -139,6 +139,9 @@ class Game:
         self.button4  = Button(400 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
         self.button4.startGame(self)
         '''
+        self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
+        self.catnip.startGame(self)
+
         self.health = PickUp(400, 400, 16, 16, 'health')                                          #
         self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
         self.health.startGame(self)
@@ -153,9 +156,9 @@ class Game:
         self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
         self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
         self.lever1.startGame(self)
-        ''' 
         self.water = Water(500, 400, 10, 10)    
         self.water.startGame(self)     
+        ''' 
         
         #
         self.refreshedInt_lever     = False                                                       

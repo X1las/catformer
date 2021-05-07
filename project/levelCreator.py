@@ -1,7 +1,7 @@
 # importing modules
 from Vector import Vec
 import pickle
-from subSprites import Box, Button, Lever, Platform, Vase, Water
+from subSprites import Box, Button, Lever, PickUp, Platform, Vase, Water
 
 ''' template '''
 def createLevel():
@@ -58,12 +58,15 @@ def createLevel1():
     lever1 = Lever(450 , 550 , 36 , 26 , 'lever1')
     # vases
     vase1 = Vase(fatplat , 'left' , 'v1')
-
     # goals
     # enemies
     # water
     water1 = Water(300 , 590 ,  150 , 70)
+    # health
+    health1 = PickUp(400, 400, 16, 16, 'health')                                          #
     # catnip
+    catnip1 = PickUp(200, 370, 16, 16, 'catnip')   
+
     # create dictionary
     level1 = {
         'name': 'level1',
@@ -80,8 +83,8 @@ def createLevel1():
         'goals':     [],
         'enemies':   [],
         'water':     [],#water1],
-        'health':    [],
-        'catnip':    []
+        'health':    [health1],
+        'catnip':    [catnip1]
     }
     return level1
 
