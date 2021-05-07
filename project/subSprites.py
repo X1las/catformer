@@ -584,8 +584,20 @@ class Lever(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_levers
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((0,200,200))
+
+        # create surface with correct size
+        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        # create sub-rectangles to load from spritesheet
+        left  = pg.Rect( 0,87,17,12)
+        right = pg.Rect(19,87,17,12)
+        rects = [left, right]
+        # load images from spritesheet
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        self.images = sheet.images_at(rects, (0,255,0))     
+        self.image_left  = pg.transform.scale(self.images[0], (self.width, self.height))
+        self.image_right = pg.transform.scale(self.images[1], (self.width, self.height))
+        self.image = self.image_left
+
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x,self.y)
 
@@ -594,7 +606,7 @@ class Lever(CustomSprite):
         if self.activated != True:
             self.activated = True
             self.deactivated = False
-            self.image.fill((255,255,255))
+            self.image = self.image_right
             if self.auto_deactivate:
                 t = Timer(2, self.deactivate)
                 t.start()
@@ -610,8 +622,8 @@ class Lever(CustomSprite):
         if self.deactivated != True:
             self.deactivated = True
             self.activated = False
-        
-            self.image.fill((0,200,200))
+            self.image = self.image_left
+
             if self.effect == "move":
                 self.target.vel.x = 0
         # whatever else it needs to deactivate
