@@ -49,6 +49,8 @@ class Game:
         self.click = False
         self.userName = ""
         self.inNameMenu = False
+        self.boundary = 600
+        self.isDamaged = False
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -413,7 +415,10 @@ class Game:
             # Runs all our methods on loop:
             self.events()  
             if self.paused:
-                self.displayPauseScreen()
+                if self.isDamaged:
+                    pass
+                else:
+                    self.displayPauseScreen()
             if not self.paused:                                              
                 self.update()
                 self.displayHUD()                                                       
@@ -468,7 +473,8 @@ class Game:
         #self.all_sprites.correctPositions()
         self.level_goal.endGoal(self.player)
         self.player.touchEnemy(self.group_damager)
-
+        if (self.player.pos.y > self.boundary):
+            self.player.takeDamage()
         # Updating Variables
         self.intWasCreated = False    
         self.refreshCount_prev = self.refreshCount
@@ -501,6 +507,7 @@ class Game:
                     self.refreshCount += 1
                 if event.key  == pg.K_p:
                     self.paused = not self.paused
+                    self.isDamaged = False
                                            
             if event.type == pg.KEYUP:
                 if event.key == pg.K_d:
@@ -616,6 +623,12 @@ class Game:
         self.pauseText2 = self.textToDisplay("Press P to resume", color= (0,0,0), bold= True)
         self.pauseText3 = self.textToDisplay("Press Q to quit", color= (0,0,0), bold= True)
 
+    
+    def damageScreen(self):
+        deathFont = pg.font.Font("gypsy-curse.regular.ttf", 70)
+        self.pauseText = deathFont.render("YOU DIED", True, (255, 0 ,0))
+        self.pauseText2 = self.textToDisplay("Press P to resume", color= (0,0,0), bold= True)
+        self.pauseText3 = self.textToDisplay("Press Q to quit", color= (0,0,0), bold= True)
 
 
     def textToDisplay(self, text, font = 'Comic Sans MS', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):

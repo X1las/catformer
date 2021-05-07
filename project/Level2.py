@@ -47,6 +47,8 @@ class Level:
         
         for p in self.platforms:
             p.startGame(self.game)
+            if (p.y > self.game.boundary):
+                self.game.boundary = p.y
         for p in self.boxes:
             p.startGame(self.game)
         for p in self.vases:
