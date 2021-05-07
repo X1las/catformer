@@ -785,7 +785,7 @@ class Hostile(CustomSprite):
         result = False
         if collideds:
             for collided in collideds:
-                if collided != self and collided.name != "p_floor" and self.massHOR <= collided.massHOR: #self.lessMassThan(collided):
+                if collided != self and collided.name != "p_floor" and self.ori_massHOR <= collided.massHOR: #self.lessMassThan(collided):
                     
                     #if self.solidstrength < collided.solidstrength:
                     #   self.solidstrength = collided.solidstrength -1
@@ -1231,12 +1231,15 @@ class AiEnemy(Hostile):
             elif self.playerLeft(): 
                 self.vel.x = - self.speed
                 self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+            else: 
+                self.vel.x = 0
         else:
             self.vel.x = 0
 
 
     def updatePos(self, group):
         self.pos +=  self.vel +  self.acc * 0.5
+        self.acc = vec(0,0)     
 
 
     def update(self):
@@ -1247,10 +1250,8 @@ class AiEnemy(Hostile):
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
-        
         self.detectPlayer()
         self.stopMoving = self.inbetweenSolids()
-        self.acc = vec(0,0)    
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.pygamecolls(self.game.group_solid)
         
@@ -1297,6 +1298,9 @@ class AiEnemy(Hostile):
                             if coll_side == "left": # left side of collidedd obj
                                 newpos = collided.left_x() - self.width/2
                                 if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                                    self.vel.x = 0
+                                    self.pos.x = newpos
+                                    """
                                     if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
                                         self.pos.x = newpos
                                         self.vel.x = copy.copy(collided.vel.x) #no copy
@@ -1306,12 +1310,16 @@ class AiEnemy(Hostile):
                                     #  self.vel.x *= -1
                                     if self.collides_left: #remove?
                                         self.vel.x *= 0
+                                    """
                                 self.massHOR = collided.massHOR - 1
                                 self.count = 1
                                     
                             if coll_side == "right":
                                 newpos = collided.right_x() + self.width/2
                                 if newpos >= self.pos.x:
+                                    self.vel.x = 0
+                                    self.pos.x = newpos
+                                    """
                                     if collided.vel.x !=  0:
                                         self.pos.x = newpos
                                         self.vel.x = copy.copy(collided.vel.x) # no copy
@@ -1321,9 +1329,10 @@ class AiEnemy(Hostile):
                                     #  self.vel.x *= -1
                                     if self.collides_right: #remove?
                                         self.vel.x *= 0
+                                    """
                                 self.massHOR = collided.massHOR - 1
                                     
-                                self.vel.x *= -1
+                                #self.vel.x *= -1
                                 self.count = 1
                         if self.massVER < collided.massVER:
                             coll_side = self.determineSide(collided)
