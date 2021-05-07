@@ -284,6 +284,7 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collideds:
                 #if self.isPlayer:
                 print(f'{collided.name} mass: {collided.massHOR}')
+                                                                    # Probably not the best solution
                 if collided != self and collided not in ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
                     #if group.has(self):
                      #   self.solidstrength = collided.solidstrength -1

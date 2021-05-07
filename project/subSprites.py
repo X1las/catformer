@@ -853,7 +853,7 @@ class PatrollingEnemy(Hostile):
         self.originalsolidstrength = self.solidstrength
         
         self.name = name
-        self.count = 5
+        self.count = 2
         self.init()
         self.isEnemy = True
         self.stopMoving = False
@@ -920,13 +920,15 @@ class PatrollingEnemy(Hostile):
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
         self.checkDist()
+        self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
-        self.collidingWithWall()
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.pygamecolls(self.game.group_solid)
         
 
 
     def posCorrection(self):
+        self.collidingWithWall()
         pass
         #self.pygamecolls(self.game.group_solid)
 
@@ -945,11 +947,12 @@ class PatrollingEnemy(Hostile):
                 if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
                     #if collided.solidstrength > self.solidstrength:
                     #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
-                    self.count = 5
 
                     if not self.stopMoving: # If it was inbetween solids
                         if self.massHOR < collided.massHOR:
                             coll_side = self.determineSide(collided)
+                            print(f'!!!!!!!!!!! ------ {self.name} added by {collided.name}')
+
                             if coll_side == "left": # left side of collidedd obj
                                 newpos = collided.left_x() - self.width/2
                                 if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
@@ -963,6 +966,7 @@ class PatrollingEnemy(Hostile):
                                     if self.collides_left: #remove?
                                         self.vel.x *= 0
                                 self.massHOR = collided.massHOR - 1
+                                self.count = 2
                                     
                             if coll_side == "right":
                                 newpos = collided.right_x() + self.width/2
@@ -979,6 +983,7 @@ class PatrollingEnemy(Hostile):
                                 self.massHOR = collided.massHOR - 1
                                     
                                 self.vel.x *= -1
+                                self.count = 2
                         if self.massVER < collided.massVER:
                             coll_side = self.determineSide(collided)
                                 
@@ -988,22 +993,27 @@ class PatrollingEnemy(Hostile):
                                 else: 
                                     self.pos.x = collided.right_x() + self.width/2
                                 self.massVER = collided.massVER - 1
+                                #self.count = 5
 
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):
-        inflation = 4
+        inflation = 6
         self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         result = False
         if collideds:
             for collided in collideds:
-                if collided != self and collided.name != "p_floor":
+                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
                      
-                    if self.solidstrength < collided.solidstrength:
-                        self.solidstrength = collided.solidstrength -1
-                        count = 2
+                    #if self.solidstrength < collided.solidstrength:
+                     #   self.solidstrength = collided.solidstrength -1
+                        #count = 2
+                    #if self.massVER < collided.massVER:
+                     #       self.massVER = collided.massVER - 1
                     coll_side = self.determineSide(collided)
+                    if self.massHOR < collided.massHOR:
+                            self.massHOR = collided.massHOR - 1
                     if coll_side == "left": # left side of collidedd obj
                         if self.collides_left:
                             self.vel.x *= 0
@@ -1021,9 +1031,8 @@ class PatrollingEnemy(Hostile):
         
 
     def collidingWithWall(self):
-
-        self.stopMoving = self.inbetweenSolids()
         self.pygamecolls(self.game.group_solid)
+
         self.collides_left = False
         self.collides_right = False
 
