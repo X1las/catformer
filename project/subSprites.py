@@ -967,24 +967,24 @@ class PatrollingEnemy(Hostile):
 
         # get spritesheet
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
-        # get individual sprites and add to list
-        self.images_right = []
-        self.images_right.append(wormSheet.image_at((  4, 36, 29, 28), (0,0,0)))    # (x,y,width,height)
-        self.images_right.append(wormSheet.image_at(( 36, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at(( 68, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at((100, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at((132, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at((164, 36, 29, 28), (0,0,0)))
+        # create sub-rectangles to load from water spritesheet
+        rect1 = pg.Rect(  4, 36, 29, 28)
+        rect2 = pg.Rect( 36, 36, 29, 28)
+        rect3 = pg.Rect( 68, 36, 29, 28)
+        rect4 = pg.Rect(100, 36, 29, 28)
+        rect5 = pg.Rect(132, 36, 29, 28)
+        rect6 = pg.Rect(164, 36, 29, 28)
+        rects = [rect1, rect2, rect3, rect4, rect5, rect6]
+        # load images from spritesheet
+        self.images_right = wormSheet.images_at(rects, colorkey=(0,0,0))
         self.images_left = []
         for img in self.images_right:
             self.images_left.append(pg.transform.flip(img,True,False))
-
         self.imageIndex = 0
         self.image = self.images_right[self.imageIndex]
     
         # scale image to correct size
         self.image = pg.transform.scale(self.image, (self.width, self.height))
-        
         
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
@@ -1194,20 +1194,21 @@ class AiEnemy(Hostile):
         self.groups = game.all_sprites, game.group_damager, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        # get spritesheet
+         # get spritesheet
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
-        # get individual sprites and add to list
-        self.images_right = []
-        self.images_right.append(wormSheet.image_at((  4, 36, 29, 28), (0,0,0)))    # (x,y,width,height)
-        self.images_right.append(wormSheet.image_at(( 36, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at(( 68, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at((100, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at((132, 36, 29, 28), (0,0,0)))
-        self.images_right.append(wormSheet.image_at((164, 36, 29, 28), (0,0,0)))
+        # create sub-rectangles to load from water spritesheet
+        rect1 = pg.Rect(  4, 36, 29, 28)
+        rect2 = pg.Rect( 36, 36, 29, 28)
+        rect3 = pg.Rect( 68, 36, 29, 28)
+        rect4 = pg.Rect(100, 36, 29, 28)
+        rect5 = pg.Rect(132, 36, 29, 28)
+        rect6 = pg.Rect(164, 36, 29, 28)
+        rects = [rect1, rect2, rect3, rect4, rect5, rect6]
+        # load images from spritesheet
+        self.images_right = wormSheet.images_at(rects, colorkey=(0,0,0))
         self.images_left = []
         for img in self.images_right:
             self.images_left.append(pg.transform.flip(img,True,False))
-
         self.imageIndex = 0
         self.image = self.images_right[self.imageIndex]
     
