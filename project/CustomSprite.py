@@ -282,7 +282,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.x += r(self.relativeVel().x*1.5)
-        self.rect.y += r(self.vel.y*1.5) 
+        self.rect.y += r(self.vel.y) 
         collideds = pg.sprite.spritecollide(self, group, False)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect = self.rect.inflate(-inflationW, -inflationH)
@@ -305,6 +305,7 @@ class CustomSprite(pg.sprite.Sprite):
                             if newpos < self.pos.y:
                                 self.set_bot(collided.top_y())
                                 self.vel.y = 0
+                                self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
 
@@ -314,6 +315,7 @@ class CustomSprite(pg.sprite.Sprite):
                             if newpos > self.pos.y:
                                 self.pos.y = newpos
                                 self.vel.y = self.addedVel.y
+                                self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
                     if self.massHOR < collided.massHOR:

@@ -38,8 +38,8 @@ class Player(CustomSprite):
     collides_left = False; collides_right = False
     
     name = "player"
-    
-
+    canjump = True
+    jumpcounter = 0
 
     def __init__(self, spawn, name="player"):
         
@@ -115,6 +115,14 @@ class Player(CustomSprite):
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
         #self.massHOR = self.ori_massHOR
+        if not self.inAir:
+            self.jumpcounter += 1
+        else:
+            self.jumpcounter = 0
+        if self.jumpcounter > 10:
+            self.canjump = True
+        else:
+            self.canjump = False
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.vel += self.addedVel
@@ -139,7 +147,8 @@ class Player(CustomSprite):
                 #print("WALKING RIGHT")
 
             self.acc.x = PLAYER_ACC                                          
-        if keys[pg.K_SPACE] and not self.inAir:                                                 
+        if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
+            #self.jumpcounter = 0
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP 
 
@@ -213,8 +222,8 @@ class Player(CustomSprite):
     def posCorrection(self):
         #pass
         #print(f'player mass: {self.massHOR}')
-        if self.can_fall_and_move:
-            self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
+        #if self.can_fall_and_move:
+        self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
         self.ignoredSolids = []
         #self.count -= 1
         #if self.count <= 0:
