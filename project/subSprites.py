@@ -347,11 +347,12 @@ class Box(CustomSprite):
         if self.has_collided:
             #if not self.isPickedUp:
             """ DO NOT DELETE """
-            self.new_vel.x = self.interacter.vel.x
-            self.new_acc.x = self.interacter.acc.x
+            self.new_vel = self.interacter.vel.copy()
+            self.new_acc = self.interacter.acc.copy()
             self.rect.midbottom = self.pos.realRound().asTuple()
             if self.beingHeld:
                 self.vel.x = self.new_vel.x
+                self.vel.y = 0
                 self.acc.x = self.new_acc.x
                 self.gravity = 0
             """"""
@@ -915,7 +916,7 @@ class PatrollingEnemy(Hostile):
             self.vel.x = -1
             self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
 
-        
+        # onlt do at init?
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
         self.checkDist()
@@ -947,42 +948,46 @@ class PatrollingEnemy(Hostile):
                     self.count = 5
 
                     if not self.stopMoving: # If it was inbetween solids
-                        coll_side = self.determineSide(collided)
-                        if coll_side == "left": # left side of collidedd obj
-                            newpos = collided.left_x() - self.width/2
-                            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                    self.pos.x = newpos
-                                    self.vel.x = copy.copy(collided.vel.x) #no copy
-                                    self.acc.x = collided.acc.x
-                                if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_left: #remove?
-                                    self.vel.x *= 0
-                            self.massHOR = collided.massHOR - 1
+                        if self.massHOR < collided.massHOR:
+                            coll_side = self.determineSide(collided)
+                            if coll_side == "left": # left side of collidedd obj
+                                newpos = collided.left_x() - self.width/2
+                                if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                                    if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                        self.pos.x = newpos
+                                        self.vel.x = copy.copy(collided.vel.x) #no copy
+                                        self.acc.x = collided.acc.x
+                                    if collided.vel.x == 0: # If collided object is not moving, just turn around
+                                        self.vel.x = 1
+                                        self.vel.x *= -1
+                                    if self.collides_left: #remove?
+                                        self.vel.x *= 0
+                                self.massHOR = collided.massHOR - 1
+                                    
+                            if coll_side == "right":
+                                newpos = collided.right_x() + self.width/2
+                                if newpos >= self.pos.x:
+                                    if collided.vel.x !=  0:
+                                        self.pos.x = newpos
+                                        self.vel.x = copy.copy(collided.vel.x) # no copy
+                                        self.acc.x = collided.acc.x
+                                    if collided.vel.x == 0:
+                                        self.vel.x = 1
+                                        self.vel.x *= -1
+                                    if self.collides_right: #remove?
+                                        self.vel.x *= 0
+                                self.massHOR = collided.massHOR - 1
+                                    
+                                self.vel.x *= -1
+                        if self.massVER < collided.massVER:
+                            coll_side = self.determineSide(collided)
                                 
-                        if coll_side == "right":
-                            newpos = collided.right_x() + self.width/2
-                            if newpos >= self.pos.x:
-                                if collided.vel.x !=  0:
-                                    self.pos.x = newpos
-                                    self.vel.x = copy.copy(collided.vel.x) # no copy
-                                    self.acc.x = collided.acc.x
-                                if collided.vel.x == 0:
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_right: #remove?
-                                    self.vel.x *= 0
-                            self.massHOR = collided.massHOR - 1
-                                
-                            self.vel.x *= -1
-                        elif coll_side == "bot":
-                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                                self.pos.x = collided.left_x() - self.width/2
-                            else: 
-                                self.pos.x = collided.right_x() + self.width/2
-                            self.massVER = collided.massVER - 1
+                            if coll_side == "bot":
+                                if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                    self.pos.x = collided.left_x() - self.width/2
+                                else: 
+                                    self.pos.x = collided.right_x() + self.width/2
+                                self.massVER = collided.massVER - 1
 
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):

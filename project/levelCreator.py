@@ -92,7 +92,7 @@ def createLevel1():
 def createLevel2():
     # platforms
     floor   = Platform(-200 , 600 , 6000 , 50 ,'p_floor', floorplat = True )
-    fatplat = Platform( 100 , 500 ,  150 , 40 , 'fatplat')
+    fatplat = Platform( 100 , 480 ,  150 , 40 , 'fatplat')
     # boxes
     box1 = Box(150 , 400 , 44 , 44 , 'box_1')
     # buttons
@@ -111,7 +111,7 @@ def createLevel2():
     levelName = {
         'name': 'level2',
         'settings': {
-            'spawn': Vec(370,350),
+            'spawn': Vec(330,350),
             'length': 5000,
             'track': 'nyan.mp3'
         },
