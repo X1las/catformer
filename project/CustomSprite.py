@@ -301,7 +301,6 @@ class CustomSprite(pg.sprite.Sprite):
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
                     if self.massHOR < collided.massHOR:
-                    
                         if coll_side == "left":
                             newpos = collided.left_x() - self.width/2 #Left side of object being collided with
                             if newpos <= self.pos.x:
