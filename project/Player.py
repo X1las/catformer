@@ -27,7 +27,7 @@ class Player(CustomSprite):
     locked              = False
     can_fall_and_move   = True
 
-    width               = 38 
+    width               = 47 
     height              = 46
     vel                 = vec(0, 0)   
     acc                 = vec(0, 0)
@@ -67,7 +67,7 @@ class Player(CustomSprite):
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from water spritesheet
         sit  = pg.Rect(0,151,38,46)
-        walk = pg.Rect(39,153,46,44)
+        walk = pg.Rect(40,151,47,46)
         #interact = pg.Rect(32,117,16,16)
         #jump = 
         rects = [sit, walk]#, interact]
