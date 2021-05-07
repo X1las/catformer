@@ -95,9 +95,9 @@ class Player(CustomSprite):
         self.lives -= 1
         self.respawn()
         self.game.resetCamera()
-        self.game.damageScreen()
+        #self.game.damageScreen()
         self.game.isDamaged = True
-        self.game.paused = True
+        #self.game.paused = True
         return self.lives
 
 
@@ -147,7 +147,7 @@ class Player(CustomSprite):
         super().resetRects()
 
     def inbetweenSolids(self):
-        inflation = 4
+        inflation = 0
         self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
