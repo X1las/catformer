@@ -142,7 +142,7 @@ class Player(CustomSprite):
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
                         if self.collides_left:
-                            print(f'{collided.name} vel: {collided.vel}')
+                            #print(f'{collided.name} vel: {collided.vel}')
                             if round(collided.vel.x) != 0:
                                 moving = True
                             if moving:
@@ -192,7 +192,7 @@ class Player(CustomSprite):
 
     def posCorrection(self):
         #pass
-        print(f'player mass: {self.massHOR}')
+        #print(f'player mass: {self.massHOR}')
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
         self.ignoredSolids = []
