@@ -774,7 +774,7 @@ class Hostile(CustomSprite):
     pass
 
 
-   
+
 
 
     def inbetweenSolids(self):
@@ -1121,7 +1121,7 @@ class PatrollingEnemy(Hostile):
                             else: 
                                 self.pos.x = collided.right_x() + self.width/2
                             #self.count = 5
-     
+    
 
     def posCorrection(self):
         self.collidingWithWall()
@@ -1143,8 +1143,9 @@ class PatrollingEnemy(Hostile):
 
 # AI Enemy SubClass 
 class AiEnemy(Hostile):
-    def __init__(self,x,y, width, height, game, name = "enemyai"):
+    def __init__(self,x,y, width, height, game, speed = 1, name = "enemyai"):
         self._layer = 10
+        self.speed = speed
         self.x = x
         self.width          = width; self.height = height
         self.game = game
@@ -1157,38 +1158,38 @@ class AiEnemy(Hostile):
         self.collides_left = False
         self.solidstrength = 3
         self.originalsolidstrength = self.solidstrength
-        
+        self.target = None
         self.name = name
         self.count = 5
         self.init()
         self.isEnemy = True
         self.stopMoving = False
         #self.facing = None
+    
+    def onSameLevel(self):
+        #result = True
+        return (abs(self.target.pos.y - self.pos.y) < 125)
+        #   result = False
+        #return result
 
-    def onSameLevel(self, game):
-        result = True
-        if (abs(game.player.pos.y - self.pos.y) > 125):
-            result = False
-        return result
-
-    def playerLeft(self, game):
-        result = False
-        if (game.player.pos.x < self.pos.x and self.pos.x - game.player.pos.x < 200):
-            result = True
-        return result
+    def playerLeft(self):
+        #result = False
+        return (self.target.pos.x < self.pos.x and abs(self.target.pos.x - self.pos.x) < 200)
+        #   result = True
+        #return result
             
-    def onPlayer(self, game):
-        result = False
-        if (abs(game.player.pos.x - self.pos.x) <5):
-            result = True
-        return result
+    def onPlayer(self):
+        #result = False
+        return (abs(self.target.pos.x - self.pos.x) <5)
+        #    result = True
+        #return result
 
-    def playerRight(self, game):
-        result = False
-        if (game.player.pos.x > self.pos.x and game.player.pos.x - self.pos.x < 200):
-            result = True
-        return result
-
+    def playerRight(self):
+        #result = False
+        return (self.target.pos.x > self.pos.x and abs(self.target.pos.x - self.pos.x) < 200)
+        #   result = True
+        #return result
+    
     def startGame(self, game):
         self.game = game
         self.groups = game.all_sprites, game.group_damager, game.group_solid
@@ -1215,10 +1216,23 @@ class AiEnemy(Hostile):
         # scale image to correct size
         self.image = pg.transform.scale(self.image, (self.width, self.height))
         
-        
+        self.target = self.game.player
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
 
+    def detectPlayer(self):
+
+        if self.onSameLevel():
+            if self.onPlayer():
+                self.vel.x = 0
+            elif self.playerRight():
+                self.vel.x = self.speed
+                self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
+            elif self.playerLeft(): 
+                self.vel.x = - self.speed
+                self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+        else:
+            self.vel.x = 0
 
 
     def updatePos(self, group):
@@ -1231,21 +1245,10 @@ class AiEnemy(Hostile):
             self.imageIndex = 0
         
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
-        if self.onSameLevel(self.game):
-            if self.onPlayer(self.game):
-                self.vel.x = 0
-            elif self.playerRight(self.game):
-                self.vel.x = 1
-                self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
-            elif self.playerLeft(self.game): 
-                self.vel.x = -1
-                self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
-        else:
-            self.vel.x = 0
-
         
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
+        self.detectPlayer()
         self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -1266,8 +1269,75 @@ class AiEnemy(Hostile):
         self.pygamecolls(self.game.group_solid)
 
         self.collides_left = False
+    
+    
         self.collides_right = False
-        
+
+
+# The part that checks whether to just turn around or be pushed
+    def pygamecolls(self, group, ignoredSol = None):
+        inflation = 0
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+
+                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
+                    #if collided.solidstrength > self.solidstrength:
+                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
+
+                    if not self.stopMoving: # If it was inbetween solids
+                        if self.massHOR < collided.massHOR:
+                            coll_side = self.determineSide(collided)
+
+                            if coll_side == "left": # left side of collidedd obj
+                                newpos = collided.left_x() - self.width/2
+                                if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                                    if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                        self.pos.x = newpos
+                                        self.vel.x = copy.copy(collided.vel.x) #no copy
+                                        self.acc.x = collided.acc.x
+                                    if collided.vel.x == 0: # If collided object is not moving, just turn around
+                                       self.vel.x = 0
+                                    #  self.vel.x *= -1
+                                    if self.collides_left: #remove?
+                                        self.vel.x *= 0
+                                self.massHOR = collided.massHOR - 1
+                                self.count = 1
+                                    
+                            if coll_side == "right":
+                                newpos = collided.right_x() + self.width/2
+                                if newpos >= self.pos.x:
+                                    if collided.vel.x !=  0:
+                                        self.pos.x = newpos
+                                        self.vel.x = copy.copy(collided.vel.x) # no copy
+                                        self.acc.x = collided.acc.x
+                                    if collided.vel.x == 0:
+                                       self.vel.x = 0
+                                    #  self.vel.x *= -1
+                                    if self.collides_right: #remove?
+                                        self.vel.x *= 0
+                                self.massHOR = collided.massHOR - 1
+                                    
+                                self.vel.x *= -1
+                                self.count = 1
+                        if self.massVER < collided.massVER:
+                            coll_side = self.determineSide(collided)
+                                
+                            if coll_side == "bot":
+                                if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                    self.pos.x = collided.left_x() - self.width/2
+                                else: 
+                                    self.pos.x = collided.right_x() + self.width/2
+                                self.massVER = collided.massVER - 1
+                                #self.count = 5
+
+
+
     """
     # The part that checks whether to just turn around or be pushed
     def pygamecolls(self, group, ignoredSol = None):
