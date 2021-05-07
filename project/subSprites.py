@@ -1250,7 +1250,6 @@ class AiEnemy(Hostile):
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
-        print(f'vel???? {self.vel}')
         self.detectPlayer()
         self.stopMoving = self.inbetweenSolids()
         self.rect.midbottom = self.pos.realRound().asTuple()
