@@ -9,6 +9,7 @@ from settings import *
 from Vector import Vec
 from CustomSprite import CustomSprite
 from random import choice, randrange, uniform
+import Spritesheet as ss
 
 # Variables
 vec = Vec
@@ -26,8 +27,8 @@ class Player(CustomSprite):
     locked              = False
     can_fall_and_move   = True
 
-    width               = 30 
-    height              = 40
+    width               = 38 
+    height              = 46
     vel                 = vec(0, 0)   
     acc                 = vec(0, 0)
     dist_from_right     = 0
@@ -49,7 +50,6 @@ class Player(CustomSprite):
         self.name = name
 
 
-        self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
 
         self.prevpos = vec() # delete
         self.prevvel = vec()
@@ -62,6 +62,27 @@ class Player(CustomSprite):
         self.game       = game
         self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
+        
+        # create surface with correct size
+        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        # create sub-rectangles to load from water spritesheet
+        sit  = pg.Rect(0,151,38,46)
+        walk = pg.Rect(47,155,37,46)
+        #interact = pg.Rect(32,117,16,16)
+        #jump = 
+        rects = [sit, walk]#, interact]
+        # load images from spritesheet
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        images = sheet.images_at(rects,(0,255,0))
+        self.image_sit    = images[0]
+        self.image_walk_r = images[1]
+        self.image_walk_l = pg.transform.flip (self.image_walk_r, True, False)
+        self.image_sit    = pg.transform.scale(self.image_sit,    (self.width, self.height))
+        self.image_walk_r = pg.transform.scale(self.image_walk_r, (self.width, self.height))
+        self.image_walk_l = pg.transform.scale(self.image_walk_l, (self.width, self.height))
+        self.image = self.image_sit
+
+        self.rect = self.image.get_rect()
         self.rect.midbottom         = (self.spawn.x,self.spawn.y)
 
     def respawn(self):
@@ -93,6 +114,7 @@ class Player(CustomSprite):
 
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
+        #self.massHOR = self.ori_massHOR
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.vel += self.addedVel
@@ -107,11 +129,13 @@ class Player(CustomSprite):
         if keys[pg.K_LEFT]:                                             # If it's left arrow
             if self.locked == False:
                 self.facing = "left"
+                self.image = self.image_walk_l
                 #print("WALKING LEFT")
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if self.locked == False:
                 self.facing = "right"
+                self.image = self.image_walk_r
                 #print("WALKING RIGHT")
 
             self.acc.x = PLAYER_ACC                                          
@@ -128,6 +152,7 @@ class Player(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         result = False
+        moving = False
         if collideds:
             for collided in collideds:
                 if collided != self and collided.name != "p_floor":
@@ -137,12 +162,19 @@ class Player(CustomSprite):
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
                         if self.collides_left:
-                            self.takeDamage()
+                            #print(f'{collided.name} vel: {collided.vel}')
+                            if round(collided.vel.x) != 0:
+                                moving = True
+                            if moving:
+                                self.takeDamage()
                             result = True
                         self.collides_right = True
                     if coll_side == "right":
                         if self.collides_right:
-                            self.takeDamage()
+                            if round(collided.vel.x) != 0:
+                                moving = True
+                            if moving:
+                                self.takeDamage()
                             result = True
                             self.vel.x *= 0
                         self.collides_left = True
@@ -180,7 +212,7 @@ class Player(CustomSprite):
 
     def posCorrection(self):
         #pass
-        print(f'player mass: {self.massHOR}')
+        #print(f'player mass: {self.massHOR}')
         if self.can_fall_and_move:
             self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
         self.ignoredSolids = []

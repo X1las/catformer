@@ -347,11 +347,12 @@ class Box(CustomSprite):
         if self.has_collided:
             #if not self.isPickedUp:
             """ DO NOT DELETE """
-            self.new_vel.x = self.interacter.vel.x
-            self.new_acc.x = self.interacter.acc.x
+            self.new_vel = self.interacter.vel.copy()
+            self.new_acc = self.interacter.acc.copy()
             self.rect.midbottom = self.pos.realRound().asTuple()
             if self.beingHeld:
                 self.vel.x = self.new_vel.x
+                self.vel.y = 0
                 self.acc.x = self.new_acc.x
                 self.gravity = 0
             """"""
@@ -381,8 +382,8 @@ class Box(CustomSprite):
 
 
     #def posCorrection(self):
-     #   self.rect.midbottom = self.pos.realRound().asTuple()
-      #  self.pygamecoll(self.game.group_solid) # was moved down from update(). dunno if it caused problems
+    #   self.rect.midbottom = self.pos.realRound().asTuple()
+    #  self.pygamecoll(self.game.group_solid) # was moved down from update(). dunno if it caused problems
 
     def liftedBy(self,interacter):
         #if not pg.sprite.spritecollideany(self, self.game.group_solid):
@@ -403,6 +404,7 @@ class Box(CustomSprite):
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 3
             self.interacter.player.massHOR = self.ori_massHOR + 1
+            self.interacter.player.count = 1
             #self.interacter.player.ignoredSolids.append(self)
         else: 
             self.beingHeld = False
@@ -771,6 +773,104 @@ class PickUp(CustomSprite):
 class Hostile(CustomSprite):
     pass
 
+
+   
+
+
+    def inbetweenSolids(self):
+        inflation = 10
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect = self.rect.inflate(inflation,inflation)
+        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
+        result = False
+        if collideds:
+            for collided in collideds:
+                if collided != self and collided.name != "p_floor" and self.massHOR <= collided.massHOR: #self.lessMassThan(collided):
+                    
+                    #if self.solidstrength < collided.solidstrength:
+                    #   self.solidstrength = collided.solidstrength -1
+                        #count = 2
+                    #if self.massVER < collided.massVER:
+                    #       self.massVER = collided.massVER - 1
+                    coll_side = self.determineSide(collided)
+                    if self.massHOR < collided.massHOR:
+                            self.massHOR = collided.massHOR - 1
+                    if coll_side == "left": # left side of collidedd obj
+                        if self.collides_left:
+                            self.vel.x *= 0
+                            result = True
+                        self.collides_right = True
+                    if coll_side == "right":
+                        if self.collides_right:
+                            result = True
+                            self.vel.x *= 0
+                        self.collides_left = True
+        self.rect = self.rect.inflate(-inflation,-inflation)
+        
+        return result      
+
+    # The part that checks whether to just turn around or be pushed
+    def pygamecolls(self, group, ignoredSol = None):
+        inflation = 0
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+
+                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
+                    #if collided.solidstrength > self.solidstrength:
+                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
+
+                    if not self.stopMoving: # If it was inbetween solids
+                        if self.massHOR < collided.massHOR:
+                            coll_side = self.determineSide(collided)
+
+                            if coll_side == "left": # left side of collidedd obj
+                                newpos = collided.left_x() - self.width/2
+                                if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                                    if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                        self.pos.x = newpos
+                                        self.vel.x = copy.copy(collided.vel.x) #no copy
+                                        self.acc.x = collided.acc.x
+                                    if collided.vel.x == 0: # If collided object is not moving, just turn around
+                                        self.vel.x = 1
+                                        self.vel.x *= -1
+                                    if self.collides_left: #remove?
+                                        self.vel.x *= 0
+                                self.massHOR = collided.massHOR - 1
+                                self.count = 2
+                                    
+                            if coll_side == "right":
+                                newpos = collided.right_x() + self.width/2
+                                if newpos >= self.pos.x:
+                                    if collided.vel.x !=  0:
+                                        self.pos.x = newpos
+                                        self.vel.x = copy.copy(collided.vel.x) # no copy
+                                        self.acc.x = collided.acc.x
+                                    if collided.vel.x == 0:
+                                        self.vel.x = 1
+                                        self.vel.x *= -1
+                                    if self.collides_right: #remove?
+                                        self.vel.x *= 0
+                                self.massHOR = collided.massHOR - 1
+                                    
+                                self.vel.x *= -1
+                                self.count = 2
+                        if self.massVER < collided.massVER:
+                            coll_side = self.determineSide(collided)
+                                
+                            if coll_side == "bot":
+                                if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                    self.pos.x = collided.left_x() - self.width/2
+                                else: 
+                                    self.pos.x = collided.right_x() + self.width/2
+                                self.massVER = collided.massVER - 1
+                                #self.count = 5
+
 # Water SubClass - Inherits from Hostile
 class Water(Hostile):
     def __init__(self,x,y, width, height, name = None): 
@@ -851,7 +951,7 @@ class PatrollingEnemy(Hostile):
         self.originalsolidstrength = self.solidstrength
         
         self.name = name
-        self.count = 5
+        self.count = 2
         self.init()
         self.isEnemy = True
         self.stopMoving = False
@@ -914,110 +1014,31 @@ class PatrollingEnemy(Hostile):
             self.vel.x = -1
             self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
 
-        
+        # onlt do at init?
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
         self.checkDist()
+        self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
-        self.collidingWithWall()
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.pygamecolls(self.game.group_solid)
         
 
 
     def posCorrection(self):
+        self.collidingWithWall()
         pass
         #self.pygamecolls(self.game.group_solid)
 
-    # The part that checks whether to just turn around or be pushed
-    def pygamecolls(self, group, ignoredSol = None):
-        inflation = 0
-        self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
-        collideds = pg.sprite.spritecollide(self, group, False)
-
-        if collideds:
-            for collided in collideds:
-
-                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
-                    #if collided.solidstrength > self.solidstrength:
-                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
-                    self.count = 5
-
-                    if not self.stopMoving: # If it was inbetween solids
-                        coll_side = self.determineSide(collided)
-                        if coll_side == "left": # left side of collidedd obj
-                            newpos = collided.left_x() - self.width/2
-                            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                    self.pos.x = newpos
-                                    self.vel.x = copy.copy(collided.vel.x) #no copy
-                                    self.acc.x = collided.acc.x
-                                if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_left: #remove?
-                                    self.vel.x *= 0
-                            self.massHOR = collided.massHOR - 1
-                                
-                        if coll_side == "right":
-                            newpos = collided.right_x() + self.width/2
-                            if newpos >= self.pos.x:
-                                if collided.vel.x !=  0:
-                                    self.pos.x = newpos
-                                    self.vel.x = copy.copy(collided.vel.x) # no copy
-                                    self.acc.x = collided.acc.x
-                                if collided.vel.x == 0:
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_right: #remove?
-                                    self.vel.x *= 0
-                            self.massHOR = collided.massHOR - 1
-                                
-                            self.vel.x *= -1
-                        elif coll_side == "bot":
-                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                                self.pos.x = collided.left_x() - self.width/2
-                            else: 
-                                self.pos.x = collided.right_x() + self.width/2
-                            self.massVER = collided.massVER - 1
 
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
-    def inbetweenSolids(self):
-        inflation = 4
-        self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
-        result = False
-        if collideds:
-            for collided in collideds:
-                if collided != self and collided.name != "p_floor":
-                     
-                    if self.solidstrength < collided.solidstrength:
-                        self.solidstrength = collided.solidstrength -1
-                        count = 2
-                    coll_side = self.determineSide(collided)
-                    if coll_side == "left": # left side of collidedd obj
-                        if self.collides_left:
-                            self.vel.x *= 0
-                            result = True
-                        self.collides_right = True
-                    if coll_side == "right":
-                        if self.collides_right:
-                            result = True
-                            self.vel.x *= 0
-                        self.collides_left = True
-        self.rect = self.rect.inflate(-inflation,-inflation)
-        
-        return result           
+    
 
         
 
     def collidingWithWall(self):
-
-        self.stopMoving = self.inbetweenSolids()
         self.pygamecolls(self.game.group_solid)
+
         self.collides_left = False
         self.collides_right = False
 
@@ -1126,11 +1147,16 @@ class AiEnemy(Hostile):
         
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
+        self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
-        self.collidingWithWall()
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.pygamecolls(self.game.group_solid)
         
-
+        #self.acc = vec(0,0)    
+        #self.collidingWithWall()
+        #self.rect.midbottom = self.pos.realRound().asTuple()
+        
+    """
     # The part that checks whether to just turn around or be pushed
     def pygamecolls(self, group, ignoredSol = None):
         inflation = 0
@@ -1175,7 +1201,7 @@ class AiEnemy(Hostile):
                                 if self.collides_right: #remove?
                                     self.vel.x *= 0
                             self.vel.x *= -1
- 
+    
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     def inbetweenSolids(self):
         inflation = 4
@@ -1201,15 +1227,25 @@ class AiEnemy(Hostile):
                             self.vel.x *= 0
                         self.collides_left = True
         self.rect = self.rect.inflate(-inflation,-inflation)
-          
+        
         return result           
- 
+    """
+
+
+    def posCorrection(self):
+        self.collidingWithWall()
+        pass
+        #self.pygamecolls(self.game.group_solid)
+
+
+    # Will make the enemy stand still if inbetween solids (instead of vibrating)
+    
+
         
 
     def collidingWithWall(self):
-
-        self.stopMoving = self.inbetweenSolids()
         self.pygamecolls(self.game.group_solid)
+
         self.collides_left = False
         self.collides_right = False
 

@@ -94,7 +94,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def resetSprite(self):
-        if self.count < 0:
+        if self.count <= 0:
             self.resetMass()
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
@@ -198,9 +198,8 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pickupSprite(self,  agents, turn, justPickedUp):
         # should ckeck which box is closest
-            
+        canpickup = True
         collided = pg.sprite.spritecollide(self, agents, False)
-        
         if collided: 
             if turn:
                 for collided_obj in collided:
@@ -208,10 +207,14 @@ class CustomSprite(pg.sprite.Sprite):
                     collided_obj.rect.y -= 1
                     # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
                     self.game.group_solid.remove(collided_obj)
-                    testcol = pg.sprite.spritecollideany(collided_obj, self.game.group_solid)
+                    testcol = pg.sprite.spritecollide(collided_obj, self.game.group_solid, False)
                     self.game.group_solid.add(collided_obj)
-                    
-                    if not testcol:
+                    for i in testcol:
+                        side = i.determineSide(collided_obj)
+                        if side == "top":
+                            canpickup = False
+
+                    if canpickup:
                 
                         self.colliding = True
                         if justPickedUp:
@@ -222,6 +225,7 @@ class CustomSprite(pg.sprite.Sprite):
                     collided_obj.rect.y += 1 
             else:
                 self.colliding = False
+                #self.player.massVER = self.player.ori_massVER
 
 
     def relativeVel(self):
@@ -277,16 +281,19 @@ class CustomSprite(pg.sprite.Sprite):
 
         if collideds:
             for collided in collideds:
-                if self.isPlayer:
-                    print(f'{collided.name} mass: {collided.massHOR}')
+                #if self.isPlayer:
+                #print(f'{collided.name} mass: {collided.massHOR}')
+                                                                    # Probably not the best solution
                 if collided != self and collided not in ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
                     #if group.has(self):
                      #   self.solidstrength = collided.solidstrength -1
                     coll_side = self.determineSide(collided)
                     if self.massVER < collided.massVER:
-                        self.count = 2
+                        #print(f' ------ {self.name} added by {collided.name}')
                         if coll_side == "top":
                             newpos = collided.top_y()
+                            
+                            self.count = 2
                             if newpos < self.pos.y:
                                 self.set_bot(collided.top_y())
                                 self.vel.y = 0
@@ -295,6 +302,7 @@ class CustomSprite(pg.sprite.Sprite):
 
                         if coll_side == "bot":
                             newpos =  collided.bot_y() + self.height 
+                            self.count = 2
                             if newpos > self.pos.y:
                                 self.pos.y = newpos
                                 self.vel.y = self.addedVel.y
@@ -302,6 +310,7 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.massVER = collided.massVER - 1
                     if self.massHOR < collided.massHOR:
                         if coll_side == "left":
+                            self.count = 2
                             newpos = collided.left_x() - self.width/2 #Left side of object being collided with
                             if newpos <= self.pos.x:
                                 self.pos.x = collided.left_x() - self.width/2
@@ -311,6 +320,7 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.massHOR = collided.massHOR - 1
 
                         if coll_side == "right":
+                            self.count = 2
                             newpos = collided.right_x() + self.width/2
                             if newpos >= self.pos.x:
                                 self.pos.x = collided.right_x() + self.width/2
