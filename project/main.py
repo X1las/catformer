@@ -130,8 +130,8 @@ class Game:
         
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
         self.enemy.startGame(self)
-        #self.aienemy = AiEnemy(20, 550,26, 36, 200, name =  "ai1")                       #      
-        #self.aienemy.startGame(self)
+        self.aienemy = AiEnemy(20, 550,26, 36, 200, name =  "ai1")                       #      
+        self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(700 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
