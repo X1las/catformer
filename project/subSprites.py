@@ -951,7 +951,6 @@ class PatrollingEnemy(Hostile):
                     if not self.stopMoving: # If it was inbetween solids
                         if self.massHOR < collided.massHOR:
                             coll_side = self.determineSide(collided)
-                            print(f'!!!!!!!!!!! ------ {self.name} added by {collided.name}')
 
                             if coll_side == "left": # left side of collidedd obj
                                 newpos = collided.left_x() - self.width/2

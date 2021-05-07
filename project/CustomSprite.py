@@ -210,7 +210,6 @@ class CustomSprite(pg.sprite.Sprite):
                     testcol = pg.sprite.spritecollide(collided_obj, self.game.group_solid, False)
                     self.game.group_solid.add(collided_obj)
                     for i in testcol:
-                        print(f'---------------------------PUCKUP---------------------------------')
                         side = i.determineSide(collided_obj)
                         if side == "top":
                             canpickup = False
@@ -283,14 +282,14 @@ class CustomSprite(pg.sprite.Sprite):
         if collideds:
             for collided in collideds:
                 #if self.isPlayer:
-                print(f'{collided.name} mass: {collided.massHOR}')
+                #print(f'{collided.name} mass: {collided.massHOR}')
                                                                     # Probably not the best solution
                 if collided != self and collided not in ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
                     #if group.has(self):
                      #   self.solidstrength = collided.solidstrength -1
                     coll_side = self.determineSide(collided)
                     if self.massVER < collided.massVER:
-                        print(f' ------ {self.name} added by {collided.name}')
+                        #print(f' ------ {self.name} added by {collided.name}')
                         if coll_side == "top":
                             newpos = collided.top_y()
                             
