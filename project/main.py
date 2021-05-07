@@ -130,7 +130,7 @@ class Game:
         self.tallplat   = Platform(850, 530, 20, 50, "tallplat", upMaxDist= 50, downMaxDist = 100)
         self.tallplat.startGame(self)
         
-        self.enemy = PatrollingEnemy(750, 460 , 26, 36, 200, name =  "pat1")                       #      
+        self.enemy = PatrollingEnemy(750, 460 , 26, 30, 200, name =  "pat1")                       #      
         self.enemy.startGame(self)
         #self.aienemy = AiEnemy(220, 550,36, 28, 200, name =  "ai1")                       #      
         #self.aienemy.startGame(self)

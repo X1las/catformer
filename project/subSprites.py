@@ -776,7 +776,7 @@ class PickUp(CustomSprite):
 # Hostile UpperClass - Inherits from CustomSprite
 class Hostile(CustomSprite):
     pass
-
+    active = True
 
 
 
@@ -962,6 +962,7 @@ class PatrollingEnemy(Hostile):
         self.init()
         self.isEnemy = True
         self.stopMoving = False
+        self.active = True
         #self.facing = None
 
     def startGame(self, game):
@@ -1024,13 +1025,14 @@ class PatrollingEnemy(Hostile):
         # onlt do at init?
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
-        self.stopMoving = self.inbetweenSolids()
+        #self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.touchBox()
         self.checkDist()
         self.pygamecolls2()
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.active = self.aboveground
         
     def touchBox(self):
         inflationW = 0
@@ -1090,44 +1092,44 @@ class PatrollingEnemy(Hostile):
                     #if collided.solidstrength > self.solidstrength:
                     #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
 
-                    if not self.stopMoving: # If it was inbetween solids
+                    #if not self.stopMoving: # If it was inbetween solids
                         #if self.massHOR < collided.massHOR:
-                        coll_side = self.determineSide(collided)
+                    coll_side = self.determineSide(collided)
 
-                        if coll_side == "left": # left side of collidedd obj
-                            newpos = collided.left_x() - self.width/2
-                            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                # i don't think this is necessary
-                                #if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                 #   self.aboveground = False
-                                #if collided.vel.x == 0 and self.aboveground: # If collided object is not moving, just turn around
-                                self.vel.x = 1
-                                self.vel.x *= -1
-                                #if self.collides_left: #remove?
-                                 #   self.vel.x *= 0
-                                
-                        if coll_side == "right":
-                            newpos = collided.right_x() + self.width/2
-                            if newpos >= self.pos.x:
-                                #if collided.vel.x !=  0:
-                                 #   self.aboveground = False
-                                #if collided.vel.x == 0 and self.aboveground:
-                                self.vel.x = 1
-                                self.vel.x *= -1
-                                #if self.collides_right: #remove?
-                                 #   self.vel.x *= 0
-                                
+                    if coll_side == "left": # left side of collidedd obj
+                        newpos = collided.left_x() - self.width/2
+                        if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                            # i don't think this is necessary
+                            #if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                #   self.aboveground = False
+                            #if collided.vel.x == 0 and self.aboveground: # If collided object is not moving, just turn around
+                            #self.vel.x = 1
                             self.vel.x *= -1
-                        #if self.massVER < collided.massVER:
-                        coll_side = self.determineSide(collided)
-                        """    
-                        if coll_side == "bot":
-                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                                self.pos.x = collided.left_x() - self.width/2
-                            else: 
-                                self.pos.x = collided.right_x() + self.width/2
-                            #self.count = 5
-                        """
+                            #if self.collides_left: #remove?
+                                #   self.vel.x *= 0
+                            
+                    if coll_side == "right":
+                        newpos = collided.right_x() + self.width/2
+                        if newpos >= self.pos.x:
+                            #if collided.vel.x !=  0:
+                                #   self.aboveground = False
+                            #if collided.vel.x == 0 and self.aboveground:
+                            #self.vel.x = 1
+                            self.vel.x *= -1
+                            #if self.collides_right: #remove?
+                                #   self.vel.x *= 0
+                            
+                        #self.vel.x *= -1
+                    #if self.massVER < collided.massVER:
+                    coll_side = self.determineSide(collided)
+                    """    
+                    if coll_side == "bot":
+                        if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                            self.pos.x = collided.left_x() - self.width/2
+                        else: 
+                            self.pos.x = collided.right_x() + self.width/2
+                        #self.count = 5
+                    """
 
     def posCorrection(self):
         self.collidingWithWall()

@@ -187,8 +187,9 @@ class CustomSprite(pg.sprite.Sprite):
         #self.rect.y -= 2
         if collided: 
             for collided_obj in collided:
-                print(f'hit enemy: {collided_obj.name}')
-                self.takeDamage()         
+                if collided_obj.active:
+                    print(f'hit enemy: {collided_obj.name}')
+                    self.takeDamage()         
         self.rect.midbottom = self.pos.rounded().asTuple()
         
     def touchPickUp(self, pickups):
