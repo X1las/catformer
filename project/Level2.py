@@ -42,6 +42,7 @@ class Level:
         self.goals     = levelData['goals'    ]
         self.enemies   = levelData['enemies'  ]
         self.health    = levelData['health'   ]
+        self.catnip    = levelData['catnip'   ]
         self.water     = levelData['water'    ]
         
         for p in self.platforms:
@@ -59,6 +60,8 @@ class Level:
         for p in self.enemies:
             p.startGame(self.game)
         for p in self.health:
+            p.startGame(self.game)
+        for p in self.catnip:
             p.startGame(self.game)
         for p in self.water:
             p.startGame(self.game)
