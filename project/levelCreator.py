@@ -41,37 +41,37 @@ def createLevel():
 ''' Level 1 '''
 def createLevel1():
     # platforms
-    floor   = Platform(-200 , 600 , 6000 , 50 ,'p_floor', floorplat = True )
-    fatplat = Platform( 100 , 450 ,  150 , 40 , 'fatplat')
-    p_2     = Platform( 300 , 590 ,  150 , 70 , 'p_2')
-    p_3     = Platform( 500 , 300 ,  150 , 40 , 'p_3')
-    p_4     = Platform( 700 , 450 ,  150 , 40 , 'p_4')
-    p_5     = Platform( 900 , 400 ,  150 , 40 , 'p_5')
+    floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
+    fatplat = Platform( 300 , 450 ,  150 , 40 , 'fatplat')
+    p_2     = Platform( 500 , 590 ,  150 , 70 , 'p_2')
+    p_3     = Platform( 700 , 300 ,  150 , 40 , 'p_3')
+    p_4     = Platform( 900 , 450 ,  150 , 40 , 'p_4')
+    p_5     = Platform( 1100 , 400 ,  150 , 40 , 'p_5')
     # boxes
-    box1 = Box(170 , 400 , 44 , 44 , 'box_1')
+    box1 = Box(370 , 400 , 44 , 44 , 'box_1')
     #box2 = Box(130 , 500 , 44 , 44 , 'box_2')
 
     # buttons
-    btn1 = Button(400 , 550 , 30 , 20 , 'button1')
-    btn2 = Button(300 , 550 , 30 , 20 , 'button2')
+    btn1 = Button(600 , 550 , 30 , 20 , 'button1')
+    btn2 = Button(500 , 550 , 30 , 20 , 'button2')
     # levers
-    lever1 = Lever(450 , 550 , 36 , 26 , 'lever1')
+    lever1 = Lever(650 , 550 , 36 , 26 , 'lever1')
     # vases
     vase1 = Vase(fatplat , 'left' , 'v1')
     # goals
     # enemies
     # water
-    water1 = Water(300 , 590 ,  150 , 70)
+    water1 = Water(500 , 590 ,  150 , 70)
     # health
-    health1 = PickUp(400, 400, 16, 16, 'health')                                          #
+    health1 = PickUp(600, 400, 16, 16, 'health')                                          #
     # catnip
-    catnip1 = PickUp(200, 370, 16, 16, 'catnip')   
+    catnip1 = PickUp(400, 370, 16, 16, 'catnip')   
 
     # create dictionary
     level1 = {
         'name': 'level1',
         'settings': {
-            'spawn': Vec(170, 350),
+            'spawn': Vec(270, 350),
             'length': 5000,
             'track': ''
         },
@@ -91,13 +91,13 @@ def createLevel1():
 ''' Level 2 '''
 def createLevel2():
     # platforms
-    floor   = Platform(-200 , 600 , 6000 , 50 ,'p_floor', floorplat = True )
-    fatplat = Platform( 100 , 480 ,  150 , 40 , 'fatplat')
+    floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
+    fatplat = Platform( 300 , 480 ,  150 , 40 , 'fatplat')
     # boxes
-    box1 = Box(150 , 400 , 44 , 44 , 'box_1')
+    box1 = Box(350 , 400 , 44 , 44 , 'box_1')
     # buttons
-    btn1 = Button(400 , 550 , 30 , 20 , 'button1')
-    btn2 = Button(300 , 550 , 30 , 20 , 'button2')
+    btn1 = Button(600 , 550 , 30 , 20 , 'button1')
+    btn2 = Button(500 , 550 , 30 , 20 , 'button2')
     # levers
     lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
     lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
