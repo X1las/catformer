@@ -625,7 +625,7 @@ class Game:
 
     
     def damageScreen(self):
-        deathFont = pg.font.Font("gypsy-curse.regular.ttf", 70)
+        deathFont = pg.font.Font("resources/gypsy-curse.regular.ttf", 70)
         self.pauseText = deathFont.render("YOU DIED", True, (255, 0 ,0))
         self.pauseText2 = self.textToDisplay("Press P to resume", color= (0,0,0), bold= True)
         self.pauseText3 = self.textToDisplay("Press Q to quit", color= (0,0,0), bold= True)
