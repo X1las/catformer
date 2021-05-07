@@ -167,9 +167,7 @@ class CustomSprite(pg.sprite.Sprite):
 
     
     def knockOver(self,  agents, turn):
-        
         collided = pg.sprite.spritecollide(self, agents, False)
-
         if collided: 
             for collided_obj in collided:
                 if turn:
@@ -180,7 +178,11 @@ class CustomSprite(pg.sprite.Sprite):
 
 
     def touchEnemy(self, damager):
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.y += 2
+
         collided = pg.sprite.spritecollide(self, damager, False)
+        self.rect.y -= 2
         if collided: 
             for collided_obj in collided:
                 self.takeDamage()         

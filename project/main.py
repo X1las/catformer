@@ -459,6 +459,7 @@ class Game:
         for plat in self.group_solid:
             plat.collisionEffect()
         #self.player.vel += self.player.addedVel
+        self.player.touchEnemy(self.group_damager)
         self.all_sprites.update()
 
         for box in self.group_boxes:
@@ -472,7 +473,6 @@ class Game:
 
         #self.all_sprites.correctPositions()
         self.level_goal.endGoal(self.player)
-        self.player.touchEnemy(self.group_damager)
         if (self.player.pos.y > self.boundary):
             self.player.takeDamage()
         # Updating Variables
