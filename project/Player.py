@@ -56,6 +56,7 @@ class Player(CustomSprite):
         self.prevrelpos = vec()
         self.prevrelvel = vec()
         self.init()
+        self.ignoredSolids = []
 
     def startGame(self, game):    
         self.game       = game
@@ -90,7 +91,8 @@ class Player(CustomSprite):
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.vel += self.addedVel
-        self.pygamecoll(self.game.group_solid)
+        # there for a picked up box to register that the player stands still
+        self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.pygamecoll(self.game.group_solid)
 
@@ -175,7 +177,8 @@ class Player(CustomSprite):
         #pass
         print(f'player mass: {self.massHOR}')
         if self.can_fall_and_move:
-            self.pygamecoll(self.game.group_solid)
+            self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
+        self.ignoredSolids = []
         #self.count -= 1
         #if self.count <= 0:
          #   self.solidstrength = 0
