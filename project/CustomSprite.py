@@ -94,7 +94,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def resetSprite(self):
-        if self.count < 0:
+        if self.count <= 0:
             self.resetMass()
             self.solidstrength = self.originalsolidstrength
         self.count -= 1
@@ -222,6 +222,7 @@ class CustomSprite(pg.sprite.Sprite):
                     collided_obj.rect.y += 1 
             else:
                 self.colliding = False
+                #self.player.massVER = self.player.ori_massVER
 
 
     def relativeVel(self):
@@ -284,9 +285,9 @@ class CustomSprite(pg.sprite.Sprite):
                      #   self.solidstrength = collided.solidstrength -1
                     coll_side = self.determineSide(collided)
                     if self.massVER < collided.massVER:
-                        self.count = 2
                         if coll_side == "top":
                             newpos = collided.top_y()
+                            self.count = 2
                             if newpos < self.pos.y:
                                 self.set_bot(collided.top_y())
                                 self.vel.y = 0
@@ -295,6 +296,7 @@ class CustomSprite(pg.sprite.Sprite):
 
                         if coll_side == "bot":
                             newpos =  collided.bot_y() + self.height 
+                            self.count = 2
                             if newpos > self.pos.y:
                                 self.pos.y = newpos
                                 self.vel.y = self.addedVel.y
@@ -302,6 +304,7 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.massVER = collided.massVER - 1
                     if self.massHOR < collided.massHOR:
                         if coll_side == "left":
+                            self.count = 2
                             newpos = collided.left_x() - self.width/2 #Left side of object being collided with
                             if newpos <= self.pos.x:
                                 self.pos.x = collided.left_x() - self.width/2
@@ -311,6 +314,7 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.massHOR = collided.massHOR - 1
 
                         if coll_side == "right":
+                            self.count = 2
                             newpos = collided.right_x() + self.width/2
                             if newpos >= self.pos.x:
                                 self.pos.x = collided.right_x() + self.width/2

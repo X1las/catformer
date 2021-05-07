@@ -403,6 +403,7 @@ class Box(CustomSprite):
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 3
             self.interacter.player.massHOR = self.ori_massHOR + 1
+            self.interacter.player.count = 1
             #self.interacter.player.ignoredSolids.append(self)
         else: 
             self.beingHeld = False

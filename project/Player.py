@@ -88,6 +88,7 @@ class Player(CustomSprite):
 
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
+        #self.massHOR = self.ori_massHOR
         self.move()
         self.applyPhysics(self.game.group_solid) 
         self.vel += self.addedVel
@@ -123,6 +124,7 @@ class Player(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         result = False
+        moving = False
         if collideds:
             for collided in collideds:
                 if collided != self and collided.name != "p_floor":
@@ -132,12 +134,19 @@ class Player(CustomSprite):
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
                         if self.collides_left:
-                            self.takeDamage()
+                            print(f'{collided.name} vel: {collided.vel}')
+                            if round(collided.vel.x) != 0:
+                                moving = True
+                            if moving:
+                                self.takeDamage()
                             result = True
                         self.collides_right = True
                     if coll_side == "right":
                         if self.collides_right:
-                            self.takeDamage()
+                            if round(collided.vel.x) != 0:
+                                moving = True
+                            if moving:
+                                self.takeDamage()
                             result = True
                             self.vel.x *= 0
                         self.collides_left = True
