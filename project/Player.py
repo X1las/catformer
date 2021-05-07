@@ -9,6 +9,7 @@ from settings import *
 from Vector import Vec
 from CustomSprite import CustomSprite
 from random import choice, randrange, uniform
+import Spritesheet as ss
 
 # Variables
 vec = Vec
@@ -26,8 +27,8 @@ class Player(CustomSprite):
     locked              = False
     can_fall_and_move   = True
 
-    width               = 30 
-    height              = 40
+    width               = 38 
+    height              = 46
     vel                 = vec(0, 0)   
     acc                 = vec(0, 0)
     dist_from_right     = 0
@@ -49,7 +50,6 @@ class Player(CustomSprite):
         self.name = name
 
 
-        self.image                  =  pg.Surface((self.width,self.height)); self.image.fill((255,255,0)); self.rect = self.image.get_rect()
 
         self.prevpos = vec() # delete
         self.prevvel = vec()
@@ -62,6 +62,14 @@ class Player(CustomSprite):
         self.game       = game
         self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
+        
+        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        self.img = sheet.image_at((0,151,38,46),(0,255,0))
+        self.image = pg.transform.scale(self.img, (self.width, self.height))
+        #self.image.fill((255,255,0))
+
+        self.rect = self.image.get_rect()
         self.rect.midbottom         = (self.spawn.x,self.spawn.y)
 
     def respawn(self):
