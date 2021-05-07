@@ -996,10 +996,10 @@ class PatrollingEnemy(Hostile):
 
     # Checking if the enemy is outside its patrolling area
     def checkDist(self):
-        if  self.pos.x - self.x >= self.maxDist: # right boundary
+        if  self.pos.x - self.x >= self.maxDist or self.right_x() >= self.currentplat.right_x()  -2: # right boundary
             self.area = "right"
             self.vel.x = -1 * abs(self.vel.x)
-        elif self.pos.x - self.x <= -1*self.maxDist:
+        elif self.pos.x - self.x <= -1*self.maxDist or self.left_x() <= self.currentplat.left_x() +2:
             self.vel.x = abs(self.vel.x)
             self.area = "left"
 
@@ -1024,11 +1024,11 @@ class PatrollingEnemy(Hostile):
         # onlt do at init?
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
-        self.checkDist()
         self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.touchBox()
+        self.checkDist()
         self.pygamecolls2()
         self.rect.midbottom = self.pos.realRound().asTuple()
         
@@ -1041,7 +1041,9 @@ class PatrollingEnemy(Hostile):
         self.rect.y += r(self.vel.y*1.5) 
         # do not look at plats????
         if self.aboveground:
-            self.currentplat = self.on_solid(self.game.group_platforms)
+            possibleplat = self.on_solid(self.game.group_platforms)
+            if possibleplat != None:
+                self.currentplat = possibleplat
         # else if it is inside a plat (self.abovegroun = False), move enemies rect up
         else: 
             self.rect.bottom = self.currentplat.rect.top - 1
@@ -1069,8 +1071,8 @@ class PatrollingEnemy(Hostile):
             self.wasunderground = False
 
     def popup(self):
-        newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
-        newPickup.startGame(self.game)
+        #newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
+        #newPickup.startGame(self.game)
         self.justpoppedup = False
 
     def pygamecolls2(self, ignoredSol = None):
@@ -1096,36 +1098,36 @@ class PatrollingEnemy(Hostile):
                             newpos = collided.left_x() - self.width/2
                             if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                                 # i don't think this is necessary
-                                if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                    self.aboveground = False
-                                if collided.vel.x == 0 and self.aboveground: # If collided object is not moving, just turn around
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_left: #remove?
-                                    self.vel.x *= 0
+                                #if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                 #   self.aboveground = False
+                                #if collided.vel.x == 0 and self.aboveground: # If collided object is not moving, just turn around
+                                self.vel.x = 1
+                                self.vel.x *= -1
+                                #if self.collides_left: #remove?
+                                 #   self.vel.x *= 0
                                 
                         if coll_side == "right":
                             newpos = collided.right_x() + self.width/2
                             if newpos >= self.pos.x:
-                                if collided.vel.x !=  0:
-                                    self.aboveground = False
-                                if collided.vel.x == 0 and self.aboveground:
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_right: #remove?
-                                    self.vel.x *= 0
+                                #if collided.vel.x !=  0:
+                                 #   self.aboveground = False
+                                #if collided.vel.x == 0 and self.aboveground:
+                                self.vel.x = 1
+                                self.vel.x *= -1
+                                #if self.collides_right: #remove?
+                                 #   self.vel.x *= 0
                                 
                             self.vel.x *= -1
                         #if self.massVER < collided.massVER:
                         coll_side = self.determineSide(collided)
-                            
+                        """    
                         if coll_side == "bot":
                             if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
                                 self.pos.x = collided.left_x() - self.width/2
                             else: 
                                 self.pos.x = collided.right_x() + self.width/2
                             #self.count = 5
-    
+                        """
 
     def posCorrection(self):
         self.collidingWithWall()
@@ -1278,6 +1280,7 @@ class AiEnemy(Hostile):
         self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
 
+        # lol the if if i f if if if if if if if if if if if if if fif if if if if
         if collideds:
             for collided in collideds:
 

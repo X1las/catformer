@@ -130,10 +130,10 @@ class Game:
         self.tallplat   = Platform(850, 530, 20, 50, "tallplat", upMaxDist= 50, downMaxDist = 100)
         self.tallplat.startGame(self)
         
-        #self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
-        #self.enemy.startGame(self)S
-        self.aienemy = AiEnemy(220, 550,36, 28, 200, name =  "ai1")                       #      
-        self.aienemy.startGame(self)
+        self.enemy = PatrollingEnemy(750, 460 , 26, 36, 200, name =  "pat1")                       #      
+        self.enemy.startGame(self)
+        #self.aienemy = AiEnemy(220, 550,36, 28, 200, name =  "ai1")                       #      
+        #self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
@@ -458,15 +458,11 @@ class Game:
         
         for plat in self.group_solid:
             plat.collisionEffect()
-        #self.player.vel += self.player.addedVel
-        self.player.touchEnemy(self.group_damager)
         self.all_sprites.update()
+        self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
 
         for box in self.group_boxes:
             box.resets()
-        #for plat in self.group_platforms:
-         #   plat.collisionEffect()
-        #for i in self.all_sprites:
         self.all_sprites.updatePos(self.group_solid)
         self.moveScreen()
         self.relativePos()
