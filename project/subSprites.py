@@ -1162,6 +1162,7 @@ class AiEnemy(Hostile):
         self.name = name
         self.count = 5
         self.init()
+        self.ori_massVER = 8
         self.isEnemy = True
         self.stopMoving = False
         #self.facing = None
@@ -1248,32 +1249,21 @@ class AiEnemy(Hostile):
             self.imageIndex = 0
         
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
-        
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         self.detectPlayer()
         self.stopMoving = self.inbetweenSolids()
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.pygamecolls(self.game.group_solid)
-        
-        #self.acc = vec(0,0)    
-        #self.collidingWithWall()
-        #self.rect.midbottom = self.pos.realRound().asTuple()
 
 
     def posCorrection(self):
         self.collidingWithWall()
-        pass
-        #self.pygamecolls(self.game.group_solid)
 
 
     def collidingWithWall(self):
         self.pygamecolls(self.game.group_solid)
-
         self.collides_left = False
-    
-    
         self.collides_right = False
-
 
 # The part that checks whether to just turn around or be pushed
     def pygamecolls(self, group, ignoredSol = None):
@@ -1288,8 +1278,6 @@ class AiEnemy(Hostile):
             for collided in collideds:
 
                 if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
-                    #if collided.solidstrength > self.solidstrength:
-                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
 
                     if not self.stopMoving: # If it was inbetween solids
                         if self.massHOR < collided.massHOR:
@@ -1300,17 +1288,6 @@ class AiEnemy(Hostile):
                                 if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                                     self.vel.x = 0
                                     self.pos.x = newpos
-                                    """
-                                    if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                        self.pos.x = newpos
-                                        self.vel.x = copy.copy(collided.vel.x) #no copy
-                                        self.acc.x = collided.acc.x
-                                    if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                       self.vel.x = 0
-                                    #  self.vel.x *= -1
-                                    if self.collides_left: #remove?
-                                        self.vel.x *= 0
-                                    """
                                 self.massHOR = collided.massHOR - 1
                                 self.count = 1
                                     
@@ -1319,20 +1296,8 @@ class AiEnemy(Hostile):
                                 if newpos >= self.pos.x:
                                     self.vel.x = 0
                                     self.pos.x = newpos
-                                    """
-                                    if collided.vel.x !=  0:
-                                        self.pos.x = newpos
-                                        self.vel.x = copy.copy(collided.vel.x) # no copy
-                                        self.acc.x = collided.acc.x
-                                    if collided.vel.x == 0:
-                                       self.vel.x = 0
-                                    #  self.vel.x *= -1
-                                    if self.collides_right: #remove?
-                                        self.vel.x *= 0
-                                    """
                                 self.massHOR = collided.massHOR - 1
                                     
-                                #self.vel.x *= -1
                                 self.count = 1
                         if self.massVER < collided.massVER:
                             coll_side = self.determineSide(collided)
@@ -1343,7 +1308,6 @@ class AiEnemy(Hostile):
                                 else: 
                                     self.pos.x = collided.right_x() + self.width/2
                                 self.massVER = collided.massVER - 1
-                                #self.count = 5
 
 
 
