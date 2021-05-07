@@ -546,7 +546,11 @@ class Vase(CustomSprite):
 
     def posCorrection(self):
         if self.broken:
-            self.pygamecoll(self.game.group_solid)
+          #  self.pygamecoll(self.game.group_solid)
+            standingon = self.on_solid(self.game.group_platforms)
+            if standingon:
+                self.pos.y = standingon.top_y()
+                self.vel.y = 0; self.acc.y = 0
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
 
@@ -560,12 +564,12 @@ class Vase(CustomSprite):
             for collided in collideds:
                 if collided != self and collided != self.ignoreSol:
                     if self.fell_fast_enough:
-                        self.set_bot(collided.top_y())
+                        #self.set_bot(collided.top_y())
                         if not self.broken:
                             self.breaks()
                         #self.fall = False
                         #self.gravity = 0
-                        self.vel.y = 0
+                        #self.vel.y = 0
                         #self.vel.x = 0
                         #self.addedVel.x = 0
 
