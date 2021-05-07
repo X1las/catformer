@@ -63,11 +63,24 @@ class Player(CustomSprite):
         self.groups = game.all_sprites, game.group_pressureActivator
         pg.sprite.Sprite.__init__(self, self.groups)
         
+        # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        # create sub-rectangles to load from water spritesheet
+        sit  = pg.Rect(0,151,38,46)
+        walk = pg.Rect(47,155,37,46)
+        #interact = pg.Rect(32,117,16,16)
+        #jump = 
+        rects = [sit, walk]#, interact]
+        # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
-        self.img = sheet.image_at((0,151,38,46),(0,255,0))
-        self.image = pg.transform.scale(self.img, (self.width, self.height))
-        #self.image.fill((255,255,0))
+        images = sheet.images_at(rects,(0,255,0))
+        self.image_sit    = images[0]
+        self.image_walk_r = images[1]
+        self.image_walk_l = pg.transform.flip (self.image_walk_r, True, False)
+        self.image_sit    = pg.transform.scale(self.image_sit,    (self.width, self.height))
+        self.image_walk_r = pg.transform.scale(self.image_walk_r, (self.width, self.height))
+        self.image_walk_l = pg.transform.scale(self.image_walk_l, (self.width, self.height))
+        self.image = self.image_sit
 
         self.rect = self.image.get_rect()
         self.rect.midbottom         = (self.spawn.x,self.spawn.y)
@@ -111,11 +124,13 @@ class Player(CustomSprite):
         if keys[pg.K_LEFT]:                                             # If it's left arrow
             if self.locked == False:
                 self.facing = "left"
+                self.image = self.image_walk_l
                 #print("WALKING LEFT")
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if self.locked == False:
                 self.facing = "right"
+                self.image = self.image_walk_r
                 #print("WALKING RIGHT")
 
             self.acc.x = PLAYER_ACC                                          
