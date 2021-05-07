@@ -71,7 +71,7 @@ class Game:
         self.group_levers             = pg.sprite.Group()  # Onlt applied to the lever 
         self.group_levelGoals         = pg.sprite.Group()   # Only applied to the levelGoal sprite
         self.group_vases              = pg.sprite.Group() #Only applied to vases
-        self.group_solid              = pg.sprite.Group()          # solid objects (formerly rayIntersecters)
+        self.group_solid              = SpriteGroup()          # solid objects (formerly rayIntersecters)
         self.group_pickups            = pg.sprite.Group()       # All things that can get picked up by player
         self.group_damager            = pg.sprite.Group()       # All hostiles
 
@@ -121,7 +121,7 @@ class Game:
             pass
         #self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
         #self.movingPlat.startGame(self)
-        self.smalltest = Platform(250 , 560 , 50 , 40 , "small tester" )
+        self.smalltest = Platform(250 , 550 , 50 , 40 , "small tester" )
         self.smalltest.startGame(self)
         
         

@@ -264,7 +264,7 @@ class CustomSprite(pg.sprite.Sprite):
     def lessMassThan(self, other):
         return self.massHOR < other.massHOR or self.massVER < other.massVER
 
-    def pygamecoll(self, group, ignoredSol = None):
+    def pygamecoll(self, group, ignoredSol = []):
         inflationW = 0
         inflationH = 0
         self.rect = self.rect.inflate(inflationW,inflationH)
@@ -279,12 +279,12 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collideds:
                 if self.isPlayer:
                     print(f'{collided.name} mass: {collided.massHOR}')
-                if collided != self and collided != ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
+                if collided != self and collided not in ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
                     #if group.has(self):
                      #   self.solidstrength = collided.solidstrength -1
+                    coll_side = self.determineSide(collided)
                     if self.massVER < collided.massVER:
                         self.count = 2
-                        coll_side = self.determineSide(collided)
                         if coll_side == "top":
                             newpos = collided.top_y()
                             if newpos < self.pos.y:
