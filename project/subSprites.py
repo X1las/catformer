@@ -949,7 +949,10 @@ class PatrollingEnemy(Hostile):
         self.collides_left = False
         self.solidstrength = 3
         self.originalsolidstrength = self.solidstrength
-        
+        self.currentplat = None
+        self.aboveground = True
+        self.wasunderground = False
+        self.justpoppedup = False
         self.name = name
         self.count = 2
         self.init()
@@ -1021,9 +1024,104 @@ class PatrollingEnemy(Hostile):
         self.stopMoving = self.inbetweenSolids()
         self.acc = vec(0,0)    
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.pygamecolls(self.game.group_solid)
+        self.touchBox()
+        self.pygamecolls2()
+        self.rect.midbottom = self.pos.realRound().asTuple()
         
+    def touchBox(self):
+        inflationW = 0
+        inflationH = 0
+        self.rect = self.rect.inflate(inflationW,inflationH)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.relativeVel().x*1.5)
+        self.rect.y += r(self.vel.y*1.5) 
+        # do not look at plats????
+        if self.aboveground:
+            self.currentplat = self.on_solid(self.game.group_platforms)
+        # else if it is inside a plat (self.abovegroun = False), move enemies rect up
+        else: 
+            self.rect.bottom = self.currentplat.rect.top - 1
+        collideds = pg.sprite.spritecollide(self, self.game.group_boxes, False)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect = self.rect.inflate(-inflationW, -inflationH)
+        justpoppedup = 10
+        # If it is above ground, check which platform it is on
+        remove = False
+        if collideds:
+            for collided in collideds:
+                #if collided not in self.game.group_platforms:
+                self.pos.y = self.currentplat.pos.y - 1
+                self.aboveground = False
+                self.wasunderground = True
+                remove = True
+        else: 
+            if self.wasunderground:
+                self.justpoppedup = True
+                
+                t = Timer(0.5, self.popup)
+                t.start()
+            self.pos.y = self.currentplat.top_y()
+            self.aboveground = True
+            self.wasunderground = False
 
+    def popup(self):
+        newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
+        newPickup.startGame(self.game)
+        self.justpoppedup = False
+
+    def pygamecolls2(self, ignoredSol = None):
+        inflation = 0
+        self.rect.inflate(inflation,inflation)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, self.game.group_platforms, False)
+
+        if collideds:
+            for collided in collideds:
+                # handle floor plat better
+                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
+                    #if collided.solidstrength > self.solidstrength:
+                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
+
+                    if not self.stopMoving: # If it was inbetween solids
+                        #if self.massHOR < collided.massHOR:
+                        coll_side = self.determineSide(collided)
+
+                        if coll_side == "left": # left side of collidedd obj
+                            newpos = collided.left_x() - self.width/2
+                            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                                # i don't think this is necessary
+                                if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
+                                    self.aboveground = False
+                                if collided.vel.x == 0 and self.aboveground: # If collided object is not moving, just turn around
+                                    self.vel.x = 1
+                                    self.vel.x *= -1
+                                if self.collides_left: #remove?
+                                    self.vel.x *= 0
+                                
+                        if coll_side == "right":
+                            newpos = collided.right_x() + self.width/2
+                            if newpos >= self.pos.x:
+                                if collided.vel.x !=  0:
+                                    self.aboveground = False
+                                if collided.vel.x == 0 and self.aboveground:
+                                    self.vel.x = 1
+                                    self.vel.x *= -1
+                                if self.collides_right: #remove?
+                                    self.vel.x *= 0
+                                
+                            self.vel.x *= -1
+                        #if self.massVER < collided.massVER:
+                        coll_side = self.determineSide(collided)
+                            
+                        if coll_side == "bot":
+                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                self.pos.x = collided.left_x() - self.width/2
+                            else: 
+                                self.pos.x = collided.right_x() + self.width/2
+                            #self.count = 5
+     
 
     def posCorrection(self):
         self.collidingWithWall()
@@ -1037,7 +1135,7 @@ class PatrollingEnemy(Hostile):
         
 
     def collidingWithWall(self):
-        self.pygamecolls(self.game.group_solid)
+        #self.pygamecolls(self.game.group_solid)
 
         self.collides_left = False
         self.collides_right = False
@@ -1155,6 +1253,19 @@ class AiEnemy(Hostile):
         #self.acc = vec(0,0)    
         #self.collidingWithWall()
         #self.rect.midbottom = self.pos.realRound().asTuple()
+
+
+    def posCorrection(self):
+        self.collidingWithWall()
+        pass
+        #self.pygamecolls(self.game.group_solid)
+
+
+    def collidingWithWall(self):
+        self.pygamecolls(self.game.group_solid)
+
+        self.collides_left = False
+        self.collides_right = False
         
     """
     # The part that checks whether to just turn around or be pushed
@@ -1230,24 +1341,6 @@ class AiEnemy(Hostile):
         
         return result           
     """
-
-
-    def posCorrection(self):
-        self.collidingWithWall()
-        pass
-        #self.pygamecolls(self.game.group_solid)
-
-
-    # Will make the enemy stand still if inbetween solids (instead of vibrating)
-    
-
-        
-
-    def collidingWithWall(self):
-        self.pygamecolls(self.game.group_solid)
-
-        self.collides_left = False
-        self.collides_right = False
 
 
 

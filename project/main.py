@@ -121,8 +121,8 @@ class Game:
         except:
             print("Error loading music!")
             pass
-        self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
-        self.movingPlat.startGame(self)
+        #self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
+        #self.movingPlat.startGame(self)
         self.smalltest = Platform(250 , 550 , 50 , 40 , "small tester" )
         self.smalltest.startGame(self)
         
@@ -132,8 +132,8 @@ class Game:
         
         self.enemy = PatrollingEnemy(170, 550,26, 36, 200, name =  "pat1")                       #      
         self.enemy.startGame(self)
-        self.aienemy = AiEnemy(20, 550,26, 36, 200, name =  "ai1")                       #      
-        self.aienemy.startGame(self)
+        #self.aienemy = AiEnemy(20, 550,26, 36, 200, name =  "ai1")                       #      
+        #self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(700 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
