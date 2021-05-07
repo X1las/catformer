@@ -1196,22 +1196,22 @@ class AiEnemy(Hostile):
         pg.sprite.Sprite.__init__(self, self.groups)
 
          # get spritesheet
-        wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
+        wormSheet = ss.Spritesheet('resources/hyena-spritesheet.png')
         # create sub-rectangles to load from water spritesheet
-        rect1 = pg.Rect(  4, 36, 29, 28)
-        rect2 = pg.Rect( 36, 36, 29, 28)
-        rect3 = pg.Rect( 68, 36, 29, 28)
-        rect4 = pg.Rect(100, 36, 29, 28)
-        rect5 = pg.Rect(132, 36, 29, 28)
-        rect6 = pg.Rect(164, 36, 29, 28)
-        rects = [rect1, rect2, rect3, rect4, rect5, rect6]
+        rect1 = pg.Rect( 12, 20, 36, 28)
+        rect2 = pg.Rect( 59, 20, 36, 28)
+        rect3 = pg.Rect(106, 21, 36, 28)
+        rect4 = pg.Rect(155, 21, 36, 28)
+        #rect5 = pg.Rect(132, 36, 29, 28)
+        #rect6 = pg.Rect(164, 36, 29, 28)
+        rects = [rect1, rect2, rect3, rect4]#, rect5, rect6]
         # load images from spritesheet
-        self.images_right = wormSheet.images_at(rects, colorkey=(0,0,0))
-        self.images_left = []
-        for img in self.images_right:
-            self.images_left.append(pg.transform.flip(img,True,False))
+        self.images_left = wormSheet.images_at(rects, colorkey=(0,0,0))
+        self.images_right = []
+        for img in self.images_left:
+            self.images_right.append(pg.transform.flip(img,True,False))
         self.imageIndex = 0
-        self.image = self.images_right[self.imageIndex]
+        self.image = self.images_left[self.imageIndex]
     
         # scale image to correct size
         self.image = pg.transform.scale(self.image, (self.width, self.height))
