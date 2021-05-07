@@ -67,7 +67,7 @@ class Player(CustomSprite):
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from water spritesheet
         sit  = pg.Rect(0,151,38,46)
-        walk = pg.Rect(47,155,37,46)
+        walk = pg.Rect(39,153,46,44)
         #interact = pg.Rect(32,117,16,16)
         #jump = 
         rects = [sit, walk]#, interact]
