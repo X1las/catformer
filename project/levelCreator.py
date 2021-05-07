@@ -55,7 +55,7 @@ def createLevel1():
     btn1 = Button(400 , 550 , 30 , 20 , 'button1')
     btn2 = Button(300 , 550 , 30 , 20 , 'button2')
     # levers
-    lever1 = Lever(450 , 550 , 34 , 24 , 'lever1')
+    lever1 = Lever(450 , 550 , 36 , 26 , 'lever1')
     # vases
     vase1 = Vase(fatplat , 'left' , 'v1')
 

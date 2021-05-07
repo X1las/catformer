@@ -588,8 +588,8 @@ class Lever(CustomSprite):
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from spritesheet
-        left  = pg.Rect( 0,87,17,12)
-        right = pg.Rect(19,87,17,12)
+        left  = pg.Rect( 0,87,18,13)
+        right = pg.Rect(19,87,18,13)
         rects = [left, right]
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
