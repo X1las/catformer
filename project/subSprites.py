@@ -328,7 +328,7 @@ class Box(CustomSprite):
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
         if self.isPlayer and abs(self.vel.x) < 0.0001:
-            self.vel.x = 0
+            self.vel.x = self.addedVel
 
         #if self.can_fall_and_move:
         #  self.pygamecoll(Intersecters)
@@ -453,7 +453,7 @@ class Box(CustomSprite):
     def posCorrection(self):
         # I am not sure this is needed
         #if self.can_fall_and_move:
-        print(f'{self.name} strength: {self.massHOR}')
+        #print(f'{self.name} strength: {self.massHOR}')
         self.pygamecoll(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.vel.x = self.addedVel.x
@@ -536,7 +536,7 @@ class Vase(CustomSprite):
 
     def breaks(self):
         self.image.blit(self.images[1],(0,0))
-        self.vel.x = 0
+        self.vel.x = self.addedVel.x
         #self.addedVel.x = 0
         newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
         newPickup.startGame(self.game)
@@ -1267,7 +1267,7 @@ class AiEnemy(Hostile):
             else: 
                 self.vel.x = self.addedVel.x
         else:
-            self.vel.x = 0
+            self.vel.x = self.addedVel.x
 
 
     def updatePos(self, group): # fix
@@ -1285,11 +1285,11 @@ class AiEnemy(Hostile):
         self.vel += self.addedVel
         self.detectPlayer()
         self.checkCliff()
-        #self.pygamecolls(self.game.group_solid)
-        self.stopMoving = self.inbetweenSolids()
+        self.pygamecolls(self.game.group_solid)
+        #self.stopMoving = self.inbetweenSolids()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
-        self.pygamecolls(self.game.group_solid)
+        #self.pygamecolls(self.game.group_solid)
 
 
     def posCorrection(self):
@@ -1308,19 +1308,21 @@ class AiEnemy(Hostile):
         possibleplat = self.on_solid(self.game.group_platforms)
         if possibleplat != None:
             self.currentplat = possibleplat
-        #if self.right_x() >= self.currentplat.right_x()  -1:
-        if self.right_x() +  self.vel.x >= self.currentplat.right_x():
+        if self.right_x() >= self.currentplat.right_x()  -1:
+        #if self.right_x() +  self.addedVel.x >= self.currentplat.right_x():
 
             #self.vel.x = -1 * abs(self.vel.x)
             self.vel = self.addedVel
-            #self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
-            self.set_right(self.currentplat.right_x()) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
-        elif self.left_x() +  self.vel.x <= self.currentplat.left_x(): 
+            self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+            #self.set_right(self.currentplat.right_x() + self.addedVel.x) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+        #elif self.left_x() +  self.addedVel.x <= self.currentplat.left_x() +1: 
+        elif self.left_x() <= self.currentplat.left_x() +1: 
+        
             #self.vel.x = abs(self.vel.x)
             self.vel = self.addedVel
 
-            self.set_left(self.currentplat.left_x())
-            #self.set_left(self.currentplat.left_x() + 2)
+            #self.set_left(self.currentplat.left_x() + self.addedVel.x + 1)
+            self.set_left(self.currentplat.left_x() + 2)
 
     def collidingWithWall(self):
         self.pygamecolls(self.game.group_solid)
@@ -1329,10 +1331,11 @@ class AiEnemy(Hostile):
 
 # The part that checks whether to just turn around or be pushed
     def pygamecolls(self, group, ignoredSol = None):
+        print(f'before---------------')
         inflation = 0
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x*1.5)
+        self.rect.x += r((self.vel.x-self.addedVel.x)*1.5)
         self.rect.y += r(self.vel.y*1.5)
         collideds = pg.sprite.spritecollide(self, group, False)
 
@@ -1341,23 +1344,23 @@ class AiEnemy(Hostile):
             for collided in collideds:
 
                 if collided != self and collided.name != "p_floor":
-
+                    print(f'enemy coll with: {collided.name}') 
                     if not self.stopMoving: # If it was inbetween solids
                         if self.ori_massHOR <= collided.massHOR:
                             coll_side = self.determineSide(collided)
-
                             if coll_side == "left": # left side of collidedd obj
-                                newpos = collided.left_x() - self.width/2
+                                newpos = collided.left_x() - self.width/2 
                                 if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                    self.vel.x = 0
+                                    self.vel.x = self.addedVel.x
                                     self.pos.x = newpos
                                 #self.massHOR = collided.massHOR - 1
                                 #self.count = 1
                                     
                             if coll_side == "right":
-                                newpos = collided.right_x() + self.width/2
+                                newpos = collided.right_x() + self.width/2 
                                 if newpos >= self.pos.x:
-                                    self.vel.x = 0
+                                    self.vel.x = self.addedVel.x
+                                    #self.vel.x = 0
                                     self.pos.x = newpos
                                 #self.massHOR = collided.massHOR - 1
                                     

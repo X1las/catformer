@@ -410,7 +410,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
         if self.isPlayer and abs(self.vel.x) < 0.0001:
-            self.vel.x = 0
+            self.vel.x = self.addedVel.x
        
     def updatePos(self, group = None):
         self.pos +=  self.vel +  self.acc * 0.5

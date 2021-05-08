@@ -77,7 +77,7 @@ def createLevel1():
             'track': ''
         },
         'platforms': [floor, fatplat, p_1, p_3, p_4, p_5],
-        'boxes':     [box1],
+        'boxes':     [box1, box2],
         'buttons':   [btn1, btn2],
         'levers':    [lever1],
         'vases':     [vase1],
