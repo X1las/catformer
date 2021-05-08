@@ -136,8 +136,9 @@ class Game:
         #self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
-        dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
-                             { "movespeed" : Vec(0,-1), "target" : self.all_sprites.getObject("tallplat")}]}
+        dic = { "move"    : [{ "movespeed" : Vec(2,0), "deactspeed" : Vec(-2,0), "target" : self.all_sprites.getObject("p_3")}, 
+                             { "movespeed" : Vec(0,-1),"deactspeed" : Vec(0,0), "target" : self.all_sprites.getObject("tallplat")}],
+                "respawn" : [{"target" : self.all_sprites.getObject('box_1')}]            }
         self.button4  = Lever(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
         self.button4.startGame(self)
         #self.button4  = Button(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #

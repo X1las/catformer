@@ -307,8 +307,9 @@ class Box(CustomSprite):
 
 
     def respawn(self):
-        self.pos = vec(self.initX, self.initY)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        #self.pos = vec(self.initX, self.initY)
+        #self.rect.midbottom = self.pos.rounded().asTuple()
+        self = self.__init__(self.initX, self.initY, self.width, self.height, self.name)
 
     def resetRects(self):
         super().resetRects()
@@ -598,7 +599,8 @@ class Lever(CustomSprite):
         self.activated = False
         self.deactivated = True
         self.x = x; self.y = y
-        
+        self.hasActivatedTarget = False
+
     def startGame(self, game):
         self.game = game
         self.groups = game.all_sprites, game.group_levers
@@ -623,12 +625,15 @@ class Lever(CustomSprite):
     def activeEffect(self):
         try:
             for e,v in self.effect.items():
+                #print(f'{e} and {v}')
                 if e == "respawn":
                     for respawn in v:
-                        target = respawn['target']
+                        if not self.hasActivatedTarget:
+                            target = respawn['target']
+                            self.hasActivatedTarget = True
+                            target.respawn()
                         
                         #respawn['target'].vel = respawn["movespeed"].copy() + target.originalVel
-                        target.respawn()
                 if e == "move":
 
                     for move in v:
@@ -641,6 +646,7 @@ class Lever(CustomSprite):
         try: # shouldn't be try except, I think
             for e,v in self.effect.items():
                 if e == "respawn":
+                    self.hasActivatedTarget = False
                     pass
                     #self.target.respawn()
                 if e == "move":
@@ -649,7 +655,7 @@ class Lever(CustomSprite):
                         target = move["target"]
                         nextpos = target.pos + target.vel  
                         #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
-                        move['target'].vel = move["movespeed"].copy() * (-1) + target.originalVel
+                        move['target'].vel = move["deactspeed"].copy() + target.originalVel
         except Exception as e:
             print(f'button deact: {e}') 
 

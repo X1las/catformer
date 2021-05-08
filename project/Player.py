@@ -165,11 +165,9 @@ class Player(CustomSprite):
         movingVER = False
         movingHOR = False
         collides_top = False; collides_bot = False
-        print(f'before.---------------')
         if collideds:
             for collided in collideds:
                 if collided != self:
-                    print(f'collided: {collided.name}')
                     #if self.solidstrength < collided.solidstrength:
                      #   self.solidstrength = collided.solidstrength -1
                       #  count = 2
