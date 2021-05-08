@@ -43,14 +43,14 @@ def createLevel1():
     # platforms
     floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
     fatplat = Platform( 300 , 450 ,  150 , 40 , 'fatplat')
-    p_1     = Platform( 700 , 500 ,  150 , 40, "p_1", vel=Vec(1,0), maxDist = 100)
+    p_1     = Platform( 650 , 500 ,  150 , 40, "p_1", vel=Vec(-1,0), maxDist = 100)
     p_2     = Platform( 500 , 590 ,  150 , 70 , 'p_2')
-    p_3     = Platform( 700 , 300 ,  150 , 40 , 'p_3')
-    p_4     = Platform( 900 , 450 ,  150 , 40 , 'p_4')
+    p_3     = Platform( 600 , 300 ,  150 , 40 , 'p_3')
+    p_4     = Platform( 720 , 450 ,  150 , 40 , 'p_4')
     p_5     = Platform( 1100 , 400 ,  150 , 40 , 'p_5')
     # boxes
-    box1 = Box(370 , 400 , 44 , 44 , 'box_1')
-    box2 = Box(710 , 400 , 44 , 44 , 'box_2')
+    box1 = Box(270 , 200 , 44 , 44 , 'box_1')
+    box2 = Box(700 , 400 , 44 , 44 , 'box_2')
 
     # buttons
     btn1 = Button(600 , 550 , 30 , 20 , 'button1')

@@ -105,7 +105,7 @@ class CustomSprite(pg.sprite.Sprite):
         #self.stoppedHOR = False
         #self.stoppedVER = False
 
-
+    
         
     def top_y(self):
         return self.pos.y - self.height

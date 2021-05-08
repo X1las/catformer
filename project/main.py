@@ -127,13 +127,13 @@ class Game:
         self.smalltest.startGame(self)
         
         
-        self.tallplat   = Platform(850, 530, 20, 50, "tallplat", upMaxDist= 50, downMaxDist = 100)
+        self.tallplat   = Platform(850, 530, 20, 50, "tallplat", upMaxDist= 100, downMaxDist = 200)
         self.tallplat.startGame(self)
         
         #self.enemy = PatrollingEnemy(750, 460 , 26, 30, 200, name =  "pat1")                       #      
         #self.enemy.startGame(self)
-        self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
-        self.aienemy.startGame(self)
+        #self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
+        #self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 

@@ -94,7 +94,7 @@ class LevelGoal(CustomSprite):
 class Platform(CustomSprite):
 
     game = None
-    def __init__(self, x, y, width, height, name, vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 0, downMaxDist = 0):
+    def __init__(self, x, y, width, height, name, vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
         self.originalVel = vel.copy()
         self.solid = True
         self.vel = vel
@@ -234,7 +234,9 @@ class Platform(CustomSprite):
             self.vel.x = abs(self.originalVel.x)
             #self.vel.x = abs(self.vel.x)
             self.area = "left"
-        elif self.pos.y - self.y <= -1*self.upMaxDist:
+        elif abs(self.pos.y - self.y) >= abs(self.upMaxDist):
+            if self.vel.y == 0:
+                self.pos.y = self.y - self.upMaxDist + 1
             self.vel.y = -1* abs(self.originalVel.y)
             #self.vel.y = -1* abs(self.vel.y)
             self.area = "left"
@@ -725,7 +727,7 @@ class Button(CustomSprite):
                             target = move["target"]
                             nextpos = target.pos + target.vel  
                             #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
-                            move['target'].vel = move["movespeed"] * (-1)
+                            move['target'].vel = move["movespeed"].copy() * (-1)
             except Exception as e:
                 print(f'button deact: {e}') 
                 pass
@@ -1331,7 +1333,6 @@ class AiEnemy(Hostile):
 
 # The part that checks whether to just turn around or be pushed
     def pygamecolls(self, group, ignoredSol = None):
-        print(f'before---------------')
         inflation = 0
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -1344,7 +1345,6 @@ class AiEnemy(Hostile):
             for collided in collideds:
 
                 if collided != self and collided.name != "p_floor":
-                    print(f'enemy coll with: {collided.name}') 
                     if not self.stopMoving: # If it was inbetween solids
                         if self.ori_massHOR <= collided.massHOR:
                             coll_side = self.determineSide(collided)
