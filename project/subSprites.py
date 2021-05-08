@@ -502,7 +502,7 @@ class Vase(CustomSprite):
 
     def posCorrection(self):
         if self.broken:
-          #  self.pygamecoll(self.game.group_solid)
+        #  self.pygamecoll(self.game.group_solid)
             standingon = self.on_solid(self.game.group_platforms)
             if standingon:
                 self.pos.y = standingon.top_y()
@@ -532,19 +532,76 @@ class Vase(CustomSprite):
 
 
 
+class Activator(CustomSprite):
+
+    hasActivatedTarget = False
+    activated = False
+    deactivated = True
+    
+
+    def activeEffect(self):
+        try:
+            for e,v in self.effect.items():
+                if e == "respawn":
+                    for respawn in v:
+                        if not self.hasActivatedTarget:
+                            target = respawn['target']
+                            self.hasActivatedTarget = True
+                            target.respawn()
+                if e == "move":
+
+                    for move in v:
+                        target = move["target"]
+                        move['target'].vel = move["movespeed"].copy() + target.originalVel
+        except Exception as e:
+            print(f'button activate: {e}') 
+
+    def deactiveEffect(self):
+        try: # shouldn't be try except, I think
+            for e,v in self.effect.items():
+                if e == "respawn":
+                    self.hasActivatedTarget = False
+                if e == "move":
+
+                    for move in v:
+                        target = move["target"]
+                        move['target'].vel = move["deactspeed"].copy() + target.originalVel
+        except Exception as e:
+            print(f'button deact: {e}') 
+
+
+
+    def activate(self):
+        if not self.activated:
+            self.activated = True
+            self.deactivated = False
+            self.image = self.image_active
+            #self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
+    def deactivate(self):
+        if not self.deactivated:
+            self.deactivated = True
+            self.activated = False
+            self.image = self.image_inactive
+    def update(self):
+        if self.activated:
+            self.activeEffect()
+        elif self.deactivated:
+            self.deactiveEffect()
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
 # Lever SubClass - Inherits from CustomSprite
-class Lever(CustomSprite):
+class Lever(Activator):
     def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
-        self.width = width; self.height = height
-        self.effect = effect; #self.target = target; self.movespeed = movespeed
+        self.width = width; self.height = height; self.effect = effect; 
         self.auto_deactivate = autodeactivate
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
+        
         self.deactivate_counter = 30
-        self.activated = False
-        self.deactivated = True
-        self.x = x; self.y = y
-        self.hasActivatedTarget = False
+        #self.x = x; self.y = y
+        '''move to super'''
+
+
 
     def startGame(self, game):
         self.game = game
@@ -560,102 +617,41 @@ class Lever(CustomSprite):
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.images = sheet.images_at(rects, (0,255,0))     
-        self.image_left  = pg.transform.scale(self.images[0], (self.width, self.height))
-        self.image_right = pg.transform.scale(self.images[1], (self.width, self.height))
-        self.image = self.image_left
+
+        #self.image_left  = pg.transform.scale(self.images[0], (self.width, self.height))
+        #self.image_right = pg.transform.scale(self.images[1], (self.width, self.height))
+        #self.image = self.image_left
+        self.image_inactive  = pg.transform.scale(self.images[0], (self.width, self.height))
+        self.image_active = pg.transform.scale(self.images[1], (self.width, self.height))
+        self.image = self.image_inactive
 
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (self.x,self.y)
-
-    def activeEffect(self):
-        try:
-            for e,v in self.effect.items():
-                #print(f'{e} and {v}')
-                if e == "respawn":
-                    for respawn in v:
-                        if not self.hasActivatedTarget:
-                            target = respawn['target']
-                            self.hasActivatedTarget = True
-                            target.respawn()
-                        
-                        #respawn['target'].vel = respawn["movespeed"].copy() + target.originalVel
-                if e == "move":
-
-                    for move in v:
-                        target = move["target"]
-                        move['target'].vel = move["movespeed"].copy() + target.originalVel
-        except Exception as e:
-            print(f'button activate: {e}') 
-
-    def deactiveEffect(self):
-        try: # shouldn't be try except, I think
-            for e,v in self.effect.items():
-                if e == "respawn":
-                    self.hasActivatedTarget = False
-                    pass
-                    #self.target.respawn()
-                if e == "move":
-
-                    for move in v:
-                        target = move["target"]
-                        nextpos = target.pos + target.vel  
-                        #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
-                        move['target'].vel = move["deactspeed"].copy() + target.originalVel
-        except Exception as e:
-            print(f'button deact: {e}') 
-
-
-    def activate(self):
-        if self.activated != True:
-            self.activated = True
-            self.deactivated = False
-            self.image = self.image_right
-            
-            if self.auto_deactivate:
-                t = Timer(2, self.deactivate)
-                t.start()
-            """
-            if self.effect == "respawn":
-                self.target.respawn()
-            if self.effect == "move":
-                self.target.vel.x = self.movespeed
-            """
-        # whatever else it needs to activate
-    
-
-
-    def deactivate(self):
-        if self.deactivated != True:
-            self.deactivated = True
-            self.activated = False
-            self.image = self.image_left
-
-            #if self.effect == "move":
-             #   self.target.vel.x = 0
-        # whatever else it needs to deactivate
-            
-    
-
-    def update(self):
-        if self.activated:
-            self.activeEffect()
-        elif self.deactivated:
-            self.deactiveEffect()
-        #round(self.pos) 
-        self.rect.midbottom = self.pos.realRound().asTuple()
-
+        self.rect.midbottom = (self.pos.x,self.pos.y)   
 
 # Button SubClass - Inherits from CustomSprite
-class Button(CustomSprite):
-    #def __init__(self,game,x,y, width, height, name = None, effect = [None], movespeed = None, target = None): 
+class Button(Activator):
     def __init__(self,x,y, width, height, name = None, effect = {}): 
-        self.x = x; self.y = y
-        self.effect = effect; #self.target = target; self.movespeed = movespeed
+
+        self.effect = effect; 
         self.width = width; self.height = height
         self.pos = vec(x,y)
+
+
+        ''' probably not needed'''
+        #self.x = x; self.y = y
+        #self.activated = False
+        #self.deactivated = True
+
+        ''' just for testing?'''
+
+        ''' really not sure'''
+
+        ''' pretty sure is needed'''
         self.relativePosition = self.pos.copy()
-        self.activated = False
-        self.deactivated = True
+
+        ''' should be revisited'''
+
+        ''' in use'''
 
     def startGame(self, game):
         self.game = game
@@ -671,73 +667,27 @@ class Button(CustomSprite):
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.images = sheet.images_at(rects, (0,255,0))     
-        self.image_pressed = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
-        self.image_unpressed = pg.transform.scale(self.images[1], (self.width, self.height))
-        self.image = self.image_unpressed
+        #self.image_pressed = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
+        #self.image_unpressed = pg.transform.scale(self.images[1], (self.width, self.height))
+        #self.image = self.image_unpressed
+        self.image_active = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
+        self.image_inactive = pg.transform.scale(self.images[1], (self.width, self.height))
+        self.image = self.image_inactive
 
         self.rect = self.image.get_rect()
-        self.rect.midbottom = (self.x,self.y)
-
+        self.rect.midbottom = (self.pos.x,self.pos.y)
 
     def activate(self):
-        if self.activated != True:
-            self.activated = True
-            self.deactivated = False
-            self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
-            self.image = self.image_pressed
-                    #self.target.vel = self.movespeed
-            
-        # whatever else it needs to activate
-        
-
+        super().activate()
+        self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
     def deactivate(self):
-        if self.deactivated != True:
-            self.deactivated = True
-            self.activated = False
-            self.rect.update(self.pos.asTuple(), (self.width, self.height))
-            self.image = self.image_unpressed
+        super().deactivate()
+        self.rect.update(self.pos.asTuple(), (self.width, self.height))
 
-        # whatever else it needs to deactivate
-            #for e in self.effect: 
-            #   if e == "move":
-            #      self.target.vel = vec()
-            
 
     def update(self):
-        if self.activated:
-            try:
-                for e,v in self.effect.items():
-                    if e == "respawn":
-                        self.target.respawn()
-                    if e == "move":
-
-                        for move in v:
-                            target = move["target"]
-                            move['target'].vel = move["movespeed"].copy() + target.originalVel
-            except Exception as e:
-                print(f'button activate: {e}') 
-                pass
-        if self.deactivated:
-            try: # shouldn't be try except, I think
-                for e,v in self.effect.items():
-                    if e == "respawn":
-                        self.target.respawn()
-                    if e == "move":
-
-                        for move in v:
-                            target = move["target"]
-                            nextpos = target.pos + target.vel  
-                            #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
-                            move['target'].vel = move["movespeed"].copy() * (-1) + target.originalVel
-            except Exception as e:
-                print(f'button deact: {e}') 
-                pass
-
-            
-        self.activated = False
-
-        self.rect.midbottom = self.pos.realRound().asTuple()
-
+        super().update()
+        self.activated = False # Not sure if needed
 
 # Pickup SubClass - Inherits from CustomSprite
 class PickUp(CustomSprite):
@@ -745,7 +695,8 @@ class PickUp(CustomSprite):
     def __init__(self,x,y, width, height, type_, name = None): 
         self.width = width; self.height = height
         self.type = type_
-        self.pickup = True
+        
+        #self.pickup = True
         
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
@@ -771,7 +722,6 @@ class PickUp(CustomSprite):
 
 
     def update(self):
-        #round(self.pos) 
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
@@ -779,106 +729,11 @@ class PickUp(CustomSprite):
 
 
 # Hostile UpperClass - Inherits from CustomSprite
+''' trash everything inside?'''
 class Hostile(CustomSprite):
     pass
     active = True
-
-
-
-
-    def inbetweenSolids(self):
-        inflation = 10
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect = self.rect.inflate(inflation,inflation)
-        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
-        result = False
-        if collideds:
-            for collided in collideds:
-                if collided != self and collided.name != "p_floor" and self.ori_massHOR <= collided.massHOR: #self.lessMassThan(collided):
-                    
-                    #if self.solidstrength < collided.solidstrength:
-                    #   self.solidstrength = collided.solidstrength -1
-                        #count = 2
-                    #if self.massVER < collided.massVER:
-                    #       self.massVER = collided.massVER - 1
-                    coll_side = self.determineSide(collided)
-                    if self.massHOR < collided.massHOR:
-                            self.massHOR = collided.massHOR - 1
-                    if coll_side == "left": # left side of collidedd obj
-                        if self.collides_left:
-                            self.vel.x *= 0
-                            result = True
-                        self.collides_right = True
-                    if coll_side == "right":
-                        if self.collides_right:
-                            result = True
-                            self.vel.x *= 0
-                        self.collides_left = True
-        self.rect = self.rect.inflate(-inflation,-inflation)
-        
-        return result      
-
-    # The part that checks whether to just turn around or be pushed
-    def pygamecolls(self, group, ignoredSol = None):
-        inflation = 0
-        self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
-        collideds = pg.sprite.spritecollide(self, group, False)
-
-        if collideds:
-            for collided in collideds:
-
-                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided):
-                    #if collided.solidstrength > self.solidstrength:
-                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
-
-                    if not self.stopMoving: # If it was inbetween solids
-                        if self.massHOR < collided.massHOR:
-                            coll_side = self.determineSide(collided)
-
-                            if coll_side == "left": # left side of collidedd obj
-                                newpos = collided.left_x() - self.width/2
-                                if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                    if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                        self.pos.x = newpos
-                                        self.vel.x = copy.copy(collided.vel.x) #no copy
-                                        self.acc.x = collided.acc.x
-                                    if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                        self.vel.x = 1
-                                        self.vel.x *= -1
-                                    if self.collides_left: #remove?
-                                        self.vel.x *= 0
-                                self.massHOR = collided.massHOR - 1
-                                self.count = 2
-                                    
-                            if coll_side == "right":
-                                newpos = collided.right_x() + self.width/2
-                                if newpos >= self.pos.x:
-                                    if collided.vel.x !=  0:
-                                        self.pos.x = newpos
-                                        self.vel.x = copy.copy(collided.vel.x) # no copy
-                                        self.acc.x = collided.acc.x
-                                    if collided.vel.x == 0:
-                                        self.vel.x = 1
-                                        self.vel.x *= -1
-                                    if self.collides_right: #remove?
-                                        self.vel.x *= 0
-                                self.massHOR = collided.massHOR - 1
-                                    
-                                self.vel.x *= -1
-                                self.count = 2
-                        if self.massVER < collided.massVER:
-                            coll_side = self.determineSide(collided)
-                                
-                            if coll_side == "bot":
-                                if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                                    self.pos.x = collided.left_x() - self.width/2
-                                else: 
-                                    self.pos.x = collided.right_x() + self.width/2
-                                self.massVER = collided.massVER - 1
-                                #self.count = 5
+    
 
 # Water SubClass - Inherits from Hostile
 class Water(Hostile):
@@ -944,32 +799,45 @@ class Water(Hostile):
 
 # Patrolling Enemy SubClass - Inherits from Hostile
 class PatrollingEnemy(Hostile):
+
     def __init__(self,x,y, width, height, maxDist, vel = vec(1,0), name = "enemy"):
-        self._layer = 10
-        self.x = x
-        self.width          = width; self.height = height
-        
-        self.pos            = vec(x,y);     self.vel =  vec(1, 0);     self.acc = vec(0, 0)
+        self.width  = width;      self.height = height;   self.name = name
+        self.pos    = vec(x,y);   self.vel =  vel;        self.acc = vec(0, 0)
         self.maxDist = maxDist
-        self.relativePosition = self.pos.copy()
-        self.area = "mid"
-        self.collides_right = False
+
+        ''' probably not needed'''
         self.dontmove = False
+        self.count = 2
+        self.x = x
+        self.collides_right = False
         self.collides_left = False
+        
+        '''just for testing?'''
+        
+        ''' really not sure'''
+        self.isEnemy = True
+
+        ''' pretty sure is needed'''
+        self.justpoppedup = False
+        self.originalVel = vel.copy()
+        self.relativePosition = self.pos.copy()
+        
+        ''' should be revisited'''
         self.solidstrength = 3
         self.originalsolidstrength = self.solidstrength
+        
+        '''in use'''
         self.currentplat = None
         self.aboveground = True
         self.wasunderground = False
-        self.justpoppedup = False
-        self.name = name
-        self.count = 2
-        self.originalVel = vel.copy()
-        self.vel = vel
-        self.init()
-        self.isEnemy = True
-        self.stopMoving = False
+        self._layer = 10
         self.active = True
+
+        self.init()
+
+
+
+        #self.stopMoving = False
         #self.facing = None
 
     def startGame(self, game):
@@ -1006,13 +874,9 @@ class PatrollingEnemy(Hostile):
     def checkDist(self):
         if self.right_x() >= self.currentplat.right_x()  -2:
             self.vel.x = (-1) * abs(self.originalVel.x)# + self.addedVel.x
-            #self.vel.x = -1 * abs(self.vel.x)
-            #self.vel.x = self.relativeVel().x - self.addedVel.x
             self.set_right(self.currentplat.right_x() - 3)
         elif self.left_x() <= self.currentplat.left_x() + 2:
             self.vel.x = abs(self.originalVel.x)# + self.addedVel.x
-            #self.vel.x = abs(self.vel.x)
-            #self.vel.x = self.relativeVel().x - self.addedVel.x
             self.set_left(self.currentplat.left_x() + 3)
         ''' DO NOT DELETE. commented out for testing purposes
         elif  self.pos.x - self.x >= self.maxDist: # right boundary
@@ -1033,12 +897,9 @@ class PatrollingEnemy(Hostile):
             self.imageIndex = 0
         
         self.area = "mid" #Doesn't matter rn, but maybe later?
-        # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         if self.vel.x > 0:
-            #self.vel.x = 1
             self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
         else: 
-            #self.vel.x = -1
             self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
 
         # onlt do at init?
@@ -1052,11 +913,11 @@ class PatrollingEnemy(Hostile):
             self.checkDist()
         except Exception as e:
             print(f'touchbox: {e}')
-        #self.vel += self.addedVel
         self.vel += self.addedVel
         self.pygamecolls2()
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.active = self.aboveground # Whether it should deal damage
+    
     
     """
     -> Checks whether aboveground bool is true. If it is, reset the currentplat the worm is on
@@ -1105,8 +966,6 @@ class PatrollingEnemy(Hostile):
 
     def pygamecolls2(self, ignoredSol = None):
         self.rect.midbottom = self.pos.realRound().asTuple()
-        #self.rect.x += r(self.vel.x)
-        #self.rect.y += r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, self.game.group_platforms, False)
 
         if collideds:
@@ -1135,17 +994,17 @@ class PatrollingEnemy(Hostile):
                         #self.count = 5
                     """
 
+    # DEL?
     def posCorrection(self):
-        self.collidingWithWall()
+        #self.collidingWithWall()
         pass
-        #self.pygamecolls(self.game.group_solid)
 
 
     # Will make the enemy stand still if inbetween solids (instead of vibrating)
     
 
         
-
+    # DEL?
     def collidingWithWall(self):
         #self.pygamecolls(self.game.group_solid)
 
@@ -1156,29 +1015,42 @@ class PatrollingEnemy(Hostile):
 # AI Enemy SubClass 
 class AiEnemy(Hostile):
     def __init__(self,x,y, width, height, game, speed = 1, name = "enemyai"):
-        self._layer = 10
         self.speed = speed
-        self.x = x
-        self.width          = width; self.height = height
-        self.game = game
-        self.pos            = vec(x,y)
-        self.vel =  vec(0, 0)
-        self.acc = vec(0, 0)
+        #self.x = x
+        self.width = width;  self.height = height
+        self.game  = game;   self.name = name
+        self.pos = vec(x,y); self.vel = vec(speed,0); self.acc = vec()
+        
         self.relativePosition = self.pos.copy()
-        self.collides_right = False
-        self.dontmove = False
-        self.collides_left = False
-        self.update_order = 9
+        #self.dontmove = False
+
+        ''' probably not needed'''
+        self.count = 6
+
+        '''just for testing?'''
+        self.isEnemy = True
+
+
+        ''' pretty sure is needed'''
+        self.target = None # The player
+
+
+
+        ''' should be revisited'''
         self.solidstrength = 5
         self.originalsolidstrength = self.solidstrength
-        self.target = None
-        self.name = name
-        self.count = 6
-        self.init()
+
+
+    
+        """in use"""
         self.ori_massVER = 8
-        self.isEnemy = True
+        self._layer = 10
+        self.update_order = 9
         self.currentplat = None
-        self.stopMoving = False
+
+
+        self.init()
+        #self.stopMoving = False
         #self.facing = None
     
     def onSameLevel(self):
@@ -1198,7 +1070,7 @@ class AiEnemy(Hostile):
         self.groups = game.all_sprites, game.group_damager, game.group_solid, game.group_enemies
         pg.sprite.Sprite.__init__(self, self.groups)
 
-         # get spritesheet
+        # get spritesheet
         wormSheet = ss.Spritesheet('resources/hyena-spritesheet.png')
         # create sub-rectangles to load from water spritesheet
         rect1 = pg.Rect( 12, 20, 36, 28)
@@ -1322,112 +1194,35 @@ class AiEnemy(Hostile):
             for collided in collideds:
 
                 if collided != self and collided.name != "p_floor":
-                    if not self.stopMoving: # If it was inbetween solids
-                        if self.ori_massHOR <= collided.massHOR:
-                            coll_side = self.determineSide(collided)
-                            if coll_side == "left": # left side of collidedd obj
-                                newpos = collided.left_x() - self.width/2 
-                                if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                    self.vel.x = self.addedVel.x
-                                    self.pos.x = newpos
-                                #self.massHOR = collided.massHOR - 1
-                                #self.count = 1
-                                    
-                            if coll_side == "right":
-                                newpos = collided.right_x() + self.width/2 
-                                if newpos >= self.pos.x:
-                                    self.vel.x = self.addedVel.x
-                                    #self.vel.x = 0
-                                    self.pos.x = newpos
-                                #self.massHOR = collided.massHOR - 1
-                                    
-                                self.count = 1
-                        if self.ori_massVER < collided.massVER:
-                            coll_side = self.determineSide(collided)
-                                
-                            if coll_side == "bot":
-                                if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                                    self.pos.x = collided.left_x() - self.width/2
-                                else: 
-                                    self.pos.x = collided.right_x() + self.width/2
-                                self.massVER = collided.massVER - 1
-
-
-
-    """
-    # The part that checks whether to just turn around or be pushed
-    def pygamecolls(self, group, ignoredSol = None):
-        inflation = 0
-        self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
-        collideds = pg.sprite.spritecollide(self, group, False)
-
-        if collideds:
-            for collided in collideds:
-
-                if collided != self and collided.name != "p_floor" and self.solidstrength < collided.solidstrength:
-                    #if collided.solidstrength > self.solidstrength:
-                    self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
-                    self.count = 5
-
-                    if not self.stopMoving: # If it was inbetween solids
+                    #if not self.stopMoving: # If it was inbetween solids
+                    if self.ori_massHOR <= collided.massHOR:
                         coll_side = self.determineSide(collided)
                         if coll_side == "left": # left side of collidedd obj
-                            newpos = collided.left_x() - self.width/2
+                            newpos = collided.left_x() - self.width/2 
                             if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                if collided.vel.x != 0: # If being pushed (so only if being pushed by moving box)
-                                    self.pos.x = newpos
-                                    self.vel.x = copy.copy(collided.vel.x) #no copy
-                                    self.acc.x = collided.acc.x
-                                if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_left: #remove?
-                                    self.vel.x *= 0
+                                self.vel.x = self.addedVel.x
+                                self.pos.x = newpos
+                            #self.massHOR = collided.massHOR - 1
+                            #self.count = 1
+                                
                         if coll_side == "right":
-                            newpos = collided.right_x() + self.width/2
+                            newpos = collided.right_x() + self.width/2 
                             if newpos >= self.pos.x:
-                                if collided.vel.x !=  0:
-                                    self.pos.x = newpos
-                                    self.vel.x = copy.copy(collided.vel.x) # no copy
-                                    self.acc.x = collided.acc.x
-                                if collided.vel.x == 0:
-                                    self.vel.x = 1
-                                    self.vel.x *= -1
-                                if self.collides_right: #remove?
-                                    self.vel.x *= 0
-                            self.vel.x *= -1
-    
-    # Will make the enemy stand still if inbetween solids (instead of vibrating)
-    def inbetweenSolids(self):
-        inflation = 4
-        self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
-        result = False
-        if collideds:
-            for collided in collideds:
-                if collided != self and collided.name != "p_floor":
-                    if self.solidstrength < collided.solidstrength:
-                        self.solidstrength = collided.solidstrength -1
-                        count = 2
-                    coll_side = self.determineSide(collided)
-                    if coll_side == "left": # left side of collidedd obj
-                        if self.collides_left:
-                            self.vel.x *= 0
-                            result = True
-                        self.collides_right = True
-                    if coll_side == "right":
-                        if self.collides_right:
-                            result = True
-                            self.vel.x *= 0
-                        self.collides_left = True
-        self.rect = self.rect.inflate(-inflation,-inflation)
-        
-        return result           
-    """
+                                self.vel.x = self.addedVel.x
+                                #self.vel.x = 0
+                                self.pos.x = newpos
+                            #self.massHOR = collided.massHOR - 1
+                                
+                            self.count = 1
+                    if self.ori_massVER < collided.massVER:
+                        coll_side = self.determineSide(collided)
+                            
+                        if coll_side == "bot":
+                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
+                                self.pos.x = collided.left_x() - self.width/2
+                            else: 
+                                self.pos.x = collided.right_x() + self.width/2
+                            self.massVER = collided.massVER - 1
 
 
 
