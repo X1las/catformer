@@ -127,11 +127,11 @@ class Game:
         self.smalltest.startGame(self)
         
         
-        self.tallplat   = Platform(850, 530, 20, 50, "tallplat", upMaxDist= 100, downMaxDist = 200)
+        self.tallplat   = Platform(850, 430, 20, 50, "tallplat", upMaxDist= 100, downMaxDist = 200)
         self.tallplat.startGame(self)
         
-        #self.enemy = PatrollingEnemy(750, 460 , 26, 30, 200, name =  "pat1")                       #      
-        #self.enemy.startGame(self)
+        self.enemy = PatrollingEnemy(750, 460 , 26, 30, 4000, name =  "pat1")                       #      
+        self.enemy.startGame(self)
         #self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
         #self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
@@ -464,8 +464,6 @@ class Game:
         self.all_sprites.update()
         self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
 
-        for box in self.group_boxes:
-            box.resets()
         self.all_sprites.updatePos(self.group_solid)
         self.moveScreen()
         self.relativePos()
