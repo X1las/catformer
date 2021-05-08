@@ -257,6 +257,7 @@ class Platform(CustomSprite):
 
 
     def updatePos(self, solid):
+        self.checkDist()
         super().updatePos(solid)
         self.pygamecolls(self.game.group_solid)
         #self.pygamecoll(self.game.group_solid)
@@ -693,17 +694,6 @@ class Button(CustomSprite):
             self.deactivated = False
             self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
             self.image = self.image_pressed
-            try:
-                for e,v in self.effect.items():
-                    if e == "respawn":
-                        self.target.respawn()
-                    if e == "move":
-
-                        for move in v:
-                            move['target'].vel = move["movespeed"].copy()
-            except Exception as e:
-                print(f'button activate: {e}') 
-                pass
                     #self.target.vel = self.movespeed
             
         # whatever else it needs to activate
@@ -717,6 +707,26 @@ class Button(CustomSprite):
             self.image = self.image_unpressed
 
         # whatever else it needs to deactivate
+            #for e in self.effect: 
+            #   if e == "move":
+            #      self.target.vel = vec()
+            
+
+    def update(self):
+        if self.activated:
+            try:
+                for e,v in self.effect.items():
+                    if e == "respawn":
+                        self.target.respawn()
+                    if e == "move":
+
+                        for move in v:
+                            target = move["target"]
+                            move['target'].vel = move["movespeed"].copy() + target.originalVel
+            except Exception as e:
+                print(f'button activate: {e}') 
+                pass
+        if self.deactivated:
             try: # shouldn't be try except, I think
                 for e,v in self.effect.items():
                     if e == "respawn":
@@ -727,17 +737,11 @@ class Button(CustomSprite):
                             target = move["target"]
                             nextpos = target.pos + target.vel  
                             #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
-                            move['target'].vel = move["movespeed"].copy() * (-1)
+                            move['target'].vel = move["movespeed"].copy() * (-1) + target.originalVel
             except Exception as e:
                 print(f'button deact: {e}') 
                 pass
-            #for e in self.effect: 
-            #   if e == "move":
-            #      self.target.vel = vec()
-            
 
-    def update(self):
-    
             
         self.activated = False
 

@@ -137,7 +137,7 @@ class Game:
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
-                             { "movespeed" : Vec(0,-2), "target" : self.all_sprites.getObject("tallplat")}]}
+                             { "movespeed" : Vec(0,-1), "target" : self.all_sprites.getObject("tallplat")}]}
         self.button4  = Button(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
         self.button4.startGame(self)
         '''

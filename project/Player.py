@@ -125,9 +125,9 @@ class Player(CustomSprite):
             self.canjump = False
         self.move()
         self.applyPhysics(self.game.group_solid) 
+        self.inbetweenSolids()
         self.vel += self.addedVel
         # there for a picked up box to register that the player stands still
-        self.inbetweenSolids()
         self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.pygamecoll(self.game.group_solid)
@@ -157,7 +157,7 @@ class Player(CustomSprite):
         super().resetRects()
 
     def inbetweenSolids(self):
-        inflation = 0
+        inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
@@ -165,9 +165,11 @@ class Player(CustomSprite):
         movingVER = False
         movingHOR = False
         collides_top = False; collides_bot = False
+        print(f'before.---------------')
         if collideds:
             for collided in collideds:
                 if collided != self:
+                    print(f'collided: {collided.name}')
                     #if self.solidstrength < collided.solidstrength:
                      #   self.solidstrength = collided.solidstrength -1
                       #  count = 2
@@ -175,7 +177,7 @@ class Player(CustomSprite):
                     if coll_side == "left": # left side of collidedd obj
                         if self.collides_left:
                             #print(f'{collided.name} vel: {collided.vel}')
-                            if round(collided.vel.x) != 0:
+                            if collided.vel.x < 0:
                                 movingHOR = True
                             if movingHOR:
                                 self.takeDamage()
@@ -183,7 +185,7 @@ class Player(CustomSprite):
                         self.collides_right = True
                     if coll_side == "right":
                         if self.collides_right:
-                            if round(collided.vel.x) != 0:
+                            if collided.vel.x > 0:
                                 movingHOR = True
                             if movingHOR:
                                 self.takeDamage()
@@ -191,23 +193,24 @@ class Player(CustomSprite):
                             self.vel.x *= 0
                         self.collides_left = True
                     if coll_side == "top": # left side of collidedd obj
+                        if collided.vel.y < 0:
+                            movingVER = True
                         if collides_top:
                             #print(f'{collided.name} vel: {collided.vel}')
-                            if collided.vel.y != 0:
-                                movingVER = True
                             if movingVER:
                                 self.takeDamage()
                             result = True
                         collides_bot = True
                     if coll_side == "bot":
+                        if collided.vel.y > 0:
+                            movingVER = True
                         if collides_bot:
-                            if collided.vel.y != 0:
-                                movingVER = True
                             if movingVER:
                                 self.takeDamage()
                             result = True
                             self.vel.x *= 0
                         collides_top = True
+
         self.rect = self.rect.inflate(-inflation,-inflation)
           
         return result           
