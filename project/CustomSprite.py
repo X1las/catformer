@@ -118,7 +118,7 @@ class CustomSprite(pg.sprite.Sprite):
     def set_bot(self, ypos):
         self.pos.y = ypos
     def set_left(self, xpos):
-        self.pos.x = xpos - self.width/2
+        self.pos.x = xpos + self.width/2
     def set_right(self, xpos):
         self.pos.x = xpos - self.width/2
 
@@ -398,6 +398,13 @@ class CustomSprite(pg.sprite.Sprite):
         self.pos +=  self.vel +  self.acc * 0.5
 
 
+    def collisionMultipleGroups(self,*groups):
+        collidedObjects = []
+        for group in groups:
+            collisionsInGroup = pg.sprite.spritecollide(self, group, False)
+            for collision in collisionsInGroup:
+                collidedObjects.append(collision)
+        return collidedObjects
 
 
     #groups = game.all_sprites

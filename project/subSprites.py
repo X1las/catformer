@@ -559,7 +559,8 @@ class Vase(CustomSprite):
 
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.y += r(self.vel.y + 4) 
-        collideds = pg.sprite.spritecollide(self, group, False)
+        collideds = self.collisionMultipleGroups(group, self.game.group_enemies)
+        #collideds = pg.sprite.spritecollide(self, group, False)
         if collideds:
             for collided in collideds:
                 if collided != self and collided != self.ignoreSol:
@@ -967,7 +968,7 @@ class PatrollingEnemy(Hostile):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_damager, game.group_solid
+        self.groups = game.all_sprites, game.group_damager, game.group_enemies #, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get spritesheet
@@ -997,12 +998,19 @@ class PatrollingEnemy(Hostile):
 
     # Checking if the enemy is outside its patrolling area
     def checkDist(self):
-        if  self.pos.x - self.x >= self.maxDist or self.right_x() >= self.currentplat.right_x()  -2: # right boundary
+        if  self.pos.x - self.x >= self.maxDist: # right boundary
             self.area = "right"
             self.vel.x = -1 * abs(self.vel.x)
-        elif self.pos.x - self.x <= -1*self.maxDist or self.left_x() <= self.currentplat.left_x() +2:
+        elif self.pos.x - self.x <= -1*self.maxDist:
             self.vel.x = abs(self.vel.x)
             self.area = "left"
+        if self.right_x() >= self.currentplat.right_x()  -2:
+            self.vel.x = -1 * abs(self.vel.x)
+            self.set_right(self.currentplat.right_x() - 3)
+        elif self.left_x() <= self.currentplat.left_x() + 2:
+            self.vel.x = abs(self.vel.x)
+            self.set_left(self.currentplat.left_x() + 3)
+
 
     def updatePos(self, group):
         self.pos +=  self.vel +  self.acc * 0.5
@@ -1031,16 +1039,23 @@ class PatrollingEnemy(Hostile):
         self.touchBox()
         self.checkDist()
         self.pygamecolls2()
+        self.vel += self.addedVel
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.active = self.aboveground
-        
+        self.active = self.aboveground # Whether it should deal damage
+    
+    """
+    -> Checks whether aboveground bool is true. If it is, reset the currentplat the worm is on
+    -> Move rect above platform to check it is it "free" for boxes.
+    -> Checks collisions. If true, set pos to platform bot (inside plat). 
+        -> else: set pos to top of current platform.
+    """
     def touchBox(self):
         inflationW = 0
         inflationH = 0
         self.rect = self.rect.inflate(inflationW,inflationH)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.relativeVel().x*1.5)
-        self.rect.y += r(self.vel.y*1.5) 
+        #self.rect.x += r(self.relativeVel().x)
+        #self.rect.y += r(self.vel.y) 
         # do not look at plats????
         if self.aboveground:
             possibleplat = self.on_solid(self.game.group_platforms)
@@ -1201,7 +1216,7 @@ class AiEnemy(Hostile):
     
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_damager, game.group_solid
+        self.groups = game.all_sprites, game.group_damager, game.group_solid, game.group_enemies
         pg.sprite.Sprite.__init__(self, self.groups)
 
          # get spritesheet
@@ -1261,6 +1276,8 @@ class AiEnemy(Hostile):
         self.detectPlayer()
         self.stopMoving = self.inbetweenSolids()
         self.rect.midbottom = self.pos.realRound().asTuple()
+        self.vel += self.addedVel
+
         self.pygamecolls(self.game.group_solid)
 
 

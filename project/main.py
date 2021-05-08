@@ -76,7 +76,7 @@ class Game:
         self.group_solid              = SpriteGroup()          # solid objects (formerly rayIntersecters)
         self.group_pickups            = pg.sprite.Group()       # All things that can get picked up by player
         self.group_damager            = pg.sprite.Group()       # All hostiles
-
+        self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()        # Things that can activate a button
         self.group_passives           = pg.sprite.Group()
 
@@ -130,10 +130,10 @@ class Game:
         self.tallplat   = Platform(850, 530, 20, 50, "tallplat", upMaxDist= 50, downMaxDist = 100)
         self.tallplat.startGame(self)
         
-        self.enemy = PatrollingEnemy(750, 460 , 26, 30, 200, name =  "pat1")                       #      
-        self.enemy.startGame(self)
-        #self.aienemy = AiEnemy(220, 550,36, 28, 200, name =  "ai1")                       #      
-        #self.aienemy.startGame(self)
+        #self.enemy = PatrollingEnemy(750, 460 , 26, 30, 200, name =  "pat1")                       #      
+        #self.enemy.startGame(self)
+        self.aienemy = AiEnemy(220, 550,36, 28, 200, name =  "ai1")                       #      
+        self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
@@ -173,7 +173,7 @@ class Game:
         self.relposp                = 0                                                    
         self.realposp               = 0       
         self.rel_fitToPlayer        = - WIDTH/2 + self.player.pos.x #half screen - pos         
-        #self.relposx = self.rel_fitToPlayer     
+        self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
         self.run()                                  # Runs the game
 
@@ -545,7 +545,6 @@ class Game:
   
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
-        """
         #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
         if self.player.vel.x > 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
@@ -564,7 +563,9 @@ class Game:
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
                 self.relposp = 0
+        """
         
+   
     # 
     def relativePos(self):
         for sprite in self.all_sprites:
