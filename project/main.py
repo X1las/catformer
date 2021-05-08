@@ -1,5 +1,21 @@
 # Description:
 
+
+''' probably not needed'''
+
+''' just for testing?'''
+
+''' really not sure'''
+
+''' pretty sure is needed'''
+
+''' should be revisited'''
+
+''' in use'''
+
+
+
+
 # Imports
 import pygame as pg
 import sys
