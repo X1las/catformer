@@ -69,6 +69,8 @@ class CustomSprite(pg.sprite.Sprite):
     pickupStarted = False
     isPickedUp = False
     isPlatform = False
+    stoppedHOR = False
+    stoppedVER = False
 
     def resetMass(self):
         self.massHOR = self.ori_massHOR
@@ -100,6 +102,8 @@ class CustomSprite(pg.sprite.Sprite):
         self.count -= 1
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
+        #self.stoppedHOR = False
+        #self.stoppedVER = False
 
 
         
@@ -287,60 +291,73 @@ class CustomSprite(pg.sprite.Sprite):
         collideds = pg.sprite.spritecollide(self, group, False)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect = self.rect.inflate(-inflationW, -inflationH)
-
+        wasstoppedHOR = False
         if collideds:
             for collided in collideds:
                 #if self.isPlayer:
                 #print(f'{collided.name} mass: {collided.massHOR}')
                                                                     # Probably not the best solution
-                if collided != self and collided not in ignoredSol and not self.isEnemy and self.lessMassThan(collided):#collided.solidstrength >= self.solidstrength :
-                    #if group.has(self):
-                     #   self.solidstrength = collided.solidstrength -1
-                    coll_side = self.determineSide(collided)
-                    if self.massVER < collided.massVER:
-                        #print(f' ------ {self.name} added by {collided.name}')
-                        if coll_side == "top":
-                            newpos = collided.top_y()
-                            
-                            self.count = 2
-                            if newpos < self.pos.y:
-                                self.set_bot(collided.top_y())
-                                self.vel.y = 0
-                                self.acc.y = 0
-                            if group.has(self):
-                                self.massVER = collided.massVER - 1
+                if collided != self and collided not in ignoredSol and not self.isEnemy:
+                    if self.lessMassThan(collided) or self.massHOR == collided.massHOR or self.massVER == collided.massVER:#collided.solidstrength >= self.solidstrength :
+                        #if group.has(self):
+                        #   self.solidstrength = collided.solidstrength -1
+                        coll_side = self.determineSide(collided)
+                        if self.massVER < collided.massVER:
+                            #print(f' ------ {self.name} added by {collided.name}')
+                            if coll_side == "top":
+                                newpos = collided.top_y()
+                                
+                                self.count = 2
+                                if newpos < self.pos.y:
+                                    self.set_bot(collided.top_y())
+                                    self.vel.y = 0
+                                    self.acc.y = 0
+                                if group.has(self):
+                                    self.massVER = collided.massVER - 1
 
-                        if coll_side == "bot":
-                            newpos =  collided.bot_y() + self.height 
-                            self.count = 2
-                            if newpos > self.pos.y:
-                                self.pos.y = newpos
-                                self.vel.y = self.addedVel.y
-                                self.acc.y = 0
-                            if group.has(self):
-                                self.massVER = collided.massVER - 1
-                    if self.massHOR < collided.massHOR:
-                        if coll_side == "left":
-                            self.count = 2
-                            newpos = collided.left_x() - self.width/2 #Left side of object being collided with
-                            if newpos <= self.pos.x:
-                                self.pos.x = collided.left_x() - self.width/2
-                                self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
-                                self.acc.x = 0
-                            if group.has(self):
-                                self.massHOR = collided.massHOR - 1
+                            if coll_side == "bot":
+                                newpos =  collided.bot_y() + self.height 
+                                self.count = 2
+                                if newpos > self.pos.y:
+                                    self.pos.y = newpos
+                                    self.vel.y = self.addedVel.y
+                                    self.acc.y = 0
+                                if group.has(self):
+                                    self.massVER = collided.massVER - 1
+                        if self.massHOR <= collided.massHOR:
+                            #print(f'{self.name} triggered by {collided.name}')
+                            if coll_side == "left":
+                                newpos = collided.left_x() - self.width/2 #Left side of object being collided with
+                                if newpos <= self.pos.x:
+                                    self.pos.x = collided.left_x() - self.width/2
+                                    self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
+                                    self.acc.x = 0
+                                    wasstoppedHOR = True
+                                    #self.stoppedHOR = True
+                                if self.massHOR < collided.massHOR:
+                                    if group.has(self):
+                                        self.count = 2
+                                        self.massHOR = collided.massHOR - 1
 
-                        if coll_side == "right":
-                            self.count = 2
-                            newpos = collided.right_x() + self.width/2
-                            if newpos >= self.pos.x:
-                                self.pos.x = collided.right_x() + self.width/2
-                                self.vel.x = self.addedVel.x
-                                self.acc.x = 0
-                            if group.has(self):
-                                self.massHOR = collided.massHOR - 1
+                            if coll_side == "right":
+                                self.count = 2
+                                newpos = collided.right_x() + self.width/2
+                                if newpos >= self.pos.x:
+                                    self.pos.x = collided.right_x() + self.width/2
+                                    self.vel.x = self.addedVel.x
+                                    self.acc.x = 0
+                                    wasstoppedHOR = True
+                                    #self.stoppedHOR = True
+                                if self.massHOR < collided.massHOR:
+                                    if group.has(self):
+                                        self.massHOR = collided.massHOR - 1
+        if wasstoppedHOR:
+            self.stoppedHOR = True
+        else: 
+            self.stoppedHOR = False
+                        #print(f'2 - acc in coll for {self.name} with {self.acc}')
+                    #elif self.massHOR == self.massVER:
 
-                    #print(f'2 - acc in coll for {self.name} with {self.acc}')
                     
         
 

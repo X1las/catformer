@@ -449,7 +449,7 @@ class Game:
     
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
             self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
-        
+        #print(f'BEFORE UPDATES')
         """Adds velocity to something when on something moving.
         bad solution. Only works with two stacks :(
         """
