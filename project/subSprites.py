@@ -588,9 +588,9 @@ class Vase(CustomSprite):
 
 # Lever SubClass - Inherits from CustomSprite
 class Lever(CustomSprite):
-    def __init__(self,x,y, width, height, name = None, effect = None, movespeed = None, target = None, autodeactivate = None): 
+    def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         self.width = width; self.height = height
-        self.effect = effect; self.target = target; self.movespeed = movespeed
+        self.effect = effect; #self.target = target; self.movespeed = movespeed
         self.auto_deactivate = autodeactivate
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
@@ -620,22 +620,58 @@ class Lever(CustomSprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.x,self.y)
 
+    def activeEffect(self):
+        try:
+            for e,v in self.effect.items():
+                if e == "respawn":
+                    for respawn in v:
+                        target = respawn['target']
+                        
+                        #respawn['target'].vel = respawn["movespeed"].copy() + target.originalVel
+                        target.respawn()
+                if e == "move":
+
+                    for move in v:
+                        target = move["target"]
+                        move['target'].vel = move["movespeed"].copy() + target.originalVel
+        except Exception as e:
+            print(f'button activate: {e}') 
+
+    def deactiveEffect(self):
+        try: # shouldn't be try except, I think
+            for e,v in self.effect.items():
+                if e == "respawn":
+                    pass
+                    #self.target.respawn()
+                if e == "move":
+
+                    for move in v:
+                        target = move["target"]
+                        nextpos = target.pos + target.vel  
+                        #if not (target.x -1 < nextpos.x < target.x + 1) and not (target.y -1 < nextpos.y < target.y + 1):  
+                        move['target'].vel = move["movespeed"].copy() * (-1) + target.originalVel
+        except Exception as e:
+            print(f'button deact: {e}') 
+
 
     def activate(self):
         if self.activated != True:
             self.activated = True
             self.deactivated = False
             self.image = self.image_right
+            
             if self.auto_deactivate:
                 t = Timer(2, self.deactivate)
                 t.start()
+            """
             if self.effect == "respawn":
                 self.target.respawn()
             if self.effect == "move":
                 self.target.vel.x = self.movespeed
-
+            """
         # whatever else it needs to activate
     
+
 
     def deactivate(self):
         if self.deactivated != True:
@@ -643,13 +679,17 @@ class Lever(CustomSprite):
             self.activated = False
             self.image = self.image_left
 
-            if self.effect == "move":
-                self.target.vel.x = 0
+            #if self.effect == "move":
+             #   self.target.vel.x = 0
         # whatever else it needs to deactivate
             
     
 
     def update(self):
+        if self.activated:
+            self.activeEffect()
+        elif self.deactivated:
+            self.deactiveEffect()
         #round(self.pos) 
         self.rect.midbottom = self.pos.realRound().asTuple()
 

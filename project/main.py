@@ -138,9 +138,13 @@ class Game:
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0),  "target" : self.all_sprites.getObject("p_3")}, 
                              { "movespeed" : Vec(0,-1), "target" : self.all_sprites.getObject("tallplat")}]}
-        self.button4  = Button(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4  = Lever(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
         self.button4.startGame(self)
+        #self.button4  = Button(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        #self.button4.startGame(self)
         '''
+        self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
+        self.lever1.startGame(self)
         self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
         self.catnip.startGame(self)
 
@@ -156,8 +160,6 @@ class Game:
         self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
 
         self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
-        self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
-        self.lever1.startGame(self)
         self.water = Water(500, 400, 10, 10)    
         self.water.startGame(self)     
         ''' 
