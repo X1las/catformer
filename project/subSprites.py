@@ -1195,6 +1195,7 @@ class AiEnemy(Hostile):
         self.init()
         self.ori_massVER = 8
         self.isEnemy = True
+        self.currentplat = None
         self.stopMoving = False
         #self.facing = None
     
@@ -1256,15 +1257,15 @@ class AiEnemy(Hostile):
 
         if self.onSameLevel():
             if self.onPlayer():
-                self.vel.x = 0
+                self.vel.x = self.addedVel.x
             elif self.playerRight():
-                self.vel.x = self.speed
+                self.vel.x = self.speed + self.addedVel.x
                 self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
             elif self.playerLeft(): 
-                self.vel.x = - self.speed
+                self.vel.x = - self.speed + self.addedVel.x
                 self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
             else: 
-                self.vel.x = 0
+                self.vel.x = self.addedVel.x
         else:
             self.vel.x = 0
 
@@ -1281,20 +1282,45 @@ class AiEnemy(Hostile):
         
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
+        self.vel += self.addedVel
         self.detectPlayer()
+        self.checkCliff()
         #self.pygamecolls(self.game.group_solid)
         self.stopMoving = self.inbetweenSolids()
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.vel += self.addedVel
 
         self.pygamecolls(self.game.group_solid)
 
 
     def posCorrection(self):
-        print(f'{self.name} strength: {self.massHOR}')
-
         self.collidingWithWall()
 
+    def checkCliff(self):
+        # should it have a max dist?
+        """
+        if  self.pos.x - self.x >= self.maxDist: # right boundary
+            self.area = "right"
+            self.vel.x = -1 * abs(self.vel.x)
+        elif self.pos.x - self.x <= -1*self.maxDist:
+            self.vel.x = abs(self.vel.x)
+            self.area = "left"
+        """
+        possibleplat = self.on_solid(self.game.group_platforms)
+        if possibleplat != None:
+            self.currentplat = possibleplat
+        #if self.right_x() >= self.currentplat.right_x()  -1:
+        if self.right_x() +  self.vel.x >= self.currentplat.right_x():
+
+            #self.vel.x = -1 * abs(self.vel.x)
+            self.vel = self.addedVel
+            #self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+            self.set_right(self.currentplat.right_x()) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+        elif self.left_x() +  self.vel.x <= self.currentplat.left_x(): 
+            #self.vel.x = abs(self.vel.x)
+            self.vel = self.addedVel
+
+            self.set_left(self.currentplat.left_x())
+            #self.set_left(self.currentplat.left_x() + 2)
 
     def collidingWithWall(self):
         self.pygamecolls(self.game.group_solid)

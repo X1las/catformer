@@ -132,7 +132,7 @@ class Game:
         
         #self.enemy = PatrollingEnemy(750, 460 , 26, 30, 200, name =  "pat1")                       #      
         #self.enemy.startGame(self)
-        self.aienemy = AiEnemy(220, 550,36, 28, 200, name =  "ai1")                       #      
+        self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
         self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
