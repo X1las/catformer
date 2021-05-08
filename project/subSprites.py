@@ -181,42 +181,29 @@ class Platform(CustomSprite):
             for collided in collideds:
 
                 if collided != self and self.solidstrength <= collided.solidstrength:
-                    #if collided.solidstrength > self.solidstrength:
-                    #self.solidstrength = collided.solidstrength - 1 # So, if enemy is pushed towards platform, it must be "heavier" than box, so box can't push
-                    #self.count = 5
-
-                    #if not self.stopMoving: # If it was inbetween solids
                     coll_side = self.determineSide(collided)
                     if coll_side == "top":
                         newpos = collided.top_y()
-                        #print(f'1. {self.name}: {self.pos.y} vs new {collided.top_y()}')
                         if newpos <= self.pos.y:
-                            #print(f'2. {self.name}: {self.pos.y} vs new {collided.top_y()}')
                             self.pos.y = newpos
-                            #self.set_bot(collided.top_y())
                             self.vel.y = self.originalVel.y * (-1)
                     if coll_side == "left": # left side of collidedd obj
                         newpos = collided.left_x() - self.width/2
                         if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                             if collided.vel.x == 0: # If collided object is not moving, just turn around
                                 self.pos.x = newpos
-                                #self.vel.x = 1
-                                #self.vel.x *= -1
                                 self.vel.x = self.originalVel.x * (-1)
                     if coll_side == "right":
                         newpos = collided.right_x() + self.width/2
                         if newpos >= self.pos.x:
                             if collided.vel.x == 0:
                                 self.pos.x = newpos
-                                #self.vel.x = 1
                                 self.vel.x = self.originalVel.x * (-1)
                         self.vel.x *= -1
                     if coll_side == "bot": # left side of collidedd obj
                         newpos = collided.bot_y() + self.height
                         if newpos >= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                            #if collided.vel.y == 0: # If collided object is not moving, just turn around
                             self.pos.y = newpos
-                            #self.vel.x = 1
                             self.vel.y = self.originalVel.y * (-1)
         self.rect.midbottom = self.pos.realRound().asTuple()
         
@@ -273,7 +260,6 @@ class Box(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
-
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # load image from spritesheet
@@ -290,9 +276,6 @@ class Box(CustomSprite):
     def respawn(self):
         self = self.__init__(self.initX, self.initY, self.width, self.height, self.name)
 
-    def resetRects(self):
-        super().resetRects()
-        # Currently, trying to add a "pick UP" effect. This reverses it so it can be added again next time lol
 
     def applyPhysics(self,Intersecters, ignoreSol = None):
         
@@ -337,10 +320,6 @@ class Box(CustomSprite):
 
 
     def liftedBy(self,interacter):
-        #self.rect.midbottom = self.pos.rounded().asTuple()
-        #self.pygamecoll(self.game.group_solid)
-        #print(f' stoppedhor? {self.stoppedHOR}')
-        #if not pg.sprite.spritecollideany(self, self.game.group_solid):
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 4: 
                 self.pos.x = interacter.player.right_x() + self.width/2 
@@ -349,46 +328,20 @@ class Box(CustomSprite):
                 self.pos.x = interacter.player.left_x() - self.width/2
         
         # Setting how much box should be lifted
-        #self.lift.y = -3
-        #self.pos.y += self.lift.y       # Adding the pick UP effect
         self.interacter = interacter
-        #self.solidstrength = self.originalsolidstrength -1
-        #self.interacter.player.solidstrength = 6
         if not interacter.player.inAir or interacter.player.vel.y > 0:
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 3
             if not self.stoppedHOR:
                 self.interacter.player.massHOR = self.ori_massHOR + 1
                 self.interacter.player.count = 1
-            #self.interacter.player.ignoredSolids.append(self)
         else: 
             self.beingHeld = False
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
-
-
-    def pickUp(self, interacter):
-        # Technically if is IS COLLIDING* but ye
-        #self.has_collided = True
-        
-        # Checking which side the box is on. If the box is too close to player upon pickup, most the box away a bit
-            #self.gravity = GRAVITY
-        #else:   
-        #   self.inAir = True
-        #if not interacter.player.inAir:
-        #   self.pos.y = interacter.player.pos.y - 3
-        #  self.inAir = True
-        # Grapping vel and acc from the interactive field
-        pass
-    
-
-    
-
     def updatePos(self, Intersecters):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
-            #self.pos.x += self.vel.x +  self.acc.x * 0.5
-        #self.pos.y += self.vel.y +  self.acc.y * 0.5
         """DO NOT DELETE """
         self.pos += self.vel +  self.acc * 0.5
         """"""
@@ -401,8 +354,6 @@ class Box(CustomSprite):
 
     def posCorrection(self):
         # I am not sure this is needed
-        #if self.can_fall_and_move:
-        #print(f'{self.name} strength: {self.massHOR}')
         self.pygamecoll(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.vel.x = self.addedVel.x
