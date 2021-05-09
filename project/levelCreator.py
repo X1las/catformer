@@ -1,7 +1,7 @@
 # importing modules
 from Vector import Vec
 import pickle
-from subSprites import Box, Button, Lever, PickUp, Platform, Vase, Water
+from subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water
 
 ''' template '''
 def createLevel():
@@ -9,7 +9,7 @@ def createLevel():
     # boxes
     # buttons
     # levers
-    # vases
+    # mugs
     # goals
     # enemies
     # water
@@ -26,7 +26,7 @@ def createLevel():
         'boxes':     [],
         'buttons':   [],
         'levers':    [],
-        'vases':     [],
+        'mugs':      [],
         'goals':     [],
         'enemies':   [],
         'water':     [],
@@ -57,8 +57,8 @@ def createLevel1():
     btn2 = Button(500 , 550 , 30 , 20 , 'button2')
     # levers
     lever1 = Lever(650 , 550 , 36 , 26 , 'lever1')
-    # vases
-    vase1 = Vase(fatplat , 50 , 'v1')
+    # mugs
+    mug1 = Mug(fatplat , 50 , 'v1')
     # goals
     # enemies
     # water
@@ -80,7 +80,7 @@ def createLevel1():
         'boxes':     [box1, box2],
         'buttons':   [btn1, btn2],
         'levers':    [],
-        'vases':     [vase1],
+        'mugs':      [mug1],
         'goals':     [],
         'enemies':   [],
         'water':     [],#water1],
@@ -102,8 +102,8 @@ def createLevel2():
     # levers
     lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
     lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
-    # vases
-    vase1 = Vase(fatplat , 50 , 'v1')
+    # mugs
+    mug1 = Mug(fatplat , 50 , 'v1')
     # goals
     # enemies
     # water
@@ -120,7 +120,7 @@ def createLevel2():
         'boxes':     [box1],
         'buttons':   [btn1, btn2],
         'levers':    [lever1, lever2],
-        'vases':     [vase1],
+        'mugs':      [mug1],
         'goals':     [],
         'enemies':   [],
         'water':     [],

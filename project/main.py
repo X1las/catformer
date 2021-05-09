@@ -88,7 +88,7 @@ class Game:
         self.group_buttons            = pg.sprite.Group()  # Only applied to button sprite      
         self.group_levers             = pg.sprite.Group()  # Onlt applied to the lever 
         self.group_levelGoals         = pg.sprite.Group()   # Only applied to the levelGoal sprite
-        self.group_vases              = pg.sprite.Group() #Only applied to vases
+        self.group_mugs              = pg.sprite.Group() #Only applied to mugs
         self.group_solid              = SpriteGroup()          # solid objects (formerly rayIntersecters)
         self.group_pickups            = pg.sprite.Group()       # All things that can get picked up by player
         self.group_damager            = pg.sprite.Group()       # All hostiles
@@ -148,8 +148,8 @@ class Game:
         
         self.enemy = PatrollingEnemy(350, 550 , 26, 30, 100, name =  "pat1")                       #      
         self.enemy.startGame(self)
-        #self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
-        #self.aienemy.startGame(self)
+        self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
+        self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         dic = { "move"    : [{ "movespeed" : Vec(2,0), "deactspeed" : Vec(-2,0), "target" : self.all_sprites.getObject("p_3")}, 
@@ -188,7 +188,7 @@ class Game:
         self.frames                 = 0                                                         
         self.refreshCount           = 0                                                        
         self.refreshCount_prev      = 0                                                   
-        self.relposx                = 0    
+        self.relposx                = 0   
         self.relposp                = 0                                                    
         self.realposp               = 0       
         self.rel_fitToPlayer        = - WIDTH/2 + self.player.pos.x #half screen - pos         
@@ -231,24 +231,30 @@ class Game:
     def update(self):
         self.all_sprites.resetSprites()
         #print(f'NEW RUN')
-        #
-        for button in self.group_buttons:
-            activated_button = button.buttonPress(self.group_pressureActivator)
         
-        self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
-        self.refreshedInt_box = self.refreshCount >= self.refreshCount_prev       #
+        # I think this should somehow go into CustomSprite/subsprites
+        #for sprite in self.group_pressureActivator:
+         #   sprite.buttonPress()
+        
+        #for button in self.group_buttons:
+         #   activated_button = button.buttonPress(self.group_pressureActivator)
+        
+        #self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
+        #self.refreshedInt_box = self.refreshCount >= self.refreshCount_prev       #
         
         
-        self.player.touchPickUp(self.group_pickups)
+        #self.player.touchPickUp(self.group_pickups)
         # Updating Functionsdd
         #
+        """
         if self.interactive_field:
             for lever in self.group_levers:
                 lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
     
             self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
-            self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
+            self.interactive_field.knockOver(self.group_mugs, self.intWasCreated)
         #print(f'BEFORE UPDATES')
+        """
         """Adds velocity to something when on something moving.
         bad solution. Only works with two stacks :(
         """
@@ -258,7 +264,7 @@ class Game:
         for plat in self.group_solid:
             plat.collisionEffect()
         self.all_sprites.update()
-        self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
+        #self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
 
         self.all_sprites.updatePos(self.group_solid)
         self.moveScreen()
@@ -269,8 +275,8 @@ class Game:
         if (self.player.pos.y > self.boundary):
             self.player.takeDamage()
         # Updating Variables
-        self.intWasCreated = False    
-        self.refreshCount_prev = self.refreshCount
+        #self.intWasCreated = False    
+        #self.refreshCount_prev = self.refreshCount
 
     # Method that checks for events in pygame
     def events(self):
@@ -292,22 +298,23 @@ class Game:
 
                 if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
                     self.new()
+                if event.key  == pg.K_p:
+                    self.paused = not self.paused
+                    self.isDamaged = False
+            """    
                 if event.key == pg.K_d:                                         # Checks if the uses presses 
                     # if not paused?
                     self.refreshCount_prev = self.refreshCount
                     self.interactive_field = Interactive(self,self.player, self.player.facing)
                     self.intWasCreated = True
                     self.refreshCount += 1
-                if event.key  == pg.K_p:
-                    self.paused = not self.paused
-                    self.isDamaged = False
                                            
             if event.type == pg.KEYUP:
                 if event.key == pg.K_d:
                     if self.interactive_field:
                         self.interactive_field.kill()
                         self.interactive_field = None
-    
+            """
     # Method for drawing everything to the screen           
     def draw(self):                                         
         self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 

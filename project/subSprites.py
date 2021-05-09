@@ -379,7 +379,7 @@ class Box(CustomSprite):
 
 
 # Case SubClass - Inherits from CustomSprite
-class Vase(CustomSprite):
+class Mug(CustomSprite):
     def __init__(self, plat : Platform, placement, name = None):
         self.plat = plat
         self.pos = vec()
@@ -433,7 +433,7 @@ class Vase(CustomSprite):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_vases
+        self.groups = game.all_sprites, game.group_mugs
         pg.sprite.Sprite.__init__(self, self.groups)
         
         # create surface with correct size
@@ -453,7 +453,7 @@ class Vase(CustomSprite):
 
 
     def update(self):
-        # Check whether the vase has even fallen yet
+        # Check whether the mug has even fallen yet
         if not self.broken:
             if self.vel.y > 1:
                 self.fell_fast_enough = True
@@ -656,6 +656,7 @@ class Button(Activator):
 
 
     def update(self):
+        self.buttonPress()
         super().update()
         self.activated = False # Not sure if needed
 

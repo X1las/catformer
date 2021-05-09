@@ -36,7 +36,7 @@ class Level:
         # set objects   
         self.platforms = levelData['platforms']
         self.boxes     = levelData['boxes'    ]
-        self.vases     = levelData['vases'    ]
+        self.mugs      = levelData['mugs'    ]
         self.buttons   = levelData['buttons'  ]
         self.levers    = levelData['levers'   ]
         self.goals     = levelData['goals'    ]
@@ -51,7 +51,7 @@ class Level:
                 self.game.boundary = p.y
         for p in self.boxes:
             p.startGame(self.game)
-        for p in self.vases:
+        for p in self.mugs:
             p.startGame(self.game)
         for p in self.buttons:
             p.startGame(self.game)
