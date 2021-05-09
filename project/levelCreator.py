@@ -49,7 +49,7 @@ def createLevel1():
     p_4     = Platform( 720 , 450 ,  150 , 40 , 'p_4')
     p_5     = Platform( 1100 , 400 ,  150 , 40 , 'p_5')
     # boxes
-    box1 = Box(270 , 200 , 44 , 44 , 'box_1')
+    box1 = Box(370 , 200 , 44 , 44 , 'box_1')
     box2 = Box(700 , 400 , 44 , 44 , 'box_2')
 
     # buttons
@@ -58,7 +58,7 @@ def createLevel1():
     # levers
     lever1 = Lever(650 , 550 , 36 , 26 , 'lever1')
     # vases
-    vase1 = Vase(fatplat , 'left' , 'v1')
+    vase1 = Vase(fatplat , 50 , 'v1')
     # goals
     # enemies
     # water
@@ -76,7 +76,7 @@ def createLevel1():
             'length': 5000,
             'track': ''
         },
-        'platforms': [floor, fatplat, p_1, p_3, p_4, p_5],
+        'platforms': [floor, fatplat, p_1, p_2, p_3, p_4, p_5],
         'boxes':     [box1],
         'buttons':   [btn1, btn2],
         'levers':    [],
@@ -103,7 +103,7 @@ def createLevel2():
     lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
     lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
     # vases
-    vase1 = Vase(fatplat , 'left' , 'v1')
+    vase1 = Vase(fatplat , 50 , 'v1')
     # goals
     # enemies
     # water

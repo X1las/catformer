@@ -95,11 +95,29 @@ class Platform(CustomSprite):
 
     game = None
     def __init__(self, x, y, width, height, name, vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
-        self.originalVel = vel.copy()
+        self.height = height; self.width = width; self.name = name; 
+        self.pos = vec(x,y); self.vel = vel
+        self.originalVel = self.vel.copy()
+        
+
+
+        ''' probably not needed'''
+        self.typed = "platform"    
         self.solid = True
-        self.vel = vel
+        self.x = x; self.y = y # change to initX?
+
+        ''' just for testing?'''
+        self.isPlatform = True
+
+        ''' really not sure'''
+
+        ''' pretty sure is needed'''
+        self._layer = 2                                                 # Typical self.smth = smth
         self.initX = x
         self.initY = y
+
+        ''' should be revisited'''
+        self.relativePosition = self.pos.copy()
         if maxDist == None:
             self.leftMaxDist = leftMaxDist
             self.rightMaxDist = rightMaxDist
@@ -110,24 +128,17 @@ class Platform(CustomSprite):
             self.rightMaxDist = maxDist
             self.downMaxDist = maxDist
             self.upMaxDist = maxDist
-        self.height = height; self.width = width; self.name = name; self._layer = 2                                                 # Typical self.smth = smth
+
         self.solidstrength = 30
         if floorplat:
             self.solidstrength = 50
         self.originalsolidstrength = self.solidstrength
-        self.x = x; self.y = y
+        ''' in use'''
+
         self.update_order = 1
+        self.init()
         
 
-
-
-
-        self.typed = "platform"    
-        self.pos = vec(x,y)
-        self.relativePosition = self.pos.copy()
-        self._layer = 2
-        self.init()
-        self.isPlatform = True
 
 
     def startGame(self, game):
@@ -167,49 +178,6 @@ class Platform(CustomSprite):
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
-
-
-    def pygamecolls(self, group, ignoredSol = None):
-        inflation = 0
-        self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
-        collideds = pg.sprite.spritecollide(self, group, False)
-
-        if collideds:
-            for collided in collideds:
-
-                if collided != self and self.solidstrength <= collided.solidstrength:
-                    coll_side = self.determineSide(collided)
-                    if coll_side == "top":
-                        newpos = collided.top_y()
-                        if newpos <= self.pos.y:
-                            self.pos.y = newpos
-                            self.vel.y = self.originalVel.y * (-1)
-                    if coll_side == "left": # left side of collidedd obj
-                        newpos = collided.left_x() - self.width/2
-                        if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                            if collided.vel.x == 0: # If collided object is not moving, just turn around
-                                self.pos.x = newpos
-                                self.vel.x = self.originalVel.x * (-1)
-                    if coll_side == "right":
-                        newpos = collided.right_x() + self.width/2
-                        if newpos >= self.pos.x:
-                            if collided.vel.x == 0:
-                                self.pos.x = newpos
-                                self.vel.x = self.originalVel.x * (-1)
-                        self.vel.x *= -1
-                    if coll_side == "bot": # left side of collidedd obj
-                        newpos = collided.bot_y() + self.height
-                        if newpos >= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                            self.pos.y = newpos
-                            self.vel.y = self.originalVel.y * (-1)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        
-
-
-
     # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
         if  self.pos.x - self.x >= self.rightMaxDist: # right boundary
@@ -225,7 +193,7 @@ class Platform(CustomSprite):
         if self.vel.x != 0 or self.vel.y != 0:
             self.originalsolidstrength = 29.5
             self.solidstrength = 29.5
-            self.init()
+            self.init() # Needs to update massHOR and massVER
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -235,26 +203,74 @@ class Platform(CustomSprite):
         super().updatePos(solid)
         self.pygamecolls(self.game.group_solid)
 
+
+    def pygamecolls(self, group, ignoredSol = None):
+        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.x += r(self.vel.x)
+        self.rect.y += r(self.vel.y)
+        collideds = pg.sprite.spritecollide(self, group, False)
+
+        if collideds:
+            for collided in collideds:
+                if collided != self and self.solidstrength <= collided.solidstrength:
+                    coll = self.collisionSide_Conditional(collided)
+                    coll_side = coll['side']
+                    correctedPos = coll['correctedPos']
+                    #coll_side = self.determineSide(collided)
+                    if coll_side == "top":
+                            self.vel.y = self.originalVel.y * (-1)
+                    if coll_side == "left": # left side of collidedd obj
+                        if collided.vel.x == 0: # If collided object is not moving, just turn around
+                            self.vel.x = self.originalVel.x * (-1)
+                    if coll_side == "right":
+                        if collided.vel.x == 0:
+                            self.vel.x = self.originalVel.x * (-1)
+                        #self.vel.x *= -1
+                    if coll_side == "bot": # left side of collidedd obj
+                        self.vel.y = self.originalVel.y * (-1)
+                    self.pos = correctedPos
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
+
+
+
+
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
     game = None
     def __init__(self, x, y, width, height, name):
         self.width  = width; self.height = height; self.name = name
-        self.initX = x; self.initY = y
-        self._layer = 5
-        self.solid = True
-        self.moveable = True
-        self.solidstrength = 5
-        self.originalsolidstrength = self.solidstrength
-        self.update_order = 5
         self.pos = vec(x,y)
         self.savedPos = self.pos.copy()
-        self.relativePosition = self.pos.copy()
+
+                
+        ''' probably not needed'''
         self.friction = 0
-        self.init()
+        self.solid = True
+        self.moveable = True
+
+        ''' just for testing?'''
+
+        ''' really not sure'''
+        self.initX = x; self.initY = y
+
+        ''' pretty sure is needed'''
+        self._layer = 5
+
+        ''' should be revisited'''
+        self.solidstrength = 5
+        self.originalsolidstrength = self.solidstrength
+        self.relativePosition = self.pos.copy() # go to init() ?
+
+        ''' in use'''
         self.beingHeld = False
         self.interacter = None
-        
+        self.update_order = 5
+        self.init()
+
+
+
+
 
     def startGame(self, game):
         self.game = game
@@ -362,46 +378,61 @@ class Box(CustomSprite):
 
 # Case SubClass - Inherits from CustomSprite
 class Vase(CustomSprite):
-    def __init__(self, plat : Platform, placement : str, name = None):
+    def __init__(self, plat : Platform, placement, name = None):
         self.plat = plat
         self.pos = vec()
+        self.width  = 29
+        self.height = 26
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.placement = placement
+        """
         try:
             if self.placement == "left":
-                self.pos = self.plat.topleft()
-            
-                push = 20   
+                #self.pos = Vec(self.plat.left_x() + 20 + self.width/2, self.plat.top_y()) 
             elif self.placement == "right":
-                self.pos = self.plat.rect.topright
-                push = -20
+                self.pos = Vec(self.plat.right_x() - 20 - self.width/2, self.plat.top_y())
             elif self.placement == "mid":
-                push = 0
-                self.pos.x, self.pos.y = self.plat.rect.midtop.x, self.plat.rect.midtop.y 
-            self.pos.x = self.pos.x+ push; self.pos.y = self.pos.y; self.ignoreSol = self.plat
+                self.pos = Vec(self.plat.mid().x, self.plat.top_y())
+
+            #self.pos.x = self.pos.x+ push; self.pos.y = self.pos.y; self.ignoreSol = self.plat
             
         except Exception as e:
             print(e)
             print("Must choose left, right or mid")    
             #x = self.plat.rect.midtop[0]; y = self.plat.rect.midtop[1]; self.ignoreSol = self.plat
-        self.broken = False
+        """
         self.name = name
         self.breakable = True
+        self.broken = False
         
         self.fall = False
         self.gravity = PLAYER_GRAV
-        self.can_fall_and_move = True
         self.ignoreSol = plat
         self.relativePosition = self.pos.copy()
         self.isVase = True
         self.fell_fast_enough = False
         self.init()
 
+        ''' probably not needed'''
+
+        ''' just for testing?'''
+
+        ''' really not sure'''
+
+        ''' pretty sure is needed'''
+
+        ''' should be revisited'''
+
+        ''' in use'''
+
+
+
+
+
     def startGame(self, game):
         self.game = game
         self.groups = game.all_sprites, game.group_vases
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.width  = 29
-        self.height = 26
         
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
@@ -428,7 +459,7 @@ class Vase(CustomSprite):
             self.touchplat(self.game.group_solid)
             
             # fall is set to true in knockover() if conditions are satisfied
-        self.vel += self.addedVel
+        self.vel += self.addedVel #here?
         if self.fall == True:
             self.inAir = True
             self.applyGrav()
@@ -437,19 +468,14 @@ class Vase(CustomSprite):
     def breaks(self):
         self.image.blit(self.images[1],(0,0))
         self.vel.x = self.addedVel.x
-        #self.addedVel.x = 0
         newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
         newPickup.startGame(self.game)
-        #self.game.all_sprites.remove(self)
-        #self.game.group_passives.add(self)
-        #self.kill()
         self.broken = True
 
     # Applies basic gravity
     def applyGrav(self):
-        self.acc   += vec(0, self.gravity)                  # Gravity
+        self.acc.y += self.gravity                  # Gravity
         self.vel   += self.acc                              # equations of motion
-        #self.pos += self.vel +  self.acc * 0.5     
 
     def posCorrection(self):
         if self.broken:
@@ -463,23 +489,14 @@ class Vase(CustomSprite):
 
     # When it thouches a platform or other solid
     def touchplat(self, group):
-
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.y += r(self.vel.y + 4) 
         collideds = self.collisionMultipleGroups(group, self.game.group_enemies)
-        #collideds = pg.sprite.spritecollide(self, group, False)
         if collideds:
             for collided in collideds:
                 if collided != self and collided != self.ignoreSol:
-                    if self.fell_fast_enough:
-                        #self.set_bot(collided.top_y())
-                        if not self.broken:
-                            self.breaks()
-                        #self.fall = False
-                        #self.gravity = 0
-                        #self.vel.y = 0
-                        #self.vel.x = 0
-                        #self.addedVel.x = 0
+                    if self.fell_fast_enough and not self.broken:
+                        self.breaks()
 
 
 
@@ -693,6 +710,7 @@ class Water(Hostile):
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
 
+    """
     def update(self):
         '''
         self.imageIndex += 1                        # increment image index every update
@@ -703,7 +721,7 @@ class Water(Hostile):
         '''
         #round(self.pos) 
         self.rect.midbottom = self.pos.realRound().asTuple()
-
+    """
 
     def startGame(self, game):
         self.game = game
@@ -759,7 +777,7 @@ class PatrollingEnemy(Hostile):
         ''' probably not needed'''
         self.dontmove = False
         self.count = 2
-        self.x = x
+        #self.x = x
         self.collides_right = False
         self.collides_left = False
         
@@ -778,9 +796,10 @@ class PatrollingEnemy(Hostile):
         self.originalsolidstrength = self.solidstrength
         
         '''in use'''
-        self.currentplat = None
+        self.initX = x
+        self.currentplat = None # The platform it stands on/
         self.aboveground = True
-        self.wasunderground = False
+        self.wasunderground = False # Only true when worm *just* popped up
         self._layer = 10
         self.active = True
 
@@ -823,26 +842,24 @@ class PatrollingEnemy(Hostile):
 
     # Checking if the enemy is outside its patrolling area
     def checkDist(self):
-        if self.right_x() >= self.currentplat.right_x()  -2:
+        if   self.right_x() >= self.currentplat.right_x()  -2:
             self.vel.x = (-1) * abs(self.originalVel.x)# + self.addedVel.x
             self.set_right(self.currentplat.right_x() - 3)
         elif self.left_x() <= self.currentplat.left_x() + 2:
             self.vel.x = abs(self.originalVel.x)# + self.addedVel.x
             self.set_left(self.currentplat.left_x() + 3)
-        ''' DO NOT DELETE. commented out for testing purposes
-        elif  self.pos.x - self.x >= self.maxDist: # right boundary
-            self.area = "right"
-            self.vel.x = -1 * abs(self.vel.x)
-        elif self.pos.x - self.x <= -1*self.maxDist:
-            self.vel.x = abs(self.vel.x)
-            self.area = "left"
-        '''
 
-    def updatePos(self, group):
-        self.pos +=  self.vel +  self.acc * 0.5
+        elif self.pos.x - self.initX >= self.maxDist: # right boundary
+            self.vel.x = (-1) * abs(self.originalVel.x)# + self.addedVel.x
+        elif self.pos.x - self.initX <= -1*self.maxDist:
+            self.vel.x = abs(self.originalVel.x)# + self.addedVel.x
+
+    #def updatePos(self, group):
+     #   self.pos +=  self.vel +  self.acc * 0.5
 
 
-    def update(self):
+
+    def updateAnimation(self):
         self.imageIndex += 1                        # increment image index every update
         if self.imageIndex >= len(self.images_right)*10:     # reset image index to 0 when running out of images
             self.imageIndex = 0
@@ -853,21 +870,25 @@ class PatrollingEnemy(Hostile):
         else: 
             self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
 
-        # onlt do at init?
+        # onlt do at init? should probably be changed
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         
+        
+
+    def update(self):
+
         #self.stopMoving = self.inbetweenSolids()
-        self.acc = vec(0,0)    
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.updateAnimation()
+        #self.acc = vec(0,0)    
         try:
-            self.touchBox()
+            self.hide()
             self.checkDist()
         except Exception as e:
             print(f'touchbox: {e}')
         self.vel += self.addedVel
-        self.pygamecolls2()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.solidCollision()
         self.active = self.aboveground # Whether it should deal damage
+        self.rect.midbottom = self.pos.realRound().asTuple()
     
     
     """
@@ -876,7 +897,7 @@ class PatrollingEnemy(Hostile):
     -> Checks collisions. If true, set pos to platform bot (inside plat). 
         -> else: set pos to top of current platform.
     """
-    def touchBox(self):
+    def hide(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
         if self.aboveground:
             possibleplat = self.on_solid(self.game.group_platforms)
@@ -915,27 +936,27 @@ class PatrollingEnemy(Hostile):
         #newPickup.startGame(self.game)
         self.justpoppedup = False
 
-    def pygamecolls2(self, ignoredSol = None):
+    # Currently doesn't matter. The worm just hides. so?
+    def solidCollision(self):
         self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_platforms, False)
 
         if collideds:
             for collided in collideds:
                 # handle floor plat better
-                if collided != self and collided.name != "p_floor" and self.lessMassThan(collided) and collided != self.currentplat:
-                    coll_side = self.determineSide(collided)
-
+                if collided != self and collided != self.currentplat: #and collided.name != "p_floor" and self.lessMassThan(collided) :
+                    
+                    #coll_side = self.determineSide(collided)
+                    coll = self.collisionSide_Conditional(collided)
+                    coll_side = coll['side']
+                    correctedPos = coll['correctedPos']
                     if coll_side == "left": # left side of collidedd obj
-                        newpos = collided.left_x() - self.width/2
-                        if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                            self.vel.x *= -1
+                        self.vel.x *= -1
                             
                     if coll_side == "right":
-                        newpos = collided.right_x() + self.width/2
-                        if newpos >= self.pos.x:
-                            self.vel.x *= -1
+                        self.vel.x *= -1
+                    self.pos = correctedPos
                             
-                    coll_side = self.determineSide(collided)
                     """    
                     if coll_side == "bot":
                         if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
@@ -1109,19 +1130,10 @@ class AiEnemy(Hostile):
             self.gravity = GRAVITY
         try:
             if self.right_x() >= self.currentplat.right_x()  -1:
-            #if self.right_x() +  self.addedVel.x >= self.currentplat.right_x():
-
-                #self.vel.x = -1 * abs(self.vel.x)
                 self.vel = self.addedVel
                 self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
-                #self.set_right(self.currentplat.right_x() + self.addedVel.x) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
-            #elif self.left_x() +  self.addedVel.x <= self.currentplat.left_x() +1: 
             elif self.left_x() <= self.currentplat.left_x() +1: 
-            
-                #self.vel.x = abs(self.vel.x)
                 self.vel = self.addedVel
-
-                #self.set_left(self.currentplat.left_x() + self.addedVel.x + 1)
                 self.set_left(self.currentplat.left_x() + 2)
         except Exception as e:
             print(f'check cliff: {e}')
@@ -1147,24 +1159,18 @@ class AiEnemy(Hostile):
                 if collided != self and collided.name != "p_floor":
                     #if not self.stopMoving: # If it was inbetween solids
                     if self.ori_massHOR <= collided.massHOR:
-                        coll_side = self.determineSide(collided)
+                        coll = self.collisionSide_Conditional(collided)
+                        coll_side = coll['side']
+                        correctedPos = coll['correctedPos']
+                        
                         if coll_side == "left": # left side of collidedd obj
-                            newpos = collided.left_x() - self.width/2 
-                            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
-                                self.vel.x = self.addedVel.x
-                                self.pos.x = newpos
-                            #self.massHOR = collided.massHOR - 1
-                            #self.count = 1
+                            self.vel.x = self.addedVel.x
                                 
                         if coll_side == "right":
-                            newpos = collided.right_x() + self.width/2 
-                            if newpos >= self.pos.x:
-                                self.vel.x = self.addedVel.x
-                                #self.vel.x = 0
-                                self.pos.x = newpos
-                            #self.massHOR = collided.massHOR - 1
+                            self.vel.x = self.addedVel.x
                                 
                             self.count = 1
+                        self.pos = correctedPos
                     if self.ori_massVER < collided.massVER:
                         coll_side = self.determineSide(collided)
                             

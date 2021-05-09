@@ -82,7 +82,10 @@ class CustomSprite(pg.sprite.Sprite):
         self.ori_massVER = self.massVER
         self.new_vel = self.vel.copy()
 
-        
+    def update(self):
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
+
     def updateRect(self):
         roundedvec = self.relativePosition.rounded()
         self.rect.midbottom = roundedvec.asTuple()
@@ -223,6 +226,30 @@ class CustomSprite(pg.sprite.Sprite):
             else:
                 self.colliding = False
 
+    ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
+    def collisionSide_Conditional(self, collided):
+        coll_side = self.determineSide(collided)
+        result = {"side" : "None", "correctedPos" : self.pos}
+        if coll_side == "top":
+            newpos = Vec(self.pos.x, collided.top_y())
+            if newpos.y <= self.pos.y:
+                return {"side" : "top", "correctedPos" : newpos}
+        elif coll_side == "left": # left side of collidedd obj
+            newpos.x = Vec(collided.left_x() - self.width/2, self.pos.y)
+            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                return {"side" : "left", "correctedPos" : newpos}
+
+        elif coll_side == "right":
+            newpos = Vec(collided.right_x() + self.width/2, self.pos.y)
+            if newpos.x >= self.pos.x:
+                return {"side" : "right", "correctedPos" : newpos}
+
+        elif coll_side == "bot": # left side of collidedd obj
+            newpos = Vec(self.pos.x, collided.bot_y() + self.height)
+            if newpos.y >= self.pos.y: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+                return {"side" : "bot", "correctedPos" : newpos}
+        
+        return result 
 
     def relativeVel(self):
         return self.vel - self.addedVel
@@ -379,6 +406,8 @@ class CustomSprite(pg.sprite.Sprite):
        
     def updatePos(self, group = None):
         self.pos +=  self.vel +  self.acc * 0.5
+        self.acc = vec(0,0)    # caused problems? 
+
 
 
     def collisionMultipleGroups(self,*groups):
