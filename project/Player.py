@@ -40,6 +40,7 @@ class Player(CustomSprite):
     name = "player"
     canjump = True
     jumpcounter = 0
+    liftedBefore = False
 
     def __init__(self, spawn, name="player"):
         
@@ -115,6 +116,7 @@ class Player(CustomSprite):
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
         #self.massHOR = self.ori_massHOR
+        self.liftArm()
         if not self.inAir:
             self.jumpcounter += 1
         else:
@@ -131,6 +133,22 @@ class Player(CustomSprite):
         self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.pygamecoll(self.game.group_solid)
+
+
+    def liftArm(self):
+      
+        keys = pg.key.get_pressed()
+        if keys[pg.K_m]:
+            if not self.liftedBefore:
+                self.interactive_field = Interactive(self.game,self, self.facing)
+                self.liftedBefore = True
+        else:
+            try:
+                self.interactive_field.kill()
+                self.liftedBefore = False
+            except:
+                pass
+        
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -266,7 +284,7 @@ class Interactive(CustomSprite):
         self.update_order = 3
         self.player = player
         width = self.player.width/2 + 30
-        height = self.player.height       
+        height = self.player.height - 20       
         self.facing = facing
         self.image = pg.Surface((width,height)); 
         self.image.fill((0,200,0)) 
@@ -283,18 +301,10 @@ class Interactive(CustomSprite):
         
 
     def intUpdate(self, facing, pos):
-
-        #bob = self.rect.bottomleft
-        #bob = self.rect.bottomright
-
         if facing == "left":
             if pos == "global":
-                #bob = (self.player.pos.x,self.player.pos.y)   
-
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
             else:
-                #bob = self.player.relativePosition.realRound().asTuple()
-
                 self.rect.bottomright = self.player.relativePosition.realRound().asTuple()
         else: 
             if pos == "global":

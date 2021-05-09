@@ -196,6 +196,189 @@ class Game:
         self.paused = False                                  
         self.run()                                  # Runs the game
 
+    # Method that loops until a false is passed inside the game
+    def run(self):                       
+        self.playing = True                                                     
+        while self.playing:                                                     
+            self.clock.tick(FPS)                    # Changing our tickrate so that our frames per second will be the same as FPS from settings
+            
+            # Checking frame time for performance (keep commented)
+            """
+            self.frames += 1
+            if (self.frames >= 60):
+                print("new frame")
+                self.frames = 0
+            print(self.clock.get_rawtime())
+            """
+            
+            # Runs all our methods on loop:
+            self.events()  
+            if self.paused:
+                if self.isDamaged:
+                    pass
+                else:
+                    self.displayPauseScreen()
+            if not self.paused:                                              
+                self.update()
+                self.displayHUD()                                                       
+            self.draw()  
+            
+            
+    """    ------------------- UPDATE ----------------------------------------------------------------"""
+    """    ------------------- UPDATE ----------------------------------------------------------------"""
+    """    ------------------- UPDATE ----------------------------------------------------------------"""
+    # Method where we update game processesd
+    def update(self):
+        self.all_sprites.resetSprites()
+        #print(f'NEW RUN')
+        #
+        for button in self.group_buttons:
+            activated_button = button.buttonPress(self.group_pressureActivator)
+        
+        self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
+        self.refreshedInt_box = self.refreshCount >= self.refreshCount_prev       #
+        
+        
+        self.player.touchPickUp(self.group_pickups)
+        # Updating Functionsdd
+        #
+        if self.interactive_field:
+            for lever in self.group_levers:
+                lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
+    
+            self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
+            self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
+        #print(f'BEFORE UPDATES')
+        """Adds velocity to something when on something moving.
+        bad solution. Only works with two stacks :(
+        """
+        for plat in self.group_solid:
+            plat.collisionEffect()
+        
+        for plat in self.group_solid:
+            plat.collisionEffect()
+        self.all_sprites.update()
+        self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
+
+        self.all_sprites.updatePos(self.group_solid)
+        self.moveScreen()
+        self.relativePos()
+
+        #self.all_sprites.correctPositions()
+        self.level_goal.endGoal(self.player)
+        if (self.player.pos.y > self.boundary):
+            self.player.takeDamage()
+        # Updating Variables
+        self.intWasCreated = False    
+        self.refreshCount_prev = self.refreshCount
+
+    # Method that checks for events in pygame
+    def events(self):
+        for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
+            
+            if event.type == (pg.QUIT):                                         # Check if the user closes the game window
+                if self.playing:                                                # Sets playing to false if it's running (for safety measures)
+                    self.playing = False                                        
+                self.running = False                                            # Sets running to false
+                self.inMenu = False
+                self.inNameMenu = False
+            
+            if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
+                if event.key == pg.K_q:                                         # checks if the uses presses the escape key
+                    if self.playing:                                            # Does the same as before
+                        self.playing = False                                        
+                    self.running = False        
+                    self.inNameMenu = False
+
+                if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
+                    self.new()
+                if event.key == pg.K_d:                                         # Checks if the uses presses 
+                    # if not paused?
+                    self.refreshCount_prev = self.refreshCount
+                    self.interactive_field = Interactive(self,self.player, self.player.facing)
+                    self.intWasCreated = True
+                    self.refreshCount += 1
+                if event.key  == pg.K_p:
+                    self.paused = not self.paused
+                    self.isDamaged = False
+                                           
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_d:
+                    if self.interactive_field:
+                        self.interactive_field.kill()
+                        self.interactive_field = None
+    
+    # Method for drawing everything to the screen           
+    def draw(self):                                         
+        self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
+        
+        # Loop that updates rectangles?
+        for sprite in self.all_sprites:
+            sprite.updateRect()
+        
+
+        self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+        self.group_passives.draw(self.screen)
+        self.screen.blit(self.lives_display,  (50, 50))
+        self.screen.blit(self.points_display,  (400, 50))
+        if self.paused:
+            pauseRect = self.pauseText.get_rect()
+            pauseRect.center = (300, 150)
+            self.screen.blit(self.pauseText, pauseRect)
+            pauseRect2 = self.pauseText2.get_rect()
+            pauseRect2.center = (300, 250)
+            self.screen.blit(self.pauseText2, pauseRect2)
+            pauseRect3 = self.pauseText3.get_rect()
+            pauseRect3.center = (300, 350)
+            self.screen.blit(self.pauseText3, pauseRect3)
+            
+        
+        
+        pg.display.update()                                 # Updates the drawings to the screen object and flips it
+        
+        # Loop that resets rectangles?
+        for sprite in self.all_sprites:
+            sprite.resetRects()
+  
+    # Method for moving everything on the screen relative to where the player is moving
+    def moveScreen(self):
+        #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
+        if self.player.vel.x > 0:
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+            self.relposp = 0
+        #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
+        if self.player.vel.x < 0:
+            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+            self.relposp = 0
+
+        """
+        if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
+            if self.player.vel.x > 0:
+                self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
+                self.relposp = 0
+        if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
+            if self.player.vel.x < 0:
+                self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
+                self.relposp = 0
+        """
+        
+   
+    # 
+    def relativePos(self):
+        for sprite in self.all_sprites:
+            
+            sprite.relativePosition = sprite.pos.copy()
+            sprite.relativePosition.x -= self.relposx
+
+    # Respawns the player and resets the camera
+    def resetCamera(self):
+        for sprite in self.all_sprites:
+            self.relposx = 0
+            self.relposp = 0
+            sprite.relativePosition = sprite.pos.copy()
+            sprite.relativePosition.x -= self.relposx
+        self.player.respawn()
+
 
     def mainMenu(self):
         self.inMenu = True
@@ -415,189 +598,6 @@ class Game:
         textRect = drawText.get_rect()
         textRect.center = (x,y)
         self.screen.blit(drawText, textRect)
-
-    # Method that loops until a false is passed inside the game
-    def run(self):                       
-        self.playing = True                                                     
-        while self.playing:                                                     
-            self.clock.tick(FPS)                    # Changing our tickrate so that our frames per second will be the same as FPS from settings
-            
-            # Checking frame time for performance (keep commented)
-            """
-            self.frames += 1
-            if (self.frames >= 60):
-                print("new frame")
-                self.frames = 0
-            print(self.clock.get_rawtime())
-            """
-            
-            # Runs all our methods on loop:
-            self.events()  
-            if self.paused:
-                if self.isDamaged:
-                    pass
-                else:
-                    self.displayPauseScreen()
-            if not self.paused:                                              
-                self.update()
-                self.displayHUD()                                                       
-            self.draw()  
-            
-            
-    """    ------------------- UPDATE ----------------------------------------------------------------"""
-    """    ------------------- UPDATE ----------------------------------------------------------------"""
-    """    ------------------- UPDATE ----------------------------------------------------------------"""
-    # Method where we update game processesd
-    def update(self):
-        self.all_sprites.resetSprites()
-        #print(f'NEW RUN')
-        #
-        for button in self.group_buttons:
-            activated_button = button.buttonPress(self.group_pressureActivator)
-        
-        self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
-        self.refreshedInt_box = self.refreshCount >= self.refreshCount_prev       #
-        
-        
-        self.player.touchPickUp(self.group_pickups)
-        # Updating Functionsdd
-        #
-        if self.interactive_field:
-            for lever in self.group_levers:
-                lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
-    
-            self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
-            self.interactive_field.knockOver(self.group_vases, self.intWasCreated)
-        #print(f'BEFORE UPDATES')
-        """Adds velocity to something when on something moving.
-        bad solution. Only works with two stacks :(
-        """
-        for plat in self.group_solid:
-            plat.collisionEffect()
-        
-        for plat in self.group_solid:
-            plat.collisionEffect()
-        self.all_sprites.update()
-        self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
-
-        self.all_sprites.updatePos(self.group_solid)
-        self.moveScreen()
-        self.relativePos()
-
-        #self.all_sprites.correctPositions()
-        self.level_goal.endGoal(self.player)
-        if (self.player.pos.y > self.boundary):
-            self.player.takeDamage()
-        # Updating Variables
-        self.intWasCreated = False    
-        self.refreshCount_prev = self.refreshCount
-
-    # Method that checks for events in pygame
-    def events(self):
-        for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
-            
-            if event.type == (pg.QUIT):                                         # Check if the user closes the game window
-                if self.playing:                                                # Sets playing to false if it's running (for safety measures)
-                    self.playing = False                                        
-                self.running = False                                            # Sets running to false
-                self.inMenu = False
-                self.inNameMenu = False
-            
-            if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
-                if event.key == pg.K_q:                                         # checks if the uses presses the escape key
-                    if self.playing:                                            # Does the same as before
-                        self.playing = False                                        
-                    self.running = False        
-                    self.inNameMenu = False
-
-                if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
-                    self.new()
-                if event.key == pg.K_d:                                         # Checks if the uses presses 
-                    # if not paused?
-                    self.refreshCount_prev = self.refreshCount
-                    self.interactive_field = Interactive(self,self.player, self.player.facing)
-                    self.intWasCreated = True
-                    self.refreshCount += 1
-                if event.key  == pg.K_p:
-                    self.paused = not self.paused
-                    self.isDamaged = False
-                                           
-            if event.type == pg.KEYUP:
-                if event.key == pg.K_d:
-                    if self.interactive_field:
-                        self.interactive_field.kill()
-                        self.interactive_field = None
-    
-    # Method for drawing everything to the screen           
-    def draw(self):                                         
-        self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
-        
-        # Loop that updates rectangles?
-        for sprite in self.all_sprites:
-            sprite.updateRect()
-        
-
-        self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
-        self.group_passives.draw(self.screen)
-        self.screen.blit(self.lives_display,  (50, 50))
-        self.screen.blit(self.points_display,  (400, 50))
-        if self.paused:
-            pauseRect = self.pauseText.get_rect()
-            pauseRect.center = (300, 150)
-            self.screen.blit(self.pauseText, pauseRect)
-            pauseRect2 = self.pauseText2.get_rect()
-            pauseRect2.center = (300, 250)
-            self.screen.blit(self.pauseText2, pauseRect2)
-            pauseRect3 = self.pauseText3.get_rect()
-            pauseRect3.center = (300, 350)
-            self.screen.blit(self.pauseText3, pauseRect3)
-            
-        
-        
-        pg.display.update()                                 # Updates the drawings to the screen object and flips it
-        
-        # Loop that resets rectangles?
-        for sprite in self.all_sprites:
-            sprite.resetRects()
-  
-    # Method for moving everything on the screen relative to where the player is moving
-    def moveScreen(self):
-        #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
-        if self.player.vel.x > 0:
-            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
-            self.relposp = 0
-        #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
-        if self.player.vel.x < 0:
-            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
-            self.relposp = 0
-
-        """
-        if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
-            if self.player.vel.x > 0:
-                self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
-                self.relposp = 0
-        if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
-            if self.player.vel.x < 0:
-                self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
-                self.relposp = 0
-        """
-        
-   
-    # 
-    def relativePos(self):
-        for sprite in self.all_sprites:
-            
-            sprite.relativePosition = sprite.pos.copy()
-            sprite.relativePosition.x -= self.relposx
-
-    # Respawns the player and resets the camera
-    def resetCamera(self):
-        for sprite in self.all_sprites:
-            self.relposx = 0
-            self.relposp = 0
-            sprite.relativePosition = sprite.pos.copy()
-            sprite.relativePosition.x -= self.relposx
-        self.player.respawn()
 
     # Gets the current level and player date to save to a player file for saving progress
     def updateData(self):

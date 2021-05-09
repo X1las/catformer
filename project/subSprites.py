@@ -302,8 +302,8 @@ class Box(CustomSprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if self.isPlayer and abs(self.vel.x) < 0.0001:
-            self.vel.x = self.addedVel
+        if abs(self.vel.x) < 0.0001:
+            self.vel.x = self.addedVel.x
 
     def update(self):
 
@@ -316,10 +316,9 @@ class Box(CustomSprite):
         self.vel += self.addedVel 
         if self.has_collided:
             """ DO NOT DELETE """
-            self.new_vel = self.interacter.vel.copy()
-            self.new_acc = self.interacter.acc.copy()
-            self.rect.midbottom = self.pos.realRound().asTuple()
             if self.beingHeld:
+                self.new_vel = self.interacter.vel.copy()
+                self.new_acc = self.interacter.acc.copy()
                 self.vel.x = self.new_vel.x
                 self.vel.y = 0
                 self.acc.x = self.new_acc.x
@@ -328,21 +327,24 @@ class Box(CustomSprite):
             
         else:
             self.beingHeld = False
+            self.pos = self.pos.rounded()
         if self.beingHeld == False:
             self.gravity = GRAVITY
         self.pygamecoll(self.game.group_solid)
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
 
 
     def liftedBy(self,interacter):
+        """ remove?
         if interacter.pos.x < self.pos.x: # if box is right of player
             if abs(interacter.player.right_x() - self.left_x()) < 4: 
                 self.pos.x = interacter.player.right_x() + self.width/2 
         else:
             if abs(interacter.player.left_x() - self.right_x()) < 4: 
                 self.pos.x = interacter.player.left_x() - self.width/2
-        
+        """
         # Setting how much box should be lifted
         self.interacter = interacter
         if not interacter.player.inAir or interacter.player.vel.y > 0:

@@ -205,15 +205,18 @@ class CustomSprite(pg.sprite.Sprite):
             if turn:
                 for collided_obj in collided:
                     collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
-                    collided_obj.rect.y -= 1
+                
+                    collided_obj.rect.y -= 2
                     # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
-                    self.game.group_solid.remove(collided_obj)
+                    #self.game.group_solid.remove(collided_obj)
                     testcol = pg.sprite.spritecollide(collided_obj, self.game.group_solid, False)
-                    self.game.group_solid.add(collided_obj)
+                    collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
+                    #self.game.group_solid.add(collided_obj)
                     for i in testcol:
-                        side = i.determineSide(collided_obj)
-                        if side == "top":
-                            canpickup = False
+                        if i != collided_obj:
+                            side = i.determineSide(collided_obj)
+                            if side == "top":
+                                canpickup = False
 
                     if canpickup:
                 
@@ -222,9 +225,9 @@ class CustomSprite(pg.sprite.Sprite):
                             collided_obj.pickupStarted = True
                         collided_obj.has_collided = True
                         collided_obj.liftedBy(self)
-                    collided_obj.rect.y += 1 
+                    #collided_obj.rect.y += 1 
             else:
-                self.colliding = False
+                self.colliding = False # remove?
 
     ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
     def collisionSide_Conditional(self, collided):
@@ -235,8 +238,8 @@ class CustomSprite(pg.sprite.Sprite):
             if newpos.y <= self.pos.y:
                 return {"side" : "top", "correctedPos" : newpos}
         elif coll_side == "left": # left side of collidedd obj
-            newpos.x = Vec(collided.left_x() - self.width/2, self.pos.y)
-            if newpos <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
+            newpos = Vec(collided.left_x() - self.width/2, self.pos.y)
+            if newpos.x <= self.pos.x: # Make sure it is only if moving the enemy would actually get pushed out on the left side 
                 return {"side" : "left", "correctedPos" : newpos}
 
         elif coll_side == "right":
@@ -288,63 +291,69 @@ class CustomSprite(pg.sprite.Sprite):
     def lessMassThan(self, other):
         return self.massHOR < other.massHOR or self.massVER < other.massVER
 
-    def pygamecoll(self, group, ignoredSol = []):
+    def pygamecoll(self, group = None, ignoredSol = []):
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.rect.x += r(self.relativeVel().x*1.5)
         self.rect.y += r(self.vel.y) 
+        group = self.game.group_solid
         collideds = pg.sprite.spritecollide(self, group, False)
         self.rect.midbottom = self.pos.realRound().asTuple()
         wasstoppedHOR = False
         if collideds:
             for collided in collideds:
                 if collided != self and collided not in ignoredSol: #and not self.isEnemy:
-                    if self.lessMassThan(collided) or self.massHOR == collided.massHOR or self.massVER == collided.massVER:#collided.solidstrength >= self.solidstrength :
-                        coll_side = self.determineSide(collided)
-                        if self.massVER < collided.massVER:
-                            if coll_side == "top":
-                                newpos = collided.top_y()
-                                
+                    #if self.lessMassThan(collided) or self.massHOR == collided.massHOR or self.massVER == collided.massVER:#collided.solidstrength >= self.solidstrength :
+                    #coll_side = self.determineSide(collided)
+                    coll = self.collisionSide_Conditional(collided)
+                    coll_side = coll['side']
+                    correctedPos = coll['correctedPos']
+                    if self.massVER < collided.massVER:
+                        if coll_side == "top":
+                         #   newpos = collided.top_y()
+                            
+                        #if newpos <= self.pos.y:
+                            #self.set_bot(collided.top_y())
+                            self.vel.y = self.addedVel.y
+                            self.acc.y = 0
+                            if group.has(self):
                                 self.count = 2
-                                if newpos < self.pos.y:
-                                    self.set_bot(collided.top_y())
-                                    self.vel.y = 0
-                                    self.acc.y = 0
-                                if group.has(self):
-                                    self.massVER = collided.massVER - 1
+                                self.massVER = collided.massVER - 1
 
-                            if coll_side == "bot":
-                                newpos =  collided.bot_y() + self.height 
+                        if coll_side == "bot":
+                            #newpos =  collided.bot_y() + self.height 
+                            #if newpos >= self.pos.y:
+                            #self.pos.y = newpos
+                            self.vel.y = self.addedVel.y
+                            self.acc.y = 0
+                            if group.has(self):
                                 self.count = 2
-                                if newpos > self.pos.y:
-                                    self.pos.y = newpos
-                                    self.vel.y = self.addedVel.y
-                                    self.acc.y = 0
+                                self.massVER = collided.massVER - 1
+                    if self.massHOR <= collided.massHOR:
+                        if coll_side == "left":
+                            #newpos = collided.left_x() - self.width/2 #Left side of object being collided with
+                            #if newpos <= self.pos.x:
+                            #    self.pos.x = collided.left_x() - self.width/2
+                            self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
+                            self.acc.x = 0
+                            wasstoppedHOR = True
+                            if self.massHOR < collided.massHOR:
                                 if group.has(self):
-                                    self.massVER = collided.massVER - 1
-                        if self.massHOR <= collided.massHOR:
-                            if coll_side == "left":
-                                newpos = collided.left_x() - self.width/2 #Left side of object being collided with
-                                if newpos <= self.pos.x:
-                                    self.pos.x = collided.left_x() - self.width/2
-                                    self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
-                                    self.acc.x = 0
-                                    wasstoppedHOR = True
-                                if self.massHOR < collided.massHOR:
-                                    if group.has(self):
-                                        self.count = 2
-                                        self.massHOR = collided.massHOR - 1
+                                    self.count = 2
+                                    self.massHOR = collided.massHOR - 1
 
-                            if coll_side == "right":
-                                self.count = 2
-                                newpos = collided.right_x() + self.width/2
-                                if newpos >= self.pos.x:
-                                    self.pos.x = collided.right_x() + self.width/2
-                                    self.vel.x = self.addedVel.x
-                                    self.acc.x = 0
-                                    wasstoppedHOR = True
-                                if self.massHOR < collided.massHOR:
-                                    if group.has(self):
-                                        self.massHOR = collided.massHOR - 1
+                        if coll_side == "right":
+                            self.count = 2
+                            #newpos = collided.right_x() + self.width/2
+                            #if newpos >= self.pos.x:
+                            #self.pos.x = collided.right_x() + self.width/2
+                            self.vel.x = self.addedVel.x
+                            self.acc.x = 0
+                            wasstoppedHOR = True
+                            if self.massHOR < collided.massHOR:
+                                if group.has(self):
+                                    self.massHOR = collided.massHOR - 1
+                        
+                    self.pos = correctedPos
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
             self.stoppedHOR = True
@@ -401,7 +410,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if self.isPlayer and abs(self.vel.x) < 0.0001:
+        if self.isPlayer and abs(self.vel.x) < 0.01:
             self.vel.x = self.addedVel.x
        
     def updatePos(self, group = None):
