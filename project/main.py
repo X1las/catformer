@@ -258,8 +258,8 @@ class Game:
         """Adds velocity to something when on something moving.
         bad solution. Only works with two stacks :(
         """
-        for plat in self.group_solid:
-            plat.collisionEffect()
+        #for plat in self.group_solid:
+         #   plat.collisionEffect()
         
         for plat in self.group_solid:
             plat.collisionEffect()
