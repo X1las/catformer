@@ -65,7 +65,8 @@ class Player(CustomSprite):
         self.refreshedInt_box       = False                                                  
         self.interactive_field      = None                                       
         self.refreshCount           = 0                                                        
-        self.refreshCount_prev      = 0          
+        self.refreshCount_prev      = 0         
+        self.imageIndex = 0 
 
     def startGame(self, game):    
         self.game       = game
@@ -113,9 +114,9 @@ class Player(CustomSprite):
         self.lives -= 1
         self.respawn()
         self.game.resetCamera()
-        #self.game.damageScreen()
+        self.game.damageScreen()
         self.game.isDamaged = True
-        #self.game.paused = True
+        self.game.paused = True
         return self.lives
 
 
@@ -132,6 +133,9 @@ class Player(CustomSprite):
 
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
+        self.imageIndex += 1                        # increment image index every update
+        if self.imageIndex >= len(self.images['walk']['right'])*20:     # reset image index to 0 when running out of images
+            self.imageIndex = 0
         self.image = self.images['sit'][self.facing]
         self.liftArm()
         if not self.inAir:
@@ -186,7 +190,7 @@ class Player(CustomSprite):
 
 
     def interactUpdate(self):
-             
+        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/20)]
         self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
         self.refreshedInt_box   = self.refreshCount >= self.refreshCount_prev       #
         
@@ -204,6 +208,7 @@ class Player(CustomSprite):
         
         keys = pg.key.get_pressed()
         if keys[pg.K_d]:
+            self.isInteracting = True
             if not self.liftedBefore:
                 self.interactive_field = Interactive(self.game,self, self.facing)
                 self.liftedBefore = True
@@ -213,6 +218,7 @@ class Player(CustomSprite):
             self.interactUpdate()
 
         else:
+            self.isInteracting = False
             try:
                 self.interactive_field.kill()
                 self.liftedBefore = False
@@ -228,16 +234,16 @@ class Player(CustomSprite):
             if not self.lockFacing:
                 self.facing = "left"
                 #print("WALKING LEFT")
-            if not self.inAir:
-                self.image = self.images['walk'][self.facing][0]
+            if not self.inAir and not self.interactive_field:
+                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if not self.lockFacing:
                 self.facing = "right"
                 #print("WALKING RIGHT")
             self.acc.x = PLAYER_ACC                                          
-            if not self.inAir:
-                self.image = self.images['walk'][self.facing][0]
+            if not self.inAir and not self.interactive_field:
+                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
         if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
             #self.jumpcounter = 0
             self.inAir = True                                                    
@@ -306,18 +312,27 @@ class Interactive(CustomSprite):
         self._layer = 2
         self.update_order = 3
         self.player = player
-        width = self.player.width/2 + 30
-        height = self.player.height - 20       
+        width = 30#self.player.width/2 + 5
+        height = self.player.height     
         self.facing = facing
-        self.image = pg.Surface((width,height)); 
-        self.image.fill((0,200,0)) 
+        
+        # create surface with correct size
+        self.image = pg.Surface((width,height),pg.SRCALPHA)
+        #pg.Surface.fill(self.image, (0,255,0))
+        # load image from spritesheet
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        img = sheet.image_at((144,198,30,42),(0,255,0))
+        image = pg.transform.scale(img, (int(width), int(height)))
+        self.images = {'right': image, 'left': pg.transform.flip(image, True, False)}
+        self.image = self.images[self.facing]
+
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
         self.colliding = False
         self.faceinput = self.player.facing
         self.relativePosition = self.pos.copy()
         self.vel = self.player.vel
         if self.facing == "left":
-            self.rect.bottomright = (player.pos.x,player.pos.y)   
+            self.rect.bottomright = (player.pos.x-1,player.pos.y)   
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
 
@@ -336,6 +351,7 @@ class Interactive(CustomSprite):
                 self.rect.bottomleft = self.player.relativePosition.realRound().asTuple()
     
     def update(self):
+        self.image = self.images[self.facing]
         self.pos = self.player.pos
         self.vel = self.player.vel
         self.acc = self.player.acc
