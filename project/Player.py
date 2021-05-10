@@ -137,7 +137,9 @@ class Player(CustomSprite):
         self.applyPhysics(self.game.group_solid) 
         self.checkDamage()
         self.touchPickUp()
+        #print(f'Before player vel: {self.vel.x}')
         self.vel += self.addedVel
+        #print(f'After player vel: {self.vel.x}')
         # there for a picked up box to register that the player stands still
         self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -233,7 +235,7 @@ class Player(CustomSprite):
                             if movingHOR:
                                 self.takeDamage()
                             result = True
-                            self.vel.x *= 0
+                            #self.vel.x *= 0
                         self.collides_left = True
                     if coll_side == "top": # left side of collidedd obj
                         if collided.vel.y < 0:
@@ -250,15 +252,16 @@ class Player(CustomSprite):
                             if movingVER:
                                 self.takeDamage()
                             result = True
-                            self.vel.x *= 0
+                            #self.vel.x *= 0
                         collides_top = True
 
         self.rect = self.rect.inflate(-inflation,-inflation)
           
         return result           
     def updatePos(self, Intersecters):
+        #print(f'addedVel player: {self.addedVel} ')
         self.pos += self.vel +  self.acc * 0.5
-        self.inbetweenSolids()
+        #self.inbetweenSolids()
         self.collides_left = False; self.collides_right = False
 
 

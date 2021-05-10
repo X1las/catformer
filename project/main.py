@@ -148,7 +148,7 @@ class Game:
         
         self.enemy = PatrollingEnemy(350, 550 , 26, 30, 100, name =  "pat1")                       #      
         self.enemy.startGame(self)
-        self.aienemy = AiEnemy(750, 460,36, 28, 200, name =  "ai1")                       #      
+        self.aienemy = AiEnemy(500, 310,36, 28, 200, name =  "ai1")                       #      
         self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
@@ -258,8 +258,8 @@ class Game:
         """Adds velocity to something when on something moving.
         bad solution. Only works with two stacks :(
         """
-        for plat in self.group_solid:
-            plat.collisionEffect()
+        #for plat in self.group_solid:
+         #   plat.collisionEffect()
         
         for plat in self.group_solid:
             plat.collisionEffect()
