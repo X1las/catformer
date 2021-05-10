@@ -296,6 +296,7 @@ class CustomSprite(pg.sprite.Sprite):
                         coll_side = collided.determineSide(self)
                         if coll_side == "top":
                             collided.addedVel.x = self.vel.x + self.addedVel.x
+                            collided.addedVel.y = self.vel.y + self.addedVel.y
                 except:
                     pass
                     

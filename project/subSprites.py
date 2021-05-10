@@ -180,14 +180,14 @@ class Platform(CustomSprite):
 
     # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
-        if  self.pos.x - self.x >= self.rightMaxDist: # right boundary
+        if  self.pos.x - self.x >= self.rightMaxDist and self.vel.x > 0: # right boundary
             self.vel.x = -1 * abs(self.originalVel.x)
-        elif self.pos.x - self.x <= -1*self.leftMaxDist:
+        elif self.pos.x - self.x <= -1*self.leftMaxDist and self.vel.x < 0:
             self.vel.x = abs(self.originalVel.x)
-        elif abs(self.pos.y - self.y) >= abs(self.upMaxDist):
-            self.vel.y = -1* abs(self.originalVel.y)
-        elif self.pos.y - self.y >= self.downMaxDist:
-            self.vel.y = abs(self.originalVel.y)
+        elif abs(self.pos.y - self.y) >= abs(self.upMaxDist) and self.vel.y < 0:
+            self.vel.y =  abs(self.originalVel.y)
+        elif self.pos.y - self.y >= self.downMaxDist and self.vel.y > 0:
+            self.vel.y =  -1* abs(self.originalVel.y)
 
     def update(self):
         if self.vel.x != 0 or self.vel.y != 0:
@@ -507,6 +507,7 @@ class Activator(CustomSprite):
     hasActivatedTarget = False
     activated = False
     deactivated = True
+    auto_deactivate = False
     
 
     def activeEffect(self):
@@ -518,11 +519,24 @@ class Activator(CustomSprite):
                             target = respawn['target']
                             self.hasActivatedTarget = True
                             target.respawn()
+                if e == "spawn":
+                    for spawn in v:
+                        if not self.hasActivatedTarget:
+                            self.hasActivatedTarget = True
+                            target = spawn['target']
+                            target.startGame(self.game)
                 if e == "move":
 
                     for move in v:
                         target = move["target"]
                         move['target'].vel = move["movespeed"].copy() + target.originalVel
+                if e == "conMove":
+                    for conMove in  v:
+                        if not self.hasActivatedTarget:
+                            self.hasActivatedTarget = True
+                            target = conMove["target"]
+                            target.originalVel = conMove['movespeed'].copy()
+                            target.vel = target.originalVel
         except Exception as e:
             print(f'button activate: {e}') 
 
@@ -536,6 +550,12 @@ class Activator(CustomSprite):
                     for move in v:
                         target = move["target"]
                         move['target'].vel = move["deactspeed"].copy() + target.originalVel
+                if e == "conMove":
+                    self.hasActivatedTarget = False
+                    for conMove in v:
+                        target = conMove["target"]
+                        target.originalVel *= 0
+                        #target.vel = target.originalVel
         except Exception as e:
             print(f'button deact: {e}') 
 
@@ -546,6 +566,9 @@ class Activator(CustomSprite):
             self.activated = True
             self.deactivated = False
             self.image = self.image_active
+            if self.auto_deactivate:
+                t = Timer(1, self.deactivate)
+                t.start() 
             #self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
     def deactivate(self):
         if not self.deactivated:
