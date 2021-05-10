@@ -334,7 +334,7 @@ class Interactive(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.vel = self.player.vel
         if self.facing == "left":
-            self.rect.bottomright = (player.pos.x-1,player.pos.y)   
+            self.rect.bottomright = (player.pos.x,player.pos.y)   
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
 
@@ -345,15 +345,15 @@ class Interactive(CustomSprite):
             if pos == "global":
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
             else:
-                self.rect.bottomright = self.player.relativePosition.realRound().asTuple()
+                self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
         else: 
             if pos == "global":
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
-                self.rect.bottomleft = self.player.relativePosition.realRound().asTuple()
+                self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
     
     def update(self):
-        self.image = self.images[self.facing]
+        self.image = self.images[self.player.facing]
         self.pos = self.player.pos
         self.vel = self.player.vel
         self.acc = self.player.acc
