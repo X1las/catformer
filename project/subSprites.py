@@ -87,6 +87,7 @@ class LevelGoal(CustomSprite):
         level+=1
         print(level)
         self.game.level.name = "level"+str(level)
+        self.game.updateData()
         self.game.new()  
 
 

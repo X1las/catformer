@@ -105,12 +105,13 @@ class Game:
         self.finished = False
         # takshdkawd
         self.createSGroups()                #
+        
         try:
             self.level
         except:
             pass
         else:
-            self.data = self.updateData()
+            self.data = self.getPlayerData()
         
         self.level = Level(self)            #                                     
         
@@ -762,7 +763,6 @@ class Game:
 
     def checkNameConflict(self):
         result = os.path.exists("playerData/"+self.userName+"Data.txt")
-        print(result)
         return result
     
     def menuEvents(self):
@@ -809,14 +809,14 @@ class Game:
         except:
             file = open("playerData/"+self.userName+"Data.txt","w")
 
-        levelName = "level1"
-        lives = PLAYER_LIVES
-        catnip = PLAYER_CATNIP
+        newlevelName = "level1"
+        newlives = "9"
+        newcatnip = "0"
 
-        file.write(f"{levelName},{lives},{catnip}")
+        file.write(f"{newlevelName},{newlives},{newcatnip}")
         file.close()
-
-        return [levelName,int(lives),int(catnip)]
+        print(file)
+        return [newlevelName,int(newlives),int(newcatnip)]
 
 
 
@@ -838,12 +838,10 @@ class Game:
     # Gets player data from file
     def getPlayerData(self):
         try:
-            print("playerData/"+self.userName+"Data.txt")
             file = open("playerData/"+self.userName+"Data.txt","r")
             data = file.read().split(",")
             data[1] = int(data[1])
             data[2] = int(data[2])
-            print(data)
             return data
         except IOError:
             print("No playerdata found")
