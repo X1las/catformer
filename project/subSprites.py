@@ -302,7 +302,7 @@ class Box(CustomSprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x) < 0.0001:
+        if abs(self.vel.x + self.addedVel) < 0.0001:
             self.vel.x = self.addedVel.x
 
     def update(self):
