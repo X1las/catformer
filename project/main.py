@@ -28,6 +28,7 @@ from Level2 import Level
 from Vector import Vec
 from SpriteGroup import *
 from levelCreator import *
+import os.path
 
 
 def r(number):
@@ -65,9 +66,11 @@ class Game:
         self.click = False
         self.userName = ""
         self.inNameMenu = False
+        self.inNameLoadMenu = False
         self.boundary = 600
         self.isDamaged = False
         self.finished = False
+        self.outOfLives = False
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -251,13 +254,13 @@ class Game:
             self.clock.tick(FPS)                    # Changing our tickrate so that our frames per second will be the same as FPS from settings
             
             # Checking frame time for performance (keep commented)
-            """
+            '''
             self.frames += 1
             if (self.frames >= 60):
                 print("new frame")
                 self.frames = 0
             print(self.clock.get_rawtime())
-            """
+            '''
             
             # Runs all our methods on loop:
             self.events()  
@@ -270,7 +273,13 @@ class Game:
                 self.update()
                 self.displayHUD()  
             if self.finished:
-                self.endGameHUD()                                                     
+                self.endGameHUD()        
+            if self.player.lives <= 0:
+                self.playing = False
+                self.outOfLives = True
+                self.inNameMenu = False
+                self.inNameLoadMenu = False
+                #add function to delete playerdata file
             self.draw()  
             
             
@@ -338,6 +347,7 @@ class Game:
                 self.running = False                                            # Sets running to false
                 self.inMenu = False
                 self.inNameMenu = False
+                self.inNameLoadMenu = False
             
             if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
                 if event.key == pg.K_q:                                         # checks if the uses presses the escape key
@@ -345,6 +355,7 @@ class Game:
                         self.playing = False                                        
                     self.running = False        
                     self.inNameMenu = False
+                    self.inNameLoadMenu = False
 
                 if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
                     self.new()
@@ -450,6 +461,8 @@ class Game:
         self.activateSelected = False
 
         while self.inMenu:
+            if self.outOfLives:
+                self.noLivesScreen()
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
             self.menuEvents()
@@ -473,7 +486,7 @@ class Game:
             elif (self.selectedState %4) == 1:
                 selectedButton  = pg.Rect(75, 200, 50, 50)
                 if self.activateSelected:
-                    self.new()
+                    self.nameLoadScreen()
             elif (self.selectedState %4) == 2:
                 selectedButton  = pg.Rect(75, 350, 50, 50)
                 if self.activateSelected:
@@ -545,6 +558,37 @@ class Game:
 
             pg.display.update()
 
+    def noLivesScreen(self):
+        self.activateSelected = False
+        self.selectedState = 0
+
+
+        while self.outOfLives:
+            self.screen.fill(BLACK)
+            self.clock.tick(FPS)
+            self.menuEvents()
+            mx, my = pg.mouse.get_pos()
+            returnButton   = pg.Rect(190, 475, 220, 100)
+            pg.draw.rect(self.screen, (0, 125, 255), returnButton)
+
+            selectedButton  = pg.Rect(75, 500, 50, 50)
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+
+            if self.activateSelected:
+                self.outOfLives = False
+
+            if self.click:
+                if returnButton.collidepoint((mx, my)):
+                    self.outOfLives = False
+            self.activateSelected = False
+            
+            self.click = False
+            self.drawMenuText("Return", 300, 525)
+            self.drawMenuText(f'Player '+self.userName+' has run out of lives', 300, 50, 30)
+            self.drawMenuText("Press Q to quit", 300, 200, 30)
+
+            pg.display.update()
+
     def nameInput(self):
         self.inNameMenu = True
         self.userName = ""
@@ -571,7 +615,12 @@ class Game:
                 selectedButton  = pg.Rect(75, 350, 50, 50)
                 if self.activateSelected:
                     if not self.userName == "":
-                        self.new()
+                        if not self.checkNameConflict():
+                            self.data = self.createPlayerData()
+                            self.new()
+                        else:
+                            self.nameError = True
+                            self.activateSelected = False 
                     else:
                         self.nameError = True
                         self.activateSelected = False
@@ -627,7 +676,94 @@ class Game:
             pg.display.update()
 
             
+    def nameLoadScreen(self):
+        self.inNameLoadMenu = True
+        self.userName = ""
+        self.nameError = False
+        self.activateSelected = False
+        self.selectedState = 0
+        while self.inNameLoadMenu:
+            self.screen.fill(BLACK)
+            self.clock.tick(FPS)
 
+            mx, my = pg.mouse.get_pos()
+            startButton   = pg.Rect(190, 325, 220, 100)
+            returnButton  = pg.Rect(190, 475, 220, 100)
+            pg.draw.rect(self.screen, (0, 125, 255), startButton)
+            pg.draw.rect(self.screen, (0, 125, 255), returnButton)
+            self.drawMenuText("Return", 300, 525)
+            self.drawMenuText("Start", 300, 375)
+            self.drawMenuText("Please enter a name to load", 300, 100)
+            if self.nameError:
+                self.drawMenuText("Invalid name entered", 300, 300)
+
+
+            if (self.selectedState %2) == 0:
+                selectedButton  = pg.Rect(75, 350, 50, 50)
+                if self.activateSelected:
+                    if self.checkNameConflict():
+                        self.data = self.getPlayerData()
+                        print(self.data)
+                        self.new()
+                    else:
+                        self.nameError = True
+                        self.activateSelected = False 
+                    
+            elif (self.selectedState %2) == 1:
+                selectedButton  = pg.Rect(75, 500, 50, 50)
+                if self.activateSelected:
+                    self.inNameLoadMenu = False
+                    self.selectedState = 0
+
+
+            pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
+            
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:                                   
+                    self.inMenu = False
+                    self.running = False
+                    self.inTutorial = False  
+                    self.inNameLoadMenu = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.click = True 
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_BACKSPACE:
+                        self.userName = self.userName[:-1]
+                    elif event.key == pg.K_RETURN:
+                        self.activateSelected = True
+                    elif event.key == pg.K_UP:
+                        self.selectedState += 1
+                    elif event.key == pg.K_DOWN:
+                        self.selectedState -= 1
+                    else:
+                        self.userName += event.unicode
+            self.drawMenuText(self.userName, 300, 150)
+
+            
+            if returnButton.collidepoint((mx, my)):
+                self.selectedState = 1
+                if self.click:
+                    self.inNameLoadMenu = False
+                    self.selectedState = 0
+            if startButton.collidepoint((mx, my)):
+                self.selectedState = 0
+                if self.click:
+                    if not self.userName == "":
+                        self.new()
+                    else:
+                        self.nameError = True
+
+
+
+            self.click = False
+            pg.display.update()
+
+    def checkNameConflict(self):
+        result = os.path.exists("playerData/"+self.userName+"Data.txt")
+        print(result)
+        return result
     
     def menuEvents(self):
         for event in pg.event.get():                                
@@ -637,6 +773,8 @@ class Game:
                 self.running = False
                 self.inTutorial = False  
                 self.inNameMenu = False
+                self.inNameLoadMenu = False
+                self.outOfLives = False
 
 
             if event.type == pg.KEYDOWN:
@@ -645,6 +783,8 @@ class Game:
                     self.running = False
                     self.inTutorial = False  
                     self.inNameMenu = False
+                    self.inNameLoadMenu = False
+                    self.outOfLives = False
                 if event.key == pg.K_RETURN:
                     self.activateSelected = True
                 if event.key == pg.K_DOWN:
@@ -663,11 +803,28 @@ class Game:
         self.screen.blit(drawText, textRect)
 
     # Gets the current level and player date to save to a player file for saving progress
+    def createPlayerData(self):
+        try:
+            file = open("playerData/"+self.userName+"Data.txt","x")
+        except:
+            file = open("playerData/"+self.userName+"Data.txt","w")
+
+        levelName = "level1"
+        lives = PLAYER_LIVES
+        catnip = PLAYER_CATNIP
+
+        file.write(f"{levelName},{lives},{catnip}")
+        file.close()
+
+        return [levelName,int(lives),int(catnip)]
+
+
+
     def updateData(self):
         try:
-            file = open("playerData/player.txt","x")
+            file = open("playerData/"+self.userName+"Data.txt","x")
         except:
-            file = open("playerData/player.txt","w")
+            file = open("playerData/"+self.userName+"Data.txt","w")
 
         levelName = self.level.name
         lives = str(self.player.lives)
@@ -681,7 +838,8 @@ class Game:
     # Gets player data from file
     def getPlayerData(self):
         try:
-            file = open("playerData/player.txt","r")
+            print("playerData/"+self.userName+"Data.txt")
+            file = open("playerData/"+self.userName+"Data.txt","r")
             data = file.read().split(",")
             data[1] = int(data[1])
             data[2] = int(data[2])
