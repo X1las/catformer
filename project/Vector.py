@@ -79,6 +79,12 @@ class Vec(object):
         roundedy = self.rounding(self.y)
         return Vec(roundedx,roundedy)    
 
+    def roundUp(self):
+        roundedx = self.roundUpN(self.x)
+        roundedy = self.roundUpN(self.y)
+        return Vec(roundedx,roundedy)    
+
+
     def normRound(self, number):
         inte = math.floor(number)
         dec = number - inte
@@ -88,12 +94,18 @@ class Vec(object):
             result = 0
         return inte + result
 
+    def roundUpN(self, number):
+        rounded_num = number
+        rounded_num = math.floor(rounded_num)
+        return rounded_num        
+
+
     def rounding(self, number):
         neg = False
         if number < 0:
             neg = True
         rounded_num = number
-        rounded_num = math.floor(abs(rounded_num))
+        rounded_num = math.ceil(abs(rounded_num))
         if neg:
             rounded_num *= -1
         return rounded_num        

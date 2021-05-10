@@ -83,11 +83,15 @@ class CustomSprite(pg.sprite.Sprite):
         self.new_vel = self.vel.copy()
 
     def update(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     def updateRect(self):
-        roundedvec = self.relativePosition.rounded()
+        if self.isPlayer:
+            roundedvec = self.relativePosition.rounded()
+            
+        else:
+            roundedvec = self.relativePosition.rounded()
         self.rect.midbottom = roundedvec.asTuple()
         self.acc = vec(0,0)
         
@@ -153,32 +157,6 @@ class CustomSprite(pg.sprite.Sprite):
             self.deactivated = True
             return None
 
-    """
-    def buttonPress(self, agents):
-        collided = pg.sprite.spritecollide(self, agents, False)
-        if collided: 
-            for collided_obj in collided:
-                self.activate()
-                self.prevActivated = True
-                return self
-        else:
-            self.deactivate()
-            self.activated = False
-            self.deactivated = True
-            return None
-    """
-    def touchEnemy(self):
-        damager = self.game.group_enemies
-        self.rect.midbottom = self.pos.rounded().asTuple()
-        self.rect = self.rect.inflate(4,4)
-        collided = pg.sprite.spritecollide(self, damager, False)
-        self.rect = self.rect.inflate(-4,-4)
-        if collided: 
-            for collided_obj in collided:
-                if collided_obj.active:
-                    print(f'hit enemy: {collided_obj.name}')
-                    self.takeDamage()         
-        self.rect.midbottom = self.pos.rounded().asTuple()
         
     def touchPickUp(self):
         pickups = self.game.group_pickups
@@ -191,60 +169,7 @@ class CustomSprite(pg.sprite.Sprite):
                 if collided_obj.type == 'catnip':
                     self.addCatnip()
                     collided_obj.kill()
-    """
-    def leverPull(self,  agents, turn):
-        collided = pg.sprite.spritecollide(self, agents, False)
-        if collided: 
-            for collided_obj in collided:
-                if turn:
-                    if not self.activated:
-                        self.activate()
-                    else:
-                        self.deactivate()
-                self.prevActivated = True
-                return self
-    
-
-    def knockOver(self,  agents, turn):
-        collided = pg.sprite.spritecollide(self, agents, False)
-        if collided: 
-            for collided_obj in collided:
-                if turn:
-                    collided_obj.fall = True
-                    collided_obj.gravity = PLAYER_GRAV
-    def pickupSprite(self,  agents, turn, justPickedUp):
-        # should ckeck which box is closest
-        canpickup = True
-        collided = pg.sprite.spritecollide(self, agents, False)
-        if collided: 
-            if turn:
-                for collided_obj in collided:
-                    collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
-                
-                    collided_obj.rect.y -= 2
-                    # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
-                    #self.game.group_solid.remove(collided_obj)
-                    testcol = pg.sprite.spritecollide(collided_obj, self.game.group_solid, False)
-                    collided_obj.rect.midbottom = collided_obj.pos.realRound().asTuple()
-                    #self.game.group_solid.add(collided_obj)
-                    for i in testcol:
-                        if i != collided_obj:
-                            side = i.determineSide(collided_obj)
-                            if side == "top":
-                                canpickup = False
-
-                    if canpickup:
-                
-                        self.colliding = True
-                        if justPickedUp:
-                            collided_obj.pickupStarted = True
-                        collided_obj.has_collided = True
-                        collided_obj.liftedBy(self)
-                    #collided_obj.rect.y += 1 
-            else:
-                self.colliding = False # remove?
-
-    """
+ 
     ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
     def collisionSide_Conditional(self, collided):
         coll_side = self.determineSide(collided)
@@ -430,7 +355,7 @@ class CustomSprite(pg.sprite.Sprite):
         if self.isPlayer and abs(self.vel.x + self.addedVel.x) < 0.01:
             self.vel.x = self.addedVel.x
        
-    def updatePos(self, group = None):
+    def updatePos(self):
         self.pos +=  self.vel +  self.acc * 0.5
         self.acc = vec(0,0)    # caused problems? 
 

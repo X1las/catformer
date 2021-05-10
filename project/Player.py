@@ -155,9 +155,34 @@ class Player(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.pygamecoll(self.game.group_solid)
 
+    def updatePos(self):
+        #print(f'addedVel player: {self.addedVel} ')
+        self.pos += self.vel +  self.acc * 0.5
+        #self.inbetweenSolids()
+        self.collides_left = False; self.collides_right = False
+
+
+
+    def posCorrection(self):
+        self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
+        self.rect.midbottom = self.pos.realRound().asTuple()
+
     def checkDamage(self):
         self.inbetweenSolids()
         self.touchEnemy()
+
+    def touchEnemy(self):
+        damager = self.game.group_damager
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect = self.rect.inflate(4,4)
+        collided = pg.sprite.spritecollide(self, damager, False)
+        self.rect = self.rect.inflate(-4,-4)
+        if collided: 
+            for collided_obj in collided:
+                if collided_obj.active:
+                    print(f'hit enemy: {collided_obj.name}')
+                    self.takeDamage()         
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     def interactUpdate(self):
@@ -270,20 +295,6 @@ class Player(CustomSprite):
         self.rect = self.rect.inflate(-inflation,-inflation)
           
         return result           
-    def updatePos(self, Intersecters):
-        #print(f'addedVel player: {self.addedVel} ')
-        self.pos += self.vel +  self.acc * 0.5
-        #self.inbetweenSolids()
-        self.collides_left = False; self.collides_right = False
-
-
-
-    def posCorrection(self):
-        self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
-        
-
-    def hitsSolid(self, hitObject, hitPosition , relativeHitPos):
-        super().hitsSolid(hitObject, hitPosition , relativeHitPos)
 
 
 # Interactive Field SubClass - Inherits from CustomSprite
