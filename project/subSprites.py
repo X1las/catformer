@@ -85,7 +85,7 @@ class LevelGoal(CustomSprite):
     # Function that gets called whenever the player reaches a goal
     def activate(self):
         self.game.player.image = self.game.player.images['sleep']
-        '''
+        
         self.game.resetCamera()
         current = self.game.level.name
         level = int(current[5:6])
@@ -94,7 +94,7 @@ class LevelGoal(CustomSprite):
         self.game.level.name = "level"+str(level)
         self.game.updateData()
         self.game.new()
-        '''
+        
 
 
 # Platform SubClass - Inherits from CustomSprite
