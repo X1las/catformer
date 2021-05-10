@@ -97,13 +97,13 @@ def createLevel1():
     startplat = Platform( 300 , 500 ,  120 , 30 , 'startplat')
     p_1       = Platform( 420 , 350 ,  100 , 30, "p_1")
     p_2       = Platform( 540 , 270 ,  65 , 30 , 'p_2')
-    mugplat   = Platform( 660 , 270 ,  65 , 30 , 'mugplat', vel = Vec(0.7), maxDist = 50)
+    mugplat   = Platform( 660 , 270 ,  65 , 30 , 'mugplat', vel = Vec(1,0), maxDist = 50)
     
     waterDiv1 = Platform( 550 , 550 ,  30 , 100 , 'p_3')
     waterDiv2 = Platform( 1100 , 550 ,  30 , 100 , 'p_3')
 
-    moving1     = Platform( 700 , 450 ,  150 , 30 , 'p_4', vel=Vec(-0.7,0), maxDist = 50)
-    moving2     = Platform( 900 , 450 ,  150 , 30 , 'p_4', vel=Vec(-0.7,0), leftMaxDist=30, rightMaxDist= 70)
+    moving1     = Platform( 700 , 450 ,  150 , 30 , 'p_4', vel=Vec(-1,0), maxDist = 50)
+    moving2     = Platform( 900 , 450 ,  150 , 30 , 'p_4', vel=Vec(-1,0), leftMaxDist=30, rightMaxDist= 70)
     
     endplat     = Platform( 1300 , 500 ,  100 , 30 , 'p_5')
     # boxes
