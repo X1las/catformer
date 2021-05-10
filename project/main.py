@@ -67,6 +67,7 @@ class Game:
         self.inNameMenu = False
         self.boundary = 600
         self.isDamaged = False
+        self.finished = False
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -98,7 +99,7 @@ class Game:
 
     # Method that creates a new level
     def new(self):
-        
+        self.finished = False
         # takshdkawd
         self.createSGroups()                #
         try:
@@ -120,6 +121,7 @@ class Game:
         
         if not self.level.load(self.level.name):
             self.level.load(DEFAULT_LEVEL)
+            self.finished = True
             print('test')
         
         self.player = Player(self.level.spawn)                         #
@@ -220,7 +222,9 @@ class Game:
                     self.displayPauseScreen()
             if not self.paused:                                              
                 self.update()
-                self.displayHUD()                                                       
+                self.displayHUD()  
+            if self.finished:
+                self.endGameHUD()                                                     
             self.draw()  
             
             
@@ -338,7 +342,13 @@ class Game:
             pauseRect3 = self.pauseText3.get_rect()
             pauseRect3.center = (300, 350)
             self.screen.blit(self.pauseText3, pauseRect3)
-            
+        if self.finished:
+            endRect = self.endText.get_rect()
+            endRect.center = (300, 150)
+            self.screen.blit(self.endText, endRect)
+            endRect2 = self.endText2.get_rect()
+            endRect2.center = (300, 250)
+            self.screen.blit(self.endText2, endRect2)
         
         
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
@@ -638,6 +648,12 @@ class Game:
     def displayHUD(self):
         self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
+
+    def endGameHUD(self):
+        deathFont = pg.font.Font("resources/gypsy-curse.regular.ttf", 70)
+        self.endText = deathFont.render("Congratulations", True, (255, 0 ,0))
+        self.endText2 = deathFont.render("You have finished the game", True, (255, 0 ,0))
+
  
     def displayPauseScreen(self):
         self.pauseText = self.textToDisplay("Game is paused", color= (0,0,0), bold= True)

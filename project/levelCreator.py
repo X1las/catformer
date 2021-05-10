@@ -130,6 +130,35 @@ def createLevel2():
 
     return levelName
 
+''' End Level '''
+def createLevel4():
+    # platforms
+    floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
+
+    mug1 = Mug(floor , 50 , 'v1')
+
+
+    levelName = {
+        'name': 'level4',
+        'settings': {
+            'spawn': Vec(330,550),
+            'length': 5000,
+            'track': 'nyan.mp3'
+        },
+        'platforms': [floor],
+        'boxes':     [],
+        'buttons':   [],
+        'levers':    [],
+        'mugs':      [mug1],
+        'goals':     [],
+        'enemies':   [],
+        'water':     [],
+        'health':    [],
+        'catnip':    []
+    }
+
+    return levelName
+
 
 # pickling method
 def pickleLevel(level, filename):
@@ -140,7 +169,9 @@ def pickleLevel(level, filename):
 # create objects and dicts
 level1 = createLevel1()
 level2 = createLevel2()
+level4 = createLevel4()
 
 # pickle levels
 pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
+pickleLevel(level4, 'level4')
