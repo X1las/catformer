@@ -103,20 +103,8 @@ class LevelGoal(CustomSprite):
             self.sleepcount += 1
             if self.sleepcount > 100:
                 self.nextLevel()
+                self.sleepcount = 0
             
-            #if not self.triggered:
-             #   self.triggered = True
-                #n = 10000
-                #t0 = time.time()
-                #for i in range(n): myfast()
-                #t1 = time.time()
-
-                #total_n = t1-t0
-                #t = Timer(1, self.nextLevel)
-                #t.start() 
-                #self.triggered = False
-                #self.nextLevel()
-
 
 # Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
