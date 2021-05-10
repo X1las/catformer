@@ -200,11 +200,68 @@ class Game:
 
 
         # Stine level things ---------------------------------------------------------------------------------
-        
+        # Lever A
+        """
+        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        self.smalltest2 = Platform(550 , 350 , 50 , 40, "small tester", leftMaxDist = 0, rightMaxDist= 100, vel = Vec(0,0) )
+        self.smalltest2.startGame(self)
+        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest},
+                           {"movespeed"  : Vec(1,0), "deactspeed" : Vec(-1,0) , "target" : self.smalltest2} ]
+                                }
+        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.leverA.startGame(self)
+        """
+        # Lever B
+        '''
+        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        #self.smallbox = Box(370 , 200 , 44 , 44 , 'box_1')
+        dic = {  "move"  : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}],
+                 "spawn" : [{"target": Box(370 , 200 , 44 , 44 , 'box_1')}] 
+                  }
+        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.leverA.startGame(self)
+        '''
+        #lever F
+        '''
+        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}]
+                               }
+        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.leverA.startGame(self)
+        '''
+        # Lever E
+        """
+        self.smallbox = Box(370 , 200 , 44 , 44 , 'box_1')
+        self.smallbox.startGame(self)
+        dic = { "respawn" : [{"target": self.smallbox}] 
+                  }
+        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic, autodeactivate=True)                                          #
+        self.leverA.startGame(self)
+        """
+        # button C
+        '''
+        self.smalltest = Platform(450 , 450 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}]
+                               }
+        self.leverA  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.leverA.startGame(self)
+        '''
+        # button D
+        '''
+        self.smalltest = Platform(450 , 450 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        dic = {  "conMove" : [{"movespeed"  : Vec(0,1), "target" : self.smalltest} ]
 
-
-
-
+                                }
+        self.button4  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4.startGame(self)
+        '''
         # Stine level things ---------------------------------------------------------------------------------
         '''
         dic = { "move"    : [{ "movespeed" : Vec(2,0), "deactspeed" : Vec(-2,0), "target" : self.all_sprites.getObject("p_3")}, 
