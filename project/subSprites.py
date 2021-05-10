@@ -461,7 +461,6 @@ class Mug(CustomSprite):
 
 
     def update(self):
-        print(f'pos: {self.pos.x}')
         # Check whether the mug has even fallen yet
         if not self.broken:
             if self.vel.y > 1:
