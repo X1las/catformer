@@ -24,10 +24,10 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         for i in lis:
             i.update()
 
-    def updatePos(self, solid):
+    def updatePos(self):
         lis = self.updateOrder()
         for i in lis:
-            i.updatePos(solid)
+            i.updatePos()
             #i.posCorrection()
         """ So, if box is pushing into something and getting pushed out, player is already updated before the box was pushed out, so it vibrates"""
         self.correctPositions()

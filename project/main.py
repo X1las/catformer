@@ -158,7 +158,7 @@ class Game:
         #self.enemy.startGame(self)
         #self.aienemy = AiEnemy(500, 310,36, 28, 200, name =  "ai1")                       #      
         #self.aienemy.startGame(self)
-        self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
+        self.level_goal     = LevelGoal(1600 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
         
         # Matthias level things ----------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ class Game:
         self.all_sprites.update()
         #self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
 
-        self.all_sprites.updatePos(self.group_solid)
+        self.all_sprites.updatePos()
         self.moveScreen()
         self.relativePos()
 
@@ -475,11 +475,11 @@ class Game:
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
         #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
-        if self.player.vel.x > 0:
+        if self.player.vel.x + self.player.acc.x * 0.5 > 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
             self.relposp = 0
         #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
-        if self.player.vel.x < 0:
+        if self.player.vel.x + self.player.acc.x * 0.5 < 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
             self.relposp = 0
 
@@ -500,7 +500,8 @@ class Game:
         for sprite in self.all_sprites:
             
             sprite.relativePosition = sprite.pos.copy()
-            sprite.relativePosition.x -= self.relposx
+            sprite.relativePosition.x = sprite.relativePosition.x-self.relposx
+            
 
     # Respawns the player and resets the camera
     def resetCamera(self):

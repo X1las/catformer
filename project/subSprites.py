@@ -202,9 +202,9 @@ class Platform(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
-    def updatePos(self, solid):
+    def updatePos(self):
         self.checkDist()
-        super().updatePos(solid)
+        super().updatePos()
         self.pygamecolls(self.game.group_solid)
 
 
@@ -269,6 +269,7 @@ class Box(CustomSprite):
         ''' in use'''
         self.beingHeld = False
         self.interacter = None
+        self.justreleased = False
         self.update_order = 5
         self.init()
 
@@ -306,11 +307,10 @@ class Box(CustomSprite):
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x + self.addedVel.x) < 0.0001:
+        if abs(self.vel.x + self.addedVel.x) < 0.1:
             self.vel.x = self.addedVel.x
 
     def update(self):
-
         if not self.inAir:
             self.pickupStarted = False
         self.savedpos = self.pos.copy()
@@ -331,7 +331,9 @@ class Box(CustomSprite):
             
         else:
             self.beingHeld = False
-            self.pos = self.pos.rounded()
+            if self.justreleased:
+                self.pos = self.pos.realRound()
+                self.justreleased = False
         if self.beingHeld == False:
             self.gravity = GRAVITY
         self.pygamecoll(self.game.group_solid)
@@ -357,12 +359,13 @@ class Box(CustomSprite):
             if not self.stoppedHOR:
                 self.interacter.player.massHOR = self.ori_massHOR + 1
                 self.interacter.player.count = 1
+            self.justreleased = True
         else: 
             self.beingHeld = False
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
-    def updatePos(self, Intersecters):
+    def updatePos(self):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         """DO NOT DELETE """
         self.pos += self.vel +  self.acc * 0.5
@@ -384,12 +387,13 @@ class Box(CustomSprite):
 
 # Case SubClass - Inherits from CustomSprite
 class Mug(CustomSprite):
-    def __init__(self, plat : Platform, placement, name = None):
+    def __init__(self, plat : Platform, placement, name = None, spawn = None):
         self.plat = plat
         self.pos = vec()
+        self.spawn = spawn
         self.width  = 29
         self.height = 26
-        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()).rounded() 
         self.placement = placement
         """
         try:
@@ -410,7 +414,7 @@ class Mug(CustomSprite):
         self.name = name
         self.breakable = True
         self.broken = False
-        
+        self.update_order = 11
         self.fall = False
         self.gravity = PLAYER_GRAV
         self.ignoreSol = plat
@@ -457,6 +461,7 @@ class Mug(CustomSprite):
 
 
     def update(self):
+        print(f'pos: {self.pos.x}')
         # Check whether the mug has even fallen yet
         if not self.broken:
             if self.vel.y > 1:
@@ -465,33 +470,50 @@ class Mug(CustomSprite):
             self.touchplat(self.game.group_solid)
             
             # fall is set to true in knockover() if conditions are satisfied
-        self.vel += self.addedVel #here?
+        
+        #self.vel = self.addedVel
         if self.fall == True:
             self.inAir = True
             self.applyGrav()
+        #self.pos = self.pos.rounded()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
         self.image.blit(self.images[1],(0,0))
-        self.vel.x = self.addedVel.x
-        newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
-        newPickup.startGame(self.game)
+        #self.vel.x = 0
+        #newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
+        self.pos = self.pos.rounded()
+        self.spawn.pos = self.pos.copy()
+        self.spawn.startGame(self.game)
         self.broken = True
 
     # Applies basic gravity
     def applyGrav(self):
         self.acc.y += self.gravity                  # Gravity
-        self.vel   += self.acc                              # equations of motion
+        self.vel.y   += self.acc.y                              # equations of motion
 
-    def posCorrection(self):
+    def updatePos(self):
         if self.broken:
         #  self.pygamecoll(self.game.group_solid)
             standingon = self.on_solid(self.game.group_platforms)
             if standingon:
                 self.pos.y = standingon.top_y()
-                self.vel.y = 0; self.acc.y = 0
-        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+                self.vel.y = self.addedVel.y; self.acc.y = 0
+                self.vel.x = self.addedVel.x
+        #self.acc.x += self.vel.x * self.friction            # Friction
+        #self.vel   += self.acc       
+        #if abs(self.addedVel.x + self.vel.x) < 0.1:
+         #   self.vel.x = self.addedVel.x
+        self.vel.x = self.addedVel.x #here?
+        super().updatePos()
+        self.rect.midbottom = self.pos.realRound().asTuple()
 
+
+
+    def posCorrection(self):
+        self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
+        #self.vel = self.addedVel #here?
+        #self.pos = self.pos.realRound()
 
     # When it thouches a platform or other solid
     def touchplat(self, group):
@@ -588,10 +610,15 @@ class Activator(CustomSprite):
 
 # Lever SubClass - Inherits from CustomSprite
 class Lever(Activator):
-    def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+    #def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+    def __init__(self, plat, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+        self.plat = plat
+        
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
+        self.placement = placement
         self.width = width; self.height = height; self.effect = effect; 
         self.auto_deactivate = autodeactivate
-        self.pos = vec(x,y)
+        #self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         
         self.deactivate_counter = 30
@@ -627,11 +654,17 @@ class Lever(Activator):
 
 # Button SubClass - Inherits from CustomSprite
 class Button(Activator):
-    def __init__(self,x,y, width, height, name = None, effect = {}): 
+    #def __init__(self,x,y, width, height, name = None, effect = {}): 
+    def __init__(self, plat:Platform, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+        self.plat = plat
+        
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
+        self.placement = placement
 
         self.effect = effect; 
         self.width = width; self.height = height
-        self.pos = vec(x,y)
+        #self.pos = vec(x,y)
+
 
 
         ''' probably not needed'''
@@ -736,9 +769,11 @@ class Hostile(CustomSprite):
 # Water SubClass - Inherits from Hostile
 class Water(Hostile):
     def __init__(self,x,y, width, height, name = None): 
+        self.active = True
         self.width = width; self.height = height
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
+        self._layer = 15
 
     """
     def update(self):
@@ -799,9 +834,14 @@ class Water(Hostile):
 # Patrolling Enemy SubClass - Inherits from Hostile
 class PatrollingEnemy(Hostile):
 
-    def __init__(self,x,y, width, height, maxDist, vel = vec(1,0), name = "enemy"):
+    #def __init__(self,x,y, width, height, maxDist, vel = vec(1,0), name = "enemy"):
+    def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 30, vel = vec(1,0), name = "enemy"):
+        self.plat = plat
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
+        self.placement = placement
         self.width  = width;      self.height = height;   self.name = name
-        self.pos    = vec(x,y);   self.vel =  vel;        self.acc = vec(0, 0)
+        #self.pos    = vec(x,y);   
+        self.vel =  vel;        self.acc = vec(0, 0)
         self.maxDist = maxDist
 
         ''' probably not needed'''
@@ -826,7 +866,7 @@ class PatrollingEnemy(Hostile):
         self.originalsolidstrength = self.solidstrength
         
         '''in use'''
-        self.initX = x
+        self.initX = self.pos.x
         self.currentplat = None # The platform it stands on/
         self.aboveground = True
         self.wasunderground = False # Only true when worm *just* popped up
@@ -1016,12 +1056,17 @@ class PatrollingEnemy(Hostile):
 
 # AI Enemy SubClass 
 class AiEnemy(Hostile):
-    def __init__(self,x,y, width, height, game, speed = 1, name = "enemyai"):
+    def __init__(self,plat, placement, width, height, game, speed = 1, name = "enemyai"):
+    #def __init__(self, plat, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+        self.plat = plat
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
+        self.placement = placement
         self.speed = speed
         #self.x = x
         self.width = width;  self.height = height
         self.game  = game;   self.name = name
-        self.pos = vec(x,y); self.vel = vec(speed,0); self.acc = vec()
+        #self.pos = vec(x,y); 
+        self.vel = vec(speed,0); self.acc = vec()
         
         self.relativePosition = self.pos.copy()
         #self.dontmove = False
@@ -1113,7 +1158,7 @@ class AiEnemy(Hostile):
             self.vel.x = self.addedVel.x
 
 
-    def updatePos(self, group): # fix
+    def updatePos(self): # fix
         self.acc   += vec(0, self.gravity)                  # Gravity
         #self.vel += self.acc
         self.pos +=  self.vel +  self.acc * 0.5

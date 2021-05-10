@@ -1,7 +1,7 @@
 # importing modules
 from Vector import Vec
 import pickle
-from subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water
+from subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water, PatrollingEnemy, AiEnemy
 
 ''' template '''
 def createLevel():
@@ -39,6 +39,7 @@ def createLevel():
 
 
 ''' Level 1 '''
+'''
 def createLevel1():
     # platforms
     floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
@@ -88,6 +89,62 @@ def createLevel1():
         'catnip':    [catnip1]
     }
     return level1
+'''
+''' Level 1 '''
+def createLevel1():
+    # platforms
+    floor     = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
+    startplat = Platform( 300 , 500 ,  120 , 30 , 'startplat')
+    p_1       = Platform( 420 , 350 ,  100 , 30, "p_1")
+    p_2       = Platform( 540 , 270 ,  65 , 30 , 'p_2')
+    mugplat   = Platform( 660 , 270 ,  65 , 30 , 'mugplat', vel = Vec(0.7), maxDist = 50)
+    
+    waterDiv1 = Platform( 550 , 550 ,  30 , 100 , 'p_3')
+    waterDiv2 = Platform( 1100 , 550 ,  30 , 100 , 'p_3')
+
+    moving1     = Platform( 700 , 450 ,  150 , 30 , 'p_4', vel=Vec(-0.7,0), maxDist = 50)
+    moving2     = Platform( 900 , 450 ,  150 , 30 , 'p_4', vel=Vec(-0.7,0), leftMaxDist=30, rightMaxDist= 70)
+    
+    endplat     = Platform( 1300 , 500 ,  100 , 30 , 'p_5')
+    # boxes
+    box1 = Box(270 , 200 , 44 , 44 , 'box_1')
+    box2 = Box(660 , 200 , 44 , 44 , 'box_1')
+
+    # buttons
+    # levers
+    # goals
+    # enemies
+    pat1 = PatrollingEnemy(floor, 400, 50)
+    pat2 = PatrollingEnemy(floor, 1200, 50)
+    # water
+    water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
+    # health
+    health1 = PickUp(600, 400, 16, 16, 'health')                                          #
+    # catnip
+    catnip1 = PickUp(400, 370, 16, 16, 'catnip')   
+    # mugs
+    mug1 = Mug(mugplat , 50 , 'v1', spawn = catnip1)
+
+    # create dictionary
+    level1 = {
+        'name': 'level1',
+        'settings': {
+            'spawn': Vec(320, 350),
+            'length': 5000,
+            'track': ''
+        },
+        'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat], # , p_1, p_2, p_3, p_4, p_5],
+        'boxes':     [  box1],# box2],
+        'buttons':   [],
+        'levers':    [],
+        'mugs':      [mug1],
+        'goals':     [],
+        'enemies':   [pat1, pat2],
+        'water':     [water1],
+        'health':    [health1],
+        'catnip':    [],#catnip1]
+    }
+    return level1
 
 ''' Level 2 '''
 def createLevel2():
@@ -97,13 +154,13 @@ def createLevel2():
     # boxes
     box1 = Box(350 , 400 , 44 , 44 , 'box_1')
     # buttons
-    btn1 = Button(600 , 550 , 30 , 20 , 'button1')
-    btn2 = Button(500 , 550 , 30 , 20 , 'button2')
+    #btn1 = Button(600 , 550 , 30 , 20 , 'button1')
+    #btn2 = Button(500 , 550 , 30 , 20 , 'button2')
     # levers
-    lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
-    lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
+    #lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
+    #lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
     # mugs
-    mug1 = Mug(fatplat , 50 , 'v1')
+    #mug1 = Mug(fatplat , 50 , 'v1')
     # goals
     # enemies
     # water
@@ -118,9 +175,9 @@ def createLevel2():
         },
         'platforms': [floor, fatplat],
         'boxes':     [box1],
-        'buttons':   [btn1, btn2],
-        'levers':    [lever1, lever2],
-        'mugs':      [mug1],
+        'buttons':   [],#btn1, btn2],
+        'levers':    [],#lever1, lever2],
+        'mugs':      [],#mug1],
         'goals':     [],
         'enemies':   [],
         'water':     [],
