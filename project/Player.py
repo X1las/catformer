@@ -114,9 +114,9 @@ class Player(CustomSprite):
         self.lives -= 1
         self.respawn()
         self.game.resetCamera()
-        #self.game.damageScreen()
+        self.game.damageScreen()
         self.game.isDamaged = True
-        #self.game.paused = True
+        self.game.paused = True
         return self.lives
 
 
