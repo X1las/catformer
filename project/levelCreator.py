@@ -45,7 +45,7 @@ def createLevel1():
     fatplat = Platform( 300 , 450 ,  150 , 40 , 'fatplat')
     p_1     = Platform( 500 , 350 ,  150 , 40, "p_1", vel=Vec(-0.7,0), maxDist = 100)
     p_2     = Platform( 500 , 590 ,  150 , 70 , 'p_2')
-    p_3     = Platform( 600 , 300 ,  150 , 40 , 'p_3')
+    p_3     = Platform( 600 , 200 ,  150 , 40 , 'p_3')
     p_4     = Platform( 720 , 450 ,  150 , 40 , 'p_4')
     p_5     = Platform( 1100 , 400 ,  150 , 40 , 'p_5')
     # boxes
@@ -76,7 +76,7 @@ def createLevel1():
             'length': 5000,
             'track': ''
         },
-        'platforms': [floor, fatplat, p_1, p_2, p_4, p_5],
+        'platforms': [floor, fatplat, p_1, p_2, p_3, p_4, p_5],
         'boxes':     [box1, box2],
         'buttons':   [btn1, btn2],
         'levers':    [],
