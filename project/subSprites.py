@@ -71,8 +71,11 @@ class LevelGoal(CustomSprite):
         self.game = game
         self.groups = game.all_sprites, game.group_levelGoals
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((self.width,self.height))
-        self.image.fill((255, 165, 0))
+        # load image from spritesheet
+        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        self.image = sheet.image_at((0,280,55,20),(0,255,0))
+        #self.image = pg.transform.scale(self.img, (self.width, self.height))
+
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 

@@ -82,7 +82,8 @@ class Player(CustomSprite):
         jump       = pg.Rect( 0,198,47,42)
         interact1  = pg.Rect(48,198,47,42)
         interact2  = pg.Rect(96,198,47,42)
-        rects = [sit, walk1, walk2, jump, interact1, interact2]
+        sleep      = pg.Rect( 0,241,42,38)
+        rects = [sit, walk1, walk2, jump, interact1, interact2, sleep]
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         images = sheet.images_at(rects,(0,255,0))
@@ -234,7 +235,7 @@ class Player(CustomSprite):
             if not self.lockFacing:
                 self.facing = "left"
                 #print("WALKING LEFT")
-            if not self.inAir and not self.interactive_field:
+            if not self.inAir and not self.isInteracting:
                 self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
@@ -242,7 +243,7 @@ class Player(CustomSprite):
                 self.facing = "right"
                 #print("WALKING RIGHT")
             self.acc.x = PLAYER_ACC                                          
-            if not self.inAir and not self.interactive_field:
+            if not self.inAir and not self.isInteracting:
                 self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
         if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
             #self.jumpcounter = 0
