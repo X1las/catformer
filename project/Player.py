@@ -65,7 +65,8 @@ class Player(CustomSprite):
         self.refreshedInt_box       = False                                                  
         self.interactive_field      = None                                       
         self.refreshCount           = 0                                                        
-        self.refreshCount_prev      = 0          
+        self.refreshCount_prev      = 0         
+        self.imageIndex = 0 
 
     def startGame(self, game):    
         self.game       = game
@@ -132,6 +133,9 @@ class Player(CustomSprite):
 
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
+        self.imageIndex += 1                        # increment image index every update
+        if self.imageIndex >= len(self.images['walk']['right'])*20:     # reset image index to 0 when running out of images
+            self.imageIndex = 0
         self.image = self.images['sit'][self.facing]
         self.liftArm()
         if not self.inAir:
@@ -204,7 +208,7 @@ class Player(CustomSprite):
                 self.facing = "left"
                 #print("WALKING LEFT")
             if not self.inAir:
-                self.image = self.images['walk'][self.facing][0]
+                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if not self.lockFacing:
@@ -212,7 +216,7 @@ class Player(CustomSprite):
                 #print("WALKING RIGHT")
             self.acc.x = PLAYER_ACC                                          
             if not self.inAir:
-                self.image = self.images['walk'][self.facing][0]
+                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
         if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
             #self.jumpcounter = 0
             self.inAir = True                                                    
