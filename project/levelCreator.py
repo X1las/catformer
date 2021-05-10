@@ -1,7 +1,7 @@
 # importing modules
 from Vector import Vec
 import pickle
-from subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water, PatrollingEnemy, AiEnemy
+from subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water, PatrollingEnemy, AiEnemy, LevelGoal
 
 ''' template '''
 def createLevel():
@@ -113,6 +113,7 @@ def createLevel1():
     # buttons
     # levers
     # goals
+    endgoal = LevelGoal(endplat, 50, name = "end")
     # enemies
     pat1 = PatrollingEnemy(floor, 400, 50)
     pat2 = PatrollingEnemy(floor, 1200, 50)
@@ -138,7 +139,7 @@ def createLevel1():
         'buttons':   [],
         'levers':    [],
         'mugs':      [mug1],
-        'goals':     [],
+        'goals':     [endgoal],
         'enemies':   [pat1, pat2],
         'water':     [water1],
         'health':    [health1],

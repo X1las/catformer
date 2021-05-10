@@ -62,9 +62,10 @@ class Tester(CustomSprite):
 
 # LevelGoal SubClass - Inherits from CustomSprite
 class LevelGoal(CustomSprite):
-    def __init__(self,x,y, width, height, name = None): 
+    def __init__(self,plat, placement, width = 100, height = 20, name = None): 
+        self.pos = Vec(plat.left_x() + placement, plat.top_y()) 
         self.width = width; self.height = height
-        self.pos = vec(x,y)
+        #self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.triggered = False
         self.sleepcount = 0
@@ -80,8 +81,10 @@ class LevelGoal(CustomSprite):
 
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
+        self.darkener = pg.Rect(0,0,WIDTH, HEIGHT)
 
     def update(self):
+        self.endGoal(self.game.player)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     # Function that gets called whenever the player reaches a goal
@@ -99,8 +102,10 @@ class LevelGoal(CustomSprite):
     def endGoal(self, player):
         has_collided = pg.sprite.collide_rect(self, player)
         if has_collided:
+            self.game.endinglevel = True
             self.game.player.image = self.game.player.images['sleep']
             self.sleepcount += 1
+            pg.draw.rect(self.game.screen, (0,0,0), self.darkener)
             if self.sleepcount > 100:
                 self.nextLevel()
                 self.sleepcount = 0

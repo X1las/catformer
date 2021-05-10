@@ -158,8 +158,8 @@ class Game:
         #self.enemy.startGame(self)
         #self.aienemy = AiEnemy(500, 310,36, 28, 200, name =  "ai1")                       #      
         #self.aienemy.startGame(self)
-        self.level_goal     = LevelGoal(1600 , 550, 20, 100, name = 'end goal')                    # 
-        self.level_goal.startGame(self)
+        #self.level_goal     = LevelGoal(1600 , 550, 20, 100, name = 'end goal')                    # 
+        #self.level_goal.startGame(self)
         
         # Matthias level things ----------------------------------------------------------------------------------
         # platform moving up at down if lever is active
@@ -291,6 +291,13 @@ class Game:
         ''' 
         
         #
+        self.image = pg.Surface((WIDTH,HEIGHT))
+        
+        self.darkener = self.image.get_rect()
+
+        #self.darkener = pg.Rect(0,0,WIDTH, HEIGHT)
+        self.endinglevel = False
+        self.sleepcount = 0
         self.refreshedInt_lever     = False                                                       
         self.refreshedInt_box       = False                                                  
         self.interactive_field      = None                                       
@@ -388,7 +395,7 @@ class Game:
         self.relativePos()
 
         #self.all_sprites.correctPositions()
-        self.level_goal.endGoal(self.player)
+        #self.level_goal.endGoal(self.player)
         if (self.player.pos.y > self.boundary):
             self.player.takeDamage()
         # Updating Variables
@@ -445,7 +452,9 @@ class Game:
 
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         self.group_passives.draw(self.screen)
+        self.darkenScreen()
         self.screen.blit(self.lives_display,  (50, 50))
+        
         self.screen.blit(self.points_display,  (400, 50))
         if self.paused:
             pauseRect = self.pauseText.get_rect()
@@ -472,6 +481,23 @@ class Game:
         for sprite in self.all_sprites:
             sprite.resetRects()
   
+    def darkenScreen(self):
+        if self.endinglevel == True:
+            self.sleepcount += 1
+            if self.sleepcount > 100:
+                self.endinglevel = False
+                self.sleepcount = 0
+            #pg.draw.rect(self.screen, (0,0,0, self.sleepcount), (0,0,WIDTH, HEIGHT))
+            #self.image.set_alpha(self.sleepcount)
+            #self.darkener = self.image.get_rect()
+            #self.screen.blit(self.image, (0,0))
+            p#g.display.flip()
+            #self.screen.set_alpha(self.sleepcount)
+
+            
+
+
+
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
         #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
@@ -487,7 +513,6 @@ class Game:
         if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
             if self.player.vel.x > 0:
                 self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
-                self.relposp = 0
         if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
             if self.player.vel.x < 0:
                 self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
