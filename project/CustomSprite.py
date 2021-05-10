@@ -3,7 +3,8 @@ import pygame as pg
 from Vector import *
 from settings import *
 import math
-
+import time
+from threading import Timer
 #import spritesheet as ss
 
 vec = Vec
@@ -139,10 +140,10 @@ class CustomSprite(pg.sprite.Sprite):
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
 
-    def endGoal(self, player):
-        has_collided = pg.sprite.collide_rect(self, player)
-        if has_collided:
-            self.activate()
+    def tester(self):
+        print("hello")
+
+
 
     def buttonPress(self):
         collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
@@ -169,7 +170,7 @@ class CustomSprite(pg.sprite.Sprite):
                 if collided_obj.type == 'catnip':
                     self.addCatnip()
                     collided_obj.kill()
- 
+
     ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
     def collisionSide_Conditional(self, collided):
         coll_side = self.determineSide(collided)
@@ -251,7 +252,7 @@ class CustomSprite(pg.sprite.Sprite):
                     correctedPos = coll['correctedPos']
                     if self.massVER < collided.massVER:
                         if coll_side == "top":
-                         #   newpos = collided.top_y()
+                        #   newpos = collided.top_y()
                             
                         #if newpos <= self.pos.y:
                             #self.set_bot(collided.top_y())
@@ -354,7 +355,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.vel   += self.acc                              # equations of motion
         if self.isPlayer and abs(self.vel.x + self.addedVel.x) < 0.01:
             self.vel.x = self.addedVel.x
-       
+    
     def updatePos(self):
         self.pos +=  self.vel +  self.acc * 0.5
         self.acc = vec(0,0)    # caused problems? 

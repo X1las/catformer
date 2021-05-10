@@ -66,6 +66,8 @@ class LevelGoal(CustomSprite):
         self.width = width; self.height = height
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
+        self.triggered = False
+        self.sleepcount = 0
 
     def startGame(self, game):
         self.game = game
@@ -83,9 +85,8 @@ class LevelGoal(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     # Function that gets called whenever the player reaches a goal
-    def activate(self):
-        self.game.player.image = self.game.player.images['sleep']
-        
+    def nextLevel(self):
+       
         self.game.resetCamera()
         current = self.game.level.name
         level = int(current[5:6])
@@ -94,7 +95,27 @@ class LevelGoal(CustomSprite):
         self.game.level.name = "level"+str(level)
         self.game.updateData()
         self.game.new()
-        
+
+    def endGoal(self, player):
+        has_collided = pg.sprite.collide_rect(self, player)
+        if has_collided:
+            self.game.player.image = self.game.player.images['sleep']
+            self.sleepcount += 1
+            if self.sleepcount > 100:
+                self.nextLevel()
+            
+            #if not self.triggered:
+             #   self.triggered = True
+                #n = 10000
+                #t0 = time.time()
+                #for i in range(n): myfast()
+                #t1 = time.time()
+
+                #total_n = t1-t0
+                #t = Timer(1, self.nextLevel)
+                #t.start() 
+                #self.triggered = False
+                #self.nextLevel()
 
 
 # Platform SubClass - Inherits from CustomSprite
