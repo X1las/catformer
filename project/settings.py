@@ -8,7 +8,7 @@ WIDTH = 600
 HEIGHT = 600
 FPS = 60
 FONT_NAME = 'arial'
-DEFAULT_LEVEL = "level1"
+DEFAULT_LEVEL = "level4"
 
 # Camera Options
 CAMERA_BORDER_R = WIDTH * 2/3

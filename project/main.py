@@ -67,6 +67,7 @@ class Game:
         self.inNameMenu = False
         self.boundary = 600
         self.isDamaged = False
+        self.finished = False
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -98,7 +99,7 @@ class Game:
 
     # Method that creates a new level
     def new(self):
-        
+        self.finished = False
         # takshdkawd
         self.createSGroups()                #
         try:
@@ -120,6 +121,7 @@ class Game:
         
         if not self.level.load(self.level.name):
             self.level.load(DEFAULT_LEVEL)
+            self.finished = True
             print('test')
         
         self.player = Player(self.level.spawn)                         #
@@ -139,27 +141,73 @@ class Game:
             pass
         #self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
         #self.movingPlat.startGame(self)
-        self.smalltest = Platform(450 , 550 , 50 , 40 , "small tester" )
-        self.smalltest.startGame(self)
+        #self.smalltest = Platform(450 , 550 , 50 , 40 , "small tester" )
+        #self.smalltest.startGame(self)
+        #self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        #self.smalltest.startGame(self)
         
         
-        self.tallplat   = Platform(850, 430, 20, 50, "tallplat", upMaxDist= 100, downMaxDist = 200)
-        self.tallplat.startGame(self)
+        #self.tallplat   = Platform(850, 430, 20, 50, "tallplat", upMaxDist= 100, downMaxDist = 200)
+        #self.tallplat.startGame(self)
         
-        self.enemy = PatrollingEnemy(350, 550 , 26, 30, 100, name =  "pat1")                       #      
-        self.enemy.startGame(self)
-        self.aienemy = AiEnemy(500, 310,36, 28, 200, name =  "ai1")                       #      
-        self.aienemy.startGame(self)
+        #self.enemy = PatrollingEnemy(350, 550 , 26, 30, 100, name =  "pat1")                       #      
+        #self.enemy.startGame(self)
+        #self.aienemy = AiEnemy(500, 310,36, 28, 200, name =  "ai1")                       #      
+        #self.aienemy.startGame(self)
         self.level_goal     = LevelGoal(1100 , 550, 20, 100, name = 'end goal')                    # 
         self.level_goal.startGame(self)
+        
+        # Matthias level things ----------------------------------------------------------------------------------
+        # platform moving up at down if lever is active
+        '''
+        self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        dic = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : self.smalltest} ]
+
+                                }
+        self.button4  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4.startGame(self)
+        '''
+        # three platforms going above water
+        '''
+        self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        self.smalltest2 = Platform(550 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest2.startGame(self)
+        self.smalltest3 = Platform(650 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest3.startGame(self)
+        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : self.smalltest} ,
+                           {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : self.smalltest2} ,
+                           {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : self.smalltest3}] 
+                }
+        self.button4  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4.startGame(self)
+        '''
+        # top platform
+        '''
+        self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", leftMaxDist = 100, rightMaxDist= 0, vel = Vec(0,0) )
+        self.smalltest.startGame(self)
+        dic = {  "move" : [{"movespeed"  : Vec(-1,0), "deactspeed" : Vec(1,0) , "target" : self.smalltest} ]
+                                }
+        self.button4  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
+        self.button4.startGame(self)
+        '''
+        # Matthias level things ----------------------------------------------------------------------------------
+
+
+        # Stine level things ---------------------------------------------------------------------------------
+        
+
+
+
+
+        # Stine level things ---------------------------------------------------------------------------------
+        '''
         dic = { "move"    : [{ "movespeed" : Vec(2,0), "deactspeed" : Vec(-2,0), "target" : self.all_sprites.getObject("p_3")}, 
                              { "movespeed" : Vec(0,-1),"deactspeed" : Vec(0,0), "target" : self.all_sprites.getObject("tallplat")}],
                 "respawn" : [{"target" : self.all_sprites.getObject('box_1')}]            }
-        self.button4  = Lever(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.button4.startGame(self)
         #self.button4  = Button(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
         #self.button4.startGame(self)
-        '''
         self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
         self.lever1.startGame(self)
         self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
@@ -220,7 +268,9 @@ class Game:
                     self.displayPauseScreen()
             if not self.paused:                                              
                 self.update()
-                self.displayHUD()                                                       
+                self.displayHUD()  
+            if self.finished:
+                self.endGameHUD()                                                     
             self.draw()  
             
             
@@ -338,7 +388,13 @@ class Game:
             pauseRect3 = self.pauseText3.get_rect()
             pauseRect3.center = (300, 350)
             self.screen.blit(self.pauseText3, pauseRect3)
-            
+        if self.finished:
+            endRect = self.endText.get_rect()
+            endRect.center = (300, 150)
+            self.screen.blit(self.endText, endRect)
+            endRect2 = self.endText2.get_rect()
+            endRect2.center = (300, 250)
+            self.screen.blit(self.endText2, endRect2)
         
         
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
@@ -638,6 +694,12 @@ class Game:
     def displayHUD(self):
         self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
+
+    def endGameHUD(self):
+        deathFont = pg.font.Font("resources/gypsy-curse.regular.ttf", 70)
+        self.endText = deathFont.render("Congratulations", True, (255, 0 ,0))
+        self.endText2 = deathFont.render("You have finished the game", True, (255, 0 ,0))
+
  
     def displayPauseScreen(self):
         self.pauseText = self.textToDisplay("Game is paused", color= (0,0,0), bold= True)
