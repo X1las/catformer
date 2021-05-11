@@ -429,9 +429,11 @@ def pickleLevel(level, filename):
 # create objects and dicts
 level1 = createLevel1()
 level2 = createLevel2()
+level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
 pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
+pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
