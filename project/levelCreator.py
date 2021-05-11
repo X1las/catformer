@@ -279,14 +279,14 @@ def createLevel3():
     ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
     floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor')
 
-    leftboundary = Platform(0 - left, bottom, 100, bottom, "left bound")
+    leftboundary = Platform(20 - left, bottom, 100, bottom, "left bound")
     rightboundary = Platform(1800 - left, bottom, 100, bottom, "left bound")
 
     startplat = Platform(600 - left, bottom, 150, 100)
-    hiddenwaterplat1 = Platform(startplat.left_x() - 150, bottom, 60, 20, downMaxDist = 0, upMaxDist = 60)
-    hiddenlevplat1 = Platform(startplat.left_x() - 250, bottom, 60, 60)
+    hiddenwaterplat1 = Platform(startplat.left_x() - 120, bottom, 60, 20, downMaxDist = 0, upMaxDist = 60)
+    hiddenlevplat1 = Platform(startplat.left_x() - 210, bottom, 60, 60)
     hiddenwaterplat2 = Platform(startplat.left_x() - 350, bottom, 60, 20, downMaxDist = 0, upMaxDist = hiddenwaterplat1.upMaxDist)
-    hiddenlevplat2 = Platform(startplat.left_x() - 450, bottom, 60, 60)
+    hiddenlevplat2 = Platform(startplat.left_x() - 420, bottom, 60, 60)
 
     tinyhiddenplat = Platform(startplat.left_x() - 50, bottom, 60, 2)
 
@@ -297,21 +297,21 @@ def createLevel3():
     boxrespplat = Platform(mugplat.left_x()-100, mugplat.top_y() - 50, 80, 30)
     befend  = Platform(boxrespplat.right_x() + 100, boxrespplat.top_y() - 30, 80, 30)
     endplat  = Platform(befend.right_x() + 150, befend.top_y() - 30, 150, 30)
-    enddoor  = Platform(endplat.left_x() + 10, endplat.top_y(), 20, 200, downMaxDist = 0, upMaxDist = 60)
+    enddoor  = Platform(endplat.left_x() + 10, endplat.top_y(), 20, 200, downMaxDist = 0, upMaxDist = 80)
     plat2  = Platform(boxrespplat.left_x() - 100, boxrespplat.top_y() - 30, 80, 30)
     #plat3  = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
     btnmugplat = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
-    movinga = Platform(leftboundary.right_x() + 50, btnmugplat.bot_y() + 30, 100, 30, leftMaxDist = 0, rightMaxDist =  btnmugplat.left_x() - 100 - leftboundary.right_x())
+    movinga = Platform(leftboundary.right_x() + 50, btnmugplat.bot_y() + 60, 100, 30, leftMaxDist = 0, rightMaxDist =  btnmugplat.left_x() - 120 - leftboundary.right_x())
 
 
-    topleft = Platform(btnmugplat.left_x() - movinga.width - 20 - 180, movinga.top_y() - 30, 360, 30)
-    topleftdoor = Platform(topleft.right_x() - 10, topleft.top_y(), 20, 100, downMaxDist = 0, upMaxDist = 50, name = "topleftdoor")
-    hiddendoor = Platform(topleft.left_x() + 100, topleft.top_y(), 20, 100, downMaxDist = 0, upMaxDist = 100)
+    topleft = Platform(leftboundary.right_x() + 360/2, movinga.top_y() - 30, 360, 30)
+    topleftdoor = Platform(topleft.right_x() - 10, topleft.top_y(), 20, topleft.top_y(), downMaxDist = 0, upMaxDist = 100, name = "topleftdoor")
+    hiddendoor = Platform(topleft.left_x() + 100, topleft.top_y(), 20, topleft.top_y(), downMaxDist = 0, upMaxDist = 100)
 
 
 
 
-    plats = [ceil, floor, leftboundary, rightboundary, startplat, 
+    plats = [floor, leftboundary, rightboundary, startplat, 
             hiddenlevplat1, hiddenlevplat2, hiddenwaterplat1, hiddenwaterplat2, tinyhiddenplat,
             plat1, movingd, mugplat, boxrespplat, btnmugplat, movinga,
             plat2, topleftdoor, hiddendoor,
@@ -355,7 +355,7 @@ def createLevel3():
     btnD = Button(plat1, 40, effect = dic)
 
     '''WATER '''
-    water1 = Water(startplat.left_x() - round((startplat.left_x() - leftboundary.right_x())/2), bottom, startplat.left_x() - leftboundary.right_x(), 40)
+    water1 = Water(leftboundary.right_x() + round((startplat.left_x() - leftboundary.right_x())/2) - 2, bottom, startplat.left_x() - leftboundary.right_x() + 4, 40)
 
 
     '''PICKUPS'''
