@@ -539,9 +539,9 @@ class Game:
 
     # Respawns the player and resets the camera
     def resetCamera(self):
+        self.rel_fitToPlayer        = - WIDTH/2 + self.player.pos.x #half screen - pos         
+        self.relposx = self.rel_fitToPlayer     
         for sprite in self.all_sprites:
-            self.relposx = 0
-            self.relposp = 0
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x -= self.relposx
         self.player.respawn()
