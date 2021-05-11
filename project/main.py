@@ -543,7 +543,7 @@ class Game:
             sprite.relativePosition.x -= self.relposx
         self.player.respawn()
 
-
+    #creates a main menu for the game
     def mainMenu(self):
         self.inMenu = True
         selectedButton  = pg.Rect(75, 50, 50, 50)
@@ -551,27 +551,27 @@ class Game:
         self.activateSelected = False
 
         while self.inMenu:
-            if self.outOfLives:
+            if self.outOfLives:                                              #opening no lives screen if the player runs out of lives
                 self.noLivesScreen()
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
-            self.menuEvents()
-            mx, my = pg.mouse.get_pos()
-            newGameButton   = pg.Rect(190, 25, 220, 100)
+            self.menuEvents()                                                #getting user input
+            mx, my = pg.mouse.get_pos()                                      #getting mouse position
+            newGameButton   = pg.Rect(190, 25, 220, 100)                     #creating buttons
             loadGameButton  = pg.Rect(190, 175, 220, 100)
             tutorialButton  = pg.Rect(190, 325, 220, 100)
             exitButton      = pg.Rect(190, 475, 220, 100)
 
 
-            pg.draw.rect(self.screen, (0, 125, 255), newGameButton)
+            pg.draw.rect(self.screen, (0, 125, 255), newGameButton)          #drawing buttons on screen
             pg.draw.rect(self.screen, (0, 125, 255), loadGameButton)
             pg.draw.rect(self.screen, (0, 125, 255), tutorialButton)
             pg.draw.rect(self.screen, (0, 125, 255), exitButton)
             pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
 
-            if (self.selectedState %4) == 0:
-                selectedButton  = pg.Rect(75, 50, 50, 50)
-                if self.activateSelected:
+            if (self.selectedState %4) == 0:                                 #getting currently selected item based on arrow key presses
+                selectedButton  = pg.Rect(75, 50, 50, 50)                    #setting position of currently selected indicator
+                if self.activateSelected:                                    #if enter is pressed call a function
                     self.nameInput()
             elif (self.selectedState %4) == 1:
                 selectedButton  = pg.Rect(75, 200, 50, 50)
@@ -583,13 +583,13 @@ class Game:
                     self.tutorialScreen()
             else:
                 selectedButton  = pg.Rect(75, 500, 50, 50)
-                if self.activateSelected:
+                if self.activateSelected:                                    #break out of main menu loop if exit is pressed
                     self.inMenu = False
                     self.running = False
             
-            if newGameButton.collidepoint((mx, my)):
-                self.selectedState = 0
-                if self.click:
+            if newGameButton.collidepoint((mx, my)):                         #checking if mouse position is on a button
+                self.selectedState = 0                                       #setting position of currently selected indicator
+                if self.click:                                               #if mouse1 is clicked call a function
                     self.nameInput()
             if loadGameButton.collidepoint((mx, my)):
                 self.selectedState = 1
@@ -601,95 +601,101 @@ class Game:
                     self.tutorialScreen()
             if exitButton.collidepoint((mx, my)):
                 self.selectedState = 3
-                if self.click:
+                if self.click:                                               #break out of main menu loop if exit is pressed
                     self.inMenu = False
                     self.running = False
             
-            self.activateSelected = False
-            self.click = False
-            self.drawMenuText("New Game", 300, 75)
+            self.activateSelected = False                                    #reset value if enter is pressed
+            self.click = False                                               #reset value if mouse1 is pressed
+            self.drawMenuText("New Game", 300, 75)                           #drawing text on buttons
             self.drawMenuText("Load Game", 300, 225)
             self.drawMenuText("Tutorial", 300, 375)
             self.drawMenuText("Quit", 300, 525)
             
-            pg.display.update()
+            pg.display.update()                                              #updating the screen
 
+
+        #creates tutorial screen
     def tutorialScreen(self):
         self.inTutorial = True
         self.activateSelected = False
         self.selectedState = 0
 
-        while self.inTutorial:
+        while self.inTutorial:                                               #tutorial loop
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
-            self.menuEvents()
-            mx, my = pg.mouse.get_pos()
+            self.menuEvents()                                                #getting user input
+            mx, my = pg.mouse.get_pos()                                      #getting mouse position
             returnButton   = pg.Rect(190, 475, 220, 100)
             pg.draw.rect(self.screen, (0, 125, 255), returnButton)
 
             selectedButton  = pg.Rect(75, 500, 50, 50)
             pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
 
-            if self.activateSelected:
+            if self.activateSelected:                                        #if return is pressed break tutorial loop
                 self.inTutorial = False
 
             if self.click:
-                if returnButton.collidepoint((mx, my)):
+                if returnButton.collidepoint((mx, my)):                      #if return is pressed break tutorial loop
                     self.inTutorial = False
             self.activateSelected = False
             
             self.click = False
-            self.drawMenuText("Return", 300, 525)
+            self.drawMenuText("Return", 300, 525)                            #drawing tutorial text
             self.drawMenuText("Use arrow keys to move left/right", 300, 50, 30)
             self.drawMenuText("Press space to jump", 300, 100, 30)
             self.drawMenuText("Press P to pause", 300, 150, 30)
             self.drawMenuText("Press Q to quit", 300, 200, 30)
             self.drawMenuText("Press D to interact", 300, 250, 30)
 
-            pg.display.update()
+            pg.display.update()                                              #updating display
 
+
+        #screen for when player runs out of lives
     def noLivesScreen(self):
         self.activateSelected = False
         self.selectedState = 0
 
 
-        while self.outOfLives:
+        while self.outOfLives:                                               #no lives menu loop
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
-            self.menuEvents()
-            mx, my = pg.mouse.get_pos()
+            self.menuEvents()                                                #get user input
+            mx, my = pg.mouse.get_pos()                                      #get mouse position
             returnButton   = pg.Rect(190, 475, 220, 100)
             pg.draw.rect(self.screen, (0, 125, 255), returnButton)
 
             selectedButton  = pg.Rect(75, 500, 50, 50)
             pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
 
-            if self.activateSelected:
+            if self.activateSelected:                                        #break no lives loop if return is pressed
                 self.outOfLives = False
 
-            if self.click:
+            if self.click:                                                   #break no lives loop if return is pressed
                 if returnButton.collidepoint((mx, my)):
                     self.outOfLives = False
             self.activateSelected = False
             
             self.click = False
-            self.drawMenuText("Return", 300, 525)
+            self.drawMenuText("Return", 300, 525)                            #drawing text
             self.drawMenuText(f'Player '+self.userName+' has run out of lives', 300, 50, 30)
             self.drawMenuText("Press Q to quit", 300, 200, 30)
 
-            pg.display.update()
+            pg.display.update()                                              #updating screen
 
+
+        #menu for user name input
     def nameInput(self):
         self.inNameMenu = True
-        self.userName = ""
+        self.userName = ""                                                   #reseting inputed name
         self.nameError = False
         self.activateSelected = False
         self.selectedState = 0
-        while self.inNameMenu:
+        while self.inNameMenu:                                               #name input loop
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
 
-            mx, my = pg.mouse.get_pos()
+            mx, my = pg.mouse.get_pos()                                      #get mouse position
             startButton   = pg.Rect(190, 325, 220, 100)
             returnButton  = pg.Rect(190, 475, 220, 100)
             pg.draw.rect(self.screen, (0, 125, 255), startButton)
@@ -697,34 +703,34 @@ class Game:
             self.drawMenuText("Return", 300, 525)
             self.drawMenuText("Start", 300, 375)
             self.drawMenuText("Please enter a name", 300, 100)
-            if self.nameError:
+            if self.nameError:                                               #error message if invalid name entered
                 self.drawMenuText("Invalid name entered", 300, 300)
 
 
             if (self.selectedState %2) == 0:
                 selectedButton  = pg.Rect(75, 350, 50, 50)
                 if self.activateSelected:
-                    if not self.userName == "":
-                        if not self.checkNameConflict():
-                            self.data = self.createPlayerData()
-                            self.new()
+                    if not self.userName == "":                              #check if name is not empty
+                        if not self.checkNameConflict():                     #check if name does not exist already
+                            self.data = self.createPlayerData()              #creates default playerdata file
+                            self.new()                                       #opens the game
                         else:
-                            self.nameError = True
+                            self.nameError = True                            #give error message
                             self.activateSelected = False 
                     else:
-                        self.nameError = True
+                        self.nameError = True                                #give error message
                         self.activateSelected = False
             elif (self.selectedState %2) == 1:
                 selectedButton  = pg.Rect(75, 500, 50, 50)
-                if self.activateSelected:
-                    self.inNameMenu = False
+                if self.activateSelected:                                    #breaks name input loop if return
+                    self.inNameMenu = False 
                     self.selectedState = 0
 
 
             pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
             
 
-            for event in pg.event.get():
+            for event in pg.event.get():                                     #custon menu events to allow typing name
                 if event.type == pg.QUIT:                                   
                     self.inMenu = False
                     self.running = False
@@ -744,39 +750,43 @@ class Game:
                         self.selectedState -= 1
                     else:
                         self.userName += event.unicode
-            self.drawMenuText(self.userName, 300, 150)
+            self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
             
             if returnButton.collidepoint((mx, my)):
                 self.selectedState = 1
                 if self.click:
-                    self.inNameMenu = False
+                    self.inNameMenu = False                                  #breaks name input loop if return is pressed
                     self.selectedState = 0
             if startButton.collidepoint((mx, my)):
                 self.selectedState = 0
                 if self.click:
-                    if not self.userName == "":
-                        self.new()
+                    if not self.userName == "":                              #check if name is not empty
+                        if not self.checkNameConflict():                     #check if name does not exist already
+                            self.data = self.createPlayerData()              #creates default playerdata file
+                            self.new()                                       #opens the game
+                        else:
+                            self.nameError = True                            #give error message
                     else:
-                        self.nameError = True
+                        self.nameError = True                                #gives error message
 
 
 
             self.click = False
-            pg.display.update()
+            pg.display.update()                                              #updating display
 
-            
+            #menu for loading a game
     def nameLoadScreen(self):
         self.inNameLoadMenu = True
         self.userName = ""
         self.nameError = False
         self.activateSelected = False
         self.selectedState = 0
-        while self.inNameLoadMenu:
+        while self.inNameLoadMenu:                                           #load screen loop
             self.screen.fill(BLACK)
             self.clock.tick(FPS)
 
-            mx, my = pg.mouse.get_pos()
+            mx, my = pg.mouse.get_pos()                                      #get mouse position
             startButton   = pg.Rect(190, 325, 220, 100)
             returnButton  = pg.Rect(190, 475, 220, 100)
             pg.draw.rect(self.screen, (0, 125, 255), startButton)
@@ -784,23 +794,23 @@ class Game:
             self.drawMenuText("Return", 300, 525)
             self.drawMenuText("Start", 300, 375)
             self.drawMenuText("Please enter a name to load", 300, 100)
-            if self.nameError:
+            if self.nameError:                                               #error message
                 self.drawMenuText("Invalid name entered", 300, 300)
 
 
             if (self.selectedState %2) == 0:
                 selectedButton  = pg.Rect(75, 350, 50, 50)
                 if self.activateSelected:
-                    if self.checkNameConflict():
-                        self.data = self.getPlayerData()
-                        self.new()
+                    if self.checkNameConflict():                             #check if name exists
+                        self.data = self.getPlayerData()                     #reading data file for that name
+                        self.new()                                           #opening the game
                     else:
-                        self.nameError = True
+                        self.nameError = True                                #show error message
                         self.activateSelected = False 
                     
             elif (self.selectedState %2) == 1:
                 selectedButton  = pg.Rect(75, 500, 50, 50)
-                if self.activateSelected:
+                if self.activateSelected:                                    #break load screen loop
                     self.inNameLoadMenu = False
                     self.selectedState = 0
 
@@ -808,7 +818,7 @@ class Game:
             pg.draw.rect(self.screen, (255, 125, 0), selectedButton)
             
 
-            for event in pg.event.get():
+            for event in pg.event.get():                                     #custom events for typing
                 if event.type == pg.QUIT:                                   
                     self.inMenu = False
                     self.running = False
@@ -828,36 +838,38 @@ class Game:
                         self.selectedState -= 1
                     else:
                         self.userName += event.unicode
-            self.drawMenuText(self.userName, 300, 150)
+            self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
             
             if returnButton.collidepoint((mx, my)):
                 self.selectedState = 1
-                if self.click:
+                if self.click:                                               #breaking load screen loop if return is pressed
                     self.inNameLoadMenu = False
                     self.selectedState = 0
             if startButton.collidepoint((mx, my)):
                 self.selectedState = 0
                 if self.click:
-                    if self.checkNameConflict():
-                        self.data = self.getPlayerData()
-                        self.new()
+                    if self.checkNameConflict():                             #checking if name exists
+                        self.data = self.getPlayerData()                     #reading data from file with that name
+                        self.new()                                           #loading the game
                     else:
-                        self.nameError = True
+                        self.nameError = True                                #showing error message
 
 
 
             self.click = False
-            pg.display.update()
+            pg.display.update()                                              #updating the display
 
+        #check for name conflicts
     def checkNameConflict(self):
         result = os.path.exists("playerData/"+self.userName+"Data.txt")
-        return result
-    
+        return result                                                        #return true/false if file exists/does not
+
+        #getting user input for menu screens
     def menuEvents(self):
         for event in pg.event.get():                                
             
-            if event.type == (pg.QUIT):                                   
+            if event.type == (pg.QUIT):                                      #breaks all loops if QUIT is pressed
                 self.inMenu = False
                 self.running = False
                 self.inTutorial = False  
@@ -867,99 +879,102 @@ class Game:
 
 
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_q:                                    # checks if the uses presses the escape key
+                if event.key == pg.K_q:                                      #breaks all loops if q is pressed
                     self.inMenu = False                                        
                     self.running = False
                     self.inTutorial = False  
                     self.inNameMenu = False
                     self.inNameLoadMenu = False
                     self.outOfLives = False
-                if event.key == pg.K_RETURN:
+                if event.key == pg.K_RETURN:                                 #sets value to true if enter is pressed
                     self.activateSelected = True
-                if event.key == pg.K_DOWN:
+                if event.key == pg.K_DOWN:                                   #increase value for selection
                     self.selectedState += 1
-                if event.key == pg.K_UP:
+                if event.key == pg.K_UP:                                     #decrease value for selection
                     self.selectedState -= 1
              
-            if event.type == pg.MOUSEBUTTONDOWN:
+            if event.type == pg.MOUSEBUTTONDOWN:                             #sets value to true if mouse1 is pressed
                 if event.button == 1:
                     self.click = True                                       
 
+        #function for drawing text on screen
     def drawMenuText(self, text, x, y, fontsize = 40):
-        drawText = self.textToDisplay(text, fontsize = fontsize)
-        textRect = drawText.get_rect()
-        textRect.center = (x,y)
-        self.screen.blit(drawText, textRect)
+        drawText = self.textToDisplay(text, fontsize = fontsize)             #calls textToDisplay with string and fontsize to get a surface
+        textRect = drawText.get_rect()                                       #get rectangle of surface
+        textRect.center = (x,y)                                              #centers text based on rectangle position
+        self.screen.blit(drawText, textRect)                                 #draws text at rectangle position
 
-    # Gets the current level and player date to save to a player file for saving progress
+        #creates a default playerData file
     def createPlayerData(self):
         try:
-            file = open("playerData/"+self.userName+"Data.txt","x")
+            file = open("playerData/"+self.userName+"Data.txt","x")          #file saved based on userName
         except:
             file = open("playerData/"+self.userName+"Data.txt","w")
 
-        newlevelName = "level1"
+        newlevelName = "level1"                                              #default values
         newlives = "9"
         newcatnip = "0"
 
-        file.write(f"{newlevelName},{newlives},{newcatnip}")
+        file.write(f"{newlevelName},{newlives},{newcatnip}")                 #writing text to file
         file.close()
         print(file)
-        return [newlevelName,int(newlives),int(newcatnip)]
+        return [newlevelName,int(newlives),int(newcatnip)]                   #returning values
 
 
-
+        #updates files with new data
     def updateData(self):
         try:
-            file = open("playerData/"+self.userName+"Data.txt","x")
+            file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
         except:
             file = open("playerData/"+self.userName+"Data.txt","w")
 
-        levelName = self.level.name
+        levelName = self.level.name                                          #gets data from the game
         lives = str(self.player.lives)
         catnip = str(self.player.catnip_level)
 
-        file.write(f"{levelName},{lives},{catnip}")
+        file.write(f"{levelName},{lives},{catnip}")                          #writing text to file
         file.close()
 
-        return [levelName,int(lives),int(catnip)]
+        return [levelName,int(lives),int(catnip)]                            #returning values
 
     # Gets player data from file
     def getPlayerData(self):
         try:
-            file = open("playerData/"+self.userName+"Data.txt","r")
-            data = file.read().split(",")
-            data[1] = int(data[1])
+            file = open("playerData/"+self.userName+"Data.txt","r")          #opening file based on userName
+            data = file.read().split(",")                                    #splitting on , and reading
+            data[1] = int(data[1])                                           #converting values to int
             data[2] = int(data[2])
-            return data
-        except IOError:
+            return data                                                      #returning the data
+        except IOError:                                                      #error if data is no found
             print("No playerdata found")
             return None
 
+        #HUD used ingame for displaying lives and catnip
     def displayHUD(self):
         self.lives_display  = self.textToDisplay(f'Lives: {self.player.lives}')
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
 
+        #HUD used for endgame level 
     def endGameHUD(self):
-        endFont = pg.font.Font("resources/action-jackson.regular.ttf", 40)
+        endFont = pg.font.Font("resources/action-jackson.regular.ttf", 40)   #loading custom font
         self.endText = endFont.render("Congratulations", True, (255, 0 ,0))
         endFont = pg.font.Font("resources/action-jackson.regular.ttf", 30)
         self.endText2 = endFont.render("You have finished the game", True, (255, 0 ,0))
 
- 
+        #displaying text on screen for pause screen
     def displayPauseScreen(self):
         self.pauseText = self.textToDisplay("Game is paused", color= (0,0,0), bold= True)
         self.pauseText2 = self.textToDisplay("Press P to resume", color= (0,0,0), bold= True)
         self.pauseText3 = self.textToDisplay("Press Q to quit", color= (0,0,0), bold= True)
 
-    
+        #displaying text on screen for damage screen
     def damageScreen(self):
-        deathFont = pg.font.Font("resources/gypsy-curse.regular.ttf", 70)
+        deathFont = pg.font.Font("resources/gypsy-curse.regular.ttf", 70)    #loading custom font
         self.pauseText = deathFont.render("YOU DIED", True, (255, 0 ,0))
         self.pauseText2 = self.textToDisplay("Press P to resume", color= (0,0,0), bold= True)
         self.pauseText3 = self.textToDisplay("Press Q to quit", color= (0,0,0), bold= True)
 
-
+        #function used to convert a string into a surface
     def textToDisplay(self, text, font = 'Comic Sans MS', fontsize = 40, bold = False, italic = False, color = (255,255,255) ):
         font = pg.font.SysFont(font, fontsize, bold, italic)
         return font.render(text, True, color)
