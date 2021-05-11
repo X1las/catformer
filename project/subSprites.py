@@ -1032,15 +1032,14 @@ class PatrollingEnemy(Hostile):
             self.aboveground = True
             if self.wasunderground:
                 self.justpoppedup = True
-                
+                # go to dirt pile animations
                 t = Timer(0.5, self.popup)
                 t.start()
             self.wasunderground = False
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def popup(self):
-        #newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
-        #newPickup.startGame(self.game)
+        # go back to old animation
         self.justpoppedup = False
 
     # Currently doesn't matter. The worm just hides. so?
