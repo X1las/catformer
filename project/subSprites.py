@@ -62,7 +62,7 @@ class Tester(CustomSprite):
 
 # LevelGoal SubClass - Inherits from CustomSprite
 class LevelGoal(CustomSprite):
-    def __init__(self,plat, placement, width = 100, height = 20, name = None): 
+    def __init__(self,plat, placement, width = 100, height = 20, name = "Goal"): 
         self.pos = Vec(plat.left_x() + placement, plat.top_y()) 
         self.width = width; self.height = height
         #self.pos = vec(x,y)
@@ -206,7 +206,7 @@ class Platform(CustomSprite):
             self.vel.x = -1 * abs(self.originalVel.x)
         elif self.pos.x - self.x <= -1*self.leftMaxDist and self.vel.x < 0:
             self.vel.x = abs(self.originalVel.x)
-        elif abs(self.pos.y - self.y) >= abs(self.upMaxDist) and self.vel.y < 0:
+        elif self.pos.y - self.y <= -1* abs(self.upMaxDist) and self.vel.y < 0:
             self.vel.y =  abs(self.originalVel.y)
         elif self.pos.y - self.y >= self.downMaxDist and self.vel.y > 0:
             self.vel.y =  -1* abs(self.originalVel.y)
@@ -260,7 +260,7 @@ class Platform(CustomSprite):
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
     game = None
-    def __init__(self, x, y, width, height, name):
+    def __init__(self, x, y, width = 44, height = 44, name = "box"):
         self.width  = width; self.height = height; self.name = name
         self.pos = vec(x,y)
         self.savedPos = self.pos.copy()
@@ -405,7 +405,7 @@ class Box(CustomSprite):
 
 # Case SubClass - Inherits from CustomSprite
 class Mug(CustomSprite):
-    def __init__(self, plat : Platform, placement, name = None, spawn = None):
+    def __init__(self, plat : Platform, placement, name = "mug", spawn = None):
         self.plat = plat
         self.pos = vec()
         self.spawn = spawn
@@ -548,57 +548,69 @@ class Mug(CustomSprite):
 class Activator(CustomSprite):
 
     hasActivatedTarget = False
+    hasDeactivatedTarget = False
     activated = False
     deactivated = True
     auto_deactivate = False
     
 
     def activeEffect(self):
+        doDeactivate = False
         try:
             for e,v in self.effect.items():
                 if e == "respawn":
                     for respawn in v:
                         if not self.hasActivatedTarget:
+                            doDeactivate = True
                             target = respawn['target']
-                            self.hasActivatedTarget = True
+                            #self.hasActivatedTarget = True
                             target.respawn()
                 if e == "spawn":
                     for spawn in v:
                         if not self.hasActivatedTarget:
-                            self.hasActivatedTarget = True
+                            doDeactivate = True
+                            #self.hasActivatedTarget = True
                             target = spawn['target']
                             target.startGame(self.game)
                 if e == "move":
-
+                    self.hasDeactivatedTarget = False
                     for move in v:
                         target = move["target"]
                         move['target'].vel = move["movespeed"].copy() + target.originalVel
                 if e == "conMove":
                     for conMove in  v:
+                        
                         if not self.hasActivatedTarget:
-                            self.hasActivatedTarget = True
+                            doDeactivate = True
                             target = conMove["target"]
                             target.originalVel = conMove['movespeed'].copy()
-                            target.vel = target.originalVel
+                            target.vel = target.originalVel.copy()
+            if doDeactivate:
+                self.hasActivatedTarget = True
         except Exception as e:
             print(f'button activate: {e}') 
 
     def deactiveEffect(self):
+        doActivate = False
         try: # shouldn't be try except, I think
             for e,v in self.effect.items():
                 if e == "respawn":
                     self.hasActivatedTarget = False
                 if e == "move":
+                    if not self.hasDeactivatedTarget:
+                        doActivate = True
+                        for move in v:
+                            target = move["target"]
+                            move['target'].vel = move["deactspeed"].copy() + target.originalVel
 
-                    for move in v:
-                        target = move["target"]
-                        move['target'].vel = move["deactspeed"].copy() + target.originalVel
                 if e == "conMove":
                     self.hasActivatedTarget = False
                     for conMove in v:
                         target = conMove["target"]
                         target.originalVel *= 0
-                        #target.vel = target.originalVel
+                        target.vel = target.originalVel
+            if doActivate:
+                self.hasDeactivatedTarget = True
         except Exception as e:
             print(f'button deact: {e}') 
 
@@ -740,7 +752,7 @@ class Button(Activator):
 # Pickup SubClass - Inherits from CustomSprite
 class PickUp(CustomSprite):
 
-    def __init__(self,x,y, width, height, type_, name = None): 
+    def __init__(self,x,y, type_,  width = 16, height = 16, name = "pickup"): 
         self.width = width; self.height = height
         self.type = type_
         

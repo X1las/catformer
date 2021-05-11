@@ -248,7 +248,7 @@ class Game:
         self.smalltest = Platform(450 , 450 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
         self.smalltest.startGame(self)
         dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}]
-                               }
+                         q      }
         self.leverA  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
         self.leverA.startGame(self)
         '''
@@ -969,10 +969,12 @@ class Game:
 # create objects and dicts
 level1 = createLevel1()
 level2 = createLevel2()
+level3 = createLevel3()
 
 # pickle levels
-pickleLevel(level1, 'level2')
-pickleLevel(level2, 'level1')
+pickleLevel(level3, 'level1')
+pickleLevel(level1, 'level3')
+pickleLevel(level2, 'level2')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 #g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart

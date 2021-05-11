@@ -126,11 +126,11 @@ def createLevel1():
     # water
     water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
     # health
-    health1 = PickUp(1300, 540, 16, 16, 'health')                                          #
+    health1 = PickUp(1300, 540, 'health')                                          #
     # catnip
-    catnip1 = PickUp(400, 370, 16, 16, 'catnip')   
+    catnip1 = PickUp(400, 370, 'catnip')   
     # mugs
-    mug1 = Mug(mugplat , 50 , 'v1', spawn = catnip1)
+    mug1 = Mug(mugplat , 50 , spawn = catnip1)
 
     # create dictionary
     level1 = {
@@ -258,6 +258,130 @@ def createLevel2():
     }
 
     return levelName
+
+
+''' level3 '''
+def createLevel3():
+    # platforms
+    bottom = 550
+    left = -200
+    # platforms
+    floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor', floorplat = True )
+
+    leftboundary = Platform(0 - left, bottom, 100, 600, "left bound")
+    rightboundary = Platform(1800 - left, bottom, 100, 600, "left bound")
+
+    startplat = Platform(600 - left, bottom, 150, 100)
+    hiddenwaterplat1 = Platform(startplat.left_x() - 150, bottom, 60, 20, downMaxDist = 0, upMaxDist = 60)
+    hiddenlevplat1 = Platform(startplat.left_x() - 250, bottom, 60, 60)
+    hiddenwaterplat2 = Platform(startplat.left_x() - 350, bottom, 60, 20, downMaxDist = 0, upMaxDist = hiddenwaterplat1.upMaxDist)
+    hiddenlevplat2 = Platform(startplat.left_x() - 450, bottom, 60, 60)
+
+    tinyhiddenplat = Platform(startplat.left_x() - 50, bottom, 60, 2)
+
+    plat1 = Platform(startplat.right_x() + 100, startplat.top_y() - 50, 80, 30)
+    movingd = Platform(plat1.right_x() + 100, plat1.bot_y() + 30, 80, 30, upMaxDist =  10, downMaxDist = 30)
+
+    mugplat = Platform(movingd.right_x() + 100, movingd.top_y() - 50, 80, 30)
+    boxrespplat = Platform(mugplat.left_x()-100, mugplat.top_y() - 50, 80, 30)
+    befend  = Platform(boxrespplat.right_x() + 100, boxrespplat.top_y() - 30, 80, 30)
+    endplat  = Platform(befend.right_x() + 150, befend.top_y() - 30, 150, 30)
+    enddoor  = Platform(endplat.left_x() + 10, endplat.top_y(), 20, 200, downMaxDist = 0, upMaxDist = 60)
+    plat2  = Platform(boxrespplat.left_x() - 100, boxrespplat.top_y() - 30, 80, 30)
+    #plat3  = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
+    btnmugplat = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
+    movinga = Platform(leftboundary.right_x() + 50, btnmugplat.bot_y() + 30, 100, 30, leftMaxDist = 0, rightMaxDist =  btnmugplat.left_x() - 100 - leftboundary.right_x())
+
+
+    topleft = Platform(btnmugplat.left_x() - movinga.width - 20 - 180, movinga.top_y() - 30, 360, 30)
+    topleftdoor = Platform(topleft.right_x() - 10, topleft.top_y(), 20, 100, downMaxDist = 0, upMaxDist = 50, name = "topleftdoor")
+    hiddendoor = Platform(topleft.left_x() + 100, topleft.top_y(), 20, 100, downMaxDist = 0, upMaxDist = 100)
+
+
+
+
+    plats = [floor, leftboundary, rightboundary, startplat, 
+            hiddenlevplat1, hiddenlevplat2, hiddenwaterplat1, hiddenwaterplat2, tinyhiddenplat,
+            plat1, movingd, mugplat, boxrespplat, btnmugplat, movinga,
+            plat2, topleftdoor, hiddendoor,
+            topleft,
+            befend, endplat, enddoor]
+
+
+    ''' BOXES '''
+    box1 = Box(startplat.right_x() - 22, startplat.top_y() - 40)
+
+    ''' LEVERS '''
+    dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : topleftdoor},
+                       {"movespeed"  : Vec(1,0),  "deactspeed" : Vec(-1,0) , "target" : movinga}]}
+    leverA = Lever(hiddenlevplat1, 20, effect = dic)
+    
+    dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : hiddendoor}]}            
+    leverF = Lever(hiddenlevplat2, 40, effect = dic)
+    
+    dic = {  "move"  : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : enddoor}],
+             "spawn" : [{"target": Box(370 , 200 , 44 , 44 , 'box_1')},
+                        {"target" : PickUp(hiddendoor.left_x() - 40, topleft.top_y() - 30, "catnip")},
+                        {"target" : leverF}]}
+    leverB = Lever(topleft, 200, effect = dic)
+
+    dic = { "respawn" : [{"target": box1}]
+                  }
+    leverE = Lever(boxrespplat, 40, effect = dic, autodeactivate = True)
+
+
+    ''' BUTTONS '''
+    dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : topleftdoor}]
+                               }
+    btnC = Button(btnmugplat, 40, effect = dic)
+
+    dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : hiddenwaterplat1}]
+                               }
+    btnG = Button(tinyhiddenplat, 20, width = 60, effect = dic)
+
+    dic = {  "conMove" : [{"movespeed"  : Vec(0,0.5), "target" : movingd} ]
+                                }
+    btnD = Button(plat1, 40, effect = dic)
+
+    '''WATER '''
+    water1 = Water(startplat.left_x() - round((startplat.left_x() - leftboundary.right_x())/2), bottom, startplat.left_x() - leftboundary.right_x(), 40)
+
+
+    '''PICKUPS'''
+    mug1spawn = PickUp(0,0, "catnip")
+    mug2spawn = PickUp(0,0, "health")
+
+
+    ''' MUGS '''
+    mug1 = Mug(btnmugplat , 50, spawn = mug1spawn)
+    mug2 = Mug(mugplat , 50, spawn = mug2spawn)
+
+    '''GOAL'''
+    goal = LevelGoal(endplat, 100)
+
+
+    levelName = {
+        'name': 'level4',
+        'settings': {
+            'spawn': Vec(600 - left,100),
+            'length': 5000,
+            'track': 'nyan.mp3'
+        },
+        'platforms': plats,
+        'boxes':     [box1],
+        'buttons':   [btnC, btnD, btnG],
+        'levers':    [ leverB, leverE, leverA],
+        'mugs':      [mug1, mug2],
+        'goals':     [goal],
+        'enemies':   [],
+        'water':     [water1],
+        'health':    [],
+        'catnip':    []
+    }
+
+    return levelName
+
+
 
 ''' End Level '''
 def createLevel4():

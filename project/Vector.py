@@ -99,6 +99,8 @@ class Vec(object):
         rounded_num = math.floor(rounded_num)
         return rounded_num        
 
+    def similarTo(self, other, deltaX, deltaY):
+        return abs(self.x - other.x) <= deltaX and abs(self.y - other.y) <= deltaY 
 
     def rounding(self, number):
         neg = False
