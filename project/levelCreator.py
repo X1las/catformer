@@ -155,15 +155,77 @@ def createLevel1():
 
 ''' Level 2 '''
 def createLevel2():
+    bottom = 550
+    left = -200
     # platforms
-    floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
-    fatplat = Platform( 300 , 480 ,  150 , 40 , 'fatplat')
+    floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor', floorplat = True )
+    rightboundary = Platform(1800 - left, bottom, 100, 600, "left bound")
+    
+    water1width = 200
+    waterdiv1 = Platform( 400 - left , bottom ,  20 , 40 , 'fatplat')
+    midwater  = Platform( waterdiv1.right_x() + water1width/2 , 530 ,     50 , 30 , 'fatplat')
+    waterdiv2 = Platform( waterdiv1.right_x() + water1width + 10 , bottom ,  20 , 40 , 'fatplat')
+
+    # height 1
+    plat1     = Platform(1200 - left, 500    , 500 , 30, "plat1" )
+    blocker   = Platform(plat1.x - 30, plat1.top_y() - 50   , 44 , 154, "plat1" ) 
+    vert      = Platform(plat1.x - plat1.width/2 + 15, plat1.y - plat1.height   , 30 , 100, "plat1" )
+    #jumphelp  = Platform(plat1.right_x() + 200, bottom    , 30 , 30, "plat1" )
+    #jumphelp2 = Platform(plat1.left_x() + 30 + 15, plat1.top_y()    , 30 , 30, "plat1" )
+    plat2     = Platform(vert.left_x()  - 300/2, vert.top_y() + 30    , 300 , 30, "plat1" )
+    
+
+    #height 2 part 1
+    plat3     = Platform(plat1.right_x() -(plat1.right_x()-blocker.right_x())/2, blocker.top_y() + 30, plat1.right_x()-blocker.right_x() , 30 , "")
+    moving1   = Platform(plat1.right_x() + 30, plat1.bot_y()    , 60 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y)
+    underwater= Platform(blocker.left_x()  - 200, blocker.top_y() + 60, 400 , 20 , "")
+    boxstop   = Platform(blocker.left_x() + 5, blocker.top_y()    , 10 , 10, "plat1" )
+    waterplat1 = Platform(underwater.left_x() + underwater.width*3/4, underwater.top_y(), 50, 20, downMaxDist = 0, upMaxDist = 40)
+    waterplat2 = Platform(underwater.left_x() + underwater.width*2/4, underwater.top_y(), 50, 20,  downMaxDist = 0, upMaxDist = waterplat1.upMaxDist)
+    waterplat3 = Platform(underwater.left_x() + underwater.width*1/4, underwater.top_y(), 50, 20, downMaxDist = 0, upMaxDist = waterplat1.upMaxDist)
+    rightwat  = Platform(underwater.left_x() , underwater.top_y(), 50, 30)
+    
+    
+    
+    #height 2 part 2
+    jumper1    = Platform(rightwat.left_x() - 100, rightwat.bot_y(), 50, 30)
+    jumper2    = Platform(jumper1.left_x() - 100, rightwat.bot_y(), 50, 30)
+    jumper3    = Platform(jumper2.left_x() - 100, rightwat.bot_y(), 50, 30)
+    jumper4    = Platform(jumper3.left_x() - 100, rightwat.bot_y(), 100, 30)
+    smallleft  = Platform(jumper4.left_x() + 15, jumper4.top_y() - 55, 30, 30)
+    
+    #height 3
+    plat4      = Platform(smallleft.right_x() + 50 + 60, smallleft.top_y() - 20, 100, 30)
+    rightmov  = Platform(plat4.right_x() + 200, plat4.bot_y(), 80, 30)
+    moving2   = Platform(rightmov.left_x() - 30, plat4.bot_y(), 60 , 30, leftMaxDist = 200, rightMaxDist = 0)
+    enemyplat = Platform(rightmov.right_x() + 200, rightmov.bot_y(), 200, 30)
+    enemsafe  = Platform(enemyplat.mid().x, enemyplat.top_y(), 10, 40)
+    goalplat  = Platform(enemyplat.right_x() + 100, enemyplat.bot_y(), 100, 30)
+
+    leftboundary = Platform(jumper4.left_x() - 50, bottom, 100, 600, "left bound")
+
+    plats = [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2,
+             plat1, blocker, vert,  plat2, moving1, rightwat, #jumphelp, jumphelp2,
+             plat3, underwater, boxstop, waterplat1, waterplat2, waterplat3,
+             jumper1, jumper2, jumper3, jumper4, smallleft, 
+             plat4, moving2, rightmov, enemyplat, enemsafe, goalplat
+             ]
     # boxes
-    box1 = Box(350 , 400 , 44 , 44 , 'box_1')
+    box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 , 'box_1')
     # buttons
+    btn1eff = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat1} ,
+                {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat2} ,
+                {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat3}] }
+    
+    waters1btn = Button(plat3, 40, effect = btn1eff)
+    mov2btneff = {  "move" : [{"movespeed"  : Vec(-1,0), "deactspeed" : Vec(1,0) , "target" : moving2} ]}
+    mov2btn = Button(plat4, 20, effect = mov2btneff)
     #btn1 = Button(600 , 550 , 30 , 20 , 'button1')
     #btn2 = Button(500 , 550 , 30 , 20 , 'button2')
     # levers
+    lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
+                        }
+    mov1lev = Lever(plat2, 40, effect = lev1eff)
     #lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
     #lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
     # mugs
@@ -171,23 +233,26 @@ def createLevel2():
     # goals
     # enemies
     # water
+    water1 = Water(waterdiv1.right_x() + water1width/2, bottom , water1width, 36 )
+    water2 = Water(underwater.mid().x  + rightwat.width/2 - 13, underwater.top_y() , underwater.width - rightwat.width/2, plat2.height )
     # catnip
 
     levelName = {
         'name': 'level2',
         'settings': {
-            'spawn': Vec(330,350),
+            'spawn': Vec(leftboundary.right_x() + 50,500),
             'length': 5000,
             'track': 'nyan.mp3'
         },
-        'platforms': [floor, fatplat],
+        #'platforms': [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2, plat1],
+        'platforms': plats,
         'boxes':     [box1],
-        'buttons':   [],#btn1, btn2],
-        'levers':    [],#lever1, lever2],
+        'buttons':   [waters1btn, mov2btn],#btn1, btn2],
+        'levers':    [mov1lev],#lever1, lever2],
         'mugs':      [],#mug1],
         'goals':     [],
         'enemies':   [],
-        'water':     [],
+        'water':     [water1, water2],
         'health':    [],
         'catnip':    []
     }

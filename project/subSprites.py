@@ -115,10 +115,11 @@ class LevelGoal(CustomSprite):
 class Platform(CustomSprite):
 
     game = None
-    def __init__(self, x, y, width, height, name, vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
+    def __init__(self, x, y, width, height, name = "plat", vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
         self.height = height; self.width = width; self.name = name; 
         self.pos = vec(x,y); self.vel = vel
         self.originalVel = self.vel.copy()
+        
         
 
 
@@ -627,7 +628,7 @@ class Activator(CustomSprite):
 # Lever SubClass - Inherits from CustomSprite
 class Lever(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
-    def __init__(self, plat, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+    def __init__(self, plat, placement, width = 30, height = 20, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         self.plat = plat
         
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
@@ -671,7 +672,7 @@ class Lever(Activator):
 # Button SubClass - Inherits from CustomSprite
 class Button(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}): 
-    def __init__(self, plat:Platform, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+    def __init__(self, plat:Platform, placement, width = 30, height = 20, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         self.plat = plat
         
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 

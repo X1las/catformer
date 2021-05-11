@@ -328,7 +328,10 @@ class Game:
             '''
             
             # Runs all our methods on loop:
+            #self.new()
+            #self.update()
             self.events()  
+            
             if self.paused:
                 if self.isDamaged:
                     pass
@@ -544,8 +547,12 @@ class Game:
         selectedButton  = pg.Rect(75, 50, 50, 50)
         self.selectedState = 0
         self.activateSelected = False
-
-        while self.inMenu:
+        self.new()
+        #while self.inMenu:
+        while self.playing:
+            #self.events()q
+            self.run()
+            """
             if self.outOfLives:
                 self.noLivesScreen()
             self.screen.fill(BLACK)
@@ -608,7 +615,7 @@ class Game:
             self.drawMenuText("Quit", 300, 525)
             
             pg.display.update()
-
+            """
     def tutorialScreen(self):
         self.inTutorial = True
         self.activateSelected = False
@@ -964,8 +971,8 @@ level1 = createLevel1()
 level2 = createLevel2()
 
 # pickle levels
-pickleLevel(level1, 'level1')
-pickleLevel(level2, 'level2')
+pickleLevel(level1, 'level2')
+pickleLevel(level2, 'level1')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 #g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
