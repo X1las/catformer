@@ -93,6 +93,9 @@ def createLevel1():
 ''' Level 1 '''
 def createLevel1():
     # platforms
+    left = -200
+
+    ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
     floor     = Platform( 1000, 600 , 3000 , 50 ,'p_floor', floorplat = True )
     startplat = Platform( 300 , 500 ,  120 , 30 , 'startplat')
     p_1       = Platform( 420 , 350 ,  100 , 30, "p_1")
@@ -107,8 +110,8 @@ def createLevel1():
     
     endplat     = Platform( 1300 , 500 ,  100 , 30 , 'p_5')
     
-    leftboundary = Platform(50, 560, 100, 600, "left bound")
-    rightboundary = Platform(1400, 560, 100, 600, "left bound")
+    leftboundary = Platform(50, 550, 100, 550, "left bound")
+    rightboundary = Platform(1400, 550, 100, 550, "left bound")
     # boxes
     box1 = Box(270 , 200 , 44 , 44 , 'box_1')
     box2 = Box(660 , 200 , 44 , 44 , 'box_1')
@@ -140,7 +143,7 @@ def createLevel1():
             'length': 5000,
             'track': ''
         },
-        'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
+        'platforms': [ceil, floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
         'boxes':     [  box1],# box2],
         'buttons':   [],
         'levers':    [],
@@ -158,8 +161,9 @@ def createLevel2():
     bottom = 550
     left = -200
     # platforms
+    ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
     floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor', floorplat = True )
-    rightboundary = Platform(1800 - left, bottom, 100, 600, "left bound")
+    rightboundary = Platform(1800 - left, bottom, 100, bottom, "left bound")
     
     water1width = 200
     waterdiv1 = Platform( 400 - left , bottom ,  20 , 40 , 'fatplat')
@@ -198,17 +202,19 @@ def createLevel2():
     plat4      = Platform(smallleft.right_x() + 50 + 60, smallleft.top_y() - 20, 100, 30)
     rightmov  = Platform(plat4.right_x() + 200, plat4.bot_y(), 80, 30)
     moving2   = Platform(rightmov.left_x() - 30, plat4.bot_y(), 60 , 30, leftMaxDist = 200, rightMaxDist = 0)
-    enemyplat = Platform(rightmov.right_x() + 200, rightmov.bot_y(), 200, 30)
-    enemsafe  = Platform(enemyplat.mid().x, enemyplat.top_y(), 10, 40)
-    goalplat  = Platform(enemyplat.right_x() + 100, enemyplat.bot_y(), 100, 30)
+    longplat = Platform(rightmov.right_x() + 300, rightmov.bot_y() - 30, 500, 30)
+    enemyplat = Platform(longplat.right_x() + 150, longplat.bot_y() + 30, 200, 30)
+    enemsafe  = Platform(enemyplat.mid().x, enemyplat.top_y(), 20, 40)
+    #plat5  = Platform(enemyplat.right_x() + 150, enemyplat.bot_y(), 200, 30)
+    goalplat  = Platform(enemyplat.right_x() + 130, enemyplat.bot_y(), 150, 30)
 
-    leftboundary = Platform(jumper4.left_x() - 50, bottom, 100, 600, "left bound")
+    leftboundary = Platform(jumper4.left_x() - 50, bottom, 100, bottom, "left bound")
 
-    plats = [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2,
+    plats = [ceil, floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2,
              plat1, blocker, vert,  plat2, moving1, rightwat, #jumphelp, jumphelp2,
              plat3, underwater, boxstop, waterplat1, waterplat2, waterplat3,
              jumper1, jumper2, jumper3, jumper4, smallleft, 
-             plat4, moving2, rightmov, enemyplat, enemsafe, goalplat
+             plat4, moving2, rightmov, longplat, enemyplat,  goalplat #enemsafe,
              ]
     # boxes
     box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 , 'box_1')
@@ -226,12 +232,16 @@ def createLevel2():
     lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
                         }
     mov1lev = Lever(plat2, 40, effect = lev1eff)
-    #lever1 = Lever(450 , 550 , 10 , 40 , 'lever1')
-    #lever2 = Lever(500 , 550 , 10 , 40 , 'lever2')
+    # pickups
+    health1 = PickUp(1300, 540, 'health')                                          #
+    catnip1 = PickUp(400, 370, 'catnip')   
     # mugs
-    #mug1 = Mug(fatplat , 50 , 'v1')
+    mug1 = Mug(longplat , 170, spawn = catnip1)
+    mug2 = Mug(jumper2 , 40, spawn = health1)
     # goals
+    goal = LevelGoal(goalplat, 60)
     # enemies
+    pat1 = PatrollingEnemy(enemyplat, 70, maxDist = 100)
     # water
     water1 = Water(waterdiv1.right_x() + water1width/2, bottom , water1width, 36 )
     water2 = Water(underwater.mid().x  + rightwat.width/2 - 13, underwater.top_y() , underwater.width - rightwat.width/2, plat2.height )
@@ -240,7 +250,7 @@ def createLevel2():
     levelName = {
         'name': 'level2',
         'settings': {
-            'spawn': Vec(leftboundary.right_x() + 50,500),
+            'spawn': Vec(leftboundary.right_x() + 500,100),
             'length': 5000,
             'track': 'nyan.mp3'
         },
@@ -249,9 +259,9 @@ def createLevel2():
         'boxes':     [box1],
         'buttons':   [waters1btn, mov2btn],#btn1, btn2],
         'levers':    [mov1lev],#lever1, lever2],
-        'mugs':      [],#mug1],
-        'goals':     [],
-        'enemies':   [],
+        'mugs':      [mug1, mug2],
+        'goals':     [goal],
+        'enemies':   [pat1],
         'water':     [water1, water2],
         'health':    [],
         'catnip':    []
@@ -266,10 +276,11 @@ def createLevel3():
     bottom = 550
     left = -200
     # platforms
+    ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
     floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor', floorplat = True )
 
-    leftboundary = Platform(0 - left, bottom, 100, 600, "left bound")
-    rightboundary = Platform(1800 - left, bottom, 100, 600, "left bound")
+    leftboundary = Platform(0 - left, bottom, 100, bottom, "left bound")
+    rightboundary = Platform(1800 - left, bottom, 100, bottom, "left bound")
 
     startplat = Platform(600 - left, bottom, 150, 100)
     hiddenwaterplat1 = Platform(startplat.left_x() - 150, bottom, 60, 20, downMaxDist = 0, upMaxDist = 60)
@@ -300,7 +311,7 @@ def createLevel3():
 
 
 
-    plats = [floor, leftboundary, rightboundary, startplat, 
+    plats = [ceil, floor, leftboundary, rightboundary, startplat, 
             hiddenlevplat1, hiddenlevplat2, hiddenwaterplat1, hiddenwaterplat2, tinyhiddenplat,
             plat1, movingd, mugplat, boxrespplat, btnmugplat, movinga,
             plat2, topleftdoor, hiddendoor,
@@ -393,6 +404,9 @@ def createLevel3():
 ''' End Level '''
 def createLevel4():
     # platforms
+    left = -200
+
+    ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
     floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
 
     mug1 = Mug(floor , 50 , 'v1')
@@ -405,7 +419,7 @@ def createLevel4():
             'length': 5000,
             'track': 'nyan.mp3'
         },
-        'platforms': [floor],
+        'platforms': [ceil, floor],
         'boxes':     [],
         'buttons':   [],
         'levers':    [],
