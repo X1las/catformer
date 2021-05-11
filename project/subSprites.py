@@ -119,7 +119,7 @@ class Platform(CustomSprite):
         self.height = height; self.width = width; self.name = name; 
         self.pos = vec(x,y); self.vel = vel
         self.originalVel = self.vel.copy()
-        
+        self.floorplat = floorplat
         
 
 
@@ -234,7 +234,7 @@ class Platform(CustomSprite):
 
         if collideds:
             for collided in collideds:
-                if collided != self and self.solidstrength <= collided.solidstrength:
+                if collided != self and self.solidstrength <= collided.solidstrength and not collided.floorplat:
                     coll = self.collisionSide_Conditional(collided)
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']

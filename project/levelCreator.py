@@ -96,7 +96,7 @@ def createLevel1():
     left = -200
 
     ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
-    floor     = Platform( 1000, 600 , 3000 , 50 ,'p_floor', floorplat = True )
+    floor     = Platform( 1000, 600 , 3000 , 50 )
     startplat = Platform( 300 , 500 ,  120 , 30 , 'startplat')
     p_1       = Platform( 420 , 350 ,  100 , 30, "p_1")
     p_2       = Platform( 540 , 270 ,  65 , 30 , 'p_2')
@@ -162,7 +162,7 @@ def createLevel2():
     left = -200
     # platforms
     ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
-    floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor', floorplat = True )
+    floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor' )
     rightboundary = Platform(1800 - left, bottom, 100, bottom, "left bound")
     
     water1width = 200
@@ -277,7 +277,7 @@ def createLevel3():
     left = -200
     # platforms
     ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
-    floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor', floorplat = True )
+    floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,'p_floor')
 
     leftboundary = Platform(0 - left, bottom, 100, bottom, "left bound")
     rightboundary = Platform(1800 - left, bottom, 100, bottom, "left bound")

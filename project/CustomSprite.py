@@ -295,8 +295,8 @@ class CustomSprite(pg.sprite.Sprite):
                             if self.massHOR < collided.massHOR:
                                 if group.has(self):
                                     self.massHOR = collided.massHOR - 1
-                        
-                    self.pos = correctedPos
+                    if correctedPos.y > 0:    
+                        self.pos = correctedPos
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
             self.stoppedHOR = True
