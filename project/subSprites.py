@@ -917,15 +917,23 @@ class PatrollingEnemy(Hostile):
         # get spritesheet
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
         # create sub-rectangles to load from water spritesheet
-        rect1 = pg.Rect(  4, 36, 29, 28)
-        rect2 = pg.Rect( 36, 36, 29, 28)
-        rect3 = pg.Rect( 68, 36, 29, 28)
-        rect4 = pg.Rect(100, 36, 29, 28)
-        rect5 = pg.Rect(132, 36, 29, 28)
-        rect6 = pg.Rect(164, 36, 29, 28)
-        rects = [rect1, rect2, rect3, rect4, rect5, rect6]
+        walk = []
+        walk.append(pg.Rect(  4, 36, 28, 28))
+        walk.append(pg.Rect( 36, 36, 28, 28))
+        walk.append(pg.Rect( 68, 36, 28, 28))
+        walk.append(pg.Rect(100, 36, 28, 28))
+        walk.append(pg.Rect(132, 36, 28, 28))
+        walk.append(pg.Rect(164, 36, 28, 28))
+        popup = []
+        popup.append(pg.Rect(  4, 4, 28, 28))
+        popup.append(pg.Rect( 36, 4, 28, 28))
+        popup.append(pg.Rect( 68, 4, 28, 28))
+        popup.append(pg.Rect(100, 4, 28, 28))
+        popup.append(pg.Rect(132, 4, 28, 28))
+        popup.append(pg.Rect(164, 4, 28, 28))
         # load images from spritesheet
-        self.images_right = wormSheet.images_at(rects, colorkey=(0,0,0))
+        self.images_right = wormSheet.images_at(walk,  colorkey=(0,0,0))
+        self.images_popup = wormSheet.images_at(popup, colorkey=(0,0,0))
         self.images_left = []
         for img in self.images_right:
             self.images_left.append(pg.transform.flip(img,True,False))
@@ -1148,15 +1156,21 @@ class AiEnemy(Hostile):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get spritesheet
-        wormSheet = ss.Spritesheet('resources/hyena-spritesheet.png')
-        # create sub-rectangles to load from water spritesheet
+        wormSheet = ss.Spritesheet('resources/Hyena_walk.png')
+        # create sub-rectangles to load from spritesheet
+        '''
         rect1 = pg.Rect( 12, 20, 36, 28)
         rect2 = pg.Rect( 59, 20, 36, 28)
         rect3 = pg.Rect(106, 21, 36, 28)
         rect4 = pg.Rect(155, 21, 36, 28)
-        #rect5 = pg.Rect(132, 36, 29, 28)
-        #rect6 = pg.Rect(164, 36, 29, 28)
-        rects = [rect1, rect2, rect3, rect4]#, rect5, rect6]
+        '''
+        rect1 = pg.Rect(  3, 21, 45, 27)
+        rect2 = pg.Rect( 50, 21, 45, 27)
+        rect3 = pg.Rect( 99, 21, 45, 27)
+        rect4 = pg.Rect(147, 21, 45, 27)
+        rect5 = pg.Rect(195, 21, 45, 27)
+        rect6 = pg.Rect(243, 21, 45, 27)
+        rects = [rect1, rect2, rect3, rect4, rect5, rect6]
         # load images from spritesheet
         self.images_left = wormSheet.images_at(rects, colorkey=(0,0,0))
         self.images_right = []

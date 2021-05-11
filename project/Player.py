@@ -76,14 +76,16 @@ class Player(CustomSprite):
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from water spritesheet
-        sit        = pg.Rect( 0,155,47,42)
-        walk1      = pg.Rect(48,155,47,42)
-        walk2      = pg.Rect(96,155,47,42)
-        jump       = pg.Rect( 0,198,47,42)
-        interact1  = pg.Rect(48,198,47,42)
-        interact2  = pg.Rect(96,198,47,42)
-        sleep      = pg.Rect( 0,241,42,38)
-        rects = [sit, walk1, walk2, jump, interact1, interact2, sleep]
+        sit        = pg.Rect(  0,155,47,42)
+        walk1      = pg.Rect( 48,155,47,42)
+        walk2      = pg.Rect( 65,112,47,42)
+        walk3      = pg.Rect( 96,155,47,42)
+        walk4      = pg.Rect(113,112,47,42)
+        jump       = pg.Rect(  0,198,47,42)
+        interact1  = pg.Rect( 48,198,47,42)
+        interact2  = pg.Rect( 96,198,47,42)
+        sleep      = pg.Rect(  0,241,42,38)
+        rects = [sit, walk1, walk2, walk3, walk4, jump, interact1, interact2, sleep]
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         images = sheet.images_at(rects,(0,255,0))
@@ -92,11 +94,11 @@ class Player(CustomSprite):
             img = pg.transform.scale(img, (self.width, self.height))
         # define and flip images
         self.images = {
-            'sit' :     {'right':  images[0],             'left':  pg.transform.flip(images[0], True, False)},
-            'walk':     {'right': [images[1], images[2]], 'left': [pg.transform.flip(images[1], True, False), pg.transform.flip (images[2], True, False)]},
-            'jump':     {'right':  images[3],             'left':  pg.transform.flip(images[3], True, False)},
-            'interact': {'right': [images[4], images[5]], 'left': [pg.transform.flip(images[4], True, False), pg.transform.flip (images[5], True, False)]},
-            'sleep':    images[6]
+            'sit' :     {'right': images[0],   'left':  pg.transform.flip(images[0], True, False)},
+            'walk':     {'right': images[1:5], 'left': [pg.transform.flip(i, True, False) for i in images[1:5]]},
+            'jump':     {'right': images[5],   'left':  pg.transform.flip(images[3], True, False)},
+            'interact': {'right': images[6:8], 'left': [pg.transform.flip(i, True, False) for i in images[6:8]]},
+            'sleep':    images[8]
         }
         
         # set starting image
@@ -136,7 +138,7 @@ class Player(CustomSprite):
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
         self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images['walk']['right'])*20:     # reset image index to 0 when running out of images
+        if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         self.image = self.images['sit'][self.facing]
         self.liftArm()
@@ -192,7 +194,7 @@ class Player(CustomSprite):
 
 
     def interactUpdate(self):
-        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/20)]
+        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
         self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
         self.refreshedInt_box   = self.refreshCount >= self.refreshCount_prev       #
         
@@ -237,7 +239,7 @@ class Player(CustomSprite):
                 self.facing = "left"
                 #print("WALKING LEFT")
             if not self.inAir and not self.isInteracting:
-                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
+                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/15)]
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if not self.lockFacing:
@@ -245,7 +247,7 @@ class Player(CustomSprite):
                 #print("WALKING RIGHT")
             self.acc.x = PLAYER_ACC                                          
             if not self.inAir and not self.isInteracting:
-                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/20)]
+                self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/15)]
         if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
             #self.jumpcounter = 0
             self.inAir = True                                                    
