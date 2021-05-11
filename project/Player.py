@@ -194,7 +194,7 @@ class Player(CustomSprite):
 
 
     def interactUpdate(self):
-        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/15)]
+        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
         self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
         self.refreshedInt_box   = self.refreshCount >= self.refreshCount_prev       #
         
