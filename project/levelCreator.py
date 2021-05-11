@@ -409,9 +409,9 @@ def createLevel4():
 
     ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor', floorplat = True )
     floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
-
-    mug1 = Mug(floor , 50 , 'v1')
-
+    WINPLAT = Platform( 400, 500, 400, 30)
+    win = PickUp(0,0,"health")
+    mug1 = Mug(WINPLAT , 50 , spawn = win, width = 100, height = 100)
 
     levelName = {
         'name': 'level4',
@@ -420,7 +420,7 @@ def createLevel4():
             'length': 5000,
             'track': 'nyan.mp3'
         },
-        'platforms': [ceil, floor],
+        'platforms': [WINPLAT, floor],
         'boxes':     [],
         'buttons':   [],
         'levers':    [],

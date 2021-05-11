@@ -405,12 +405,12 @@ class Box(CustomSprite):
 
 # Case SubClass - Inherits from CustomSprite
 class Mug(CustomSprite):
-    def __init__(self, plat : Platform, placement, name = "mug", spawn = None):
+    def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawn = None):
         self.plat = plat
         self.pos = vec()
         self.spawn = spawn
-        self.width  = 29
-        self.height = 26
+        self.width  = width
+        self.height = height
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()).rounded() 
         self.placement = placement
         """
@@ -474,6 +474,8 @@ class Mug(CustomSprite):
         self.image_whole = self.images[0]
         self.image_broken = self.images[1]
         self.image = self.image_whole
+        self.image = pg.transform.scale(self.image, (self.width, self.height))
+
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
