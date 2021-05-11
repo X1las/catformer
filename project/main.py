@@ -482,6 +482,7 @@ class Game:
             sprite.resetRects()
   
     def darkenScreen(self):
+
         if self.endinglevel == True:
             self.sleepcount += 1
             if self.sleepcount > 100:

@@ -93,14 +93,14 @@ def createLevel1():
 ''' Level 1 '''
 def createLevel1():
     # platforms
-    floor     = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
+    floor     = Platform( 1000, 600 , 3000 , 50 ,'p_floor', floorplat = True )
     startplat = Platform( 300 , 500 ,  120 , 30 , 'startplat')
     p_1       = Platform( 420 , 350 ,  100 , 30, "p_1")
     p_2       = Platform( 540 , 270 ,  65 , 30 , 'p_2')
     mugplat   = Platform( 660 , 270 ,  65 , 30 , 'mugplat', vel = Vec(1,0), maxDist = 50)
     
-    waterDiv1 = Platform( 550 , 550 ,  30 , 100 , 'p_3')
-    waterDiv2 = Platform( 1100 , 550 ,  30 , 100 , 'p_3')
+    waterDiv1 = Platform( 550 , 550 ,  30 , 130 , 'p_3')
+    waterDiv2 = Platform( 1100 , 550 ,  30 , 130 , 'p_3')
 
     moving1     = Platform( 700 , 450 ,  150 , 30 , 'p_4', vel=Vec(-1,0), maxDist = 50)
     moving2     = Platform( 900 , 450 ,  150 , 30 , 'p_4', vel=Vec(-1,0), leftMaxDist=30, rightMaxDist= 70)
@@ -108,7 +108,7 @@ def createLevel1():
     endplat     = Platform( 1300 , 500 ,  100 , 30 , 'p_5')
     
     leftboundary = Platform(50, 560, 100, 600, "left bound")
-    rightboundary = Platform(1600, 560, 100, 600, "left bound")
+    rightboundary = Platform(1400, 560, 100, 600, "left bound")
     # boxes
     box1 = Box(270 , 200 , 44 , 44 , 'box_1')
     box2 = Box(660 , 200 , 44 , 44 , 'box_1')
@@ -121,8 +121,8 @@ def createLevel1():
     # goals
     endgoal = LevelGoal(endplat, 50, name = "end")
     # enemies
-    pat1 = PatrollingEnemy(floor, 400, 50)
-    pat2 = PatrollingEnemy(floor, 1200, 50)
+    pat1 = PatrollingEnemy(floor, 900, 50)
+    pat2 = PatrollingEnemy(floor, 1700, 50)
     # water
     water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
     # health
