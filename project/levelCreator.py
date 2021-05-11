@@ -106,9 +106,15 @@ def createLevel1():
     moving2     = Platform( 900 , 450 ,  150 , 30 , 'p_4', vel=Vec(-1,0), leftMaxDist=30, rightMaxDist= 70)
     
     endplat     = Platform( 1300 , 500 ,  100 , 30 , 'p_5')
+    
+    leftboundary = Platform(50, 560, 100, 600, "left bound")
+    rightboundary = Platform(1600, 560, 100, 600, "left bound")
     # boxes
     box1 = Box(270 , 200 , 44 , 44 , 'box_1')
     box2 = Box(660 , 200 , 44 , 44 , 'box_1')
+
+
+
 
     # buttons
     # levers
@@ -120,7 +126,7 @@ def createLevel1():
     # water
     water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
     # health
-    health1 = PickUp(600, 400, 16, 16, 'health')                                          #
+    health1 = PickUp(1300, 540, 16, 16, 'health')                                          #
     # catnip
     catnip1 = PickUp(400, 370, 16, 16, 'catnip')   
     # mugs
@@ -134,7 +140,7 @@ def createLevel1():
             'length': 5000,
             'track': ''
         },
-        'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat], # , p_1, p_2, p_3, p_4, p_5],
+        'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
         'boxes':     [  box1],# box2],
         'buttons':   [],
         'levers':    [],
