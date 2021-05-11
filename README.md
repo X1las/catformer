@@ -1,2 +1,2 @@
 # catformer
-cat platformer with pygame
+Dev branch for the Cat-Platformer Game!
