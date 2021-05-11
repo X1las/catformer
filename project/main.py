@@ -491,7 +491,7 @@ class Game:
             #self.image.set_alpha(self.sleepcount)
             #self.darkener = self.image.get_rect()
             #self.screen.blit(self.image, (0,0))
-            p#g.display.flip()
+            #pg.display.flip()
             #self.screen.set_alpha(self.sleepcount)
 
             
