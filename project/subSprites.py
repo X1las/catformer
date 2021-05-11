@@ -1085,7 +1085,7 @@ class PatrollingEnemy(Hostile):
 
 # AI Enemy SubClass 
 class AiEnemy(Hostile):
-    def __init__(self,plat, placement, width, height, game, speed = 1, name = "enemyai"):
+    def __init__(self,plat, placement, width = 36, height = 28, speed = 1, name = "enemyai"):
     #def __init__(self, plat, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         self.plat = plat
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
@@ -1093,7 +1093,8 @@ class AiEnemy(Hostile):
         self.speed = speed
         #self.x = x
         self.width = width;  self.height = height
-        self.game  = game;   self.name = name
+        #self.game  = game;   
+        self.name = name
         #self.pos = vec(x,y); 
         self.vel = vec(speed,0); self.acc = vec()
         
@@ -1167,7 +1168,7 @@ class AiEnemy(Hostile):
         # scale image to correct size
         self.image = pg.transform.scale(self.image, (self.width, self.height))
         
-        self.target = self.game.player
+        #self.target = self.game.player
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
 
@@ -1195,6 +1196,7 @@ class AiEnemy(Hostile):
 
 
     def update(self):
+        self.target = self.game.player
         self.imageIndex += 1                        # increment image index every update
         if self.imageIndex >= len(self.images_right)*10:     # reset image index to 0 when running out of images
             self.imageIndex = 0

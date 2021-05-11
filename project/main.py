@@ -253,7 +253,7 @@ class Game:
         self.leverA.startGame(self)
         '''
         # button D
-        '''
+        ''' 
         self.smalltest = Platform(450 , 450 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
         self.smalltest.startGame(self)
         dic = {  "conMove" : [{"movespeed"  : Vec(0,1), "target" : self.smalltest} ]

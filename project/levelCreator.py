@@ -356,6 +356,13 @@ def createLevel3():
     mug1 = Mug(btnmugplat , 50, spawn = mug1spawn)
     mug2 = Mug(mugplat , 50, spawn = mug2spawn)
 
+    '''ENEMIES'''
+
+    pat1 = PatrollingEnemy(floor, 1400 - left, 300)
+    detect1 = AiEnemy(floor, 1300)
+    detect2 = AiEnemy(floor, 1600)
+
+
     '''GOAL'''
     goal = LevelGoal(endplat, 100)
 
@@ -373,7 +380,7 @@ def createLevel3():
         'levers':    [ leverB, leverE, leverA],
         'mugs':      [mug1, mug2],
         'goals':     [goal],
-        'enemies':   [],
+        'enemies':   [pat1, detect1, detect2],
         'water':     [water1],
         'health':    [],
         'catnip':    []
