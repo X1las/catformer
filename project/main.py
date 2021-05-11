@@ -99,6 +99,7 @@ class Game:
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()        # Things that can activate a button
         self.group_passives           = pg.sprite.Group()
+        self.group_movables          = pg.sprite.Group()
 
     # Method that creates a new level
     def new(self):
@@ -175,13 +176,13 @@ class Game:
             self.clock.tick(FPS)                    # Changing our tickrate so that our frames per second will be the same as FPS from settings
             
             # Checking frame time for performance (keep commented)
-            '''
+            """
             self.frames += 1
             if (self.frames >= 60):
                 print("new frame")
                 self.frames = 0
             print(self.clock.get_rawtime())
-            '''
+            """
             
             # Runs all our methods on loop:
             #self.new()
@@ -798,9 +799,9 @@ level2 = createLevel2()
 level3 = createLevel3()
 
 # pickle levels
-pickleLevel(level3, 'level1')
+pickleLevel(level3, 'level2')
 pickleLevel(level1, 'level3')
-pickleLevel(level2, 'level2')
+pickleLevel(level2, 'level1')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 #g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart

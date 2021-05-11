@@ -72,7 +72,7 @@ class LevelGoal(CustomSprite):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_levelGoals
+        self.groups = game.all_sprites, game.group_levelGoals, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         # load image from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
@@ -297,7 +297,7 @@ class Box(CustomSprite):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid
+        self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
@@ -459,7 +459,7 @@ class Mug(CustomSprite):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_mugs
+        self.groups = game.all_sprites, game.group_mugs, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         
         # create surface with correct size
@@ -658,7 +658,7 @@ class Lever(Activator):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_levers
+        self.groups = game.all_sprites, game.group_levers, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create surface with correct size
@@ -714,7 +714,7 @@ class Button(Activator):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_buttons
+        self.groups = game.all_sprites, game.group_buttons, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create surface with correct size
@@ -911,7 +911,7 @@ class PatrollingEnemy(Hostile):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_damager, game.group_enemies #, game.group_solid
+        self.groups = game.all_sprites, game.group_damager, game.group_enemies, game.group_movables #, game.group_solid
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get spritesheet
@@ -1151,7 +1151,7 @@ class AiEnemy(Hostile):
     
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_damager, game.group_solid, game.group_enemies
+        self.groups = game.all_sprites, game.group_damager, game.group_solid, game.group_enemies, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get spritesheet

@@ -210,7 +210,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.y -= 2
         collideds = None
         if not self.isEnemy:
-            collideds = pg.sprite.spritecollide(self, self.game.all_sprites, False)
+            collideds = pg.sprite.spritecollide(self, self.game.group_movables, False)
 
         if collideds:
             for collided in collideds:
