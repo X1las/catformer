@@ -96,7 +96,7 @@ class Player(CustomSprite):
         self.images = {
             'sit' :     {'right': images[0],   'left':  pg.transform.flip(images[0], True, False)},
             'walk':     {'right': images[1:5], 'left': [pg.transform.flip(i, True, False) for i in images[1:5]]},
-            'jump':     {'right': images[5],   'left':  pg.transform.flip(images[3], True, False)},
+            'jump':     {'right': images[5],   'left':  pg.transform.flip(images[5], True, False)},
             'interact': {'right': images[6:8], 'left': [pg.transform.flip(i, True, False) for i in images[6:8]]},
             'sleep':    images[8]
         }
