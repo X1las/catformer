@@ -28,7 +28,7 @@ from Level2 import Level
 from Vector import Vec
 from SpriteGroup import *
 from levelCreator import *
-import os.path
+import os
 
 
 def r(number):
@@ -119,13 +119,16 @@ class Game:
         if self.data:
             #print(self.level.name)
             self.level.name = self.data[0]
+            if self.level.name == "level4":
+                self.finished = True
+                if os.path.exists("playerData/"+self.userName+"Data.txt"):
+                    os.remove("playerData/"+self.userName+"Data.txt")
             print(self.level.name)
         
         #self.level.load(self.level.name)
         
         if not self.level.load(self.level.name):
             self.level.load(DEFAULT_LEVEL)
-            self.finished = True
             print('test')
         
         self.player = Player(self.level.spawn)                         #
@@ -344,6 +347,8 @@ class Game:
                 self.outOfLives = True
                 self.inNameMenu = False
                 self.inNameLoadMenu = False
+                if os.path.exists("playerData/"+self.userName+"Data.txt"):
+                    os.remove("playerData/"+self.userName+"Data.txt")
                 #add function to delete playerdata file
             self.draw()  
             
@@ -589,7 +594,7 @@ class Game:
             if loadGameButton.collidepoint((mx, my)):
                 self.selectedState = 1
                 if self.click:
-                    self.new()
+                    self.nameLoadScreen()
             if tutorialButton.collidepoint((mx, my)):
                 self.selectedState = 2
                 if self.click:
@@ -788,7 +793,6 @@ class Game:
                 if self.activateSelected:
                     if self.checkNameConflict():
                         self.data = self.getPlayerData()
-                        print(self.data)
                         self.new()
                     else:
                         self.nameError = True
@@ -835,7 +839,8 @@ class Game:
             if startButton.collidepoint((mx, my)):
                 self.selectedState = 0
                 if self.click:
-                    if not self.userName == "":
+                    if self.checkNameConflict():
+                        self.data = self.getPlayerData()
                         self.new()
                     else:
                         self.nameError = True
@@ -936,9 +941,10 @@ class Game:
         self.points_display = self.textToDisplay(f'Catnip: {self.player.catnip_level}')
 
     def endGameHUD(self):
-        deathFont = pg.font.Font("resources/gypsy-curse.regular.ttf", 70)
-        self.endText = deathFont.render("Congratulations", True, (255, 0 ,0))
-        self.endText2 = deathFont.render("You have finished the game", True, (255, 0 ,0))
+        endFont = pg.font.Font("resources/action-jackson.regular.ttf", 40)
+        self.endText = endFont.render("Congratulations", True, (255, 0 ,0))
+        endFont = pg.font.Font("resources/action-jackson.regular.ttf", 30)
+        self.endText2 = endFont.render("You have finished the game", True, (255, 0 ,0))
 
  
     def displayPauseScreen(self):
