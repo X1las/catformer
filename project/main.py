@@ -146,153 +146,6 @@ class Game:
         except:
             print("Error loading music!")
             pass
-        #self.movingPlat = Platform(270 , 500 , 150 , 40 , "moving" , vel = Vec(1,0), maxDist = 50)
-        #self.movingPlat.startGame(self)
-        #self.smalltest = Platform(450 , 550 , 50 , 40 , "small tester" )
-        #self.smalltest.startGame(self)
-        #self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        #self.smalltest.startGame(self)
-        
-        
-        #self.tallplat   = Platform(850, 430, 20, 50, "tallplat", upMaxDist= 100, downMaxDist = 200)
-        #self.tallplat.startGame(self)
-        
-        #self.enemy = PatrollingEnemy(350, 550 , 26, 30, 100, name =  "pat1")                       #      
-        #self.enemy.startGame(self)
-        #self.aienemy = AiEnemy(500, 310,36, 28, 200, name =  "ai1")                       #      
-        #self.aienemy.startGame(self)
-        #self.level_goal     = LevelGoal(1600 , 550, 20, 100, name = 'end goal')                    # 
-        #self.level_goal.startGame(self)
-        
-        # Matthias level things ----------------------------------------------------------------------------------
-        # platform moving up at down if lever is active
-        '''
-        self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        dic = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : self.smalltest} ]
-
-                                }
-        self.button4  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.button4.startGame(self)
-        '''
-        # three platforms going above water
-        '''
-        self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        self.smalltest2 = Platform(550 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest2.startGame(self)
-        self.smalltest3 = Platform(650 , 550 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest3.startGame(self)
-        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : self.smalltest} ,
-                           {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : self.smalltest2} ,
-                           {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : self.smalltest3}] 
-                }
-        self.button4  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.button4.startGame(self)
-        '''
-        # top platform
-        '''
-        self.smalltest = Platform(450 , 550 , 50 , 40, "small tester", leftMaxDist = 100, rightMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        dic = {  "move" : [{"movespeed"  : Vec(-1,0), "deactspeed" : Vec(1,0) , "target" : self.smalltest} ]
-                                }
-        self.button4  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.button4.startGame(self)
-        '''
-        # Matthias level things ----------------------------------------------------------------------------------
-
-
-        # Stine level things ---------------------------------------------------------------------------------
-        # Lever A
-        """
-        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        self.smalltest2 = Platform(550 , 350 , 50 , 40, "small tester", leftMaxDist = 0, rightMaxDist= 100, vel = Vec(0,0) )
-        self.smalltest2.startGame(self)
-        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest},
-                           {"movespeed"  : Vec(1,0), "deactspeed" : Vec(-1,0) , "target" : self.smalltest2} ]
-                                }
-        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.leverA.startGame(self)
-        """
-        # Lever B
-        '''
-        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        #self.smallbox = Box(370 , 200 , 44 , 44 , 'box_1')
-        dic = {  "move"  : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}],
-                 "spawn" : [{"target": Box(370 , 200 , 44 , 44 , 'box_1')}] 
-                  }
-        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.leverA.startGame(self)
-        '''
-        #lever F
-        '''
-        self.smalltest = Platform(450 , 550 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}]
-                               }
-        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.leverA.startGame(self)
-        '''
-        # Lever E
-        """
-        self.smallbox = Box(370 , 200 , 44 , 44 , 'box_1')
-        self.smallbox.startGame(self)
-        dic = { "respawn" : [{"target": self.smallbox}] 
-                  }
-        self.leverA  = Lever(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic, autodeactivate=True)                                          #
-        self.leverA.startGame(self)
-        """
-        # button C
-        '''
-        self.smalltest = Platform(450 , 450 , 30 , 100, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : self.smalltest}]
-                         q      }
-        self.leverA  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.leverA.startGame(self)
-        '''
-        # button D
-        ''' 
-        self.smalltest = Platform(450 , 450 , 50 , 40, "small tester", upMaxDist = 100, downMaxDist= 0, vel = Vec(0,0) )
-        self.smalltest.startGame(self)
-        dic = {  "conMove" : [{"movespeed"  : Vec(0,1), "target" : self.smalltest} ]
-
-                                }
-        self.button4  = Button(300 , 410 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        self.button4.startGame(self)
-        '''
-        # Stine level things ---------------------------------------------------------------------------------
-        '''
-        dic = { "move"    : [{ "movespeed" : Vec(2,0), "deactspeed" : Vec(-2,0), "target" : self.all_sprites.getObject("p_3")}, 
-                             { "movespeed" : Vec(0,-1),"deactspeed" : Vec(0,0), "target" : self.all_sprites.getObject("tallplat")}],
-                "respawn" : [{"target" : self.all_sprites.getObject('box_1')}]            }
-        #self.button4  = Button(600 , 550 , 30 , 20 , name = "boxbutton", effect = dic)                                          #
-        #self.button4.startGame(self)
-        self.lever1 = Lever(500 , 550 , 10 , 40 , name = "resparnLever",  effect = "respawn",  target = self.all_sprites.getObject("box_1"))
-        self.lever1.startGame(self)
-        self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
-        self.catnip.startGame(self)
-
-        self.health = PickUp(400, 400, 16, 16, 'health')                                          #
-        self.catnip = PickUp(600, 370, 16, 16, 'catnip')   
-        self.health.startGame(self)
-        self.catnip.startGame(self)
-        #self.movingPlat = Platform(self, 300 , 500 , 150 , 40 )
-        
-        #self.button  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(2,0),  target = self.all_sprites.getObject("p_3"))                                          #
-        #self.button2 = Button(self,450 , 550 , 30 , 20 , na me = "boxbutton2", effect = ["move"], movespeed = Vec(-2,0),  target = self.all_sprites.getObject("p_3"))                                          #
-        #self.button2 = Button(self,450 , 550 , 30 , 20 , name = "boxbutton3", effect = ["respawn"],  target = self.all_sprites.getObject("box_1"))                                          #
-        self.button4  = Button(self,400 , 550 , 30 , 20 , name = "boxbutton", effect = ["move"], movespeed = Vec(0,-2),  target = self.all_sprites.getObject("tallplat"))                                          #
-
-        self.lever1 = Lever(450 , 550 , 10 , 40 , name = "boxlever",  effect = "move", movespeed = 2,  target = self.all_sprites.getObject("p_3"),  autodeactivate = True)
-        self.water = Water(500, 400, 10, 10)    
-        self.water.startGame(self)     
-        ''' 
-        
         #
         self.image = pg.Surface((WIDTH,HEIGHT))
         
@@ -362,34 +215,8 @@ class Game:
     # Method where we update game processesd
     def update(self):
         self.all_sprites.resetSprites()
-        #print(f'NEW RUN')
-        
-        # I think this should somehow go into CustomSprite/subsprites
-        #for sprite in self.group_pressureActivator:
-         #   sprite.buttonPress()
-        
-        #for button in self.group_buttons:
-         #   activated_button = button.buttonPress(self.group_pressureActivator)
-        
-        #self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
-        #self.refreshedInt_box = self.refreshCount >= self.refreshCount_prev       #
-        
-        
-        #self.player.touchPickUp(self.group_pickups)
-        # Updating Functionsdd
-        #
-        """
-        if self.interactive_field:
-            for lever in self.group_levers:
-                lever.leverPull(self.group_interactiveFields, self.refreshedInt_lever)
     
-            self.interactive_field.pickupSprite(self.group_boxes, self.refreshedInt_box, self.intWasCreated)
-            self.interactive_field.knockOver(self.group_mugs, self.intWasCreated)
-        #print(f'BEFORE UPDATES')
-        """
-        """Adds velocity to something when on something moving.
-        bad solution. Only works with two stacks :(
-        """
+        ''' do not delete'''
         #for plat in self.group_solid:
          #   plat.collisionEffect()
         
@@ -402,13 +229,8 @@ class Game:
         self.moveScreen()
         self.relativePos()
 
-        #self.all_sprites.correctPositions()
-        #self.level_goal.endGoal(self.player)
         if (self.player.pos.y > self.boundary):
             self.player.takeDamage()
-        # Updating Variables
-        #self.intWasCreated = False    
-        #self.refreshCount_prev = self.refreshCount
 
     # Method that checks for events in pygame
     def events(self):
@@ -435,20 +257,7 @@ class Game:
                 if event.key  == pg.K_p:
                     self.paused = not self.paused
                     self.isDamaged = False
-            """    
-                if event.key == pg.K_d:                                         # Checks if the uses presses 
-                    # if not paused?
-                    self.refreshCount_prev = self.refreshCount
-                    self.interactive_field = Interactive(self,self.player, self.player.facing)
-                    self.intWasCreated = True
-                    self.refreshCount += 1
-                                           
-            if event.type == pg.KEYUP:
-                if event.key == pg.K_d:
-                    if self.interactive_field:
-                        self.interactive_field.kill()
-                        self.interactive_field = None
-            """
+     
     # Method for drawing everything to the screen           
     def draw(self):                                         
         self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
@@ -989,9 +798,9 @@ level2 = createLevel2()
 level3 = createLevel3()
 
 # pickle levels
-pickleLevel(level3, 'level1')
+pickleLevel(level3, 'level2')
 pickleLevel(level1, 'level3')
-pickleLevel(level2, 'level2')
+pickleLevel(level2, 'level1')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 #g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
