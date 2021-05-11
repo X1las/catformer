@@ -176,8 +176,8 @@ def createLevel2():
     vert      = Platform(plat1.x - plat1.width/2 + 15, plat1.y - plat1.height   , 30 , 100, "plat1" )
     #jumphelp  = Platform(plat1.right_x() + 200, bottom    , 30 , 30, "plat1" )
     #jumphelp2 = Platform(plat1.left_x() + 30 + 15, plat1.top_y()    , 30 , 30, "plat1" )
-    plat2     = Platform(vert.left_x()  - 300/2, vert.top_y() + 30    , 300 , 30, "plat1" )
-    
+    plat2     = Platform(vert.left_x()  - 220/2, vert.top_y() + 30    , 220 , 30, "plat1" )
+
 
     #height 2 part 1
     plat3     = Platform(plat1.right_x() -(plat1.right_x()-blocker.right_x())/2, blocker.top_y() + 30, plat1.right_x()-blocker.right_x() , 30 , "")
@@ -242,6 +242,7 @@ def createLevel2():
     goal = LevelGoal(goalplat, 60)
     # enemies
     pat1 = PatrollingEnemy(enemyplat, 70, maxDist = 100)
+    detect1 = AiEnemy(floor, 1400)
     # water
     water1 = Water(waterdiv1.right_x() + water1width/2, bottom , water1width, 36 )
     water2 = Water(underwater.mid().x  + rightwat.width/2 - 13, underwater.top_y() , underwater.width - rightwat.width/2, plat2.height )
@@ -261,7 +262,7 @@ def createLevel2():
         'levers':    [mov1lev],#lever1, lever2],
         'mugs':      [mug1, mug2],
         'goals':     [goal],
-        'enemies':   [pat1],
+        'enemies':   [pat1, detect1],
         'water':     [water1, water2],
         'health':    [],
         'catnip':    []
