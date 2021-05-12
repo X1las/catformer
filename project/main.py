@@ -80,6 +80,9 @@ class Game:
             self.data.append(PLAYER_LIVES)
             self.data.append(PLAYER_CATNIP)
 
+        bg = pg.image.load("resources/bg.png")
+        self.bg = pg.transform.scale(bg, (WIDTH+400, HEIGHT))
+
     # Creates Sprite Groups
     def createSGroups(self):
     
@@ -261,8 +264,8 @@ class Game:
      
     # Method for drawing everything to the screen           
     def draw(self):                                         
-        self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
-        
+        #self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
+        self.screen.blit(self.bg, (0,0))
         # Loop that updates rectangles?
         for sprite in self.all_sprites:
             sprite.updateRect()
