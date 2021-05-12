@@ -918,7 +918,7 @@ class PatrollingEnemy(Hostile):
 
         # get spritesheet
         wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
-        # create sub-rectangles to load from water spritesheet
+        # create sub-rectangles to load from spritesheet
         walk = []
         walk.append(pg.Rect(  4, 36, 28, 28))
         walk.append(pg.Rect( 36, 36, 28, 28))
@@ -934,17 +934,22 @@ class PatrollingEnemy(Hostile):
         popup.append(pg.Rect(132, 4, 28, 28))
         popup.append(pg.Rect(164, 4, 28, 28))
         # load images from spritesheet
-        self.images_right = wormSheet.images_at(walk,  colorkey=(0,0,0))
-        self.images_popup = wormSheet.images_at(popup, colorkey=(0,0,0))
-        self.images_left = []
-        for img in self.images_right:
-            self.images_left.append(pg.transform.flip(img,True,False))
-        self.imageIndex = 0
-        self.image = self.images_right[self.imageIndex]
-    
+        images_walk  = wormSheet.images_at(walk,  colorkey=(0,0,0))
+        images_popup = wormSheet.images_at(popup, colorkey=(0,0,0))
         # scale image to correct size
-        self.image = pg.transform.scale(self.image, (self.width, self.height))
-        
+        images_walk  = [pg.transform.scale(img, (self.width, self.height)) for img in images_walk]
+        images_popup = [pg.transform.scale(img, (self.width, self.height)) for img in images_popup]
+        # define and flip images        
+        self.images  = {
+            'walk':  {'right': images_walk,  'left': [pg.transform.flip(i, True, False) for i in images_walk]},
+            'popup': {'right': images_popup, 'left': [pg.transform.flip(i, True, False) for i in images_popup]}
+        }
+        # set initial image
+        self.facing = 'right'
+        self.activity = 'walk'
+        self.imageIndex = 0
+        self.image = self.images[self.activity][self.facing][self.imageIndex]
+    
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
 
@@ -970,19 +975,19 @@ class PatrollingEnemy(Hostile):
 
     def updateAnimation(self):
         self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images_right)*10:     # reset image index to 0 when running out of images
+        if self.imageIndex >= len(self.images['walk']['right'])*10:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         
-        self.area = "mid" #Doesn't matter rn, but maybe later?
-        if self.vel.x > 0:
-            self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
-        else: 
-            self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+        #self.area = "mid" #Doesn't matter rn, but maybe later?
+        if self.vel.x < 0:
+            self.facing = 'left'
+        else:
+            self.facing = 'right'
 
-        # onlt do at init? should probably be changed
-        self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
-        
-        
+        self.image = self.images[self.activity][self.facing][math.floor(self.imageIndex/10)]
+        if self.image == self.images['popup'][self.facing][-1]:
+            self.activity = 'walk'
+                
 
     def update(self):
 
@@ -1017,9 +1022,9 @@ class PatrollingEnemy(Hostile):
             self.rect.bottom = self.currentplat.rect.top - 1
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        justpoppedup = 10
+        #justpoppedup = 10
         # If it is above ground, check which platform it is on
-        remove = False
+        #remove = False
         if collideds:
             for collided in collideds:
                 if collided != self.currentplat:
@@ -1028,22 +1033,24 @@ class PatrollingEnemy(Hostile):
                     self.pos.y = self.currentplat.pos.y - 1
                     self.aboveground = False
                     self.wasunderground = True
-                    remove = True
+                    #remove = True
         else: 
             self.pos.y = self.currentplat.top_y()
             self.aboveground = True
             if self.wasunderground:
                 self.justpoppedup = True
                 # go to dirt pile animations
-                t = Timer(0.5, self.popup)
-                t.start()
+                self.activity = 'popup'
+                self.imageIndex = 0
+                #t = Timer(5, self.popup)
+                #t.start()
             self.wasunderground = False
         self.rect.midbottom = self.pos.realRound().asTuple()
-
+    '''
     def popup(self):
         # go back to old animation
         self.justpoppedup = False
-
+    '''
     # Currently doesn't matter. The worm just hides. so?
     def solidCollision(self):
         self.rect.midbottom = self.pos.realRound().asTuple()

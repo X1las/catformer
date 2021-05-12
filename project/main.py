@@ -800,10 +800,10 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level4, 'level1')
-pickleLevel(level3, 'level2')
-pickleLevel(level1, 'level3')
-pickleLevel(level2, 'level4')
+pickleLevel(level1, 'level1')
+pickleLevel(level2, 'level2')
+pickleLevel(level3, 'level3')
+pickleLevel(level4, 'level4')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 #g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
