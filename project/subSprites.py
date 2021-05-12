@@ -95,7 +95,7 @@ class LevelGoal(CustomSprite):
         level = int(current[5:6])
         level+=1
         print(level)
-        self.game.level.name = "level"+str(level)
+        self.game.level.name = f"level{level}"
         self.game.updateData()
         self.game.new()
 
@@ -462,18 +462,24 @@ class Mug(CustomSprite):
         self.groups = game.all_sprites, game.group_mugs, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         
-        # create surface with correct size
-        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from water spritesheet
-        whole = pg.Rect( 0,0,29,26)
-        broken = pg.Rect(30,0,29,26)
-        rects = [whole, broken]
+        whole  = pg.Rect(  0,0,29,26)
+        broken = pg.Rect( 30,0,29,26)
+        bigMug = pg.Rect(104,0,77,72)
+        rects = [whole, broken, bigMug]
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.images = sheet.images_at(rects, (0,255,0))     
         self.image_whole = self.images[0]
         self.image_broken = self.images[1]
-        self.image = self.image_whole
+        image_big = self.images[2]
+        #self.image = image_big
+        
+        if self.game.level.name == 'level4':
+            self.image = image_big
+        else:
+            self.image = self.image_whole
+        
         self.image = pg.transform.scale(self.image, (self.width, self.height))
 
         self.rect = self.image.get_rect()
@@ -498,7 +504,8 @@ class Mug(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
-        self.image.blit(self.images[1],(0,0))
+        if not self.game.level.name == 'level4':
+            self.image.blit(self.images[1],(0,0))
         #self.vel.x = 0
         #newPickup = PickUp(self.pos.x, self.pos.y, 15,15, "health", "spawned pickup")
         self.pos = self.pos.rounded()
