@@ -83,9 +83,9 @@ class CustomSprite(pg.sprite.Sprite):
         self.ori_massVER = self.massVER
         self.new_vel = self.vel.copy()
 
-    def update(self):
+    """def update(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
-
+    """
 
     def updateRect(self):
         if self.isPlayer:
@@ -216,9 +216,6 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collideds:
                 try: 
                     if collided != self and collided.lessMassThan(self) and collided not in self.game.group_interactiveFields and collided not in self.game.group_pickups:
-                        #print(f'solid: {self.name} affecting {collided.name}')
-                        #print(f'solidvel : {self.vel}')
-
                         coll_side = collided.determineSide(self)
                         if coll_side == "top":
                             collided.addedVel.x = self.vel.x + self.addedVel.x
