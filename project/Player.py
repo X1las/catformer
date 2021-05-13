@@ -29,8 +29,6 @@ class Player(CustomSprite):
 
     width               = 47 
     height              = 42
-    vel                 = vec(0, 0)   
-    acc                 = vec(0, 0)
     dist_from_right     = 0
     dslopest_from_left  = 0
     dist_from_top       = 0
@@ -166,8 +164,15 @@ class Player(CustomSprite):
         self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
+
+    def outOfBounds(self):
+          if (self.pos.y > self.game.boundary):
+            self.takeDamage()
+
+
     def checkDamage(self):
         self.inbetweenSolids()
+        self.outOfBounds()
         self.touchEnemy()
 
     def touchEnemy(self):
@@ -410,8 +415,6 @@ class Interactive(CustomSprite):
                         self.player.lockFacing = True
             else:
                 self.colliding = False # remove?
-
-
 
     def leverPull(self):
         collided_list = pg.sprite.spritecollide(self, self.game.group_levers, False)

@@ -157,8 +157,6 @@ class Game:
             """
             
             # Runs all our methods on loop:
-            #self.new()
-            #self.update()
             self.events()  
             
             if self.paused:
@@ -196,15 +194,11 @@ class Game:
         for plat in self.group_solid:
             plat.collisionEffect()
         self.all_sprites.update()
-        #self.player.touchEnemy(self.group_damager) # was above update() before. Did this stop the damaging?
 
         self.all_sprites.updatePos()
         self.moveScreen()
-        self.relativePos()
 
-        if (self.player.pos.y > self.boundary):
-            self.player.takeDamage()
-
+      
     # Method that checks for events in pygame
     def events(self):
         for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
@@ -223,7 +217,8 @@ class Game:
                     self.inNameMenu = False
                     self.inNameLoadMenu = False
 
-                if event.key == pg.K_e:                                         # checks if the uses presses the escape key                               
+                # restart the level
+                if event.key == pg.K_r:                                         # checks if the uses presses the escape key                               
                     self.new()
                 if event.key  == pg.K_p:
                     self.paused = not self.paused
@@ -231,16 +226,15 @@ class Game:
      
     # Method for drawing everything to the screen           
     def draw(self):                                         
-        #self.screen.fill(BGCOLOR)                           # Sets the background color to default in Settings 
-        self.screen.blit(self.bg, (0,0))
-        # Loop that updates rectangles?
-        for sprite in self.all_sprites:
-            sprite.updateRect()
-        
-
+        self.screen.blit(self.bg, (0,0))                    # Draws background image
+        self.all_sprites.updateRects()
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
+        self.drawHUD()
+        pg.display.update()                                 # Updates the drawings to the screen object and flips it
+        self.all_sprites.resetRects()
+  
+    def drawHUD(self):
         self.screen.blit(self.lives_display,  (50, 50))
-        
         self.screen.blit(self.points_display,  (400, 50))
         if self.paused:
             pauseRect = self.pauseText.get_rect()
@@ -260,30 +254,15 @@ class Game:
             endRect2.center = (300, 250)
             self.screen.blit(self.endText2, endRect2)
         
-        
-        pg.display.update()                                 # Updates the drawings to the screen object and flips it
-        
-        # Loop that resets rectangles?
-        for sprite in self.all_sprites:
-            sprite.resetRects()
-  
-
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
         if self.player.vel.x + self.player.acc.x * 0.5 > 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
         if self.player.vel.x + self.player.acc.x * 0.5 < 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
-
-        
-   
-    # 
-    def relativePos(self):
         for sprite in self.all_sprites:
-            
             sprite.relativePosition = sprite.pos.copy()
             sprite.relativePosition.x = sprite.relativePosition.x-self.relposx
-            
 
     # Respawns the player and resets the camera
     def resetCamera(self):
@@ -312,7 +291,6 @@ class Game:
             loadGameButton  = pg.Rect(190, 175, 220, 100)
             tutorialButton  = pg.Rect(190, 325, 220, 100)
             exitButton      = pg.Rect(190, 475, 220, 100)
-
 
             pg.draw.rect(self.screen, (0, 125, 255), newGameButton)          #drawing buttons on screen
             pg.draw.rect(self.screen, (0, 125, 255), loadGameButton)
@@ -461,7 +439,8 @@ class Game:
                 if self.activateSelected:
                     if not self.userName == "":                              #check if name is not empty
                         if not self.checkNameConflict():                     #check if name does not exist already
-                            self.data = self.createPlayerData()              #creates default playerdata file
+                            self.data = self.saveData()
+                            #self.createPlayerData()              #creates default playerdata file
                             self.new()                                       #opens the game
                         else:
                             self.nameError = True                            #give error message
@@ -511,7 +490,8 @@ class Game:
                 if self.click:
                     if not self.userName == "":                              #check if name is not empty
                         if not self.checkNameConflict():                     #check if name does not exist already
-                            self.data = self.createPlayerData()              #creates default playerdata file
+                            #self.data = self.createPlayerData()              #creates default playerdata file
+                            self.data = self.saveData()              #creates default playerdata file
                             self.new()                                       #opens the game
                         else:
                             self.nameError = True                            #give error message
@@ -609,8 +589,7 @@ class Game:
 
         #check for name conflicts
     def checkNameConflict(self):
-        result = os.path.exists("playerData/"+self.userName+"Data.txt")
-        return result                                                        #return true/false if file exists/does not
+        return os.path.exists("playerData/"+self.userName+"Data.txt")       #return true/false if file exists/does not
 
         #getting user input for menu screens
     def menuEvents(self):
@@ -649,38 +628,15 @@ class Game:
         textRect.center = (x,y)                                              #centers text based on rectangle position
         self.screen.blit(drawText, textRect)                                 #draws text at rectangle position
 
-        #creates a default playerData file
-    def createPlayerData(self):
-        try:
-            file = open("playerData/"+self.userName+"Data.txt","x")          #file saved based on userName
-        except:
-            file = open("playerData/"+self.userName+"Data.txt","w")
-
-        newlevelName = "level1"                                              #default values
-        newlives = "9"
-        newcatnip = "0"
-
-        file.write(f"{newlevelName},{newlives},{newcatnip}")                 #writing text to file
-        file.close()
-        print(file)
-        return [newlevelName,int(newlives),int(newcatnip)]                   #returning values
-
-
-        #updates files with new data
-    def updateData(self):
+     
+    def saveData(self, levelname = 'level1', lives = 9, catnip = 0):
         try:
             file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
         except:
             file = open("playerData/"+self.userName+"Data.txt","w")
-
-        levelName = self.level.name                                          #gets data from the game
-        lives = str(self.player.lives)
-        catnip = str(self.player.catnip_level)
-
-        file.write(f"{levelName},{lives},{catnip}")                          #writing text to file
+        file.write(f"{levelname},{str(lives)},{str(catnip)}")                          #writing text to file
         file.close()
-
-        return [levelName,int(lives),int(catnip)]                            #returning values
+        return [levelname,lives,catnip]                            #returning values
 
     # Gets player data from file
     def getPlayerData(self):
@@ -690,7 +646,7 @@ class Game:
             data[1] = int(data[1])                                           #converting values to int
             data[2] = int(data[2])
             return data                                                      #returning the data
-        except IOError:                                                      #error if data is no found
+        except IOError:                                                      #error if data is  found
             print("No playerdata found")
             return None
 
@@ -702,9 +658,9 @@ class Game:
         #HUD used for endgame level 
     def endGameHUD(self):
         endFont = pg.font.Font("resources/action-jackson.regular.ttf", 40)   #loading custom font
-        self.endText = endFont.render("Congratulations", True, (255, 0 ,0))
+        self.endText = endFont.render("Congratulations", True, (0, 255 ,0))
         endFont = pg.font.Font("resources/action-jackson.regular.ttf", 30)
-        self.endText2 = endFont.render("You have finished the game", True, (255, 0 ,0))
+        self.endText2 = endFont.render("You have finished the game", True, (0, 255 ,0))
 
         #displaying text on screen for pause screen
     def displayPauseScreen(self):
@@ -726,6 +682,8 @@ class Game:
 
 # Game Loop
 # create objects and dicts
+
+''' remove these '''
 level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
@@ -738,8 +696,6 @@ pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
-#g.new()                                                                         # Creates a new running process, if broken without stopping the game from running it will restart
 g.mainMenu()
-#g.run()
 pg.quit()                                                                       # Exits the pygame program
 sys.exit()                                                                      # Makes sure the process is terminated (Linux issue mostly)

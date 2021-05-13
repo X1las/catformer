@@ -19,19 +19,6 @@ import math
 # Variables
 vec = Vec
 
-# Functions
-def r(number):
-    rounded_num = number
-    rounded_num = abs(rounded_num)
-    rounded_num = math.ceil(rounded_num)
-    if number < 0:
-        rounded_num *= -1
-    return rounded_num
-
-
-
-
-
 # Tester SubClass - Inherits from CustomSprite
 class Tester(CustomSprite):
     def __init__(self, game,  pos):
@@ -73,7 +60,6 @@ class LevelGoal(CustomSprite):
 
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
-        self.darkener = pg.Rect(0,0,WIDTH, HEIGHT)
 
     def update(self):
         self.endGoal(self.game.player)
@@ -88,7 +74,7 @@ class LevelGoal(CustomSprite):
         level+=1
         print(level)
         self.game.level.name = f"level{level}"
-        self.game.updateData()
+        self.game.saveData(levelname = self.game.level.name, lives = self.game.player.lives, catnip = self.game.player.catnip_level)
         self.game.new()
 
     def endGoal(self, player):
@@ -119,9 +105,6 @@ class Platform(CustomSprite):
         self.typed = "platform"    
         self.solid = True
         self.x = x; self.y = y # change to initX?
-
-        ''' just for testing?'''
-        self.isPlatform = True
 
         ''' really not sure'''
 
@@ -220,8 +203,8 @@ class Platform(CustomSprite):
 
     def pygamecolls(self, group, ignoredSol = None):
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.vel.x)
-        self.rect.y += r(self.vel.y)
+        self.rect.x +=self.r(self.vel.x)
+        self.rect.y +=self.r(self.vel.y)
         collideds = pg.sprite.spritecollide(self, group, False)
 
         if collideds:
@@ -276,7 +259,10 @@ class Box(CustomSprite):
         self.originalsolidstrength = self.solidstrength
         self.relativePosition = self.pos.copy() # go to init() ?
 
+
         ''' in use'''
+        #self.new_vel = Vec(), self.new_acc = Vec() 
+        self.has_collided = False
         self.beingHeld = False
         self.interacter = None
         self.justreleased = False
@@ -292,7 +278,7 @@ class Box(CustomSprite):
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         # create surface with correct size
-        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        #self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # load image from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.img = sheet.image_at((0,34,52,41),(0,255,0))
@@ -310,19 +296,17 @@ class Box(CustomSprite):
 
     def applyPhysics(self,Intersecters, ignoreSol = None):
         
-        if self.on_solid(self.game.group_solid):
-            self.inAir = False
-        else:
-            self.inAir = True
+        """#if self.on_solid(self.game.group_solid):
+         #   self.inAir = False
+        #else:
+         #   self.inAir = True
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
         if abs(self.vel.x + self.addedVel.x) < 0.1:
-            self.vel.x = self.addedVel.x
+            self.vel.x = self.addedVel.x"""
 
     def update(self):
-        if not self.inAir:
-            self.pickupStarted = False
         self.savedpos = self.pos.copy()
 
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -429,7 +413,6 @@ class Mug(CustomSprite):
         self.gravity = PLAYER_GRAV
         self.ignoreSol = plat
         self.relativePosition = self.pos.copy()
-        self.isVase = True
         self.fell_fast_enough = False
         self.init()
 
@@ -491,7 +474,6 @@ class Mug(CustomSprite):
         
         #self.vel = self.addedVel
         if self.fall == True:
-            self.inAir = True
             self.applyGrav()
         #self.pos = self.pos.rounded()
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -531,15 +513,13 @@ class Mug(CustomSprite):
     # When it thouches a platform or other solid
     def touchplat(self, group):
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.y += r(self.vel.y + 4) 
+        self.rect.y +=self.r(self.vel.y + 4) 
         collideds = self.collisionMultipleGroups(group, self.game.group_enemies)
         if collideds:
             for collided in collideds:
                 if collided != self and collided != self.ignoreSol:
                     if self.fell_fast_enough and not self.broken:
                         self.breaks()
-
-
 
 class Activator(CustomSprite):
 
@@ -658,7 +638,7 @@ class Lever(Activator):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create surface with correct size
-        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        #self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from spritesheet
         left  = pg.Rect( 0,87,18,13)
         right = pg.Rect(19,87,18,13)
@@ -714,7 +694,7 @@ class Button(Activator):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create surface with correct size
-        self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
+        #self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from spritesheet
         pressed   = pg.Rect( 0,81,18,5)
         unpressed = pg.Rect(18,76,18,10)
@@ -751,9 +731,6 @@ class PickUp(CustomSprite):
     def __init__(self,x,y, type_,  width = 16, height = 16, name = "pickup"): 
         self.width = width; self.height = height
         self.type = type_
-        
-        #self.pickup = True
-        
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
 
@@ -1270,8 +1247,8 @@ class AiEnemy(Hostile):
         inflation = 0
         self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r((self.vel.x-self.addedVel.x)*1.5)
-        self.rect.y += r(self.vel.y*1.5)
+        self.rect.x +=self.r((self.vel.x-self.addedVel.x)*1.5)
+        self.rect.y +=self.r(self.vel.y*1.5)
         collideds = pg.sprite.spritecollide(self, group, False)
 
         # lol the if if i f if if if if if if if if if if if if if fif if if if if

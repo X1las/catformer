@@ -5,62 +5,60 @@ from settings import *
 import math
 import time
 from threading import Timer
-#import spritesheet as ss
 
+# Variables
 vec = Vec
-
-def r(number):
-    rounded_num = number
-    rounded_num = abs(rounded_num)
-    rounded_num = math.ceil(rounded_num)
-    if number < 0:
-        rounded_num *= -1
-    return rounded_num
 
 # Classes
 class CustomSprite(pg.sprite.Sprite):
-    #attributes:
-    pos    = vec(); vel  = vec(); acc = vec()
-    change_pos = None
-    change_vel = None
-    adds_pos = []
-    solid     = False
-    moveable  = False
-    breakable = False
-    pickup = False
-    inAir = True
-    collided_right_side = False; collided_left_side = False; collided_bottom = False; collided_top = False
-    relativePosition = vec()
-    on_platform = False 
-    gravity = GRAVITY
-    has_collided = False
-    new_vel = vec(0,0)
-    new_acc = vec(0,0)
+    
 
-    friction = FRICTION
-    isPlayer = False
-    can_fall_and_move = False
-    rayPos = vec()
-    isVase = False
-    ignoreSol = None
-    solidstrength = 0
+
+
+    # Class Variables:
+
+
+    # Attributes:
+        
+    ''' probably not needed'''
+
+    ''' just for testing?'''
+
+    ''' really not sure'''
+
+    ''' pretty sure is needed'''
+
+    ''' should be revisited'''
+    count               = 5
     originalsolidstrength = 0
-    massHOR = 0
-    massVER = 0
-    ori_massHOR = massHOR
-    ori_massVER = massVER
+    solidstrength       = 0
+    massHOR             = 0
+    massVER             = 0
+    ori_massHOR         = massHOR
+    ori_massVER         = massVER
 
-    overwritevel = vec()
-    overwrite = False
-    update_order = 10
-    name = ""
-    count = 5
-    isEnemy = False
-    addedVel = Vec(0,0)
-    pickupStarted = False
-    isPlatform = False
-    stoppedHOR = False
-    stoppedVER = False
+    ''' in use'''
+    stoppedHOR      = False
+    stoppedVER      = False
+    isEnemy         = False
+    gravity         = GRAVITY
+    friction        = FRICTION
+    relativePosition = vec()
+    addedVel        = Vec()
+    update_order        = 10
+    inAir           = True
+    collided_right_side = False; collided_left_side = False; collided_bottom = False; collided_top = False
+    pos    = vec(); vel  = vec(); acc = vec()
+
+    # Methods
+
+    def r(self, number):
+        rounded_num = number
+        rounded_num = abs(rounded_num)
+        rounded_num = math.ceil(rounded_num)
+        if number < 0:
+            rounded_num *= -1
+        return rounded_num
 
     def resetMass(self):
         self.massHOR = self.ori_massHOR
@@ -74,14 +72,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.new_vel = self.vel.copy()
 
     def updateRect(self):
-        if self.isPlayer:
-            roundedvec = self.relativePosition.rounded()
-            
-        else:
-            roundedvec = self.relativePosition.rounded()
-        self.rect.midbottom = roundedvec.asTuple()
-        self.acc = vec(0,0)
-        
+        self.rect.midbottom = self.relativePosition.rounded().asTuple()
 
     def resetRects(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
@@ -93,7 +84,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.count -= 1
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
-    
+        self.acc = vec(0,0)
         
     def top_y(self):
         return self.pos.y - self.height
@@ -138,9 +129,6 @@ class CustomSprite(pg.sprite.Sprite):
             self.activated = False
             self.deactivated = True
             return None
-
-        
-   
 
     ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
     def collisionSide_Conditional(self, collided):
@@ -198,8 +186,8 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pygamecoll(self, group = None, ignoredSol = []):
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x += r(self.relativeVel().x*1.5)
-        self.rect.y += r(self.vel.y) 
+        self.rect.x += self.r(self.relativeVel().x*1.5)
+        self.rect.y += self.r(self.vel.y) 
         group = self.game.group_solid
         collideds = pg.sprite.spritecollide(self, group, False)
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -265,9 +253,6 @@ class CustomSprite(pg.sprite.Sprite):
         else: 
             self.stoppedHOR = False
 
-                    
-        
-
     def determineSide(self, collided):
         leftcoll = abs(self.right_x() - collided.left_x())
         rightcoll = abs(collided.right_x() - self.left_x() )
@@ -284,38 +269,32 @@ class CustomSprite(pg.sprite.Sprite):
         if mins == botcoll:
             return "bot"
 
-    def on_solid(self, group, ignoredSol = None):
+    def on_solid(self, group):
         self.rect.bottom += 2
         collideds = pg.sprite.spritecollide(self, group, False)
-        self.on_platform = False
         result = None
         for collided in collideds:
-            if collided != self.ignoreSol and collided != self:
+            if collided != self:
                 
                 if self.determineSide(collided) == "top":
-                    self.on_platform = True
                     result = collided
         self.rect.bottom -= 2
         return result
-        
 
-    def applyPhysics(self,Intersecters = None, ignoreSol = None):
         
-        if self.on_solid(self.game.group_solid, ignoredSol = ignoreSol):
+    def applyPhysics(self,Intersecters = None):
+        
+        if self.on_solid(self.game.group_solid):
             self.inAir = False
+            self.gravity = 0
         else:
             self.inAir = True
-
-        if self.inAir:
             self.gravity = GRAVITY
-        else:
-            self.gravity = 0
-            tempVel = self.vel.copy()
         
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if self.isPlayer and abs(self.vel.x + self.addedVel.x) < 0.01:
+        if abs(self.vel.x + self.addedVel.x) < 0.1:
             self.vel.x = self.addedVel.x
     
     def updatePos(self):

@@ -8,6 +8,15 @@ vec = Vec
 
 class SpriteGroup(pg.sprite.LayeredUpdates):
 
+    def resetRects(self):
+        for i in self:
+            i.resetRects()
+
+    def updateRects(self):
+        for i in self:
+            i.updateRect()
+
+
     def resetSprites(self):
         for i in self:
             i.resetSprite()
