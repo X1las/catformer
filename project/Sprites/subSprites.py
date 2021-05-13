@@ -1036,6 +1036,16 @@ class PatrollingEnemy(Hostile):
                     """
 
     # DEL?
+    def posCorrection(self):
+        #self.collidingWithWall()
+        pass
+
+
+    # Will make the enemy stand still if inbetween solids (instead of vibrating)
+    
+
+        
+    # DEL?
     def collidingWithWall(self):
         #self.pygamecolls(self.game.group_solid)
 

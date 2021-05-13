@@ -21,7 +21,7 @@ import pygame as pg
 import sys
 
 from settings import *
-from subSprites import *
+from Sprites import *
 
 from Player import *
 from Level import Level

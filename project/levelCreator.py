@@ -1,7 +1,7 @@
 # importing modules
 from Vector import Vec
 import pickle
-from subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water, PatrollingEnemy, AiEnemy, LevelGoal
+from Sprites.subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water, PatrollingEnemy, AiEnemy, LevelGoal
 
 ''' template '''
 def createLevel():
