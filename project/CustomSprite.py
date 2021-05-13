@@ -99,7 +99,7 @@ class CustomSprite(pg.sprite.Sprite):
     
     def resetMass(self):
         self.massHOR = self.ori_massHOR
-        #self.massVER = self.ori_massVER
+        self.massVER = self.ori_massVER
    
     def resetSprite(self):
         self.resetMass()
@@ -119,7 +119,7 @@ class CustomSprite(pg.sprite.Sprite):
 
     def resetRects(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
-        
+
     def determineSide(self, collided):
         leftcoll  = abs(self.right_x() - collided.left_x())
         rightcoll = abs(collided.right_x() - self.left_x() )
@@ -163,14 +163,15 @@ class CustomSprite(pg.sprite.Sprite):
     # CLEANED
     def collisionEffect(self):
         inflation = 2
+        self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.y -= 2
+        #self.rect.y -= 1
         collided_objects = None
         if not self.isEnemy:
             collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
         if collided_objects:
             for collided in collided_objects:
-                if collided != self and self.massHOR < collided.massHOR or self.massVER < collided.massVER:
+                if collided != self: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if coll_side == "top":
                         collided.addedVel.x = self.vel.x + self.addedVel.x
@@ -246,6 +247,6 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc.y += self.gravity                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x + self.addedVel.x) < 0.1:
+        if abs(self.vel.x + self.addedVel.x) < 0.01:
             self.vel.x = self.addedVel.x
  

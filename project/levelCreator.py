@@ -1,7 +1,16 @@
 # importing modules
 from Vector import Vec
 import pickle
-from Sprites.subSprites import Box, Button, Lever, PickUp, Platform, Mug, Water, PatrollingEnemy, AiEnemy, LevelGoal
+
+from Sprites.Platform import Platform
+from Sprites.Box import Box
+from Sprites.activator import Lever, Button
+from Sprites.IntelligentEnemy import IntelligentEnemy
+from Sprites.PatrollingEnemy import PatrollingEnemy
+from Sprites.LevelGoal import LevelGoal
+from Sprites.Pickup import PickUp
+from Sprites.Water import Water
+from Sprites.Mug import Mug
 
 ''' template '''
 def createLevel():
@@ -97,7 +106,7 @@ def createLevel1():
 
     ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 ,'p_floor')
     floor     = Platform( 1000, 600 , 3000 , 50, floorplat = True  )
-    startplat = Platform( 300 , 500 ,  120 , 30 , 'startplat')
+    startplat = Platform( 300 , 400 ,  120 , 30 , 'startplat')
     p_1       = Platform( 420 , 350 ,  100 , 30, "p_1")
     p_2       = Platform( 540 , 270 ,  65 , 30 , 'p_2')
     mugplat   = Platform( 660 , 270 ,  65 , 30 , 'mugplat', vel = Vec(1,0), maxDist = 50)
@@ -133,13 +142,13 @@ def createLevel1():
     # catnip
     catnip1 = PickUp(400, 370, 'catnip')   
     # mugs
-    mug1 = Mug(mugplat , 50 , spawn = catnip1)
+    mug1 = Mug(mugplat , 50 , spawnItem = catnip1)
 
     # create dictionary
     level1 = {
         'name': 'level1',
         'settings': {
-            'spawn': Vec(320, 350),
+            'spawn': Vec(250, 350),
             'length': 5000,
             'track': ''
         },
@@ -236,13 +245,13 @@ def createLevel2():
     health1 = PickUp(1300, 540, 'health')                                          #
     catnip1 = PickUp(400, 370, 'catnip')   
     # mugs
-    mug1 = Mug(longplat , 170, spawn = catnip1)
-    mug2 = Mug(jumper2 , 40, spawn = health1)
+    mug1 = Mug(longplat , 170, spawnItem = catnip1)
+    mug2 = Mug(jumper2 , 40, spawnItem = health1)
     # goals
     goal = LevelGoal(goalplat, 60)
     # enemies
     pat1 = PatrollingEnemy(enemyplat, 70, maxDist = 100)
-    detect1 = AiEnemy(floor, 1400)
+    detect1 = IntelligentEnemy(floor, 1400)
     # water
     water1 = Water(waterdiv1.right_x() + water1width/2, bottom , water1width, 36 )
     water2 = Water(underwater.mid().x  + rightwat.width/2 - 13, underwater.top_y() , underwater.width - rightwat.width/2, plat2.height )
@@ -365,14 +374,14 @@ def createLevel3():
 
 
     ''' MUGS '''
-    mug1 = Mug(btnmugplat , 50, spawn = mug1spawn)
-    mug2 = Mug(mugplat , 50, spawn = mug2spawn)
+    mug1 = Mug(btnmugplat , 50, spawnItem = mug1spawn)
+    mug2 = Mug(mugplat , 50, spawnItem = mug2spawn)
 
     '''ENEMIES'''
 
     pat1 = PatrollingEnemy(floor, 1400 - left, 300)
-    detect1 = AiEnemy(floor, 1300)
-    detect2 = AiEnemy(floor, 1600)
+    detect1 = IntelligentEnemy(floor, 1300)
+    detect2 = IntelligentEnemy(floor, 1600)
 
 
     '''GOAL'''
@@ -411,7 +420,7 @@ def createLevel4():
     floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
     WINPLAT = Platform( 400, 500, 400, 30)
     win = PickUp(0,0,"health")
-    mug1 = Mug(WINPLAT , 50 , spawn = win, width = 100, height = 100)
+    mug1 = Mug(WINPLAT , 50 , spawnItem = win, width = 100, height = 100)
 
     levelName = {
         'name': 'level4',
