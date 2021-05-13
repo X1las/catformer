@@ -477,6 +477,7 @@ class Mug(CustomSprite):
         
         if self.game.level.name == 'level4':
             self.image = image_big
+            self.gravity = GRAVITY/2
         else:
             self.image = self.image_whole
         

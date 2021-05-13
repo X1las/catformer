@@ -70,7 +70,7 @@ class Player(CustomSprite):
 
     def startGame(self, game):    
         self.game       = game
-        self.groups = game.all_sprites, game.group_pressureActivator
+        self.groups = game.all_sprites, game.group_pressureActivator, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         
         # create surface with correct size
