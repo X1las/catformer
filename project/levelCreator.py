@@ -380,7 +380,7 @@ def createLevel3():
 
 
     levelName = {
-        'name': 'level4',
+        'name': 'level3',
         'settings': {
             'spawn': Vec(600 - left,100),
             'length': 5000,
