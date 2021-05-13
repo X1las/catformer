@@ -54,8 +54,6 @@ class Player(CustomSprite):
         self.prevrelpos = vec()
         self.prevrelvel = vec()
         self.init()
-        self.ignoredSolids = []
-
         self.refreshedInt_lever     = False                                                       
         self.refreshedInt_box       = False                                                  
         self.interactive_field      = None                                       
@@ -148,11 +146,11 @@ class Player(CustomSprite):
             self.canjump = False
         self.move()
         self.determineGravity()
-        self.applyPhysics(self.game.group_solid) 
+        self.applyPhysics() 
         self.checkDamage()
         self.touchPickUp()
         self.vel += self.addedVel
-        self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
+        self.solidCollisions(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def updatePos(self):
@@ -168,7 +166,7 @@ class Player(CustomSprite):
             self.gravity = GRAVITY
 
     def posCorrection(self):
-        self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)
+        self.solidCollisions(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 

@@ -18,24 +18,6 @@ import math
 
 # Variables
 vec = Vec
-
-# Tester SubClass - Inherits from CustomSprite
-class Tester(CustomSprite):
-    def __init__(self, game,  pos):
-
-        # anchor depends on which way player faces
-        pg.sprite.Sprite.__init__(self, game.all_sprites)  
-        self.player = player
-        width = self.player.width/2 + 50
-        height = self.player.height       
-        self.facing = facing
-        self.image = pg.Surface((width,height)); 
-        self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
-        self.image.fill((255,255,255))
-        self.relativePosition = self.pos.copy()
-        self.midbottom = pos
-
-
 # ------- OBJECTS ------- #
 
 
@@ -44,9 +26,7 @@ class LevelGoal(CustomSprite):
     def __init__(self,plat, placement, width = 100, height = 20, name = "Goal"): 
         self.pos = Vec(plat.left_x() + placement, plat.top_y()) 
         self.width = width; self.height = height
-        #self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
-        self.triggered = False
         self.sleepcount = 0
 
     def startGame(self, game):
@@ -72,7 +52,6 @@ class LevelGoal(CustomSprite):
         current = self.game.level.name
         level = int(current[5:6])
         level+=1
-        print(level)
         self.game.level.name = f"level{level}"
         self.game.saveData(levelname = self.game.level.name, lives = self.game.player.lives, catnip = self.game.player.catnip_level)
         self.game.new()
@@ -295,7 +274,7 @@ class Box(CustomSprite):
     def update(self):
         self.savedpos = self.pos.copy()
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.applyPhysics(self.game.group_solid)
+        self.applyPhysics()
         self.vel += self.addedVel 
         if self.has_collided:
             """ DO NOT DELETE """
@@ -315,7 +294,7 @@ class Box(CustomSprite):
                 self.justreleased = False
         if self.beingHeld == False:
             self.gravity = GRAVITY
-        self.pygamecoll(self.game.group_solid)
+        self.solidCollisions(self.game.group_solid)
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
@@ -357,7 +336,7 @@ class Box(CustomSprite):
 
     def posCorrection(self):
         # I am not sure this is needed
-        self.pygamecoll(self.game.group_solid)
+        self.solidCollisions(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.vel.x = self.addedVel.x
         
@@ -479,7 +458,7 @@ class Mug(CustomSprite):
 
     def updatePos(self):
         if self.broken:
-        #  self.pygamecoll(self.game.group_solid)
+        #  self.solidCollisions(self.game.group_solid)
             standingon = self.on_solid(self.game.group_platforms)
             if standingon:
                 self.pos.y = standingon.top_y()
@@ -489,7 +468,13 @@ class Mug(CustomSprite):
         super().updatePos()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
-
+    def collisionMultipleGroups(self,*groups):
+        collidedObjects = []
+        for group in groups:
+            collisionsInGroup = pg.sprite.spritecollide(self, group, False)
+            for collision in collisionsInGroup:
+                collidedObjects.append(collision)
+        return collidedObjects
 
     def posCorrection(self):
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
