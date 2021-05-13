@@ -192,10 +192,10 @@ def createLevel2():
     
     
     #height 2 part 2
-    jumper1    = Platform(rightwat.left_x() - 100, rightwat.bot_y(), 50, 30)
-    jumper2    = Platform(jumper1.left_x() - 100, rightwat.bot_y(), 50, 30)
-    jumper3    = Platform(jumper2.left_x() - 100, rightwat.bot_y(), 50, 30)
-    jumper4    = Platform(jumper3.left_x() - 100, rightwat.bot_y(), 100, 30)
+    jumper1    = Platform(rightwat.left_x() - 100, rightwat.bot_y() + 13, 50, 30)
+    jumper2    = Platform(jumper1.left_x() - 100, jumper1.bot_y(), 50, 30)
+    jumper3    = Platform(jumper2.left_x() - 100, jumper1.bot_y(), 50, 30)
+    jumper4    = Platform(jumper3.left_x() - 100, jumper1.bot_y(), 100, 30)
     smallleft  = Platform(jumper4.left_x() + 15, jumper4.top_y() - 55, 30, 30)
     
     #height 3
@@ -203,7 +203,7 @@ def createLevel2():
     rightmov  = Platform(plat4.right_x() + 200, plat4.bot_y(), 80, 30)
     moving2   = Platform(rightmov.left_x() - 30, plat4.bot_y(), 60 , 30, leftMaxDist = 200, rightMaxDist = 0)
     longplat = Platform(rightmov.right_x() + 300, rightmov.bot_y() - 30, 500, 30)
-    enemyplat = Platform(longplat.right_x() + 150, longplat.bot_y() + 30, 200, 30)
+    enemyplat = Platform(longplat.right_x() + 150, longplat.bot_y(), 200, 30)
     enemsafe  = Platform(enemyplat.mid().x, enemyplat.top_y(), 20, 40)
     #plat5  = Platform(enemyplat.right_x() + 150, enemyplat.bot_y(), 200, 30)
     goalplat  = Platform(enemyplat.right_x() + 130, enemyplat.bot_y(), 150, 30)

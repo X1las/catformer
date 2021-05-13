@@ -42,8 +42,6 @@ class Player(CustomSprite):
     jumpcounter = 0
     liftedBefore = False
 
-    #refreshCount = 0
-
     def __init__(self, spawn, name="player"):
         
         self._layer     = 2
@@ -155,18 +153,12 @@ class Player(CustomSprite):
         self.applyPhysics(self.game.group_solid) 
         self.checkDamage()
         self.touchPickUp()
-        #print(f'Before player vel: {self.vel.x}')
-        #print(f'After player vel: {self.vel.x}')
-        # there for a picked up box to register that the player stands still
         self.vel += self.addedVel
         self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        #self.pygamecoll(self.game.group_solid)
 
     def updatePos(self):
-        #print(f'addedVel player: {self.addedVel} ')
         self.pos += self.vel +  self.acc * 0.5
-        #self.inbetweenSolids()
         self.collides_left = False; self.collides_right = False
 
 
