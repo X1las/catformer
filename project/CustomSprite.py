@@ -29,7 +29,6 @@ class CustomSprite(pg.sprite.Sprite):
     ''' pretty sure is needed'''
 
     ''' should be revisited'''
-    count               = 5
     originalsolidstrength = 0
     solidstrength       = 0
     massHOR             = 0
@@ -47,7 +46,6 @@ class CustomSprite(pg.sprite.Sprite):
     addedVel        = Vec()
     update_order        = 10
     inAir           = True
-    collided_right_side = False; collided_left_side = False; collided_bottom = False; collided_top = False
     pos    = vec(); vel  = vec(); acc = vec()
 
     # Methods
@@ -62,7 +60,7 @@ class CustomSprite(pg.sprite.Sprite):
 
     def resetMass(self):
         self.massHOR = self.ori_massHOR
-        self.massVER = self.ori_massVER
+        #self.massVER = self.ori_massVER
 
     def init(self):
         self.massHOR = self.solidstrength
@@ -78,10 +76,8 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def resetSprite(self):
-        if self.count <= 0:
-            self.resetMass()
-            self.solidstrength = self.originalsolidstrength
-        self.count -= 1
+        self.resetMass()
+        self.solidstrength = self.originalsolidstrength
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
         self.acc = vec(0,0)
@@ -113,22 +109,8 @@ class CustomSprite(pg.sprite.Sprite):
         return vec(self.left_x(), self.top_y()).realRound()
     def topright(self):
         return vec(self.right_x(), self.top_y()).realRound()
-
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
-
-    def buttonPress(self):
-        collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
-        if collided_list:
-            for collided in collided_list:
-                self.activate()
-                self.prevActivated = True
-                return self
-        else:
-            self.deactivate()
-            self.activated = False
-            self.deactivated = True
-            return None
 
     ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
     def collisionSide_Conditional(self, collided):
@@ -208,9 +190,8 @@ class CustomSprite(pg.sprite.Sprite):
                             #self.set_bot(collided.top_y())
                             self.vel.y = self.addedVel.y
                             self.acc.y = 0
-                            if group.has(self):
-                                self.count = 2
-                                self.massVER = collided.massVER - 1
+                            #if group.has(self):
+                             #   self.massVER = collided.massVER - 1
 
                         if coll_side == "bot":
                             #newpos =  collided.bot_y() + self.height 
@@ -218,9 +199,8 @@ class CustomSprite(pg.sprite.Sprite):
                             #self.pos.y = newpos
                             self.vel.y = self.addedVel.y
                             self.acc.y = 0
-                            if group.has(self):
-                                self.count = 2
-                                self.massVER = collided.massVER - 1
+                            #if group.has(self):
+                             #   self.massVER = collided.massVER - 1
                     if self.massHOR <= collided.massHOR:
                         if coll_side == "left":
                             #newpos = collided.left_x() - self.width/2 #Left side of object being collided with
@@ -231,7 +211,6 @@ class CustomSprite(pg.sprite.Sprite):
                             wasstoppedHOR = True
                             if self.massHOR < collided.massHOR:
                                 if group.has(self):
-                                    self.count = 2
                                     self.massHOR = collided.massHOR - 1
 
                         if coll_side == "right":
@@ -279,18 +258,10 @@ class CustomSprite(pg.sprite.Sprite):
                 if self.determineSide(collided) == "top":
                     result = collided
         self.rect.bottom -= 2
+
         return result
 
-        
     def applyPhysics(self,Intersecters = None):
-        
-        if self.on_solid(self.game.group_solid):
-            self.inAir = False
-            self.gravity = 0
-        else:
-            self.inAir = True
-            self.gravity = GRAVITY
-        
         self.acc   += vec(0, self.gravity)                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction
         self.vel   += self.acc                              # equations of motion
@@ -300,8 +271,6 @@ class CustomSprite(pg.sprite.Sprite):
     def updatePos(self):
         self.pos +=  self.vel +  self.acc * 0.5
         self.acc = vec(0,0)    # caused problems? 
-
-
 
     def collisionMultipleGroups(self,*groups):
         collidedObjects = []

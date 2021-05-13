@@ -147,6 +147,7 @@ class Player(CustomSprite):
         else:
             self.canjump = False
         self.move()
+        self.determineGravity()
         self.applyPhysics(self.game.group_solid) 
         self.checkDamage()
         self.touchPickUp()
@@ -158,7 +159,13 @@ class Player(CustomSprite):
         self.pos += self.vel +  self.acc * 0.5
         self.collides_left = False; self.collides_right = False
 
-
+    def determineGravity(self):
+        if self.on_solid(self.game.group_solid):
+            self.inAir = False
+            self.gravity = 0
+        else:
+            self.inAir = True
+            self.gravity = GRAVITY
 
     def posCorrection(self):
         self.pygamecoll(self.game.group_solid, ignoredSol= self.ignoredSolids)

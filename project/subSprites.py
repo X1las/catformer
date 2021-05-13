@@ -215,14 +215,13 @@ class Platform(CustomSprite):
                     correctedPos = coll['correctedPos']
                     #coll_side = self.determineSide(collided)
                     if coll_side == "top":
-                            self.vel.y = self.originalVel.y * (-1)
+                        self.vel.y = self.originalVel.y * (-1)
                     if coll_side == "left": # left side of collidedd obj
                         if collided.vel.x == 0: # If collided object is not moving, just turn around
                             self.vel.x = self.originalVel.x * (-1)
                     if coll_side == "right":
                         if collided.vel.x == 0:
                             self.vel.x = self.originalVel.x * (-1)
-                        #self.vel.x *= -1
                     if coll_side == "bot": # left side of collidedd obj
                         self.vel.y = self.originalVel.y * (-1)
                     self.pos = correctedPos
@@ -293,22 +292,8 @@ class Box(CustomSprite):
     def respawn(self):
         self = self.__init__(self.initX, self.initY, self.width, self.height, self.name)
 
-
-    def applyPhysics(self,Intersecters, ignoreSol = None):
-        
-        """#if self.on_solid(self.game.group_solid):
-         #   self.inAir = False
-        #else:
-         #   self.inAir = True
-        self.acc   += vec(0, self.gravity)                  # Gravity
-        self.acc.x += self.vel.x * self.friction            # Friction
-        self.vel   += self.acc                              # equations of motion
-        if abs(self.vel.x + self.addedVel.x) < 0.1:
-            self.vel.x = self.addedVel.x"""
-
     def update(self):
         self.savedpos = self.pos.copy()
-
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.applyPhysics(self.game.group_solid)
         self.vel += self.addedVel 
@@ -352,7 +337,6 @@ class Box(CustomSprite):
             self.pos.y = interacter.player.pos.y - 3
             if not self.stoppedHOR:
                 self.interacter.player.massHOR = self.ori_massHOR + 1
-                self.interacter.player.count = 1
             self.justreleased = True
         else: 
             self.beingHeld = False
@@ -725,6 +709,21 @@ class Button(Activator):
         super().update()
         self.activated = False # Not sure if needed
 
+    def buttonPress(self):
+        collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
+        if collided_list:
+            for collided in collided_list:
+                self.activate()
+                self.prevActivated = True
+                return self
+        else:
+            self.deactivate()
+            self.activated = False
+            self.deactivated = True
+            return None
+
+
+
 # Pickup SubClass - Inherits from CustomSprite
 class PickUp(CustomSprite):
 
@@ -848,7 +847,6 @@ class PatrollingEnemy(Hostile):
 
         ''' probably not needed'''
         self.dontmove = False
-        self.count = 2
         #self.x = x
         self.collides_right = False
         self.collides_left = False
@@ -1089,7 +1087,6 @@ class AiEnemy(Hostile):
         #self.dontmove = False
 
         ''' probably not needed'''
-        self.count = 6
 
         '''just for testing?'''
         self.isEnemy = True
@@ -1268,8 +1265,8 @@ class AiEnemy(Hostile):
                         if coll_side == "right":
                             self.vel.x = self.addedVel.x
                                 
-                            self.count = 1
                         self.pos = correctedPos
+                    """    
                     if self.ori_massVER < collided.massVER:
                         coll_side = self.determineSide(collided)
                             
@@ -1279,7 +1276,7 @@ class AiEnemy(Hostile):
                             else: 
                                 self.pos.x = collided.right_x() + self.width/2
                             self.massVER = collided.massVER - 1
-
+                    """
 
 
 
