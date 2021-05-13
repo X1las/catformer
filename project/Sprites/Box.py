@@ -100,7 +100,7 @@ class Box(CustomSprite):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         self.pos += self.vel +  self.acc * 0.5
         self.has_collided = False
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        #self.rect.midbottom = self.pos.realRound().asTuple()
 
 
 

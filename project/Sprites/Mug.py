@@ -11,14 +11,12 @@ from Sprites.Platform import Platform
 class Mug(CustomSprite):
     def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None):
         self.spawnPlat = plat
-        #self.pos = vec()
         self.spawnItem = spawnItem
         self.width  = width; self.height = height
         self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()).rounded() 
         
         self.placement = placement
         self.name = name
-        #self.breakable = True
         
         self.broken = False
         self.update_order = 11
@@ -27,18 +25,6 @@ class Mug(CustomSprite):
         self.relativePosition = self.pos.copy()
         self.fell_fast_enough = False
         self.init()
-
-        ''' probably not needed'''
-
-        ''' just for testing?'''
-
-        ''' really not sure'''
-
-        ''' pretty sure is needed'''
-
-        ''' should be revisited'''
-
-        ''' in use'''
 
 
 
@@ -100,7 +86,6 @@ class Mug(CustomSprite):
 
     def updatePos(self):
         if self.broken:
-        #  self.solidCollisions(self.game.group_solid)
             standingon = self.on_solid(self.game.group_platforms)
             if standingon:
                 self.pos.y = standingon.top_y()

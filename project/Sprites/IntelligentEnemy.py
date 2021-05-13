@@ -8,40 +8,35 @@ from settings import *
 
 # AI Enemy SubClass 
 class IntelligentEnemy(CustomSprite):
-    def __init__(self,plat, placement, width = 36, height = 28, speed = 1, name = "enemyai"):
-    #def __init__(self, plat, placement, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
-        self.plat = plat
-        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
+    def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 1, name = "enemyai"):
+        self.spawnPlat = spawnPlat
+        self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()) 
         self.placement = placement
         self.speed = speed
-        #self.x = x
         self.width = width;  self.height = height
-        #self.game  = game;   
         self.name = name
-        #self.pos = vec(x,y); 
         self.vel = vec(speed,0); self.acc = vec()
         
-        self.relativePosition = self.pos.copy()
-        #self.dontmove = False
+        #self.relativePosition = self.pos.copy()
 
-        ''' probably not needed'''
 
         '''just for testing?'''
-        self.isEnemy = True
 
 
         ''' pretty sure is needed'''
-        self.target = None # The player
+        #self.target = None # The player
 
 
 
         ''' should be revisited'''
         self.solidstrength = 5
-        self.originalsolidstrength = self.solidstrength
+        #self.originalsolidstrength = self.solidstrength
 
 
     
         """in use"""
+        self.init()
+        self.isEnemy = True
         self.active = True
         self.ori_massVER = 8
         self._layer = 10
@@ -49,7 +44,6 @@ class IntelligentEnemy(CustomSprite):
         self.currentplat = None
 
 
-        self.init()
         #self.stopMoving = False
         #self.facing = None
     

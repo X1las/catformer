@@ -136,9 +136,6 @@ class Game:
         except:
             print("Error loading music!")
 
-        #
-        self.rel_fitToPlayer        = - WIDTH/2 + self.player.pos.x #half screen - pos         
-        self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
         self.run()                                  # Runs the game
 
@@ -257,13 +254,12 @@ class Game:
         
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
-        if self.player.vel.x + self.player.acc.x * 0.5 > 0:
-            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
-        if self.player.vel.x + self.player.acc.x * 0.5 < 0:
-            self.relposx += self.player.vel.x + self.player.acc.x * 0.5
+        relative = self.player.pos.x - WIDTH/2
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
-            sprite.relativePosition.x = sprite.relativePosition.x-self.relposx
+            sprite.relativePosition.x = sprite.pos.x-relative
+            
+
 
     # Respawns the player and resets the camera
     def resetCamera(self):

@@ -6,6 +6,7 @@ from CustomSprite import CustomSprite
 from Vector import Vec as vec
 from settings import *
 from Sprites.Platform import Platform
+from threading import Timer
 
 class Activator(CustomSprite):
 

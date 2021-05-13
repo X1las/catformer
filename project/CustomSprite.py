@@ -95,7 +95,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.massVER = self.solidstrength
         self.ori_massHOR = self.massHOR
         self.ori_massVER = self.massVER
-        self.new_vel = self.vel.copy()
+        self.relativePosition = self.pos.copy()
     
     def resetMass(self):
         self.massHOR = self.ori_massHOR
@@ -103,7 +103,6 @@ class CustomSprite(pg.sprite.Sprite):
    
     def resetSprite(self):
         self.resetMass()
-        self.solidstrength = self.originalsolidstrength
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
         self.acc = vec(0,0)
@@ -125,7 +124,7 @@ class CustomSprite(pg.sprite.Sprite):
         rightcoll = abs(collided.right_x() - self.left_x() )
         topcoll   = abs(self.bot_y() - collided.top_y())
         botcoll   = abs(self.top_y() - collided.bot_y())
-        mins = min(leftcoll, rightcoll, topcoll, botcoll)
+        mins      = min(leftcoll, rightcoll, topcoll, botcoll)
 
         if mins == leftcoll: 
             return "left"
@@ -165,7 +164,7 @@ class CustomSprite(pg.sprite.Sprite):
         inflation = 2
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect = self.rect.inflate(inflation,inflation)
-        #self.rect.y -= 1
+        self.rect.y -= 1
         collided_objects = None
         if not self.isEnemy:
             collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
@@ -195,33 +194,32 @@ class CustomSprite(pg.sprite.Sprite):
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
                     if self.massVER < collided.massVER:
-                        if coll_side == "top":
+                        if coll_side == "top" or coll_side == "bot":
                             self.vel.y = self.addedVel.y
                             self.acc.y = 0
                             #if group.has(self):
                              #   self.massVER = collided.massVER - 1
 
-                        if coll_side == "bot":
-                            self.vel.y = self.addedVel.y
-                            self.acc.y = 0
+                        #if coll_side == "bot":
+                         #   self.vel.y = self.addedVel.y
+                          #  self.acc.y = 0
                             #if group.has(self):
                              #   self.massVER = collided.massVER - 1
                     if self.massHOR <= collided.massHOR:
-                        if coll_side == "left":
+                        if coll_side == "left" or coll_side == "right":
                             self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
                             self.acc.x = 0
                             wasstoppedHOR = True
                             if self.massHOR < collided.massHOR:
                                 if group.has(self):
                                     self.massHOR = collided.massHOR - 1
-                        if coll_side == "right":
-                            self.count = 2
-                            self.vel.x = self.addedVel.x
-                            self.acc.x = 0
-                            wasstoppedHOR = True
-                            if self.massHOR < collided.massHOR:
-                                if group.has(self):
-                                    self.massHOR = collided.massHOR - 1
+                        #if coll_side == "right":
+                         #   self.vel.x = self.addedVel.x
+                          #  self.acc.x = 0
+                           # wasstoppedHOR = True
+                            #if self.massHOR < collided.massHOR:
+                             #   if group.has(self):
+                              #      self.massHOR = collided.massHOR - 1
                     if correctedPos.y > 0:    
                         self.pos = correctedPos
         # This was implemented so the player couldn't push the dog with the box. 
@@ -243,6 +241,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.bottom -= 2
         return result
 
+    # Applies gravity and friction to the velocity of the sprite
     def applyPhysics(self):
         self.acc.y += self.gravity                  # Gravity
         self.acc.x += self.vel.x * self.friction            # Friction

@@ -49,4 +49,6 @@ class LevelGoal(CustomSprite):
             if self.sleepcount > 100:
                 self.nextLevel()
                 self.sleepcount = 0
+        else:
+            self.sleepcount = 0
             

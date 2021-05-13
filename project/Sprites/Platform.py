@@ -91,10 +91,15 @@ class Platform(CustomSprite):
             self.vel.y =  -1* abs(self.originalVel.y)
 
     def update(self):
-        if self.vel.x != 0 or self.vel.y != 0:
-            self.originalsolidstrength = 29.5
-            self.solidstrength = 29.5
-            self.init() # Needs to update massHOR and massVER
+        if self.vel.x != 0:
+            self.massHOR = 29.5
+        elif self.vel.y != 0:
+            self.massVER = 29.5
+
+        #if self.vel.x != 0 or self.vel.y != 0:
+         #   self.originalsolidstrength = 29.5
+          #  self.solidstrength = 29.5
+           # self.init() # Needs to update massHOR and massVER
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
