@@ -24,53 +24,46 @@ from settings import *
 from subSprites import *
 
 from Player import *
-from Level2 import Level
+from Level import Level
 from Vector import Vec
 from SpriteGroup import *
 from levelCreator import *
 import os
 
 
-def r(number):
-    rounded_num = number
-    rounded_num = abs(rounded_num)
-    rounded_num = math.floor(rounded_num)
-    if number < 0:
-        rounded_num *= -1
-    return rounded_num
-
-def re(number):
-    inte = math.floor(number)
-    dec = number - inte
-    if dec*10 >= 5:
-        result = 1
-    else:
-        result = 0
-    return inte + result
-
-
-
 # Game Class
 class Game:
     # Class Variables
+    paused = False
+    click = False
+    userName = ""                                                               # Used for saving and loading level progress based on given name
+    inNameMenu = False                                                          # Boolean used for nameMenu loop
+    inNameLoadMenu = False                                                      # Boolean used for nameLoadMenu loop
+    boundary = 600                                                              # default value for lower player boundary
+    isDamaged = False                                                           # Boolean used for damage HUD after life is lost
+    finished = False                                                            # Boolean used for endGame HUD when final level is reached
+    outOfLives = False                                                          # Boolean used for outOfLives loop
 
     # Initializer
     def __init__(self):
+
+        ''' probably not needed'''
+
+        ''' just for testing?'''
+
+        ''' really not sure'''
+
+        ''' pretty sure is needed'''
+
+        ''' should be revisited'''
+
+        ''' in use'''
         pg.init()                                                               # Initializes the pygame module
         pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
         self.clock = pg.time.Clock()                                            # Creates a pygame clock object
-        self.running = True                                                     # Creates a boolean for running the game
-        self.paused = False
-        self.click = False
-        self.userName = ""
-        self.inNameMenu = False
-        self.inNameLoadMenu = False
-        self.boundary = 600
-        self.isDamaged = False
-        self.finished = False
-        self.outOfLives = False
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
+        self.frames                 = 0                                                         
 
         # Reads the player data from file and adds it to self.data
         self.data = self.getPlayerData()
@@ -86,55 +79,46 @@ class Game:
     # Creates Sprite Groups
     def createSGroups(self):
     
-        #self.all_sprites = pg.sprite.LayeredUpdates()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
-        self.all_sprites = SpriteGroup()                           # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        #self.all_sprites = pg.sprite.LayeredUpdates()                          # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        self.all_sprites = SpriteGroup()                                        # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
-        self.group_platforms          = pg.sprite.Group() #Only applied  to platforms
-        self.group_boxes              = pg.sprite.Group() #Only applied to boxes
-        self.group_interactiveFields  = pg.sprite.Group()       # Only apllies to the interactive field
-        self.group_buttons            = pg.sprite.Group()  # Only applied to button sprite      
-        self.group_levers             = pg.sprite.Group()  # Onlt applied to the lever 
-        self.group_levelGoals         = pg.sprite.Group()   # Only applied to the levelGoal sprite
-        self.group_mugs              = pg.sprite.Group() #Only applied to mugs
-        self.group_solid              = SpriteGroup()          # solid objects (formerly rayIntersecters)
-        self.group_pickups            = pg.sprite.Group()       # All things that can get picked up by player
-        self.group_damager            = pg.sprite.Group()       # All hostiles
+        self.group_platforms          = pg.sprite.Group()                       # Only applied  to platforms
+        self.group_boxes              = pg.sprite.Group()                       # Only applied to boxes
+        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
+        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
+        self.group_levers             = pg.sprite.Group()                       # Only applied to the lever 
+        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
+        self.group_mugs               = pg.sprite.Group()                       # Only applied to mugs
+        self.group_solid              = SpriteGroup()                           # solid objects (formerly rayIntersecters)
+        self.group_pickups            = pg.sprite.Group()                       # All things that can get picked up by player
+        self.group_damager            = pg.sprite.Group()                       # All hostiles
         self.group_enemies            = pg.sprite.Group()
-        self.group_pressureActivator  = pg.sprite.Group()        # Things that can activate a button
-        self.group_passives           = pg.sprite.Group()
-        self.group_movables          = pg.sprite.Group()
+        self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
+        self.group_movables           = pg.sprite.Group()
 
     # Method that creates a new level
     def new(self):
         self.finished = False
-        # takshdkawd
-        self.createSGroups()                #
+        self.createSGroups()                                                    # Creates all the sprite groups
         
         try:
             self.level
-        except:
-            
-            pass
-        else:
             self.data = self.getPlayerData()
+        except:
+            pass
         
         self.level = Level(self)            #                                     
         
-        #
+        # Removes player's save file if all levels are finished
         if self.data:
-            #print(self.level.name)
             self.level.name = self.data[0]
             if self.level.name == "level4":
                 self.finished = True
                 if os.path.exists("playerData/"+self.userName+"Data.txt"):
                     os.remove("playerData/"+self.userName+"Data.txt")
-            print(self.level.name)
-        
-        #self.level.load(self.level.name)
         
         if not self.level.load(self.level.name):
             self.level.load(DEFAULT_LEVEL)
-            print('test')
         
         self.player = Player(self.level.spawn)                         #
         self.player.startGame(self)    
@@ -143,31 +127,15 @@ class Game:
             self.player.lives = self.data[1]
             self.player.catnip_level = self.data[2]    
 
-        #
+        # Probably delete!
         try:
             pg.mixer.music.load(self.level.musicTrack)                
             pg.mixer.music.play(-1)
             pg.mixer.music.set_volume(VOLUME)
         except:
             print("Error loading music!")
-            pass
-        #
-        self.image = pg.Surface((WIDTH,HEIGHT))
-        
-        self.darkener = self.image.get_rect()
 
-        #self.darkener = pg.Rect(0,0,WIDTH, HEIGHT)
-        self.endinglevel = False
-        self.sleepcount = 0
-        self.refreshedInt_lever     = False                                                       
-        self.refreshedInt_box       = False                                                  
-        self.interactive_field      = None                                       
-        self.frames                 = 0                                                         
-        self.refreshCount           = 0                                                        
-        self.refreshCount_prev      = 0                                                   
-        self.relposx                = 0   
-        self.relposp                = 0                                                    
-        self.realposp               = 0       
+        #
         self.rel_fitToPlayer        = - WIDTH/2 + self.player.pos.x #half screen - pos         
         self.relposx = self.rel_fitToPlayer     
         self.paused = False                                  
@@ -244,7 +212,6 @@ class Game:
             if event.type == (pg.QUIT):                                         # Check if the user closes the game window
                 if self.playing:                                                # Sets playing to false if it's running (for safety measures)
                     self.playing = False                                        
-                self.running = False                                            # Sets running to false
                 self.inMenu = False
                 self.inNameMenu = False
                 self.inNameLoadMenu = False
@@ -253,7 +220,6 @@ class Game:
                 if event.key == pg.K_q:                                         # checks if the uses presses the escape key
                     if self.playing:                                            # Does the same as before
                         self.playing = False                                        
-                    self.running = False        
                     self.inNameMenu = False
                     self.inNameLoadMenu = False
 
@@ -273,8 +239,6 @@ class Game:
         
 
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
-        self.group_passives.draw(self.screen)
-        self.darkenScreen()
         self.screen.blit(self.lives_display,  (50, 50))
         
         self.screen.blit(self.points_display,  (400, 50))
@@ -303,44 +267,14 @@ class Game:
         for sprite in self.all_sprites:
             sprite.resetRects()
   
-    def darkenScreen(self):
-
-        if self.endinglevel == True:
-            self.sleepcount += 1
-            if self.sleepcount > 100:
-                self.endinglevel = False
-                self.sleepcount = 0
-            #pg.draw.rect(self.screen, (0,0,0, self.sleepcount), (0,0,WIDTH, HEIGHT))
-            #self.image.set_alpha(self.sleepcount)
-            #self.darkener = self.image.get_rect()
-            #self.screen.blit(self.image, (0,0))
-            #pg.display.flip()
-            #self.screen.set_alpha(self.sleepcount)
-
-            
-
-
 
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
-        #if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
         if self.player.vel.x + self.player.acc.x * 0.5 > 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
-            self.relposp = 0
-        #if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
         if self.player.vel.x + self.player.acc.x * 0.5 < 0:
             self.relposx += self.player.vel.x + self.player.acc.x * 0.5
-            self.relposp = 0
 
-        """
-        if self.player.right_x()>= r(CAMERA_BORDER_R + self.relposx) :                                               # If the player moves to or above the right border of the screen
-            if self.player.vel.x > 0:
-                self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
-        if self.player.left_x()<= r(CAMERA_BORDER_L+self.relposx):
-            if self.player.vel.x < 0:
-                self.relposx += self.player.vel.x+ self.player.acc.x * 0.5
-                self.relposp = 0
-        """
         
    
     # 
@@ -402,7 +336,6 @@ class Game:
                 selectedButton  = pg.Rect(75, 500, 50, 50)
                 if self.activateSelected:                                    #break out of main menu loop if exit is pressed
                     self.inMenu = False
-                    self.running = False
             
             if newGameButton.collidepoint((mx, my)):                         #checking if mouse position is on a button
                 self.selectedState = 0                                       #setting position of currently selected indicator
@@ -420,7 +353,6 @@ class Game:
                 self.selectedState = 3
                 if self.click:                                               #break out of main menu loop if exit is pressed
                     self.inMenu = False
-                    self.running = False
             
             self.activateSelected = False                                    #reset value if enter is pressed
             self.click = False                                               #reset value if mouse1 is pressed
@@ -550,7 +482,6 @@ class Game:
             for event in pg.event.get():                                     #custon menu events to allow typing name
                 if event.type == pg.QUIT:                                   
                     self.inMenu = False
-                    self.running = False
                     self.inTutorial = False  
                     self.inNameMenu = False
                 if event.type == pg.MOUSEBUTTONDOWN:
@@ -638,7 +569,6 @@ class Game:
             for event in pg.event.get():                                     #custom events for typing
                 if event.type == pg.QUIT:                                   
                     self.inMenu = False
-                    self.running = False
                     self.inTutorial = False  
                     self.inNameLoadMenu = False
                 if event.type == pg.MOUSEBUTTONDOWN:
@@ -688,7 +618,6 @@ class Game:
             
             if event.type == (pg.QUIT):                                      #breaks all loops if QUIT is pressed
                 self.inMenu = False
-                self.running = False
                 self.inTutorial = False  
                 self.inNameMenu = False
                 self.inNameLoadMenu = False
@@ -698,7 +627,6 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_q:                                      #breaks all loops if q is pressed
                     self.inMenu = False                                        
-                    self.running = False
                     self.inTutorial = False  
                     self.inNameMenu = False
                     self.inNameLoadMenu = False

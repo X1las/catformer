@@ -17,16 +17,6 @@ def r(number):
         rounded_num *= -1
     return rounded_num
 
-def re(number):
-    inte = math.floor(number)
-    dec = number - inte
-    if dec*10 >= 5:
-        result = 1
-    else:
-        result = 0
-    return inte + result
-
-
 # Classes
 class CustomSprite(pg.sprite.Sprite):
     #attributes:
@@ -83,10 +73,6 @@ class CustomSprite(pg.sprite.Sprite):
         self.ori_massVER = self.massVER
         self.new_vel = self.vel.copy()
 
-    """def update(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
-    """
-
     def updateRect(self):
         if self.isPlayer:
             roundedvec = self.relativePosition.rounded()
@@ -140,11 +126,6 @@ class CustomSprite(pg.sprite.Sprite):
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
 
-    """def tester(self):
-        print("hello")
-    """
-
-
     def buttonPress(self):
         collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
         if collided_list:
@@ -159,17 +140,7 @@ class CustomSprite(pg.sprite.Sprite):
             return None
 
         
-    def touchPickUp(self):
-        pickups = self.game.group_pickups
-        collided = pg.sprite.spritecollide(self, pickups, False)
-        if collided: 
-            for collided_obj in collided:
-                if collided_obj.type == 'health' and self.lives < 9:
-                    self.heal()
-                    collided_obj.kill()
-                if collided_obj.type == 'catnip':
-                    self.addCatnip()
-                    collided_obj.kill()
+   
 
     ''' I gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
     def collisionSide_Conditional(self, collided):
@@ -202,29 +173,23 @@ class CustomSprite(pg.sprite.Sprite):
     def posCorrection(self):
         pass
 
+    # CLEANED
     def collisionEffect(self):
         inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
-
-        #self.rect.x += r(self.vel.x)
         self.rect.y -= 2
-        collideds = None
+        collided_objects = None
         if not self.isEnemy:
-            collideds = pg.sprite.spritecollide(self, self.game.group_movables, False)
+            collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
 
-        if collideds:
-            for collided in collideds:
-                try: 
-                    if collided != self and collided.lessMassThan(self) and collided not in self.game.group_interactiveFields and collided not in self.game.group_pickups:
-                        coll_side = collided.determineSide(self)
-                        if coll_side == "top":
-                            collided.addedVel.x = self.vel.x + self.addedVel.x
-                            collided.addedVel.y = self.vel.y + self.addedVel.y
-                except:
-                    pass
-                    
-        
-        self.rect.y += 1
+        if collided_objects:
+            for collided in collided_objects:
+                if collided != self and collided.lessMassThan(self):
+                    coll_side = collided.determineSide(self)
+                    if coll_side == "top":
+                        collided.addedVel.x = self.vel.x + self.addedVel.x
+                        collided.addedVel.y = self.vel.y + self.addedVel.y
+
         self.rect = self.rect.inflate(-inflation, -inflation)
         self.rect.midbottom = self.pos.rounded().asTuple()
 

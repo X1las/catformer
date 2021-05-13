@@ -36,8 +36,7 @@ class Player(CustomSprite):
     dist_from_top       = 0
     dist_from_bottom    = 0
     collides_left = False; collides_right = False
-    
-    name = "player"
+
     canjump = True
     jumpcounter = 0
     liftedBefore = False
@@ -244,6 +243,19 @@ class Player(CustomSprite):
             #self.jumpcounter = 0
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP
+
+
+    def touchPickUp(self):
+        pickups = self.game.group_pickups
+        collided = pg.sprite.spritecollide(self, pickups, False)
+        if collided: 
+            for collided_obj in collided:
+                if collided_obj.type == 'health' and self.lives < 9:
+                    self.heal()
+                    collided_obj.kill()
+                if collided_obj.type == 'catnip':
+                    self.addCatnip()
+                    collided_obj.kill()
 
 
     def inbetweenSolids(self):

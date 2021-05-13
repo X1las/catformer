@@ -29,14 +29,6 @@ def r(number):
     return rounded_num
 
 
-def re(number):
-    inte = math.floor(number)
-    dec = number - inte
-    if dec*10 >= 5:
-        result = 1
-    else:
-        result = 0
-    return inte + result
 
 
 
@@ -527,10 +519,6 @@ class Mug(CustomSprite):
                 self.pos.y = standingon.top_y()
                 self.vel.y = self.addedVel.y; self.acc.y = 0
                 self.vel.x = self.addedVel.x
-        #self.acc.x += self.vel.x * self.friction            # Friction
-        #self.vel   += self.acc       
-        #if abs(self.addedVel.x + self.vel.x) < 0.1:
-         #   self.vel.x = self.addedVel.x
         self.vel.x = self.addedVel.x #here?
         super().updatePos()
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -539,8 +527,6 @@ class Mug(CustomSprite):
 
     def posCorrection(self):
         self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
-        #self.vel = self.addedVel #here?
-        #self.pos = self.pos.realRound()
 
     # When it thouches a platform or other solid
     def touchplat(self, group):
