@@ -156,9 +156,9 @@ class Player(CustomSprite):
         self.checkDamage()
         self.touchPickUp()
         #print(f'Before player vel: {self.vel.x}')
-        self.vel += self.addedVel
         #print(f'After player vel: {self.vel.x}')
         # there for a picked up box to register that the player stands still
+        self.vel += self.addedVel
         self.pygamecoll(self.game.group_solid, ignoredSol = self.ignoredSolids)
         self.rect.midbottom = self.pos.realRound().asTuple()
         #self.pygamecoll(self.game.group_solid)

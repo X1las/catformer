@@ -140,9 +140,9 @@ class CustomSprite(pg.sprite.Sprite):
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
 
-    def tester(self):
+    """def tester(self):
         print("hello")
-
+    """
 
 
     def buttonPress(self):

@@ -113,6 +113,7 @@ class Game:
         try:
             self.level
         except:
+            
             pass
         else:
             self.data = self.getPlayerData()
