@@ -39,23 +39,24 @@ class Mug(CustomSprite):
         whole  = pg.Rect(  0,0,29,26)
         broken = pg.Rect( 30,0,29,26)
         bigMug = pg.Rect(104,0,77,72)
-        rects = [whole, broken, bigMug]
+        bigMug_broken = pg.Rect(182,0,77,72)
+        rects = [whole, broken, bigMug, bigMug_broken]
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
-        self.images = sheet.images_at(rects, (0,255,0))     
-        self.image_whole = self.images[0]
-        self.image_broken = self.images[1]
-        image_big = self.images[2]
-        
-        #if self.game.level.name == 'level4':
+        self.images = sheet.images_at(rects, (0,255,0))
+        # transform images to size of sprite
+        for img in self.images:
+            img = pg.transform.scale(img, (self.width, self.height))
+        # set special images for final level
         if self.final:
-            self.image = image_big
+            self.image_whole = self.images[2]
+            self.image_broken = self.images[3]
             self.gravity = GRAVITY/2
         else:
-            self.image = self.image_whole
+            self.image_whole = self.images[0]
+            self.image_broken = self.images[1]
         
-        self.image = pg.transform.scale(self.image, (self.width, self.height))
-
+        self.image = self.image_whole
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
@@ -73,11 +74,10 @@ class Mug(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
-        #if not self.game.level.name == 'level4':
-        if not self.final:
-            self.image.blit(self.images[1],(0,0))
+        
+        self.image = self.image_broken
         self.pos = self.pos.rounded()
-        if spawnItem != None:
+        if self.spawnItem != None:
             self.spawnItem.pos = self.pos.copy()
             self.spawnItem.startGame(self.game)
         if self.final:

@@ -23,7 +23,7 @@ import sys
 from settings import *
 from Sprites import *
 
-from player import *
+from Player import *
 from Level import Level
 from Vector import Vec
 from SpriteGroup import *
