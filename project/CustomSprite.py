@@ -164,9 +164,7 @@ class CustomSprite(pg.sprite.Sprite):
 
     # CLEANED
     def collisionEffect(self):
-        #inflation = 2
         self.rect.midbottom = self.pos.rounded().asTuple()
-        #self.rect = self.rect.inflate(inflation,inflation)
         self.rect.y -= 5
         collided_objects = None
         if not self.isEnemy:
@@ -175,24 +173,18 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collided_objects:
                 if collided != self: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
-                    #print(f'{self.name} effect on {collided.name}')
                     if coll_side == "top":
-                        #print(f'{self.name} affected {collided.name}')
-                        #if collided.isPlayer:
-                            #print(f'{self.name} affected {collided.name}')
                         collided.addedVel.x = self.vel.x + self.addedVel.x
-                        if self.vel.y >= 0:
+                        if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
                             collided.addedVel.y = self.vel.y + self.addedVel.y
                         if collided in self.game.group_solid:
                             collided.collisionEffect()
-        #self.rect = self.rect.inflate(-inflation, -inflation)
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     def solidCollisions(self, group = None):#, ignoredSol = []):
         self.rect.midbottom = self.pos.rounded().asTuple()
         if self.vel.x < 0:
-
             self.rect.x += self.r(self.relativeVel().x-2)
         if self.vel.x > 0:
             self.rect.x += self.r(self.relativeVel().x+2)
