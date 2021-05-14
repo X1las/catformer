@@ -20,7 +20,6 @@ class PickUp(CustomSprite):
         self.groups = game.all_sprites, game.group_pickups
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        self.image = pg.Surface((self.width,self.height))
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
 
         if self.type == 'health':

@@ -67,12 +67,6 @@ class IntelligentEnemy(CustomSprite):
         # get spritesheet
         wormSheet = ss.Spritesheet('resources/Hyena_walk.png')
         # create sub-rectangles to load from spritesheet
-        '''
-        rect1 = pg.Rect( 12, 20, 36, 28)
-        rect2 = pg.Rect( 59, 20, 36, 28)
-        rect3 = pg.Rect(106, 21, 36, 28)
-        rect4 = pg.Rect(155, 21, 36, 28)
-        '''
         rect1 = pg.Rect(  3, 21, 45, 27)
         rect2 = pg.Rect( 50, 21, 45, 27)
         rect3 = pg.Rect( 99, 21, 45, 27)

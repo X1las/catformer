@@ -16,19 +16,6 @@ class Water(CustomSprite):
         self.relativePosition = self.pos.copy()
         self._layer = 15
 
-    """
-    def update(self):
-        '''
-        self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images)*10:     # reset image index to 0 when running out of images
-            self.imageIndex = 0
-        self.image = self.images[math.floor(self.imageIndex/10)]
-        self.image = pg.transform.scale(self.image, (self.width, self.height))
-        '''
-        #round(self.pos) 
-        self.rect.midbottom = self.pos.realRound().asTuple()
-    """
-
     def startGame(self, game):
         self.game = game
         self.groups = game.all_sprites, game.group_damager
@@ -46,8 +33,6 @@ class Water(CustomSprite):
         # load images from spritesheet
         waterSheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.images = waterSheet.images_at(rects, colorkey=(0,255,0))
-        self.imageIndex = 0
-        #self.image = self.images[self.imageIndex]
 
         fill_h = 0      # for tracking how much was filled horizontally
         fill_v = 0      # for tracking how much was filled vertically

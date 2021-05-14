@@ -124,8 +124,6 @@ class Lever(Activator):
         self.groups = game.all_sprites, game.group_levers, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        # create surface with correct size
-        #self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from spritesheet
         left  = pg.Rect( 0,87,18,13)
         right = pg.Rect(19,87,18,13)
@@ -134,9 +132,6 @@ class Lever(Activator):
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.images = sheet.images_at(rects, (0,255,0))     
 
-        #self.image_left  = pg.transform.scale(self.images[0], (self.width, self.height))
-        #self.image_right = pg.transform.scale(self.images[1], (self.width, self.height))
-        #self.image = self.image_left
         self.image_inactive  = pg.transform.scale(self.images[0], (self.width, self.height))
         self.image_active = pg.transform.scale(self.images[1], (self.width, self.height))
         self.image = self.image_inactive
@@ -180,8 +175,6 @@ class Button(Activator):
         self.groups = game.all_sprites, game.group_buttons, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
 
-        # create surface with correct size
-        #self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)
         # create sub-rectangles to load from spritesheet
         pressed   = pg.Rect( 0,81,18,5)
         unpressed = pg.Rect(18,76,18,10)
@@ -189,10 +182,7 @@ class Button(Activator):
         # load images from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         self.images = sheet.images_at(rects, (0,255,0))     
-        #self.image_pressed = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
-        #self.image_unpressed = pg.transform.scale(self.images[1], (self.width, self.height))
-        #self.image = self.image_unpressed
-        self.image_active = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
+        self.image_active   = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
         self.image_inactive = pg.transform.scale(self.images[1], (self.width, self.height))
         self.image = self.image_inactive
 
