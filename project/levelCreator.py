@@ -423,7 +423,7 @@ def createLevel4():
     floor   = Platform( 1000, 600 , 2000 , 50 , floorplat = True )
     WINPLAT = Platform( 400, 500, 400, 30)
     win = PickUp(0,0,"health")
-    mug1 = Mug(WINPLAT , 50 , spawnItem = win, width = 100, height = 100)
+    mug1 = Mug(WINPLAT , 50 , spawnItem = win, width = 100, height = 100, final = True)
 
     levelName = {
         'name': 'level4',

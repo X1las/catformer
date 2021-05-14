@@ -9,12 +9,12 @@ from Sprites.Platform import Platform
 
 # Case SubClass - Inherits from CustomSprite
 class Mug(CustomSprite):
-    def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None):
+    def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None, final = False):
         self.spawnPlat = plat
         self.spawnItem = spawnItem
         self.width  = width; self.height = height
         self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()).rounded() 
-        
+        self.final = final
         self.placement = placement
         self.name = name
         
@@ -47,7 +47,8 @@ class Mug(CustomSprite):
         self.image_broken = self.images[1]
         image_big = self.images[2]
         
-        if self.game.level.name == 'level4':
+        #if self.game.level.name == 'level4':
+        if self.final:
             self.image = image_big
             self.gravity = GRAVITY/2
         else:
@@ -72,11 +73,15 @@ class Mug(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
-        if not self.game.level.name == 'level4':
+        #if not self.game.level.name == 'level4':
+        if not self.final:
             self.image.blit(self.images[1],(0,0))
         self.pos = self.pos.rounded()
-        self.spawnItem.pos = self.pos.copy()
-        self.spawnItem.startGame(self.game)
+        if spawnItem != None:
+            self.spawnItem.pos = self.pos.copy()
+            self.spawnItem.startGame(self.game)
+        if self.final:
+            self.game.finished = True
         self.broken = True
 
     # Applies basic gravity
