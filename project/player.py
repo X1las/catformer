@@ -157,6 +157,7 @@ class Player(CustomSprite):
 
         self.checkDamage()
         self.touchPickUp()
+        #self.velocityCorrection()
         self.solidCollisions(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -191,7 +192,8 @@ class Player(CustomSprite):
         damager = self.game.group_damager
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect = self.rect.inflate(4,4)
-        collided = pg.sprite.spritecollide(self, damager, False)
+        collided = self.collisionDetection(damager)
+        #collided = pg.sprite.spritecollide(self, damager, False)
         self.rect = self.rect.inflate(-4,-4)
         if collided: 
             for collided_obj in collided:
@@ -279,7 +281,8 @@ class Player(CustomSprite):
         inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
         self.rect.midbottom = self.pos.realRound().asTuple()
-        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
+        collideds = self.collisionDetection(self.game.group_solid)
+        #collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         result = False
         movingVER = False
         movingHOR = False
@@ -350,8 +353,10 @@ class Interactive(CustomSprite):
         image = pg.transform.scale(img, (int(width), int(height)))
         self.images = {'right': image, 'left': pg.transform.flip(image, True, False)}
         self.image = self.images[self.facing]
-
+        #self.width = 20; self.height = 42
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
+        #self.width = image.get_width(); self.height = image.get_height()
+        self.width = image.get_width()/2; self.height = image.get_height()/2
         self.colliding = False
         self.faceinput = self.player.facing
         self.relativePosition = self.pos.copy()
@@ -377,7 +382,11 @@ class Interactive(CustomSprite):
     
     def update(self):
         self.image = self.images[self.player.facing]
-        self.pos = self.player.pos
+        if self.player.facing == "left":
+            self.pos = Vec(self.player.left_x(), self.player.mid().y)
+        if self.player.facing == "right":
+            self.pos = Vec(self.player.right_x(), self.player.mid().y)
+            #self.pos = self.player.bottomright()
         self.vel = self.player.vel
         self.acc = self.player.acc
         self.updateRect()
@@ -401,7 +410,8 @@ class Interactive(CustomSprite):
         justPickedUp = self.player.intJustCreated
         self.colliding = False
         canpickup = True
-        collided_list = pg.sprite.spritecollide(self,  self.game.group_boxes, False)
+        collided_list = self.collisionDetection(self.game.group_boxes)
+        #collided_list = pg.sprite.spritecollide(self,  self.game.group_boxes, False)
         if collided_list: 
             if self.player.refreshedInt_box:
                 for collided in collided_list:

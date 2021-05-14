@@ -45,6 +45,7 @@ class Game:
     outOfLives = False                                                          # Boolean used for outOfLives loop
 
     # Initializer
+
     def __init__(self):
 
         ''' probably not needed'''

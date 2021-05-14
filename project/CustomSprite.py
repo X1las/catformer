@@ -127,14 +127,14 @@ class CustomSprite(pg.sprite.Sprite):
         rightcoll = abs(collided.right_x() - self.left_x() )
         topcoll   = abs(self.bot_y() - collided.top_y())
         botcoll   = abs(self.top_y() - collided.bot_y())
-        mins      = min(leftcoll, rightcoll, topcoll, botcoll)
+        mins      = min( topcoll, leftcoll, rightcoll, botcoll)
 
+        if mins == topcoll:
+            return "top"
         if mins == leftcoll: 
             return "left"
         if mins == rightcoll:
             return "right"
-        if mins == topcoll:
-            return "top"
         if mins == botcoll:
             return "bot"
 
@@ -160,6 +160,45 @@ class CustomSprite(pg.sprite.Sprite):
                 return {"side" : "bot", "correctedPos" : newpos}
         return result 
 
+    def collisionDetection(self, groups):
+        #appendedGroups = []
+        #for i in groups:
+          #  for j in i:
+         #       appendedGroups.append(j)
+        collided_objects = []
+        #print(f'all the sprites: {appendedGroups}')
+        #print(f'new collision')
+        for other in groups:
+            #print(other)
+            if  (   self.left_x()  <= other.right_x() 
+                and self.top_y()   <= other.bot_y() 
+                and self.right_x() >= other.left_x() 
+                and self.bot_y()   >= other.top_y()  ):
+                collided_objects.append(other)
+            """
+            if ((other.left_x() <= self.right_x() <= other.right_x() and other.top_y() <= (self.top_y()) <= other.bot_y())
+                or (other.left_x() <= (self.right_x()) <= other.right_x() and other.top_y() <= (self.bot_y()) <= other.bot_y())
+                or (other.left_x() <= (self.left_x()) <= other.right_x() and other.top_y() <= (self.top_y()) <= other.bot_y())
+                or (other.left_x() <= (self.left_x()) <= other.right_x() and other.top_y() <= (self.bot_y()) <= other.bot_y())):
+                collided_objects.append(other)
+            """
+            """
+            if ((other.left_x() < self.right_x() < other.right_x() and other.top_y() < (self.top_y()) < other.bot_y())
+                or (other.left_x() < (self.right_x()) < other.right_x() and other.top_y() < (self.bot_y()) < other.bot_y())
+                or (other.left_x() < (self.left_x()) < other.right_x() and other.top_y() < (self.top_y()) < other.bot_y())
+                or (other.left_x() < (self.left_x()) < other.right_x() and other.top_y() < (self.bot_y()) < other.bot_y())):
+                collided_objects.append(other)
+                #print(f'other: {collided_objects}')
+            """
+            #elif other.left_x() < (self.right_x()) < other.right_x() and other.top_y() < (self.bot_y()) < other.bot_y():
+             #   collided_objects.append(other)
+            #elif other.left_x() < (self.left_x()) < other.right_x() and other.top_y() < (self.top_y()) < other.bot_y():
+             #   collided_objects.append(other)
+            #elif other.left_x() < (self.left_x()) < other.right_x() and other.top_y() < (self.bot_y()) < other.bot_y():
+             #   collided_objects.append(other)
+        return collided_objects
+
+
 
 
     # CLEANED
@@ -168,19 +207,98 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.y -= 5
         collided_objects = None
         if not self.isEnemy:
-            collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
+            #collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
+            collided_objects = self.collisionDetection(self.game.group_movables)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if coll_side == "top":
                         collided.addedVel.x = self.vel.x + self.addedVel.x
-                        if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
-                            collided.addedVel.y = self.vel.y + self.addedVel.y
+                        #if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
+                        collided.addedVel.y = self.vel.y + self.addedVel.y
                         if collided in self.game.group_solid:
                             collided.collisionEffect()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+
+
+
+    def velocityCorrection(self, group = None):#, ignoredSol = []):
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        if self.vel.x < 0:
+            self.rect.x += self.r(self.relativeVel().x-2)
+        if self.vel.x > 0:
+            self.rect.x += self.r(self.relativeVel().x+2)
+        if self.vel.y < 0:
+            self.rect.y += self.r(self.vel.y - 1) 
+        elif self.vel.y > 0:
+            self.rect.y += self.r(self.vel.y + 1) 
+        savedPos = self.pos.copy()
+        """
+        if self.vel.x < 0:
+            self.pos.x += self.relativeVel().x-0.01
+        if self.vel.x > 0:
+            self.pos.x += self.relativeVel().x+0.01
+        if self.vel.y < 0:
+            self.pos.y += self.vel.y - 0.01
+        if self.vel.y > 0:
+            self.pos.y += self.vel.y + 0.01
+        """
+        group = self.game.group_solid
+        collided_objects = self.collisionDetection(group)
+        #print(f'own: {collided_objects}')
+        self.pos = savedPos
+        #collided_objects = pg.sprite.spritecollide(self, group, False)
+        #print(f'test: {test}')
+        #print(f'pygame: {collided_objects}')
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        wasstoppedHOR = False
+        posCorrected=False
+        if collided_objects:
+            for collided in collided_objects:
+                if collided != self: # and collided not in ignoredSol: #and not self.isEnemy:
+                    coll = self.collisionSide_Conditional(collided)
+                    coll_side = coll['side']
+                    correctedPos = coll['correctedPos']
+                    if self.massVER < collided.massVER:
+                        if coll_side == "top" or coll_side == "bot":
+                            #if (coll_side == "top" and self.vel.y > 0) or (coll_side == "bot" and self.vel.y < 0):
+                            self.vel.y = self.addedVel.y
+                            self.acc.y = 0
+                            if group.has(self):
+                                self.massVER = collided.massVER - 1
+
+                        #if coll_side == "bot":
+                         #   self.vel.y = self.addedVel.y
+                          #  self.acc.y = 0
+                            #if group.has(self):
+                             #   self.massVER = collided.massVER - 1
+                    if self.massHOR <= collided.massHOR:
+                        if coll_side == "left" or coll_side == "right":
+                            #if (coll_side == "left" and self.vel.x > 0 )or (coll_side == "right" and self.vel.x < 0):
+                            self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
+                            self.acc.x = 0
+                            wasstoppedHOR = True
+                            if self.massHOR < collided.massHOR:
+                                if group.has(self):
+                                    self.massHOR = collided.massHOR - 1
+                        #if coll_side == "right":
+                         #   self.vel.x = self.addedVel.x
+                          #  self.acc.x = 0
+                           # wasstoppedHOR = True
+                            #if self.massHOR < collided.massHOR:
+                             #   if group.has(self):
+                              #      self.massHOR = collided.massHOR - 1
+                    #if correctedPos.y > 0:    
+                    posCorrected = True
+        # This was implemented so the player couldn't push the dog with the box. 
+        if wasstoppedHOR:
+            self.stoppedHOR = True
+        else: 
+            self.stoppedHOR = False
+        #if not posCorrected:
+         #   self.pos = savedPos
 
     def solidCollisions(self, group = None):#, ignoredSol = []):
         self.rect.midbottom = self.pos.rounded().asTuple()
@@ -192,10 +310,27 @@ class CustomSprite(pg.sprite.Sprite):
             self.rect.y += self.r(self.vel.y - 1) 
         elif self.vel.y > 0:
             self.rect.y += self.r(self.vel.y + 1) 
+        savedPos = self.pos.copy()
+        """
+        if self.vel.x < 0:
+            self.pos.x += self.relativeVel().x-0.01
+        if self.vel.x > 0:
+            self.pos.x += self.relativeVel().x+0.01
+        if self.vel.y < 0:
+            self.pos.y += self.vel.y - 0.01
+        if self.vel.y > 0:
+            self.pos.y += self.vel.y + 0.01
+        """
         group = self.game.group_solid
-        collided_objects = pg.sprite.spritecollide(self, group, False)
+        collided_objects = self.collisionDetection(group)
+        #print(f'own: {collided_objects}')
+        self.pos = savedPos
+        #collided_objects = pg.sprite.spritecollide(self, group, False)
+        #print(f'test: {test}')
+        #print(f'pygame: {collided_objects}')
         self.rect.midbottom = self.pos.rounded().asTuple()
         wasstoppedHOR = False
+        posCorrected=False
         if collided_objects:
             for collided in collided_objects:
                 if collided != self: # and collided not in ignoredSol: #and not self.isEnemy:
@@ -203,6 +338,30 @@ class CustomSprite(pg.sprite.Sprite):
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
                     if self.massVER < collided.massVER:
+                        if coll_side == "top" or coll_side == "bot":
+                            if (coll_side == "top" and self.vel.y > 0) or (coll_side == "bot" and self.vel.y < 0):
+                                self.vel.y = self.addedVel.y
+                                self.acc.y = 0
+                            self.pos = correctedPos
+                            if group.has(self):
+                                self.massVER = collided.massVER - 1
+
+                        #if coll_side == "bot":
+                         #   self.vel.y = self.addedVel.y
+                          #  self.acc.y = 0
+                            #if group.has(self):
+                             #   self.massVER = collided.massVER - 1
+                    if self.massHOR <= collided.massHOR:
+                        if coll_side == "left" or coll_side == "right":
+                            if (coll_side == "left" and self.vel.x > 0 )or (coll_side == "right" and self.vel.x < 0):
+                                self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
+                                self.acc.x = 0
+                            wasstoppedHOR = True
+                            self.pos = correctedPos
+                            if self.massHOR < collided.massHOR:
+                                if group.has(self):
+                                    self.massHOR = collided.massHOR - 1
+                        """
                         if coll_side == "top" or coll_side == "bot":
                             self.vel.y = self.addedVel.y
                             self.acc.y = 0
@@ -229,25 +388,34 @@ class CustomSprite(pg.sprite.Sprite):
                             #if self.massHOR < collided.massHOR:
                              #   if group.has(self):
                               #      self.massHOR = collided.massHOR - 1
+                            """
                     #if correctedPos.y > 0:    
-                    self.pos = correctedPos
+                    #self.pos = correctedPos
+                    posCorrected = True
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
             self.stoppedHOR = True
         else: 
             self.stoppedHOR = False
+        #if not posCorrected:
+         #   self.pos = savedPos
 
 
     # Checking whether anything is on a solid
     def on_solid(self, group):
         self.rect.bottom += 2
-        collided_objects = pg.sprite.spritecollide(self,group, False)
+        #collided_objects = pg.sprite.spritecollide(self,group, False)
+        savedPos = self.pos.copy()
+        self.pos.y += 1
+        collided_objects = self.collisionDetection(group)
+        self.pos = savedPos
         result = None
         for collided in collided_objects:
             if collided != self:
                 if self.determineSide(collided) == "top":
                     result = collided
         self.rect.bottom -= 2
+        #self.pos.y -= 2
         return result
 
     # Applies gravity and friction to the velocity of the sprite

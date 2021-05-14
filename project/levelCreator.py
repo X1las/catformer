@@ -229,7 +229,8 @@ def createLevel2():
              plat4, moving2, rightmov, longplat, enemyplat,  goalplat #enemsafe,
              ]
     # boxes
-    box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 )
+    box1 = Box( moving1.pos.x , plat1.top_y() , 44 , 44 )
+    #box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 )
     # buttons
     btn1eff = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat1} ,
                 {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat2} ,
@@ -243,7 +244,8 @@ def createLevel2():
     # levers
     lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
                         }
-    mov1lev = Lever(plat5, 40, effect = lev1eff)
+    #mov1lev = Lever(plat5, 40, effect = lev1eff)
+    mov1lev = Lever(plat1, 400, effect = lev1eff)
     # pickups
     health1 = PickUp(1300, 540, 'health')                                          #
     catnip1 = PickUp(400, 370, 'catnip')   

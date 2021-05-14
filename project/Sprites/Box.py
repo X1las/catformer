@@ -74,8 +74,8 @@ class Box(CustomSprite):
         self.rect.midbottom = self.pos.realRound().asTuple()
         self.applyPhysics()
         self.pickupEffect()
+        #self.vel += self.addedVel 
         self.solidCollisions(self.game.group_solid)
-        self.vel += self.addedVel 
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
