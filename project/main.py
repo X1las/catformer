@@ -114,7 +114,7 @@ class Game:
         if self.data:
             self.level.name = self.data[0]
             if self.level.name == "level4":
-                self.finished = True
+                #sself.finished = True
                 if os.path.exists("playerData/"+self.userName+"Data.txt"):
                     os.remove("playerData/"+self.userName+"Data.txt")
         
