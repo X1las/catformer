@@ -70,15 +70,19 @@ class Vec(object):
         self.x, self.y = round(self.x), round(self.y)
 
     def rounded(self):
+        return self.realRound()
         roundedx = self.normRound(self.x)
         roundedy = self.normRound(self.y)
         return Vec(roundedx,roundedy)
 
     def realRound(self):
+        #return self.rounded()
         roundedx = self.rounding(self.x)
         roundedy = self.rounding(self.y)
         return Vec(roundedx,roundedy)    
 
+
+        
     def roundUp(self):
         roundedx = self.roundUpN(self.x)
         roundedy = self.roundUpN(self.y)

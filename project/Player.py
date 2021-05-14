@@ -61,6 +61,9 @@ class Player(CustomSprite):
         self.refreshCount_prev      = 0         
         self.imageIndex = 0 
 
+        
+
+
     def startGame(self, game):    
         self.game       = game
         self.groups = game.all_sprites, game.group_pressureActivator, game.group_movables
@@ -148,6 +151,10 @@ class Player(CustomSprite):
         self.determineGravity()
         self.applyPhysics() 
         self.vel += self.addedVel
+        
+        #print(f'in air: {self.inAir}')
+        #print(f'addedvel: {self.vel.y}')
+
         self.checkDamage()
         self.touchPickUp()
         self.solidCollisions(self.game.group_solid)

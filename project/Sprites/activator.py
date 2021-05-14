@@ -103,9 +103,9 @@ class Activator(CustomSprite):
 # Lever SubClass - Inherits from CustomSprite
 class Lever(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
-    def __init__(self, plat, placement, width = 30, height = 20, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+    def __init__(self, plat, placement, width = 30, height = 20, name = "lever", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         self.plat = plat
-        
+        self.name = name
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.placement = placement
         self.width = width; self.height = height; self.effect = effect; 
@@ -147,9 +147,9 @@ class Lever(Activator):
 # Button SubClass - Inherits from CustomSprite
 class Button(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}): 
-    def __init__(self, plat:Platform, placement, width = 30, height = 20, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+    def __init__(self, plat:Platform, placement, width = 30, height = 20, name = "button", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         self.plat = plat
-        
+        self.name = name
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.placement = placement
 

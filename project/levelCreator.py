@@ -193,7 +193,7 @@ def createLevel2():
 
     #height 2 part 1
     plat3     = Platform(plat1.right_x() -(plat1.right_x()-blocker.right_x())/2, blocker.top_y() + 30, plat1.right_x()-blocker.right_x() , 30)
-    moving1   = Platform(plat1.right_x() + 30, plat1.bot_y()    , 60 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y)
+    moving1   = Platform(plat1.right_x() + 50, plat1.bot_y()    , 100 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y)
     underwater= Platform(blocker.left_x()  - 200, blocker.top_y() + 60, 400 , 20)
     boxstop   = Platform(blocker.left_x() + 5, blocker.top_y()    , 10 , 10 )
     waterplat1 = Platform(underwater.left_x() + underwater.width*3/4, underwater.top_y(), 50, 20, downMaxDist = 0, upMaxDist = 40)

@@ -11,6 +11,7 @@ class LevelGoal(CustomSprite):
     def __init__(self,plat, placement, name = "Goal"): 
         self.pos = Vec(plat.left_x() + placement, plat.top_y()) 
         self.width = 55; self.height = 20
+        self.name = name
         self.relativePosition = self.pos.copy()
         self.sleepcount = 0
 
