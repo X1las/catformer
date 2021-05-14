@@ -147,9 +147,9 @@ class Player(CustomSprite):
         self.move()
         self.determineGravity()
         self.applyPhysics() 
+        self.vel += self.addedVel
         self.checkDamage()
         self.touchPickUp()
-        self.vel += self.addedVel
         self.solidCollisions(self.game.group_solid)
         self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -416,6 +416,7 @@ class Interactive(CustomSprite):
                         if justPickedUp:
                             collided.pickupStarted = True
                         collided.has_collided = True
+                        #collided.beingheld = True
                         collided.liftedBy(self)
                         self.player.lockFacing = True
             else:
