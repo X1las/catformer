@@ -187,8 +187,8 @@ class CustomSprite(pg.sprite.Sprite):
         for other in groups:
             #print(other)
             if  (   self.left_x()  <= other.right_x() 
-                and self.top_y()   <= other.bot_y() 
                 and self.right_x() >= other.left_x() 
+                and self.top_y()   <= other.bot_y() 
                 and self.bot_y()   >= other.top_y()  ):
                 collided_objects.append(other)
             """
