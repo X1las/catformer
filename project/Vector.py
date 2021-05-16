@@ -51,6 +51,11 @@ class Vec(object):
         #self.x *= scale; self.y *= scale
         return Vec(newx, newy)
 
+    def __truediv__(self, scale : (float or int)):
+        newx = self.x / scale; newy = self.y / scale
+        #self.x *= scale; self.y *= scale
+        return Vec(newx, newy)
+
 
     def __str__(self):
         return f'({self.x},{self.y})'

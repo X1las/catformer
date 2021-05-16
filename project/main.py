@@ -157,7 +157,7 @@ class Game:
             if (self.frames >= 60):
                 #print("new frame")
                 self.frames = 0
-            if self.framecount > 60:
+            if self.framecount > 60*4:
                 print(f'{self.accumframes/self.framecount}')
                 self.accumframes = 0
                 self.framecount = 0
