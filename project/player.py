@@ -191,10 +191,10 @@ class Player(CustomSprite):
     def touchEnemy(self):
         damager = self.game.group_damager
         self.rect.midbottom = self.pos.rounded().asTuple()
-        self.rect = self.rect.inflate(4,4)
+        #self.rect = self.rect.inflate(4,4)
         collided = self.collisionDetection(damager)
         #collided = pg.sprite.spritecollide(self, damager, False)
-        self.rect = self.rect.inflate(-4,-4)
+        #self.rect = self.rect.inflate(-4,-4)
         if collided: 
             for collided_obj in collided:
                 if collided_obj.active:

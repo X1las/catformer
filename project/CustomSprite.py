@@ -47,12 +47,15 @@ class CustomSprite(pg.sprite.Sprite):
     update_order        = 10
     inAir           = True
     pos    = vec(); vel  = vec(); acc = vec()
-
+    isOnPlatform = False
+    distanceOrder = []
+    name = "sprite"
     isPlayer = False #Remove later
 
 
     # Methods
 
+    # i dont think this is necessary anymore
     def r(self, number):
         rounded_num = number
         rounded_num = abs(rounded_num)
@@ -103,7 +106,7 @@ class CustomSprite(pg.sprite.Sprite):
     def resetMass(self):
         self.massHOR = self.ori_massHOR
         self.massVER = self.ori_massVER
-   
+
     def resetSprite(self):
         self.resetMass()
         self.vel -= self.addedVel
@@ -123,13 +126,26 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def determineSide(self, collided):
+
         leftcoll  = abs(self.right_x() - collided.left_x())
         rightcoll = abs(collided.right_x() - self.left_x() )
-        topcoll   = abs(self.bot_y() - collided.top_y())
-        botcoll   = abs(self.top_y() - collided.bot_y())
-        mins      = min( topcoll, leftcoll, rightcoll, botcoll)
 
+        topcoll   = abs(self.bot_y() - collided.top_y())
+        botcoll   =  abs(self.top_y() - collided.bot_y())
+        sides ={ "top" : abs(self.bot_y() - collided.top_y()), "left" : abs(self.right_x() - collided.left_x()), "right":abs(collided.right_x() - self.left_x() ), "bot": abs(self.top_y() - collided.bot_y())}
+        sortedSides = (sorted(sides.items(), key = lambda side: side[1]))
+        self.distanceOrder = sortedSides
+        #for side in sortedSides:
+        #   self.distanceOrder.append(side[0])
+        return self.distanceOrder[0][0]
+
+        #print(self.distanceOrder)
+        #distanceOrder = sorted( topcoll, leftcoll, rightcoll, botcoll)
+        #self.distanceOrder
+        mins      = min( topcoll, leftcoll, rightcoll, botcoll)
+        #return self.distanceOrder
         if mins == topcoll:
+            mins2 = min(leftcoll, rightcoll, botcoll)
             return "top"
         if mins == leftcoll: 
             return "left"
@@ -163,8 +179,8 @@ class CustomSprite(pg.sprite.Sprite):
     def collisionDetection(self, groups):
         #appendedGroups = []
         #for i in groups:
-          #  for j in i:
-         #       appendedGroups.append(j)
+        #  for j in i:
+        #       appendedGroups.append(j)
         collided_objects = []
         #print(f'all the sprites: {appendedGroups}')
         #print(f'new collision')
@@ -191,11 +207,11 @@ class CustomSprite(pg.sprite.Sprite):
                 #print(f'other: {collided_objects}')
             """
             #elif other.left_x() < (self.right_x()) < other.right_x() and other.top_y() < (self.bot_y()) < other.bot_y():
-             #   collided_objects.append(other)
+            #   collided_objects.append(other)
             #elif other.left_x() < (self.left_x()) < other.right_x() and other.top_y() < (self.top_y()) < other.bot_y():
-             #   collided_objects.append(other)
+            #   collided_objects.append(other)
             #elif other.left_x() < (self.left_x()) < other.right_x() and other.top_y() < (self.bot_y()) < other.bot_y():
-             #   collided_objects.append(other)
+            #   collided_objects.append(other)
         return collided_objects
 
 
@@ -247,11 +263,7 @@ class CustomSprite(pg.sprite.Sprite):
         """
         group = self.game.group_solid
         collided_objects = self.collisionDetection(group)
-        #print(f'own: {collided_objects}')
         self.pos = savedPos
-        #collided_objects = pg.sprite.spritecollide(self, group, False)
-        #print(f'test: {test}')
-        #print(f'pygame: {collided_objects}')
         self.rect.midbottom = self.pos.rounded().asTuple()
         wasstoppedHOR = False
         posCorrected=False
@@ -268,12 +280,20 @@ class CustomSprite(pg.sprite.Sprite):
                             self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
+                            other = self.distanceOrder[1][0]
+                            if self.distanceOrder[1][1] < 5:
+                                if self.distanceOrder[1] == "left":
+                                    setright = collided.left_x()
+                                    #self.set_right(collided.left_x() - 1)
+                                if self.distanceOrder[1] == "right":
+                                    setleft = collided.right_x()
+                                    #self.set_left(collided.right_x() + 1)
 
                         #if coll_side == "bot":
-                         #   self.vel.y = self.addedVel.y
-                          #  self.acc.y = 0
+                        #   self.vel.y = self.addedVel.y
+                        #  self.acc.y = 0
                             #if group.has(self):
-                             #   self.massVER = collided.massVER - 1
+                            #   self.massVER = collided.massVER - 1
                     if self.massHOR <= collided.massHOR:
                         if coll_side == "left" or coll_side == "right":
                             #if (coll_side == "left" and self.vel.x > 0 )or (coll_side == "right" and self.vel.x < 0):
@@ -284,12 +304,12 @@ class CustomSprite(pg.sprite.Sprite):
                                 if group.has(self):
                                     self.massHOR = collided.massHOR - 1
                         #if coll_side == "right":
-                         #   self.vel.x = self.addedVel.x
-                          #  self.acc.x = 0
-                           # wasstoppedHOR = True
+                        #   self.vel.x = self.addedVel.x
+                        #  self.acc.x = 0
+                        # wasstoppedHOR = True
                             #if self.massHOR < collided.massHOR:
-                             #   if group.has(self):
-                              #      self.massHOR = collided.massHOR - 1
+                            #   if group.has(self):
+                            #      self.massHOR = collided.massHOR - 1
                     #if correctedPos.y > 0:    
                     posCorrected = True
         # This was implemented so the player couldn't push the dog with the box. 
@@ -298,9 +318,122 @@ class CustomSprite(pg.sprite.Sprite):
         else: 
             self.stoppedHOR = False
         #if not posCorrected:
-         #   self.pos = savedPos
+        #   self.pos = savedPos
 
     def solidCollisions(self, group = None):#, ignoredSol = []):
+        """
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        if self.vel.x < 0:
+            self.rect.x += self.r(self.relativeVel().x-2)
+        if self.vel.x > 0:
+            self.rect.x += self.r(self.relativeVel().x+2)
+        if self.vel.y < 0:
+            self.rect.y += self.r(self.vel.y - 1) 
+        elif self.vel.y > 0:
+            self.rect.y += self.r(self.vel.y + 1) 
+        savedPos = self.pos.copy()
+        """
+        """
+        if self.vel.x < 0:
+            self.pos.x += self.relativeVel().x-0.01
+        if self.vel.x > 0:
+            self.pos.x += self.relativeVel().x+0.01
+        if self.vel.y < 0:
+            self.pos.y += self.vel.y - 0.01
+        if self.vel.y > 0:
+            self.pos.y += self.vel.y + 0.01
+        """
+        group = self.game.group_solid
+        collided_objects = self.collisionDetection(group)
+        #print(f'own: {collided_objects}')
+        #self.pos = savedPos
+        #collided_objects = pg.sprite.spritecollide(self, group, False)
+        #print(f'test: {test}')
+        #print(f'pygame: {collided_objects}')
+        #self.rect.midbottom = self.pos.rounded().asTuple()
+        wasstoppedHOR = False
+        posCorrected=False
+        onNoofPlats = 0
+        setleft = False
+        setright = False
+        if collided_objects:
+            for collided in collided_objects:
+                if collided != self: # and collided not in ignoredSol: #and not self.isEnemy:
+                    coll = self.collisionSide_Conditional(collided)
+                    coll_side = coll['side']
+                    correctedPos = coll['correctedPos']
+                    if self.massVER < collided.massVER:
+                        if coll_side == "top" or coll_side == "bot":
+                            if (coll_side == "top" and self.vel.y > 0) or (coll_side == "bot" and self.vel.y < 0):
+                                self.vel.y = self.addedVel.y
+                                self.acc.y = 0
+                            if coll_side == "top":
+                                onNoofPlats += 1
+                            self.pos = correctedPos
+                            if group.has(self):
+                                self.massVER = collided.massVER - 1
+                            other = self.distanceOrder[1]
+                            # if a box or something is right at an edge, it would stand still because everything is so accurate lol
+                            if self.distanceOrder[1][1] < 4:
+                                if self.distanceOrder[1][0] == "left":
+                                    #self.set_right(collided.left_x() - 1)
+                                    setright = collided.left_x() - 1
+                                if self.distanceOrder[1][0] == "right":
+                                    setleft = collided.right_x() + 1
+                                    #self.set_left(collided.right_x()+ 1)
+                    if self.massHOR <= collided.massHOR:
+                        if coll_side == "left" or coll_side == "right":
+                            if (coll_side == "left" and self.vel.x > 0 )or (coll_side == "right" and self.vel.x < 0):
+                                self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
+                                self.acc.x = 0
+                            wasstoppedHOR = True
+                            self.pos = correctedPos
+                            if self.massHOR < collided.massHOR:
+                                if group.has(self):
+                                    self.massHOR = collided.massHOR - 1
+                        """
+                        if coll_side == "top" or coll_side == "bot":
+                            self.vel.y = self.addedVel.y
+                            self.acc.y = 0
+                            if group.has(self):
+                                self.massVER = collided.massVER - 1
+
+                        #if coll_side == "bot":
+                        #   self.vel.y = self.addedVel.y
+                        #  self.acc.y = 0
+                            #if group.has(self):
+                            #   self.massVER = collided.massVER - 1
+                    if self.massHOR <= collided.massHOR:
+                        if coll_side == "left" or coll_side == "right":
+                            self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
+                            self.acc.x = 0
+                            wasstoppedHOR = True
+                            if self.massHOR < collided.massHOR:
+                                if group.has(self):
+                                    self.massHOR = collided.massHOR - 1
+                        #if coll_side == "right":
+                        #   self.vel.x = self.addedVel.x
+                        #  self.acc.x = 0
+                        # wasstoppedHOR = True
+                            #if self.massHOR < collided.massHOR:
+                            #   if group.has(self):
+                            #      self.massHOR = collided.massHOR - 1
+                            """
+                    #if correctedPos.y > 0:    
+                    #self.pos = correctedPos
+                    posCorrected = True
+        # This was implemented so the player couldn't push the dog with the box. 
+        if wasstoppedHOR:
+            self.stoppedHOR = True
+        else: 
+            self.stoppedHOR = False
+        if onNoofPlats <= 1:
+            if setright:
+                self.set_right(setright)
+            elif setleft:
+                self.set_left(setleft)
+
+    def solidCollisionsS(self, group = None):#, ignoredSol = []):
         self.rect.midbottom = self.pos.rounded().asTuple()
         if self.vel.x < 0:
             self.rect.x += self.r(self.relativeVel().x-2)
@@ -322,15 +455,18 @@ class CustomSprite(pg.sprite.Sprite):
             self.pos.y += self.vel.y + 0.01
         """
         group = self.game.group_solid
-        collided_objects = self.collisionDetection(group)
+        #collided_objects = self.collisionDetection(group)
         #print(f'own: {collided_objects}')
         self.pos = savedPos
-        #collided_objects = pg.sprite.spritecollide(self, group, False)
+        collided_objects = pg.sprite.spritecollide(self, group, False)
         #print(f'test: {test}')
         #print(f'pygame: {collided_objects}')
         self.rect.midbottom = self.pos.rounded().asTuple()
         wasstoppedHOR = False
         posCorrected=False
+        onNoofPlats = 0
+        setleft = False
+        setright = False
         if collided_objects:
             for collided in collided_objects:
                 if collided != self: # and collided not in ignoredSol: #and not self.isEnemy:
@@ -342,15 +478,20 @@ class CustomSprite(pg.sprite.Sprite):
                             if (coll_side == "top" and self.vel.y > 0) or (coll_side == "bot" and self.vel.y < 0):
                                 self.vel.y = self.addedVel.y
                                 self.acc.y = 0
+                            if coll_side == "top":
+                                onNoofPlats += 1
                             self.pos = correctedPos
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
-
-                        #if coll_side == "bot":
-                         #   self.vel.y = self.addedVel.y
-                          #  self.acc.y = 0
-                            #if group.has(self):
-                             #   self.massVER = collided.massVER - 1
+                            other = self.distanceOrder[1]
+                            # if a box or something is right at an edge, it would stand still because everything is so accurate lol
+                            if self.distanceOrder[1][1] < 4:
+                                if self.distanceOrder[1][0] == "left":
+                                    #self.set_right(collided.left_x() - 1)
+                                    setright = collided.left_x() - 1
+                                if self.distanceOrder[1][0] == "right":
+                                    setleft = collided.right_x() + 1
+                                    #self.set_left(collided.right_x()+ 1)
                     if self.massHOR <= collided.massHOR:
                         if coll_side == "left" or coll_side == "right":
                             if (coll_side == "left" and self.vel.x > 0 )or (coll_side == "right" and self.vel.x < 0):
@@ -369,10 +510,10 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.massVER = collided.massVER - 1
 
                         #if coll_side == "bot":
-                         #   self.vel.y = self.addedVel.y
-                          #  self.acc.y = 0
+                        #   self.vel.y = self.addedVel.y
+                        #  self.acc.y = 0
                             #if group.has(self):
-                             #   self.massVER = collided.massVER - 1
+                            #   self.massVER = collided.massVER - 1
                     if self.massHOR <= collided.massHOR:
                         if coll_side == "left" or coll_side == "right":
                             self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
@@ -382,12 +523,12 @@ class CustomSprite(pg.sprite.Sprite):
                                 if group.has(self):
                                     self.massHOR = collided.massHOR - 1
                         #if coll_side == "right":
-                         #   self.vel.x = self.addedVel.x
-                          #  self.acc.x = 0
-                           # wasstoppedHOR = True
+                        #   self.vel.x = self.addedVel.x
+                        #  self.acc.x = 0
+                        # wasstoppedHOR = True
                             #if self.massHOR < collided.massHOR:
-                             #   if group.has(self):
-                              #      self.massHOR = collided.massHOR - 1
+                            #   if group.has(self):
+                            #      self.massHOR = collided.massHOR - 1
                             """
                     #if correctedPos.y > 0:    
                     #self.pos = correctedPos
@@ -397,8 +538,10 @@ class CustomSprite(pg.sprite.Sprite):
             self.stoppedHOR = True
         else: 
             self.stoppedHOR = False
+
+        #else:
         #if not posCorrected:
-         #   self.pos = savedPos
+        #   self.pos = savedPos
 
 
     # Checking whether anything is on a solid
@@ -409,11 +552,17 @@ class CustomSprite(pg.sprite.Sprite):
         self.pos.y += 1
         collided_objects = self.collisionDetection(group)
         self.pos = savedPos
+        isOnPlatform = False
         result = None
         for collided in collided_objects:
             if collided != self:
                 if self.determineSide(collided) == "top":
+                    isOnPlatform = True
                     result = collided
+        if isOnPlatform:
+            self.isOnPlatform = True
+        else:
+            self.isOnPlatform = False
         self.rect.bottom -= 2
         #self.pos.y -= 2
         return result
@@ -425,4 +574,3 @@ class CustomSprite(pg.sprite.Sprite):
         self.vel   += self.acc                              # equations of motion
         if abs(self.vel.x + self.addedVel.x) < 0.01:
             self.vel.x = self.addedVel.x
- 

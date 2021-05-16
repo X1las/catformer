@@ -213,7 +213,8 @@ class Button(Activator):
         self.activated = False # Not sure if needed
 
     def buttonPress(self):
-        collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
+        collided_list = self.collisionDetection(self.game.group_pressureActivator)
+        #collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
         if collided_list:
             for collided in collided_list:
                 self.activate()
