@@ -12,7 +12,7 @@ from Sprites.Platform import Platform
 class PatrollingEnemy(CustomSprite):
 
     #def __init__(self,x,y, width, height, maxDist, vel = vec(1,0), name = "enemy"):
-    def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 29, vel = vec(1,0), name = "enemy"):
+    def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 29, vel = vec(1.5,0), name = "enemy"):
         self.plat = plat
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.placement = placement
@@ -127,9 +127,13 @@ class PatrollingEnemy(CustomSprite):
 
 
     def updateAnimation(self):
-        
+        #walkTime = 10
+        if self.activity == "hide" or self.activity == "popup":
+            walkTime = 5
+        elif self.activity == "walk":
+            walkTime = 10
         self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images['walk']['right'])*10:     # reset image index to 0 when running out of images
+        if self.imageIndex >= len(self.images['walk']['right'])*walkTime:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         #self.area = "mid" #Doesn't matter rn, but maybe later?
         if self.vel.x < 0:
@@ -137,13 +141,12 @@ class PatrollingEnemy(CustomSprite):
         elif self.vel.x > 0:
             self.facing = 'right'
 
-        self.image = self.images[self.activity][self.facing][math.floor(self.imageIndex/10)]
+        self.image = self.images[self.activity][self.facing][math.floor(self.imageIndex/walkTime)]
         if self.activity == "popup" and self.image == self.images['popup'][self.facing][-1]:
             self.activity = 'walk'
         if self.activity == "hide" and self.image == self.images['hide'][self.facing][-1]:
             self.activity = 'walk'
             self.aboveground = False
-            print(f'from hide to walk')
                 
 
 
@@ -201,7 +204,6 @@ class PatrollingEnemy(CustomSprite):
                         self.imageIndex = 0
                         self.aboveground = False
                     if self.activity == "walk":
-                        print(f'walk was triggered')
                     #if collided not in self.game.group_platforms:
                         self.addedVel = self.currentplat.vel
                         self.pos.y = self.currentplat.pos.y - 1

@@ -8,7 +8,7 @@ from settings import *
 
 # AI Enemy SubClass 
 class IntelligentEnemy(CustomSprite):
-    def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 1, name = "enemyai"):
+    def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 2, name = "enemyai"):
         self.spawnPlat = spawnPlat
         self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()) 
         self.placement = placement
@@ -96,10 +96,10 @@ class IntelligentEnemy(CustomSprite):
                 self.vel.x = self.addedVel.x
             elif self.playerRight():
                 self.vel.x = self.speed + self.addedVel.x
-                self.image = self.images_right[math.floor(self.imageIndex/10)]   # update current image
+                self.image = self.images_right[math.floor(self.imageIndex/6)]   # update current image
             elif self.playerLeft(): 
                 self.vel.x = - self.speed + self.addedVel.x
-                self.image = self.images_left[math.floor(self.imageIndex/10)]   # update current image
+                self.image = self.images_left[math.floor(self.imageIndex/6)]   # update current image
             else: 
                 self.vel.x = self.addedVel.x
         else:
@@ -116,7 +116,7 @@ class IntelligentEnemy(CustomSprite):
     def update(self):
         self.target = self.game.player
         self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images_right)*10:     # reset image index to 0 when running out of images
+        if self.imageIndex >= len(self.images_right)*6:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
