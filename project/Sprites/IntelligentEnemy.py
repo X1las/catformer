@@ -76,15 +76,16 @@ class IntelligentEnemy(CustomSprite):
         rects = [rect1, rect2, rect3, rect4, rect5, rect6]
         # load images from spritesheet
         self.images_left = wormSheet.images_at(rects, colorkey=(0,0,0))
+        # scale images to correct size
+        for img in self.images_left:
+            img = pg.transform.scale(img, (self.width, self.height))
+
         self.images_right = []
         for img in self.images_left:
             self.images_right.append(pg.transform.flip(img,True,False))
         self.imageIndex = 0
         self.image = self.images_left[self.imageIndex]
     
-        # scale image to correct size
-        self.image = pg.transform.scale(self.image, (self.width, self.height))
-        
         #self.target = self.game.player
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x, self.pos.y)
@@ -119,7 +120,6 @@ class IntelligentEnemy(CustomSprite):
             self.imageIndex = 0
         
         # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
-        self.image = pg.transform.scale(self.image, (self.width, self.height))  # rescale image
         self.vel += self.addedVel
         #self.applyPhysics()
 
