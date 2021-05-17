@@ -29,7 +29,7 @@ from Vector import Vec
 from SpriteGroup import *
 from levelCreator import *
 import os
-
+import Spritesheet as ss
 
 # Game Class
 class Game:
@@ -72,6 +72,12 @@ class Game:
             self.data.append(DEFAULT_LEVEL)
             self.data.append(PLAYER_LIVES)
             self.data.append(PLAYER_CATNIP)
+
+        # load images and sprite sheets
+        self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
+        self.dogSheet      = ss.Spritesheet('resources/Hyena_walk.png')
+        self.platformSheet = ss.Spritesheet('resources/platforms.png')
+        self.wormSheet     = ss.Spritesheet('resources/worm-spritesheet.png')
 
         bg = pg.image.load("resources/bg.png")
         self.bg = pg.transform.scale(bg, (WIDTH+400, HEIGHT))
@@ -487,8 +493,9 @@ class Game:
                         self.selectedState += 1
                     elif event.key == pg.K_DOWN:
                         self.selectedState -= 1
-                    else:
-                        self.userName += event.unicode
+                    elif(pg.K_0 <= event.key <= pg.K_9 or pg.K_a <= event.key <= pg.K_z):
+                        if not event.unicode == "*":
+                            self.userName += event.unicode
             self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
             
@@ -575,8 +582,9 @@ class Game:
                         self.selectedState += 1
                     elif event.key == pg.K_DOWN:
                         self.selectedState -= 1
-                    else:
-                        self.userName += event.unicode
+                    elif(pg.K_0 <= event.key <= pg.K_9 or pg.K_a <= event.key <= pg.K_z):
+                        if not event.unicode == "*":
+                            self.userName += event.unicode
             self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
             
@@ -704,9 +712,9 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level1, 'level1')
+pickleLevel(level1, 'level3')
 pickleLevel(level2, 'level2')
-pickleLevel(level3, 'level3')
+pickleLevel(level3, 'level1')
 pickleLevel(level4, 'level4')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

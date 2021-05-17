@@ -65,7 +65,7 @@ class IntelligentEnemy(CustomSprite):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get spritesheet
-        wormSheet = ss.Spritesheet('resources/Hyena_walk.png')
+        sheet = self.game.dogSheet
         # create sub-rectangles to load from spritesheet
         rect1 = pg.Rect(  3, 21, 45, 27)
         rect2 = pg.Rect( 50, 21, 45, 27)
@@ -75,7 +75,7 @@ class IntelligentEnemy(CustomSprite):
         rect6 = pg.Rect(243, 21, 45, 27)
         rects = [rect1, rect2, rect3, rect4, rect5, rect6]
         # load images from spritesheet
-        self.images_left = wormSheet.images_at(rects, colorkey=(0,0,0))
+        self.images_left = sheet.images_at(rects, colorkey=(0,0,0))
         # scale images to correct size
         for img in self.images_left:
             img = pg.transform.scale(img, (self.width, self.height))

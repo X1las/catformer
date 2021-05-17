@@ -62,7 +62,7 @@ class PatrollingEnemy(CustomSprite):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get spritesheet
-        wormSheet = ss.Spritesheet('resources/worm-spritesheet.png')
+        sheet = self.game.wormSheet
         # create sub-rectangles to load from spritesheet
         walk = []
         walk.append(pg.Rect(  4, 36, 28, 28))
@@ -81,9 +81,8 @@ class PatrollingEnemy(CustomSprite):
         #hide = popup.copy()
         #hide.reverse()
         # load images from spritesheet
-        images_walk  = wormSheet.images_at(walk,  colorkey=(0,0,0))
-        images_popup = wormSheet.images_at(popup, colorkey=(0,0,0))
-        #images_hide  = wormSheet.images_at(hide, colorkey=(0,0,0))
+        images_walk  = sheet.images_at(walk,  colorkey=(0,0,0))
+        images_popup = sheet.images_at(popup, colorkey=(0,0,0))
         # scale image to correct size
         images_walk  = [pg.transform.scale(img, (self.width, self.height)) for img in images_walk]
         images_popup = [pg.transform.scale(img, (self.width, self.height)) for img in images_popup]

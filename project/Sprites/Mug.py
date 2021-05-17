@@ -42,7 +42,7 @@ class Mug(CustomSprite):
         bigMug_broken = pg.Rect(182,0,77,72)
         rects = [whole, broken, bigMug, bigMug_broken]
         # load images from spritesheet
-        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        sheet = self.game.spriteSheet
         self.images = sheet.images_at(rects, (0,255,0))
         # transform images to size of sprite
         for img in self.images:

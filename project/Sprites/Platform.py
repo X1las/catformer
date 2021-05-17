@@ -49,12 +49,12 @@ class Platform(CustomSprite):
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # get sprite sheet
-        platformSheet = ss.Spritesheet('resources/platforms.png')
+        sheet = self.game.platformSheet
         # get individual sprites
-        end_left   = platformSheet.image_at((47 ,51, 34,26), colorkey=(0,0,0))
-        end_right  = platformSheet.image_at((175,51, 34,26), colorkey=(0,0,0))
-        mid        = platformSheet.image_at((303,51, 35,26), colorkey=(0,0,0))
-        brownPiece = platformSheet.image_at((303,176,34,32), colorkey=(0,0,0))
+        end_left   = sheet.image_at((47 ,51, 34,26), colorkey=(0,0,0))
+        end_right  = sheet.image_at((175,51, 34,26), colorkey=(0,0,0))
+        mid        = sheet.image_at((303,51, 35,26), colorkey=(0,0,0))
+        brownPiece = sheet.image_at((303,176,34,32), colorkey=(0,0,0))
         
         # create surface with correct size
         self.image = pg.Surface((self.width,self.height),pg.SRCALPHA)

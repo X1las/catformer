@@ -41,7 +41,7 @@ class Box(CustomSprite):
         self.groups = game.all_sprites, game.group_boxes, game.group_pressureActivator , game.group_solid, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         # load image from spritesheet
-        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        sheet = self.game.spriteSheet
         self.img = sheet.image_at((0,34,52,41),(0,255,0))
         self.image = pg.transform.scale(self.img, (self.width, self.height))
 
