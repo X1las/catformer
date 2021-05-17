@@ -129,7 +129,7 @@ class Lever(Activator):
         right = pg.Rect(19,87,18,13)
         rects = [left, right]
         # load images from spritesheet
-        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        sheet = self.game.spriteSheet
         self.images = sheet.images_at(rects, (0,255,0))     
 
         self.image_inactive  = pg.transform.scale(self.images[0], (self.width, self.height))
@@ -180,7 +180,7 @@ class Button(Activator):
         unpressed = pg.Rect(18,76,18,10)
         rects = [pressed, unpressed]
         # load images from spritesheet
-        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        sheet = self.game.spriteSheet
         self.images = sheet.images_at(rects, (0,255,0))     
         self.image_active   = pg.transform.scale(self.images[0], (self.width, int(self.height/2)))
         self.image_inactive = pg.transform.scale(self.images[1], (self.width, self.height))

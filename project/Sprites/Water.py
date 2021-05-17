@@ -31,8 +31,8 @@ class Water(CustomSprite):
         blue  = pg.Rect( 0,121,16,10)
         rects = [rect1, rect2, rect3, rect4, blue]
         # load images from spritesheet
-        waterSheet = ss.Spritesheet('resources/spritesheet_green.png')
-        self.images = waterSheet.images_at(rects, colorkey=(0,255,0))
+        sheet = self.game.spriteSheet
+        self.images = sheet.images_at(rects, colorkey=(0,255,0))
 
         fill_h = 0      # for tracking how much was filled horizontally
         fill_v = 0      # for tracking how much was filled vertically

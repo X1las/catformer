@@ -20,7 +20,7 @@ class LevelGoal(CustomSprite):
         self.groups = game.all_sprites, game.group_levelGoals, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         # load image from spritesheet
-        sheet = ss.Spritesheet('resources/spritesheet_green.png')
+        sheet = self.game.spriteSheet
         self.image = sheet.image_at((0,280,55,20),(0,255,0))
 
         self.rect = self.image.get_rect()
