@@ -78,16 +78,25 @@ class PatrollingEnemy(CustomSprite):
         popup.append(pg.Rect(100, 4, 28, 28))
         popup.append(pg.Rect(132, 4, 28, 28))
         popup.append(pg.Rect(164, 4, 28, 28))
+        #hide = popup.copy()
+        #hide.reverse()
         # load images from spritesheet
         images_walk  = wormSheet.images_at(walk,  colorkey=(0,0,0))
         images_popup = wormSheet.images_at(popup, colorkey=(0,0,0))
+        #images_hide  = wormSheet.images_at(hide, colorkey=(0,0,0))
         # scale image to correct size
         images_walk  = [pg.transform.scale(img, (self.width, self.height)) for img in images_walk]
         images_popup = [pg.transform.scale(img, (self.width, self.height)) for img in images_popup]
+        images_hide = []
+        for img in reversed(images_popup):
+            images_hide.append(img)
+        #images_hide = images_popup.copy()
+        #images_hide.reverse()
         # define and flip images        
         self.images  = {
             'walk':  {'right': images_walk,  'left': [pg.transform.flip(i, True, False) for i in images_walk]},
-            'popup': {'right': images_popup, 'left': [pg.transform.flip(i, True, False) for i in images_popup]}
+            'popup': {'right': images_popup, 'left': [pg.transform.flip(i, True, False) for i in images_popup]},
+            'hide': {'right': images_hide, 'left': [pg.transform.flip(i, True, False) for i in images_hide]}
         }
         # set initial image
         self.facing = 'right'
@@ -119,20 +128,25 @@ class PatrollingEnemy(CustomSprite):
 
 
     def updateAnimation(self):
+        
         self.imageIndex += 1                        # increment image index every update
         if self.imageIndex >= len(self.images['walk']['right'])*10:     # reset image index to 0 when running out of images
             self.imageIndex = 0
-        
         #self.area = "mid" #Doesn't matter rn, but maybe later?
         if self.vel.x < 0:
             self.facing = 'left'
-        else:
+        elif self.vel.x > 0:
             self.facing = 'right'
 
         self.image = self.images[self.activity][self.facing][math.floor(self.imageIndex/10)]
-        if self.image == self.images['popup'][self.facing][-1]:
+        if self.activity == "popup" and self.image == self.images['popup'][self.facing][-1]:
             self.activity = 'walk'
+        if self.activity == "hide" and self.image == self.images['hide'][self.facing][-1]:
+            self.activity = 'walk'
+            self.aboveground = False
+            print(f'from hide to walk')
                 
+
 
     def update(self):
 
@@ -140,14 +154,23 @@ class PatrollingEnemy(CustomSprite):
         #self.acc = vec(0,0)    
         try:
             self.hide()
-            self.checkDist()
         except Exception as e:
             print(f'touchbox: {e}')
-        self.updateAnimation()
         self.vel += self.addedVel
-        self.solidCollision()
-        self.active = self.aboveground # Whether it should deal damage
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.active = self.aboveground # Whether it should deal damage'
+        if self.activity == "popup":
+            self.vel.x = 0
+        elif self.activity == "hide":
+            self.vel.x = 0
+        elif self.activity == "walk":
+            if self.facing == 'left':
+                self.vel.x = abs(self.originalVel.x) * (-1)
+            elif self.facing == 'right':
+                self.vel.x = abs(self.originalVel.x)
+        self.checkDist()
+        self.updateAnimation()
+        #self.solidCollision()
+        self.rect.midbottom = self.pos.rounded().asTuple()
     
     
     """
@@ -157,7 +180,7 @@ class PatrollingEnemy(CustomSprite):
         -> else: set pos to top of current platform.
     """
     def hide(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         if self.aboveground:
             possibleplat = self.on_solid(self.game.group_platforms)
             if possibleplat != None:
@@ -165,19 +188,26 @@ class PatrollingEnemy(CustomSprite):
         # else if it is inside a plat (self.abovegroun = False), move enemies rect up
         else: 
             self.rect.bottom = self.currentplat.rect.top - 1
+        
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         #justpoppedup = 10
         # If it is above ground, check which platform it is on
         #remove = False
         if collideds:
             for collided in collideds:
                 if collided != self.currentplat:
-                #if collided not in self.game.group_platforms:
-                    self.addedVel = self.currentplat.vel
-                    self.pos.y = self.currentplat.pos.y - 1
-                    self.aboveground = False
-                    self.wasunderground = True
+                    if self.aboveground:
+                        self.activity = "hide"
+                        self.imageIndex = 0
+                        self.aboveground = False
+                    if self.activity == "walk":
+                        print(f'walk was triggered')
+                    #if collided not in self.game.group_platforms:
+                        self.addedVel = self.currentplat.vel
+                        self.pos.y = self.currentplat.pos.y - 1
+                        self.aboveground = False
+                        self.wasunderground = True
                     #remove = True
         else: 
             self.pos.y = self.currentplat.top_y()
@@ -190,7 +220,7 @@ class PatrollingEnemy(CustomSprite):
                 #t = Timer(5, self.popup)
                 #t.start()
             self.wasunderground = False
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
     '''
     def popup(self):
         # go back to old animation
@@ -198,7 +228,7 @@ class PatrollingEnemy(CustomSprite):
     '''
     # Currently doesn't matter. The worm just hides. so?
     def solidCollision(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_platforms, False)
 
         if collideds:
