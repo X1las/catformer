@@ -213,7 +213,8 @@ class Game:
         for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
             
             if event.type == (pg.QUIT):                                         # Check if the user closes the game window
-                self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
+                if os.path.exists("playerData/"+self.userName+"Data.txt"):       #return true/false if file exists/does not
+                    self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
                 if self.playing:                                                # Sets playing to false if it's running (for safety measures)
                     self.playing = False                                        
                 self.inMenu = False
@@ -223,8 +224,8 @@ class Game:
             if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
                 
                 if event.key == pg.K_q:                                         # checks if the uses presses the escape key
-                    
-                    self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
+                    if os.path.exists("playerData/"+self.userName+"Data.txt"):       #return true/false if file exists/does not
+                        self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
                     if self.playing:                                            # Does the same as before
                         self.playing = False                                        
                     self.inNameMenu = False
@@ -617,7 +618,7 @@ class Game:
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_q:                                      #breaks all loops if q is pressed
-                    self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
+                    #self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
 
                     self.inMenu = False                                        
                     self.inTutorial = False  
@@ -672,9 +673,9 @@ class Game:
         #HUD used for endgame level 
     def endGameHUD(self):
         endFont = pg.font.Font("resources/action-jackson.regular.ttf", 40)   #loading custom font
-        self.endText = endFont.render("Congratulations", True, (0, 255 ,0))
+        self.endText = endFont.render("Congratulations", True, (0, 200 ,0))
         endFont = pg.font.Font("resources/action-jackson.regular.ttf", 30)
-        self.endText2 = endFont.render("You have finished the game", True, (0, 255 ,0))
+        self.endText2 = endFont.render("You have finished the game", True, (0, 200 ,0))
 
         #displaying text on screen for pause screen
     def displayPauseScreen(self):
