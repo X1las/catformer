@@ -190,10 +190,9 @@ class Player(CustomSprite):
     def touchEnemy(self):
         damager = self.game.group_damager
         self.rect.midbottom = self.pos.rounded().asTuple()
-        #self.rect = self.rect.inflate(4,4)
-        collided = self.collisionDetection(damager)
-        #collided = pg.sprite.spritecollide(self, damager, False)
-        #self.rect = self.rect.inflate(-4,-4)
+        self.rect = self.rect.inflate(4,4)
+        collided = pg.sprite.spritecollide(self, damager, False)
+        self.rect = self.rect.inflate(-4,-4)
         if collided: 
             for collided_obj in collided:
                 if collided_obj.active:
@@ -353,6 +352,8 @@ class Interactive(CustomSprite):
         self.image = self.images[self.facing]
 
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
+        self.width = image.get_width()/2; self.height = image.get_height()/2
+        
         self.colliding = False
         self.faceinput = self.player.facing
         self.relativePosition = self.pos.copy()
@@ -378,7 +379,10 @@ class Interactive(CustomSprite):
     
     def update(self):
         self.image = self.images[self.player.facing]
-        self.pos = self.player.pos
+        if self.player.facing == "left":
+            self.pos = Vec(self.player.left_x(), self.player.mid().y)
+        if self.player.facing == "right":
+            self.pos = Vec(self.player.right_x(), self.player.mid().y)
         self.vel = self.player.vel
         self.acc = self.player.acc
         self.updateRect()
