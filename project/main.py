@@ -496,10 +496,10 @@ class Game:
                     elif event.key == pg.K_DOWN:
                         self.selectedState -= 1
                     elif(pg.K_0 <= event.key <= pg.K_9):
-                        if not (event.mod & pg.KMOD_SHIFT or event.mod & pg.KMOD_CTRL or event.mod & pg.KMOD_ALT or event.mod & KMOD_MODE or event.mod & KMOD_META or event.mod & KMOD_GUI):
+                        if not ((event.mod & pg.KMOD_SHIFT) or (event.mod & pg.KMOD_CTRL) or (event.mod & pg.KMOD_ALT) or (event.mod & KMOD_MODE) or (event.mod & KMOD_META) or (event.mod & KMOD_GUI)):
                             self.userName += event.unicode
                     elif(pg.K_a <= event.key <= pg.K_z):
-                        if not event.mod & pg.KMOD_CTRL or event.mod & pg.KMOD_ALT or event.mod & KMOD_MODE or event.mod & KMOD_META or event.mod & KMOD_GUI:
+                        if not ((event.mod & pg.KMOD_CTRL) or (event.mod & pg.KMOD_ALT) or (event.mod & KMOD_MODE) or (event.mod & KMOD_META) or (event.mod & KMOD_GUI)):
                             self.userName += event.unicode
             self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
@@ -588,10 +588,10 @@ class Game:
                     elif event.key == pg.K_DOWN:
                         self.selectedState -= 1
                     elif(pg.K_0 <= event.key <= pg.K_9):
-                        if not (event.mod & pg.KMOD_SHIFT or event.mod & pg.KMOD_CTRL or event.mod & pg.KMOD_ALT or event.mod & KMOD_MODE or event.mod & KMOD_META or event.mod & KMOD_GUI):
+                        if not ((event.mod & pg.KMOD_SHIFT) or (event.mod & pg.KMOD_CTRL) or (event.mod & pg.KMOD_ALT) or (event.mod & KMOD_MODE) or (event.mod & KMOD_META) or (event.mod & KMOD_GUI)):
                             self.userName += event.unicode
                     elif(pg.K_a <= event.key <= pg.K_z):
-                        if not event.mod & pg.KMOD_CTRL or event.mod & pg.KMOD_ALT or event.mod & KMOD_MODE or event.mod & KMOD_META or event.mod & KMOD_GUI:
+                        if not ((event.mod & pg.KMOD_CTRL) or (event.mod & pg.KMOD_ALT) or (event.mod & KMOD_MODE) or (event.mod & KMOD_META) or (event.mod & KMOD_GUI)):
                             self.userName += event.unicode
 
             self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
@@ -721,8 +721,8 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level1, 'level1')
-pickleLevel(level2, 'level2')
+pickleLevel(level1, 'level2')
+pickleLevel(level2, 'level1')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 
