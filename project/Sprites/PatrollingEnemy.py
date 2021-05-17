@@ -12,7 +12,7 @@ from Sprites.Platform import Platform
 class PatrollingEnemy(CustomSprite):
 
     #def __init__(self,x,y, width, height, maxDist, vel = vec(1,0), name = "enemy"):
-    def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 29, vel = vec(1.5,0), name = "enemy"):
+    def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 29, vel = vec(1.2,0), name = "enemy"):
         self.plat = plat
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.placement = placement
