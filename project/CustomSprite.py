@@ -158,6 +158,8 @@ class CustomSprite(pg.sprite.Sprite):
             return "left"
         if mins == rightcoll:
             return "right"
+        if mins == topcoll:
+            return "top"
         if mins == botcoll:
             return "bot"
 
@@ -247,16 +249,15 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.y -= 5
         collided_objects = None
         if not self.isEnemy:
-            #collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
-            collided_objects = self.collisionDetection(self.game.group_movables)
+            collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if coll_side == "top":
                         collided.addedVel.x = self.vel.x + self.addedVel.x
-                        #if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
-                        collided.addedVel.y = self.vel.y + self.addedVel.y
+                        if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
+                            collided.addedVel.y = self.vel.y + self.addedVel.y
                         if collided in self.game.group_solid:
                             collided.collisionEffect()
         self.rect.midbottom = self.pos.rounded().asTuple()
@@ -390,17 +391,6 @@ class CustomSprite(pg.sprite.Sprite):
             self.rect.y += self.r(self.vel.y - 1) 
         elif self.vel.y > 0:
             self.rect.y += self.r(self.vel.y + 1) 
-        savedPos = self.pos.copy()
-        """
-        if self.vel.x < 0:
-            self.pos.x += self.relativeVel().x-0.01
-        if self.vel.x > 0:
-            self.pos.x += self.relativeVel().x+0.01
-        if self.vel.y < 0:
-            self.pos.y += self.vel.y - 0.01
-        if self.vel.y > 0:
-            self.pos.y += self.vel.y + 0.01
-        """
         group = self.game.group_solid
         #collided_objects = self.collisionDetection(group)
         #print(f'own: {collided_objects}')
@@ -478,8 +468,7 @@ class CustomSprite(pg.sprite.Sprite):
                             #      self.massHOR = collided.massHOR - 1
                             """
                     #if correctedPos.y > 0:    
-                    #self.pos = correctedPos
-                    posCorrected = True
+                    self.pos = correctedPos
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
             self.stoppedHOR = True
@@ -511,7 +500,6 @@ class CustomSprite(pg.sprite.Sprite):
         else:
             self.isOnPlatform = False
         self.rect.bottom -= 2
-        #self.pos.y -= 2
         return result
 
     # Applies gravity and friction to the velocity of the sprite
