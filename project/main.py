@@ -493,8 +493,9 @@ class Game:
                         self.selectedState += 1
                     elif event.key == pg.K_DOWN:
                         self.selectedState -= 1
-                    else:
-                        self.userName += event.unicode
+                    elif(pg.K_0 <= event.key <= pg.K_9 or pg.K_a <= event.key <= pg.K_z):
+                        if not event.unicode == "*":
+                            self.userName += event.unicode
             self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
             
@@ -581,8 +582,9 @@ class Game:
                         self.selectedState += 1
                     elif event.key == pg.K_DOWN:
                         self.selectedState -= 1
-                    else:
-                        self.userName += event.unicode
+                    elif(pg.K_0 <= event.key <= pg.K_9 or pg.K_a <= event.key <= pg.K_z):
+                        if not event.unicode == "*":
+                            self.userName += event.unicode
             self.drawMenuText(self.userName, 300, 150)                       #drawing name on screen
 
             
