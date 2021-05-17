@@ -704,9 +704,9 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level1, 'level3')
+pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
-pickleLevel(level3, 'level1')
+pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

@@ -46,73 +46,19 @@ def createLevel():
     return levelName
 
 
-
-''' Level 1 '''
-'''
-def createLevel1():
-    # platforms
-    floor   = Platform( 1000, 600 , 2000 , 50 ,'p_floor', floorplat = True )
-    fatplat = Platform( 300 , 450 ,  150 , 40 , 'fatplat')
-    p_1     = Platform( 500 , 350 ,  150 , 40, "p_1", vel=Vec(-0.7,0), maxDist = 100)
-    p_2     = Platform( 500 , 590 ,  150 , 70 , 'p_2')
-    p_3     = Platform( 600 , 200 ,  150 , 40 , 'p_3')
-    p_4     = Platform( 720 , 450 ,  150 , 40 , 'p_4')
-    p_5     = Platform( 1100 , 400 ,  150 , 40 , 'p_5')
-    # boxes
-    box1 = Box(370 , 200 , 44 , 44 , 'box_1')
-    box2 = Box(200 , 400 , 44 , 44 , 'box_2')
-
-    # buttons
-    btn1 = Button(600 , 550 , 30 , 20 , 'button1')
-    btn2 = Button(500 , 550 , 30 , 20 , 'button2')
-    # levers
-    lever1 = Lever(650 , 550 , 36 , 26 , 'lever1')
-    # mugs
-    mug1 = Mug(fatplat , 50 , 'v1')
-    # goals
-    # enemies
-    # water
-    water1 = Water(500 , 590 ,  150 , 70)
-    # health
-    health1 = PickUp(600, 400, 16, 16, 'health')                                          #
-    # catnip
-    catnip1 = PickUp(400, 370, 16, 16, 'catnip')   
-
-    # create dictionary
-    level1 = {
-        'name': 'level1',
-        'settings': {
-            'spawn': Vec(270, 350),
-            'length': 5000,
-            'track': ''
-        },
-        'platforms': [floor, fatplat], # , p_1, p_2, p_3, p_4, p_5],
-        'boxes':     [], # box1, box2],
-        'buttons':   [btn1, btn2],
-        'levers':    [],
-        'mugs':      [mug1],
-        'goals':     [],
-        'enemies':   [],
-        'water':     [],#water1],
-        'health':    [health1],
-        'catnip':    [catnip1]
-    }
-    return level1
-'''
 ''' Level 1 '''
 def createLevel1():
     # platforms
     left = -200
 
-    ceil      = Platform( 1000 - left, 0 , 3000 - left, 50 )
-    floor     = Platform( 1000, 600 , 3000 , 50, floorplat = True  )
-    startplat = Platform( 300 , 400 ,  120 , 30)
-    p_1       = Platform( 420 , 350 ,  100 , 30)
-    p_2       = Platform( 540 , 270 ,   65 , 30)
+    floor     = Platform( 1000 - left, 600 , 3000 , 50, floorplat = True  )
+    startplat = Platform( 200 , 500 ,  120 , 30)
     mugplat   = Platform( 660 , 270 ,   65 , 30, vel = Vec(1,0), maxDist = 50)
     
     waterDiv1 = Platform( 550 , 550 ,  30 , 130)
     waterDiv2 = Platform( 1100, 550 ,  30 , 130)
+    p_1       = Platform( waterDiv1.left_x() - round(waterDiv1.width/2) - 100, waterDiv1.top_y() - 40 ,  100 , 30)
+    p_2       = Platform( p_1.right_x() + 70 , p_1.top_y() - 50 ,   65 , 30)
 
     moving1     = Platform( 700 , 450 ,  150 , 30 , vel=Vec(-1,0), maxDist = 50)
     moving2     = Platform( 900 , 450 ,  150 , 30 , vel=Vec(-1,0), leftMaxDist=30, rightMaxDist= 70)
@@ -122,7 +68,7 @@ def createLevel1():
     leftboundary = Platform(50, 550, 100, 550)
     rightboundary = Platform(1400, 550, 100, 550)
     # boxes
-    box1 = Box(270 , 200 , 44 , 44 )
+    box1 = Box(startplat.left_x() + 20 , 200 , 44 , 44 )
     box2 = Box(660 , 200 , 44 , 44 )
 
 
@@ -133,7 +79,7 @@ def createLevel1():
     # goals
     endgoal = LevelGoal(endplat, 50)
     # enemies
-    pat1 = PatrollingEnemy(floor, 900, 50)
+    pat1 = PatrollingEnemy(floor, 800, 100)
     pat2 = PatrollingEnemy(floor, 1700, 50)
     # water
     water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
@@ -148,11 +94,11 @@ def createLevel1():
     level1 = {
         'name': 'level1',
         'settings': {
-            'spawn': Vec(endplat.right_x(), 350),
+            'spawn': Vec(startplat.mid().x + 40, 350),
             'length': 5000,
             'track': ''
         },
-        'platforms': [ceil, floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
+        'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
         'boxes':     [  box1],# box2],
         'buttons':   [],
         'levers':    [],

@@ -46,7 +46,7 @@ class PatrollingEnemy(CustomSprite):
         self.currentplat = None # The platform it stands on/
         self.aboveground = True
         self.wasunderground = False # Only true when worm *just* popped up
-        self._layer = 10
+        self._layer = 4
         self.active = True
 
         self.init()
@@ -137,13 +137,13 @@ class PatrollingEnemy(CustomSprite):
     def update(self):
 
         #self.stopMoving = self.inbetweenSolids()
-        self.updateAnimation()
         #self.acc = vec(0,0)    
         try:
             self.hide()
             self.checkDist()
         except Exception as e:
             print(f'touchbox: {e}')
+        self.updateAnimation()
         self.vel += self.addedVel
         self.solidCollision()
         self.active = self.aboveground # Whether it should deal damage
