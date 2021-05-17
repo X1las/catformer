@@ -45,6 +45,7 @@ class Game:
     outOfLives = False                                                          # Boolean used for outOfLives loop
 
     # Initializer
+
     def __init__(self):
 
         ''' probably not needed'''
@@ -97,6 +98,10 @@ class Game:
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
         self.group_movables           = pg.sprite.Group()
 
+        self.framecount = 0
+        self.accumframes = 0
+
+
     # Method that creates a new level
     def new(self):
         self.finished = False
@@ -146,18 +151,24 @@ class Game:
             self.clock.tick(FPS)                    # Changing our tickrate so that our frames per second will be the same as FPS from settings
             
             # Checking frame time for performance (keep commented)
-            """
+            self.framecount += 1
+            self.accumframes += self.clock.get_rawtime()
             self.frames += 1
             if (self.frames >= 60):
-                print("new frame")
+                #print("new frame")
                 self.frames = 0
-            print(self.clock.get_rawtime())
-            """
+            if self.framecount > 60*4:
+                print(f'{self.accumframes/self.framecount}')
+                self.accumframes = 0
+                self.framecount = 0
+            #print(self.clock.get_rawtime())
+            
             
             # Runs all our methods on loop:
             self.events()  
             
             if self.paused:
+            
                 if self.isDamaged:
                     pass
                 else:
@@ -694,9 +705,9 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level1, 'level1')
+pickleLevel(level1, 'level3')
 pickleLevel(level2, 'level2')
-pickleLevel(level3, 'level3')
+pickleLevel(level3, 'level1')
 pickleLevel(level4, 'level4')
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

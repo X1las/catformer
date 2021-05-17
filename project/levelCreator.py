@@ -193,7 +193,7 @@ def createLevel2():
 
     #height 2 part 1
     plat3     = Platform(plat1.right_x() -(plat1.right_x()-blocker.right_x())/2, blocker.top_y() + 30, plat1.right_x()-blocker.right_x() , 30)
-    moving1   = Platform(plat1.right_x() + 50, plat1.bot_y()    , 100 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y)
+    moving1   = Platform(plat1.right_x() + 50, plat1.bot_y()    , 100 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y, name = "moving1")
     underwater= Platform(blocker.left_x()  - 200, blocker.top_y() + 60, 400 , 20)
     boxstop   = Platform(blocker.left_x() + 5, blocker.top_y()    , 10 , 10 )
     waterplat1 = Platform(underwater.left_x() + underwater.width*3/4, underwater.top_y(), 50, 20, downMaxDist = 0, upMaxDist = 40)
@@ -229,7 +229,8 @@ def createLevel2():
              plat4, moving2, rightmov, longplat, enemyplat,  goalplat #enemsafe,
              ]
     # boxes
-    box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 )
+    box1 = Box( moving1.pos.x , plat1.top_y() , 44 , 44 )
+    #box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 )
     # buttons
     btn1eff = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat1} ,
                 {"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1), "target" : waterplat2} ,
@@ -243,7 +244,8 @@ def createLevel2():
     # levers
     lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
                         }
-    mov1lev = Lever(plat5, 40, effect = lev1eff)
+    #mov1lev = Lever(plat5, 40, effect = lev1eff)
+    mov1lev = Lever(plat1, 400, effect = lev1eff)
     # pickups
     health1 = PickUp(1300, 540, 'health')                                          #
     catnip1 = PickUp(400, 370, 'catnip')   
