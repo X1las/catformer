@@ -241,11 +241,9 @@ class Game:
     # Method where we update game processesd
     def update(self):
         self.all_sprites.resetSprites()
-        
         for plat in self.group_solid:
             plat.collisionEffect()
         self.all_sprites.update()
-
         self.all_sprites.updatePos()
         self.moveScreen()
 
@@ -260,7 +258,6 @@ class Game:
                 self.exitProgram()
             
             if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
-                
                 if event.key == pg.K_q:                                         # checks if the uses presses the escape key
                     if os.path.exists("playerData/"+self.userName+"Data.txt"):       #return true/false if file exists/does not
                         self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
@@ -478,20 +475,14 @@ class Button():
     def __str__(self):
         return self.text.text
 
-    # end of button
-
-
 class Menu():
 
     def __init__(self,  screen, buttons = [], texts = []):
         self.screen = screen
         self.buttons = buttons
         self.texts = texts
-        #count = 0
         for button in self.buttons:
             button.screen = self.screen
-            #button.BTNnumber = count
-            #count += 1
         self.selectedButton = self.buttons[0]
         self.selectedState = 0
         self.activateSelected = False
@@ -508,7 +499,6 @@ class Menu():
         orangeRect     = pg.Rect(75, self.selectedButton.y + 25, 50, 50)
         pg.draw.rect(self.screen, (255, 125, 0), orangeRect)
         if self.activateSelected:
-            print(f'active')
             self.selectedButton.triggers()
             self.activateSelected = False
 
