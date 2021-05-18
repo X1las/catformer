@@ -149,14 +149,10 @@ class Player(CustomSprite):
         self.determineGravity()
         self.applyPhysics() 
         self.vel += self.addedVel
-        
-        #print(f'in air: {self.inAir}')
-        #print(f'addedvel: {self.vel.y}')
-
         self.checkDamage()
         self.touchPickUp()
         self.solidCollisions(self.game.group_solid)
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     def updatePos(self):
         self.pos += self.vel +  self.acc * 0.5
@@ -172,7 +168,7 @@ class Player(CustomSprite):
 
     def posCorrection(self):
         self.solidCollisions(self.game.group_solid)
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     def outOfBounds(self):

@@ -119,32 +119,20 @@ class IntelligentEnemy(CustomSprite):
         if self.imageIndex >= len(self.images_right)*6:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         
-        # No matter what vel if may have been given (from box e.g.) it should stay at 1 or whatever we choose
         self.vel += self.addedVel
-        #self.applyPhysics()
 
+        self.solidCollisions(self.game.group_solid)
         self.detectPlayer()
         self.checkCliff()
-        self.pygamecolls(self.game.group_solid)
-        #self.stopMoving = self.inbetweenSolids()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
-        #self.pygamecolls(self.game.group_solid)
 
 
     def posCorrection(self):
-        self.collidingWithWall()
+        self.solidCollisions(self.game.group_solid)
 
     def checkCliff(self):
         # should it have a max dist?
-        """
-        if  self.pos.x - self.x >= self.maxDist: # right boundary
-            self.area = "right"
-            self.vel.x = -1 * abs(self.vel.x)
-        elif self.pos.x - self.x <= -1*self.maxDist:
-            self.vel.x = abs(self.vel.x)
-            self.area = "left"
-        """
         possibleplat = self.on_solid(self.game.group_platforms)
         if possibleplat != None:
             self.currentplat = possibleplat
@@ -161,38 +149,27 @@ class IntelligentEnemy(CustomSprite):
         except Exception as e:
             print(f'check cliff: {e}')
 
-    def collidingWithWall(self):
-        self.pygamecolls(self.game.group_solid)
-        self.collides_left = False
-        self.collides_right = False
 
     # The part that checks whether to just turn around or be pushed
-    def pygamecolls(self, group, ignoredSol = None):
-        inflation = 0
-        self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
-        self.rect.x +=self.r((self.vel.x-self.addedVel.x)*1.5)
+    def solidCollisionsOW(self, group):
+        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.x +=self.r((self.relativeVel().x)*1.5)
         self.rect.y +=self.r(self.vel.y*1.5)
         collideds = pg.sprite.spritecollide(self, group, False)
 
-        # lol the if if i f if if if if if if if if if if if if if fif if if if if
         if collideds:
             for collided in collideds:
 
-                if collided != self and collided.name != "p_floor":
-                    #if not self.stopMoving: # If it was inbetween solids
+                if collided != self:
                     if self.ori_massHOR <= collided.massHOR:
                         coll = self.collisionSide_Conditional(collided)
                         coll_side = coll['side']
                         correctedPos = coll['correctedPos']
                         
-                        if coll_side == "left": # left side of collidedd obj
+                        if coll_side == "left" or coll_side == "right": # left side of collidedd obj
                             self.vel.x = self.addedVel.x
+                            self.pos = correctedPos
                                 
-                        if coll_side == "right":
-                            self.vel.x = self.addedVel.x
-                                
-                        self.pos = correctedPos
                     """    
                     if self.ori_massVER < collided.massVER:
                         coll_side = self.determineSide(collided)

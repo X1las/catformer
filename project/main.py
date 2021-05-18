@@ -303,7 +303,7 @@ class Game:
 
     def playerTookDamage(self):
         self.resetCamera()
-        self.damageScreen()
+        
         self.isDamaged = True
         self.paused = True
 

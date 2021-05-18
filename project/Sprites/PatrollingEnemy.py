@@ -193,9 +193,6 @@ class PatrollingEnemy(CustomSprite):
         
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         self.rect.midbottom = self.pos.rounded().asTuple()
-        #justpoppedup = 10
-        # If it is above ground, check which platform it is on
-        #remove = False
         if collideds:
             for collided in collideds:
                 if collided != self.currentplat:
@@ -204,12 +201,10 @@ class PatrollingEnemy(CustomSprite):
                         self.imageIndex = 0
                         self.aboveground = False
                     if self.activity == "walk":
-                    #if collided not in self.game.group_platforms:
                         self.addedVel = self.currentplat.vel
                         self.pos.y = self.currentplat.pos.y - 1
                         self.aboveground = False
                         self.wasunderground = True
-                    #remove = True
         else: 
             self.pos.y = self.currentplat.top_y()
             self.aboveground = True
@@ -218,15 +213,8 @@ class PatrollingEnemy(CustomSprite):
                 # go to dirt pile animations
                 self.activity = 'popup'
                 self.imageIndex = 0
-                #t = Timer(5, self.popup)
-                #t.start()
             self.wasunderground = False
         self.rect.midbottom = self.pos.rounded().asTuple()
-    '''
-    def popup(self):
-        # go back to old animation
-        self.justpoppedup = False
-    '''
     # Currently doesn't matter. The worm just hides. so?
     def solidCollision(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
