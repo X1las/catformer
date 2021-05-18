@@ -84,7 +84,7 @@ def createLevel1():
     # water
     water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
     # health
-    health1 = PickUp(1300, 540, 'health')                                          #
+    health1 = PickUp(1300, 540, 'health')                                          
     # catnip
     catnip1 = PickUp(400, 370, 'catnip')   
     # mugs
@@ -96,7 +96,6 @@ def createLevel1():
         'settings': {
             'spawn': Vec(startplat.mid().x + 40, 350),
             'length': 5000,
-            'track': ''
         },
         'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
         'boxes':     [  box1],# box2],
@@ -129,8 +128,6 @@ def createLevel2():
     plat1     = Platform(1200 - left, 500    , 500 , 30 )
     blocker   = Platform(plat1.x - 30, plat1.top_y() - 50   , 44 , 154 ) 
     vert      = Platform(plat1.x - plat1.width/2 + 15, plat1.y - plat1.height   , 30 , 100)
-    #jumphelp  = Platform(plat1.right_x() + 200, bottom    , 30 , 30, "plat1" )
-    #jumphelp2 = Platform(plat1.left_x() + 30 + 15, plat1.top_y()    , 30 , 30, "plat1" )
     plat2     = Platform(vert.left_x()  - 50/2, vert.top_y() + 30    , 50 , 30)
     vert2     = Platform(plat2.left_x() - 30/2, vert.top_y()+vert.height/2 + 40, 30, vert.height/2 + 40 ) 
     plat5     = Platform(vert2.left_x()  - 50, vert2.bot_y()    , 100 , 30)
@@ -163,7 +160,6 @@ def createLevel2():
     longplat = Platform(rightmov.right_x() + 250, rightmov.bot_y() - 10, 300, 30)
     enemyplat = Platform(longplat.right_x() + 200, longplat.bot_y(), 200, 30)
     enemsafe  = Platform(enemyplat.mid().x, enemyplat.top_y(), 20, 40)
-    #plat5  = Platform(enemyplat.right_x() + 150, enemyplat.bot_y(), 200, 30)
     goalplat  = Platform(enemyplat.right_x() + 150, enemyplat.bot_y(), 150, 30)
 
     leftboundary = Platform(jumper4.left_x() - 50, bottom, 100, bottom)
@@ -184,8 +180,6 @@ def createLevel2():
     waters1btn = Button(plat3, 40, effect = btn1eff)
     mov2btneff = {  "move" : [{"movespeed"  : Vec(-1,0), "deactspeed" : Vec(1,0) , "target" : moving2} ]}
     mov2btn = Button(plat4, 20, effect = mov2btneff)
-    #btn1 = Button(600 , 550 , 30 , 20 , 'button1')
-    #btn2 = Button(500 , 550 , 30 , 20 , 'button2')
     # levers
     lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
                         }
@@ -211,7 +205,6 @@ def createLevel2():
         'settings': {
             'spawn': Vec(goalplat.right_x(),100),
             'length': 5000,
-            'track': 'nyan.mp3'
         },
         #'platforms': [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2, plat1],
         'platforms': plats,
@@ -342,7 +335,6 @@ def createLevel3():
         'settings': {
             'spawn': Vec(endplat.right_x(),100),
             'length': 5000,
-            'track': 'nyan.mp3'
         },
         'platforms': plats,
         'boxes':     [box1],
@@ -381,7 +373,6 @@ def createLevel4():
         'settings': {
             'spawn': Vec(630,550),
             'length': 5000,
-            'track': 'nyan.mp3'
         },
         'platforms': [leftboundary, rightboundary, plat1, plat2, plat3, WINPLAT, floor],
         'boxes':     [],
