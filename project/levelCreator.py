@@ -363,22 +363,27 @@ def createLevel3():
 ''' End Level '''
 def createLevel4():
     # platforms
-    left = -200
+    #left = -200
+    bottom = 550
+    leftboundary = Platform(50, bottom, 100, bottom)
+    rightboundary = Platform(1800 , bottom, 100, bottom)
 
-    ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 )
     floor   = Platform( 1000, 600 , 2000 , 50 , floorplat = True )
-    WINPLAT = Platform( 400, 500, 400, 30)
-    win = PickUp(0,0,"health")
-    mug1 = Mug(WINPLAT , 50 , spawnItem = win, width = 100, height = 100, final = True)
+    plat1 = Platform( 700, 500, 100, 30)
+    plat2 = Platform( plat1.right_x() + 100, plat1.top_y() - 50, 100, 30)
+    plat3 = Platform( plat2.right_x() + 100, plat2.top_y() - 50, 100, 30)
+    WINPLAT = Platform( plat3.right_x() + 100, plat3.top_y() - 50, 100, 30)
+    #win = PickUp(0,0,"health")
+    mug1 = Mug(WINPLAT , 50 , spawnItem = None, width = 100, height = 100, final = True)
 
     levelName = {
         'name': 'level4',
         'settings': {
-            'spawn': Vec(330,550),
+            'spawn': Vec(630,550),
             'length': 5000,
             'track': 'nyan.mp3'
         },
-        'platforms': [WINPLAT, floor],
+        'platforms': [leftboundary, rightboundary, plat1, plat2, plat3, WINPLAT, floor],
         'boxes':     [],
         'buttons':   [],
         'levers':    [],

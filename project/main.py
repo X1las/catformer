@@ -303,7 +303,6 @@ class Game:
 
     def playerTookDamage(self):
         self.resetCamera()
-        
         self.isDamaged = True
         self.paused = True
 
@@ -323,9 +322,7 @@ class Game:
         for text in HUD:
             text.blitText()
 
-
     def quitTrig(self):
-        #self.inMenu = False
         self.mainmenu.active = False
 
     def returnTrig(self):
@@ -514,6 +511,8 @@ class Menu():
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:                                 #sets value to true if enter is pressed
                 self.activateSelected = True
+            if event.key == pg.K_q:
+                self.active = False
             if event.key == pg.K_DOWN:                                   #increase value for selection
                 self.selectedState += 1
                 self.selectedButton = self.selectedState % len(self.buttons)
@@ -554,11 +553,10 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level1, 'level2')
-pickleLevel(level2, 'level1')
+pickleLevel(level1, 'level4')
+pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
-pickleLevel(level4, 'level4')
-
+pickleLevel(level4, 'level1')
 
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

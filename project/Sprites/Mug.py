@@ -51,7 +51,7 @@ class Mug(CustomSprite):
         if self.final:
             self.image_whole = self.images[2]
             self.image_broken = self.images[3]
-            self.gravity = GRAVITY/2
+            self.gravity = GRAVITY/6
         else:
             self.image_whole = self.images[0]
             self.image_broken = self.images[1]

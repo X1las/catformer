@@ -151,7 +151,7 @@ class Player(CustomSprite):
         self.vel += self.addedVel
         self.checkDamage()
         self.touchPickUp()
-        self.solidCollisions(self.game.group_solid)
+        self.solidCollisions()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def updatePos(self):
@@ -167,7 +167,7 @@ class Player(CustomSprite):
             self.gravity = GRAVITY
 
     def posCorrection(self):
-        self.solidCollisions(self.game.group_solid)
+        self.solidCollisions()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
@@ -394,7 +394,8 @@ class Interactive(CustomSprite):
             for collided in collided_list:
                 if self.player.intJustCreated:
                     collided.fall = True
-                    collided.gravity = PLAYER_GRAV
+                    #collided.gravity = PLAYER_GRAV
+                    #collided.fall = True
 
     def pickupSprite(self):
         justPickedUp = self.player.intJustCreated

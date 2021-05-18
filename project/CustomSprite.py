@@ -182,7 +182,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
-    def solidCollisions(self, group = None):#, ignoredSol = []):
+    def solidCollisions(self):#, ignoredSol = []):
         self.rect.midbottom = self.pos.rounded().asTuple()
         if self.vel.x < 0:
             self.rect.x += self.r(self.relativeVel().x-2)
@@ -208,12 +208,6 @@ class CustomSprite(pg.sprite.Sprite):
                             self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
-
-                        #if coll_side == "bot":
-                         #   self.vel.y = self.addedVel.y
-                          #  self.acc.y = 0
-                            #if group.has(self):
-                             #   self.massVER = collided.massVER - 1
                     if self.massHOR <= collided.massHOR:
                         if coll_side == "left" or coll_side == "right":
                             self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
@@ -222,14 +216,6 @@ class CustomSprite(pg.sprite.Sprite):
                             if self.massHOR < collided.massHOR:
                                 if group.has(self):
                                     self.massHOR = collided.massHOR - 1
-                        #if coll_side == "right":
-                         #   self.vel.x = self.addedVel.x
-                          #  self.acc.x = 0
-                           # wasstoppedHOR = True
-                            #if self.massHOR < collided.massHOR:
-                             #   if group.has(self):
-                              #      self.massHOR = collided.massHOR - 1
-                    #if correctedPos.y > 0:    
                     self.pos = correctedPos
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
