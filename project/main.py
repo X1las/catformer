@@ -72,12 +72,12 @@ class Game:
         self.frames                 = 0                                                         
 
         # Reads the player data from file and adds it to self.data
-        self.data = self.getPlayerData()
+        """self.data = self.getPlayerData()
         if not self.data:
             self.data = []
             self.data.append(DEFAULT_LEVEL)
             self.data.append(PLAYER_LIVES)
-            self.data.append(PLAYER_CATNIP)
+            self.data.append(PLAYER_CATNIP)"""
 
         # load images and sprite sheets
         self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
@@ -311,10 +311,10 @@ class Game:
         self.drawHUD(self.scoreHUD)
         if self.paused:
             if self.isDamaged:
-                hud = self.damageHUD
+                self.hud = self.damageHUD
             else:
-                hud = self.pauseHUD
-            self.drawHUD(hud)
+                self.hud = self.pauseHUD
+            self.drawHUD(self.hud)
         if self.finished:
             self.drawHUD(self.endgameHUD)
             
@@ -345,7 +345,7 @@ class Game:
     
     def startLoadTrig(self):
         if self.checkNameConflict():                     #check if name does not exist already
-            self.data = self.saveData()
+            self.data = self.getPlayerData()
             self.new()                                       #opens the game
         else:
             self.nameError = True                            #give error message
@@ -374,7 +374,8 @@ class Game:
                     self.exitProgram()
                 if takeUserName:
                     self.userName = menu.writeName(event, self.userName)
-                menu.menuNavigation(event)
+                
+                menu.menuNavigation(event,takeUserName)
             for button in menu.buttons:
                 mx, my = pg.mouse.get_pos()                                      #get mouse position
                 if button.rect.collidepoint((mx, my)):                         #checking if mouse position is on a button
@@ -452,7 +453,6 @@ class Text():
         textRect.center = self.position
         self.screen.blit(drawtext, textRect)
 
-
 class Button():
     def __init__(self, text, trigger = None, screen = None, x = 190, y = 325, size = (220, 100), color = (0, 125, 255)):
         self.color = color
@@ -506,12 +506,12 @@ class Menu():
             text.blitText()
 
             #getting user input for menu screens
-    def menuNavigation(self, event):
+    def menuNavigation(self, event, takeUserName = False):
         #for event in pg.event.get():                                
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RETURN:                                 #sets value to true if enter is pressed
                 self.activateSelected = True
-            if event.key == pg.K_q:
+            if event.key == pg.K_q and not takeUserName:
                 self.active = False
             if event.key == pg.K_DOWN:                                   #increase value for selection
                 self.selectedState += 1
@@ -553,10 +553,10 @@ level3 = createLevel3()
 level4 = createLevel4()
 
 # pickle levels
-pickleLevel(level1, 'level4')
+pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
-pickleLevel(level4, 'level1')
+pickleLevel(level4, 'level4')
 
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

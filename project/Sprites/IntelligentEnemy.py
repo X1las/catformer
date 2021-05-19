@@ -121,7 +121,7 @@ class IntelligentEnemy(CustomSprite):
         
         self.vel += self.addedVel
 
-        self.solidCollisions(self.game.group_solid)
+        self.solidCollisions()
         self.detectPlayer()
         self.checkCliff()
         self.rect.midbottom = self.pos.realRound().asTuple()
@@ -129,7 +129,7 @@ class IntelligentEnemy(CustomSprite):
 
 
     def posCorrection(self):
-        self.solidCollisions(self.game.group_solid)
+        self.solidCollisions()
 
     def checkCliff(self):
         # should it have a max dist?
