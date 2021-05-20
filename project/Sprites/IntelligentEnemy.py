@@ -124,7 +124,7 @@ class IntelligentEnemy(CustomSprite):
         self.solidCollisions()
         self.detectPlayer()
         self.checkCliff()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
 
@@ -142,15 +142,16 @@ class IntelligentEnemy(CustomSprite):
         try:
             if self.right_x() >= self.currentplat.right_x()  -1:
                 self.vel = self.addedVel
-                self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+                self.set_right(self.currentplat.right_x() - 3) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
             elif self.left_x() <= self.currentplat.left_x() +1: 
                 self.vel = self.addedVel
-                self.set_left(self.currentplat.left_x() + 2)
+                self.set_left(self.currentplat.left_x() + 3)
         except Exception as e:
             print(f'check cliff: {e}')
 
 
     # The part that checks whether to just turn around or be pushed
+    # DELETE?
     def solidCollisionsOW(self, group):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x +=self.r((self.relativeVel().x)*1.5)

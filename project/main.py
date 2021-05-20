@@ -100,18 +100,19 @@ class Game:
         
         self.group_platforms          = pg.sprite.Group()                       # Only applied  to platforms
         self.group_boxes              = pg.sprite.Group()                       # Only applied to boxes
-        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
-        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
         self.group_levers             = pg.sprite.Group()                       # Only applied to the lever 
-        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_mugs               = pg.sprite.Group()                       # Only applied to mugs
-        self.group_solid              = SpriteGroup()                           # solid objects (formerly rayIntersecters)
         self.group_pickups            = pg.sprite.Group()                       # All things that can get picked up by player
+        self.group_solid              = SpriteGroup()                           # solid objects (formerly rayIntersecters)
         self.group_damager            = pg.sprite.Group()                       # All hostiles
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
+        # not necessary?
+        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
+        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_movables           = pg.sprite.Group()
-
+        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
+       
         self.framecount = 0
         self.accumframes = 0
 
