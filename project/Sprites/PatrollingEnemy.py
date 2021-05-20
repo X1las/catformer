@@ -170,7 +170,7 @@ class PatrollingEnemy(CustomSprite):
             elif self.facing == 'right':
                 self.vel.x = abs(self.originalVel.x)
         if self.aboveground:
-            self.pos.y = self.play.top_y()
+            self.pos.y = self.plat.top_y()
         self.checkDist()
         self.updateAnimation()
         #self.solidCollision()

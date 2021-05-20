@@ -142,7 +142,7 @@ class IntelligentEnemy(CustomSprite):
         try:
             if self.right_x() >= self.currentplat.right_x()  -1:
                 self.vel = self.addedVel
-                self.set_right(self.currentplat.right_x() - 3) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+                self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
             elif self.left_x() <= self.currentplat.left_x() +1: 
                 self.vel = self.addedVel
                 self.set_left(self.currentplat.left_x() + 3)

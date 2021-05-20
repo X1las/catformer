@@ -448,7 +448,7 @@ def createTestLevel():
     # floor
     floor      = Platform( 1200, 600 , 3000 , 50, floorplat = True  )
     # moving platform zone
-    patplat    = Platform( 20, 150, 250,  30, vel = Vec(1,0), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
+    patplat    = Platform( 20, 150, 250,  30, vel = Vec(1,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
     levbutplat = Platform( 20, 300, 250,  30, vel = Vec(1,1), leftMaxDist = 120, rightMaxDist =   0, upMaxDist   = 10, downMaxDist  = 100)
     intplat    = Platform( 20, 470, 250,  30, vel = Vec(0.5,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
     upplat1    = Platform(300, 400,  20, 100, vel = Vec(0,1), upMaxDist   =  10, downMaxDist  = 170)
