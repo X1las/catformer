@@ -141,14 +141,13 @@ class Player(CustomSprite):
         else:
             self.jumpcounter = 0
             self.image = self.images['jump'][self.facing]
-        if self.jumpcounter > 10:
+        if self.jumpcounter > 8:
             self.canjump = True
         else:
             self.canjump = False
         self.move()
         self.determineGravity()
         self.applyPhysics() 
-        #self.vel += self.addedVel
         self.checkDamage()
         self.touchPickUp()
         self.solidCollisions()
@@ -190,7 +189,6 @@ class Player(CustomSprite):
         if collided: 
             for collided_obj in collided:
                 if collided_obj.active:
-                    print(f'hit enemy: {collided_obj.name}')
                     self.takeDamage()         
         self.rect.midbottom = self.pos.rounded().asTuple()
 
@@ -199,9 +197,6 @@ class Player(CustomSprite):
         self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
         self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
         self.refreshedInt_box   = self.refreshCount >= self.refreshCount_prev       #
-        
-        #for lever in self.game.group_levers:
-         #   lever.leverPull(self.game.group_interactiveFields, self.refreshedInt_lever)
         self.interactive_field.leverPull()
         self.interactive_field.pickupSprite()
         self.interactive_field.knockOver()
@@ -211,7 +206,6 @@ class Player(CustomSprite):
 
     def liftArm(self):
         self.lockFacing = False
-        
         keys = pg.key.get_pressed()
         if keys[pg.K_d]:
             self.isInteracting = True
@@ -219,7 +213,6 @@ class Player(CustomSprite):
                 self.interactive_field = Interactive(self.game,self, self.facing)
                 self.liftedBefore = True
                 self.intJustCreated = True
-
                 self.refreshCount += 1
             self.interactUpdate()
 
@@ -239,19 +232,16 @@ class Player(CustomSprite):
         if keys[pg.K_LEFT]:                                             # If it's left arrow
             if not self.lockFacing:
                 self.facing = "left"
-                #print("WALKING LEFT")
             if not self.inAir and not self.isInteracting:
                 self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/15)]
             self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if not self.lockFacing:
                 self.facing = "right"
-                #print("WALKING RIGHT")
             self.acc.x = PLAYER_ACC                                          
             if not self.inAir and not self.isInteracting:
                 self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/15)]
         if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
-            #self.jumpcounter = 0
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP
 
@@ -270,51 +260,46 @@ class Player(CustomSprite):
 
 
     def inbetweenSolids(self):
+        self.rect.midbottom = self.pos.rounded().asTuple()
         inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
-        self.rect.midbottom = self.pos.realRound().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
         result = False
         movingVER = False
         movingHOR = False
         collides_top = False; collides_bot = False
+        collides_left = False; collides_right = False
         if collideds:
             for collided in collideds:
                 if collided != self:
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
-                        if self.collides_left:
-                            if collided.vel.x < 0:
-                                movingHOR = True
-                            if movingHOR:
-                                self.takeDamage()
+                        if collided.vel.x < 0:
+                            movingHOR = True
+                        if self.collides_left and movingHOR:
+                            self.takeDamage()
                             result = True
                         self.collides_right = True
                     if coll_side == "right":
-                        if self.collides_right:
-                            if collided.vel.x > 0:
-                                movingHOR = True
-                            if movingHOR:
-                                self.takeDamage()
-                            result = True
+                        if collided.vel.x > 0:
+                            movingHOR = True
+                        if self.collides_right and movingHOR:
+                            self.takeDamage()
                             #self.vel.x *= 0
                         self.collides_left = True
                     if coll_side == "top": # left side of collidedd obj
                         if collided.vel.y < 0:
                             movingVER = True
-                        if collides_top:
-                            if movingVER:
-                                self.takeDamage()
+                        if collides_top and movingVER:
+                            self.takeDamage()
                             result = True
                         collides_bot = True
                     if coll_side == "bot":
                         if collided.vel.y > 0:
                             movingVER = True
-                        if collides_bot:
-                            if movingVER:
-                                self.takeDamage()
+                        if collides_bot and movingVER:
+                            self.takeDamage()
                             result = True
-                            #self.vel.x *= 0
                         collides_top = True
 
         self.rect = self.rect.inflate(-inflation,-inflation)

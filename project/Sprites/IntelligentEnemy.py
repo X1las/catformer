@@ -139,12 +139,14 @@ class IntelligentEnemy(CustomSprite):
         else: 
             self.gravity = GRAVITY
         try:
-            if self.right_x() >= self.currentplat.right_x()  -1:
+            if self.right_x() >= self.currentplat.right_x() and self.vel.x > 0:
                 self.vel = self.addedVel
-                self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
-            elif self.left_x() <= self.currentplat.left_x() +1: 
+                self.vel *= 0
+                self.set_right(self.currentplat.right_x() ) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
+            elif self.left_x() <= self.currentplat.left_x()  and self.vel.x < 0: 
                 self.vel = self.addedVel
-                self.set_left(self.currentplat.left_x() + 2)
+                self.vel *= 0
+                self.set_left(self.currentplat.left_x())
         except Exception as e:
             print(f'check cliff: {e}')
 

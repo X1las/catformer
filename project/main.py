@@ -107,7 +107,7 @@ class Game:
         self.group_damager            = pg.sprite.Group()                       # All hostiles
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
-        # not necessary?
+        # not necessary?æ
         self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
         self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_movables           = pg.sprite.Group()
