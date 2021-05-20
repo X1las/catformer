@@ -108,7 +108,6 @@ class IntelligentEnemy(CustomSprite):
 
     def updatePos(self): # fix
         self.acc   += vec(0, self.gravity)                  # Gravity
-        #self.vel += self.acc
         self.pos +=  self.vel +  self.acc * 0.5
         self.acc = vec(0,0)     
 
@@ -145,7 +144,7 @@ class IntelligentEnemy(CustomSprite):
                 self.set_right(self.currentplat.right_x() - 2) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
             elif self.left_x() <= self.currentplat.left_x() +1: 
                 self.vel = self.addedVel
-                self.set_left(self.currentplat.left_x() + 3)
+                self.set_left(self.currentplat.left_x() + 2)
         except Exception as e:
             print(f'check cliff: {e}')
 

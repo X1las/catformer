@@ -111,14 +111,14 @@ class Platform(CustomSprite):
 
 
     def solidCollision(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x +=self.r(self.vel.x)
         self.rect.y +=self.r(self.vel.y)
         collided_objects = pg.sprite.spritecollide(self, self.game.group_solid, False)
 
         if collided_objects:
             for collided in collided_objects:
-                if collided != self and self.solidstrength <= collided.solidstrength and not collided.floorplat:
+                if collided != self and self.solidstrength <= collided.solidstrength and not self.floorplat:
                     coll = self.collisionSide_Conditional(collided)
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
@@ -133,4 +133,4 @@ class Platform(CustomSprite):
                     if coll_side == "bot": # left side of collidedd obj
                         self.vel.y = self.originalVel.y * (-1)
                     self.pos = correctedPos
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
