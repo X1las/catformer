@@ -547,19 +547,22 @@ class Menu():
 # Game Loop
 # create objects and dicts
 
-''' remove these '''
+''' remove these 
 level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
 level4 = createLevel5()
-
 # pickle levels
 pickleLevel(level1, 'level5')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 pickleLevel(level4, 'level1')
+'''
+testLevel = createTestLevel()
+pickleLevel(testLevel, 'level1')
+
 
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
