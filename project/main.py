@@ -241,9 +241,10 @@ class Game:
     # Method where we update game processesd
     def update(self):
         self.all_sprites.resetSprites()
+        self.all_sprites.update()
         for plat in self.group_solid:
             plat.collisionEffect()
-        self.all_sprites.update()
+        self.all_sprites.updateAddedvel()
         self.all_sprites.updatePos()
         self.moveScreen()
 
@@ -551,12 +552,14 @@ level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
+level4 = createLevel5()
 
 # pickle levels
-pickleLevel(level1, 'level1')
+pickleLevel(level1, 'level5')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
+pickleLevel(level4, 'level1')
 
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

@@ -8,7 +8,7 @@ from settings import *
 
 # AI Enemy SubClass 
 class IntelligentEnemy(CustomSprite):
-    def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 2, name = "enemyai"):
+    def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 1.7, name = "enemyai"):
         self.spawnPlat = spawnPlat
         self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()) 
         self.placement = placement

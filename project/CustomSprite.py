@@ -46,6 +46,7 @@ class CustomSprite(pg.sprite.Sprite):
     addedVel        = Vec()
     update_order        = 10
     inAir           = True
+    isPlatform = False
     pos    = vec(); vel  = vec(); acc = vec()
 
     isPlayer = False #Remove later
@@ -92,6 +93,12 @@ class CustomSprite(pg.sprite.Sprite):
     
     def relativeVel(self):
         return self.vel - self.addedVel
+
+
+    def updateAddedVel(self):
+        self.vel += self.addedVel
+
+
 
     def init(self):
         self.massHOR = self.solidstrength
@@ -168,10 +175,10 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.y -= 5
         collided_objects = None
         if not self.isEnemy:
-            collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
+            collided_objects = pg.sprite.spritecollide(self, self.game.all_sprites, False)
         if collided_objects:
             for collided in collided_objects:
-                if collided != self: # and self.massVER < collided.massVER:
+                if collided != self and not collided.isPlatform: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if coll_side == "top":
                         collided.addedVel.x = self.vel.x + self.addedVel.x

@@ -11,6 +11,7 @@ from Sprites.Platform import Platform
 class Mug(CustomSprite):
     def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None, final = False):
         self.spawnPlat = plat
+        self.standingon = plat
         self.spawnItem = spawnItem
         self.width  = width; self.height = height
         self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()).rounded() 
@@ -44,7 +45,7 @@ class Mug(CustomSprite):
         # load images from spritesheet
         sheet = self.game.spriteSheet
         self.images = sheet.images_at(rects, (0,255,0))
-        # transform images to size of sprite
+        # transform aimages to size of sprite
         for img in self.images:
             img = pg.transform.scale(img, (self.width, self.height))
         # set special images for final level
@@ -69,13 +70,14 @@ class Mug(CustomSprite):
             self.touchplat(self.game.group_solid)
         
         self.vel.x = self.addedVel.x
-        if self.fall == True:
+        if self.fall:
             self.applyGrav()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
     def breaks(self):
         
         self.image = self.image_broken
+        self.pos.y = self.standingon.top_y()
         self.pos = self.pos.rounded()
         if self.spawnItem != None:
             self.spawnItem.pos = self.pos.copy()
@@ -83,6 +85,7 @@ class Mug(CustomSprite):
         if self.final:
             self.game.finished = True
         self.broken = True
+        self.fall = False
 
     # Applies basic gravity
     def applyGrav(self):
@@ -90,16 +93,18 @@ class Mug(CustomSprite):
         self.vel.y += self.acc.y                              # equations of motion
 
     def updatePos(self):
-        if self.broken:
-            standingon = self.on_solid(self.game.group_platforms)
-            if standingon:
-                self.pos.y = standingon.top_y()
+        self.standingon = self.on_solid(self.game.group_platforms)
+        if self.standingon and not self.fall:
+            if self.broken:
+                self.pos.y = self.standingon.top_y()
                 self.vel.y = self.addedVel.y; self.acc.y = 0
-                self.vel.x = self.addedVel.x
+                #self.vel.x = self.addedVel.x
+            self.pos.y = self.standingon.top_y()
         self.vel.x = self.addedVel.x
+        
         #self.vel.x = self.addedVel.x #here?
         super().updatePos()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     def collisionMultipleGroups(self,*groups):
         collidedObjects = []
@@ -114,10 +119,11 @@ class Mug(CustomSprite):
 
     # When it thouches a platform or other solid
     def touchplat(self, group):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.y +=self.r(self.vel.y + 4) 
         collided_objects = self.collisionMultipleGroups(group, self.game.group_enemies)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self.spawnPlat and self.fell_fast_enough and not self.broken:
                     self.breaks()
+        self.rect.midbottom = self.pos.rounded().asTuple()

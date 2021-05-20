@@ -148,7 +148,7 @@ class Player(CustomSprite):
         self.move()
         self.determineGravity()
         self.applyPhysics() 
-        self.vel += self.addedVel
+        #self.vel += self.addedVel
         self.checkDamage()
         self.touchPickUp()
         self.solidCollisions()

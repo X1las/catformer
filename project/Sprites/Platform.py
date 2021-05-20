@@ -15,7 +15,7 @@ class Platform(CustomSprite):
         self.pos = vec(x,y); self.vel = vel
         self.originalVel = self.vel.copy()
         self.floorplat = floorplat
-        
+        self.isPlatform = True
         if maxDist == None:
             self.leftMaxDist = leftMaxDist
             self.rightMaxDist = rightMaxDist

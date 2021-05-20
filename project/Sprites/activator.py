@@ -17,6 +17,10 @@ class Activator(CustomSprite):
     auto_deactivate = False
     
 
+    def update(self):
+        self.vel += self.addedVel
+
+
     def activeEffect(self):
         doDeactivate = False
         try:
@@ -94,11 +98,17 @@ class Activator(CustomSprite):
             self.activated = False
             self.image = self.image_inactive
     def update(self):
+        self.vel.x += self.addedVel.x
         if self.activated:
             self.activeEffect()
         elif self.deactivated:
             self.deactiveEffect()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
+    def updatePos(self):
+        super().updatePos()
+        self.pos.y = self.plat.top_y()
+
 
 # Lever SubClass - Inherits from CustomSprite
 class Lever(Activator):

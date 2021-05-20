@@ -32,6 +32,14 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         for i in lis:
             i.update()
 
+
+    def updateAddedvel(self):
+        lis = self.updateOrder()
+
+        for i in lis:
+            i.updateAddedVel()
+
+
     def updatePos(self):
         lis = self.updateOrder()
         for i in lis:
