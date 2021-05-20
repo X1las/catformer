@@ -79,8 +79,8 @@ def createLevel1():
     # goals
     endgoal = LevelGoal(endplat, 50)
     # enemies
-    pat1 = PatrollingEnemy(floor, 800, 100)
-    pat2 = PatrollingEnemy(floor, 1700, 50)
+    pat1 = PatrollingEnemy(floor, 700, 100)
+    pat2 = PatrollingEnemy(floor,  waterDiv2.right_x()-floor.left_x() + 80, 50)
     # water
     water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
     # health
@@ -94,7 +94,7 @@ def createLevel1():
     level1 = {
         'name': 'level1',
         'settings': {
-            'spawn': Vec(startplat.mid().x + 40, 350),
+            'spawn': Vec(endplat.mid().x + 40, 350),
             'length': 5000,
         },
         'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
@@ -184,6 +184,7 @@ def createLevel2():
     lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
                         }
     mov1lev = Lever(plat5, 40, effect = lev1eff)
+    #mov1lev = Lever(moving1, 40, effect = lev1eff)
     # pickups
     health1 = PickUp(1300, 540, 'health')                                          #
     catnip1 = PickUp(400, 370, 'catnip')   
@@ -387,6 +388,65 @@ def createLevel4():
     }
 
     return levelName
+
+
+
+''' End Level '''
+def createLevel5():
+    # platforms
+    #left = -200
+    bottom = 550
+    leftboundary = Platform(50, bottom, 100, bottom)
+    rightboundary = Platform(1800 , bottom, 100, bottom)
+
+    floor   = Platform( 1000, 600 , 2000 , 50 , floorplat = True )
+    plat0 = Platform( 700, 300, 100, 30, vel = Vec(0,1), maxDist= 50)
+    plat1 = Platform( 700, 500, 100, 30, vel = Vec(0,1), maxDist= 50)
+    plat2 = Platform( plat1.right_x() + 100, plat1.top_y() - 50, 100, 30, vel = Vec(1,0), maxDist = 50)
+    plat3 = Platform( plat2.right_x() + 100, plat2.top_y() - 50, 100, 30)
+    WINPLAT = Platform( plat3.right_x() + 100, plat3.top_y() - 50, 100, 30)
+    #win = PickUp(0,0,"health")
+    mug1 = Mug(WINPLAT , 50 , spawnItem = None, width = 100, height = 100, final = True)
+    mug2 = Mug(plat0 , 50 , spawnItem = None)
+    box1 = Box(plat0.mid().x - 22, plat0.top_y() - 40)
+
+
+    #dic = { "respawn" : [{"target": box1}]
+                  #}
+    #leverE = Lever(plat2, 40, effect = dic, autodeactivate = True)
+
+
+    ''' BUTTONS '''
+    dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : plat3}]
+                               }
+    btnC = Button(plat1, 40, effect = dic)
+
+
+
+    levelName = {
+        'name': 'level5',
+        'settings': {
+            'spawn': Vec(630,550),
+            'length': 5000,
+        },
+        'platforms': [leftboundary, rightboundary, plat0, plat1, plat2, plat3, WINPLAT, floor],
+        'boxes':     [box1],
+        'buttons':   [btnC],
+        'levers':    [],#leverE],
+        'mugs':      [mug1, mug2],
+        'goals':     [],
+        'enemies':   [],
+        'water':     [],
+        'health':    [],
+        'catnip':    []
+    }
+
+    return levelName
+
+
+
+
+
 
 
 # pickling method
