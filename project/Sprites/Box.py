@@ -87,7 +87,8 @@ class Box(CustomSprite):
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 3
             if not self.stoppedHOR:
-                self.interacter.player.massHOR = self.ori_massHOR + 1
+                self.interacter.player.massHOR = self.ori_massHOR - 1
+                self.massHOR = self.interacter.player.massHOR - 1
             self.justreleased = True
         else: 
             self.beingHeld = False

@@ -135,7 +135,6 @@ class Player(CustomSprite):
         if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         self.image = self.images['sit'][self.facing]
-        self.liftArm()
         if not self.inAir:
             self.jumpcounter += 1
         else:
@@ -151,6 +150,7 @@ class Player(CustomSprite):
         self.checkDamage()
         self.touchPickUp()
         self.solidCollisions()
+        self.liftArm()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def updatePos(self):

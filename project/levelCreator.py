@@ -475,7 +475,7 @@ def createTestLevel():
     patbtn = Button(patplat2, 150)
     intlev = Lever(intplat2, 100)
     patlev = Lever(patplat2, 100)
-    shieldbox = Box(1100, 450)
+    shieldbox = Box(900, 450)
     # object testing zone
     mugplat = Platform(1300, 500, 500,  30)
     intmug = Mug(mugplat, 100)
@@ -494,7 +494,7 @@ def createTestLevel():
     testLevel = {
         'name': '',
         'settings': {
-            'spawn': (Vec(0,550)),
+            'spawn': (Vec(600,550)),
             'length': 5000,
             'track': ''
         },
