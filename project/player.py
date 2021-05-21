@@ -225,6 +225,8 @@ class Player(CustomSprite):
                 pass
         self.intJustCreated = False    
         
+    def update2(self):
+        self.checkDamage()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -274,14 +276,14 @@ class Player(CustomSprite):
                 if collided != self:
                     coll_side = self.determineSide(collided)
                     if coll_side == "left": # left side of collidedd obj
-                        if collided.vel.x < 0:
+                        if collided.vel.x + collided.addedVel.x < 0:
                             movingHOR = True
                         if self.collides_left and movingHOR:
                             self.takeDamage()
                             result = True
                         self.collides_right = True
                     if coll_side == "right":
-                        if collided.vel.x > 0:
+                        if collided.vel.x + collided.addedVel.x > 0:
                             movingHOR = True
                         if self.collides_right and movingHOR:
                             self.takeDamage()

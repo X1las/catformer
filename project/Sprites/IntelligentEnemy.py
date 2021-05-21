@@ -29,7 +29,7 @@ class IntelligentEnemy(CustomSprite):
 
 
         ''' should be revisited'''
-        self.solidstrength = 5
+        self.solidstrength = 8
         #self.originalsolidstrength = self.solidstrength
 
 
@@ -40,7 +40,7 @@ class IntelligentEnemy(CustomSprite):
         self.active = True
         self.ori_massVER = 8
         self._layer = 10
-        self.update_order = 9
+        self.update_order = 5
         self.currentplat = None
 
 

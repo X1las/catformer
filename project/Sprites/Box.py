@@ -33,7 +33,7 @@ class Box(CustomSprite):
         self.beingHeld = False
         self.interacter = None
         self.justreleased = False
-        self.update_order = 5
+        self.update_order = 6
         self.init()
 
     def startGame(self, game):
@@ -71,14 +71,12 @@ class Box(CustomSprite):
             self.gravity = GRAVITY
 
     def update(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
         self.applyPhysics()
         self.pickupEffect()
         self.solidCollisions()
         #self.vel += self.addedVel 
         self.rect.midbottom = self.pos.rounded().asTuple()
-
-
 
 
     def liftedBy(self,interacter):
@@ -98,7 +96,10 @@ class Box(CustomSprite):
 
     def updatePos(self):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
+        if self.vel.x == 0:
+            self.pos = self.pos.rounded()
         self.pos += self.vel +  self.acc * 0.5
+        self.vel.x = self.addedVel.x
         self.has_collided = False
         #self.rect.midbottom = self.pos.realRound().asTuple()
 
@@ -108,4 +109,3 @@ class Box(CustomSprite):
         # I am not sure this is needed
         self.solidCollisions()
         self.rect.midbottom = self.pos.realRound().asTuple()
-        self.vel.x = self.addedVel.x

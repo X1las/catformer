@@ -33,7 +33,7 @@ class Mug(CustomSprite):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_mugs, game.group_movables
+        self.groups = game.all_sprites, game.group_mugs
         pg.sprite.Sprite.__init__(self, self.groups)
         
         # create sub-rectangles to load from water spritesheet

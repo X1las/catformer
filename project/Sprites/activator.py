@@ -131,7 +131,7 @@ class Lever(Activator):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_levers, game.group_movables
+        self.groups = game.all_sprites, game.group_levers
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create sub-rectangles to load from spritesheet
@@ -182,7 +182,7 @@ class Button(Activator):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_buttons, game.group_movables
+        self.groups = game.all_sprites, game.group_buttons
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create sub-rectangles to load from spritesheet

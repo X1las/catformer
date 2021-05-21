@@ -249,11 +249,14 @@ class Game:
         self.all_sprites.resetSprites()
         self.all_sprites.update()
         for plat in self.group_solid:
+            plat.pushEffect()
             plat.collisionEffect()
         self.all_sprites.updateAddedvel()
+        self.all_sprites.update2()
         self.all_sprites.updatePos()
         self.moveScreen()
         self.updateHUD()
+
 
       
     # Method that checks for events in pygame
