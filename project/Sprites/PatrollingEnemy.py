@@ -158,7 +158,7 @@ class PatrollingEnemy(CustomSprite):
             self.hide()
         except Exception as e:
             print(f'touchbox: {e}')
-        self.vel += self.addedVel
+        #self.vel += self.addedVel
         self.active = self.aboveground # Whether it should deal damage'
         if self.activity == "popup":
             self.vel.x = 0
@@ -169,6 +169,8 @@ class PatrollingEnemy(CustomSprite):
                 self.vel.x = abs(self.originalVel.x) * (-1)
             elif self.facing == 'right':
                 self.vel.x = abs(self.originalVel.x)
+        if self.aboveground:
+            self.pos.y = self.plat.top_y()
         self.checkDist()
         self.updateAnimation()
         #self.solidCollision()

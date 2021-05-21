@@ -108,7 +108,6 @@ class IntelligentEnemy(CustomSprite):
 
     def updatePos(self): # fix
         self.acc   += vec(0, self.gravity)                  # Gravity
-        #self.vel += self.acc
         self.pos +=  self.vel +  self.acc * 0.5
         self.acc = vec(0,0)     
 
@@ -124,7 +123,7 @@ class IntelligentEnemy(CustomSprite):
         self.solidCollisions()
         self.detectPlayer()
         self.checkCliff()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
 
@@ -151,6 +150,7 @@ class IntelligentEnemy(CustomSprite):
 
 
     # The part that checks whether to just turn around or be pushed
+    # DELETE?
     def solidCollisionsOW(self, group):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x +=self.r((self.relativeVel().x)*1.5)

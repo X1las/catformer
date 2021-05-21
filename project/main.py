@@ -101,19 +101,20 @@ class Game:
         
         self.group_platforms          = pg.sprite.Group()                       # Only applied  to platforms
         self.group_boxes              = pg.sprite.Group()                       # Only applied to boxes
-        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
-        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
         self.group_levers             = pg.sprite.Group()                       # Only applied to the lever 
-        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_mugs               = pg.sprite.Group()                       # Only applied to mugs
-        self.group_solid              = SpriteGroup()                           # solid objects (formerly rayIntersecters)
         self.group_pickups            = pg.sprite.Group()                       # All things that can get picked up by player
+        self.group_solid              = SpriteGroup()                           # solid objects (formerly rayIntersecters)
         self.group_damager            = pg.sprite.Group()                       # All hostiles
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
+        # not necessary?
+        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
+        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_movables           = pg.sprite.Group()
-
-        self.framecount = 0                                                     # variablues used for testing performance
+        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
+       
+        self.framecount = 0
         self.accumframes = 0
 
     # Loads all the HUDs default values
@@ -567,19 +568,22 @@ class Menu():
 # Game Loop
 # create objects and dicts
 
-''' remove these '''
+''' remove these 
 level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
 level4 = createLevel5()
-
 # pickle levels
 pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
-pickleLevel(level4, 'level5')
+pickleLevel(level4, 'level1')
+'''
+testLevel = createTestLevel()
+pickleLevel(testLevel, 'level1')
+
 
 
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

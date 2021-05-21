@@ -443,8 +443,51 @@ def createLevel5():
 
     return levelName
 
+''' Testing Level '''
+def createTestLevel():
+    # floor
+    floor      = Platform( 1200, 600 , 3000 , 50, floorplat = True  )
+    # moving platform zone
+    patplat    = Platform( 20, 150, 250,  30, vel = Vec(1,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
+    levbutplat = Platform( 20, 300, 250,  30, vel = Vec(1,1), leftMaxDist = 120, rightMaxDist =   0, upMaxDist   = 10, downMaxDist  = 100)
+    intplat    = Platform( 20, 470, 250,  30, vel = Vec(0.5,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
+    upplat1    = Platform(300, 400,  20, 100, vel = Vec(0,1), upMaxDist   =  10, downMaxDist  = 170)
+    upplat2    = Platform(300, 250,  20, 100, vel = Vec(0,2), upMaxDist   =  10, downMaxDist  = 170)
+    pat1 = PatrollingEnemy (patplat, 150, 50,vel = Vec(2,0))
+    int1 = IntelligentEnemy(intplat, 150)
+    movbtn = Button(levbutplat, 100)
+    movlev = Lever(levbutplat, 200)
 
 
+    # boxes
+    # buttons
+    # levers
+    # mugs
+    # goals
+    # enemies
+    # water
+    # catnip
+
+    testLevel = {
+        'name': '',
+        'settings': {
+            'spawn': (Vec(0,550)),
+            'length': 5000,
+            'track': ''
+        },
+        'platforms': [floor, patplat, intplat, levbutplat, upplat1, upplat2],
+        'boxes':     [],
+        'buttons':   [movbtn],
+        'levers':    [movlev],
+        'mugs':      [],
+        'goals':     [],
+        'enemies':   [pat1, int1],
+        'water':     [],
+        'health':    [],
+        'catnip':    []
+    }
+
+    return testLevel
 
 
 
@@ -460,9 +503,11 @@ level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
+testLevel = createTestLevel()
 
 # pickle levels
 pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
+pickleLevel(testLevel, 'level1')
