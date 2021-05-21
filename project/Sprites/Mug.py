@@ -77,7 +77,8 @@ class Mug(CustomSprite):
     def breaks(self):
         
         self.image = self.image_broken
-        self.pos.y = self.standingon.top_y()
+        if self.standingon:
+            self.pos.y = self.standingon.top_y()
         self.pos = self.pos.rounded()
         if self.spawnItem != None:
             self.spawnItem.pos = self.pos.copy()
