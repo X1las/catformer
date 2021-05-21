@@ -457,16 +457,39 @@ def createTestLevel():
     int1 = IntelligentEnemy(intplat, 150)
     movbtn = Button(levbutplat, 100)
     movlev = Lever(levbutplat, 200)
+    # enemy testing zone
+    patplat2    = Platform( 500, 150, 200,  30)
+    patpatplat  = Platform( 500, 250, 200,  30)
+    patplatplat = Platform( 500, 350, 200,  30)
+    plat        = Platform( 500, 320,  50,  30)
+    intplat2    = Platform( 500, 470, 200,  30)
+    stopplat    = Platform( 800, 550,  40,  30)
+    stopplat2   = Platform(1200, 550,  40,  30)
+    pat2 = PatrollingEnemy(patplat2,     0, 200)
+    pat3 = PatrollingEnemy(patpatplat,   0, 200)
+    pat4 = PatrollingEnemy(patpatplat, 100, 200)
+    pat5 = PatrollingEnemy(patplatplat,  0, 200)
+    int2 = IntelligentEnemy(intplat2, 0)
+    int3 = IntelligentEnemy(floor, 1450)
+    intbtn = Button(intplat2, 150)
+    patbtn = Button(patplat2, 150)
+    intlev = Lever(intplat2, 100)
+    patlev = Lever(patplat2, 100)
+    shieldbox = Box(1000, 450)
+    # object testing zone
+    mugplat = Platform(1300, 500, 500,  30)
+    intmug = Mug(mugplat, 100)
+    boxmug = Mug(mugplat, 200)
+    mugmug = Mug(mugplat, 300)
+    btnmug = Mug(mugplat, 400)
+    levmug = Mug(mugplat, 500)
+    mug    = Mug(floor,  1650)
+    mugbox = Box(1250, 550)
+    boxbox = Box(1650, 550)
+    mugbtn = Button(floor, 1750)
+    muglev = Lever(floor, 1850)
+    
 
-
-    # boxes
-    # buttons
-    # levers
-    # mugs
-    # goals
-    # enemies
-    # water
-    # catnip
 
     testLevel = {
         'name': '',
@@ -475,13 +498,13 @@ def createTestLevel():
             'length': 5000,
             'track': ''
         },
-        'platforms': [floor, patplat, intplat, levbutplat, upplat1, upplat2],
-        'boxes':     [],
-        'buttons':   [movbtn],
-        'levers':    [movlev],
-        'mugs':      [],
+        'platforms': [floor, patplat, intplat, levbutplat, upplat1, upplat2, patplat2, intplat2, patpatplat, plat, patplatplat, stopplat, stopplat2, mugplat],
+        'boxes':     [shieldbox, mugbox, boxbox],
+        'buttons':   [movbtn, intbtn, patbtn, mugbtn],
+        'levers':    [movlev, intlev, patlev, muglev],
+        'mugs':      [intmug, boxmug, mugmug, btnmug, levmug, mug],
         'goals':     [],
-        'enemies':   [pat1, int1],
+        'enemies':   [pat1, int1, int2, pat2, pat3, pat4, pat5, int3],
         'water':     [],
         'health':    [],
         'catnip':    []
