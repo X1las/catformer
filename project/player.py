@@ -377,7 +377,7 @@ class Interactive(CustomSprite):
         collided_list = pg.sprite.spritecollide(self, self.game.group_mugs, False)
         if collided_list: 
             for collided in collided_list:
-                if self.player.intJustCreated:
+                if self.player.intJustCreated and not collided.broken:
                     collided.fall = True
                     #collided.gravity = PLAYER_GRAV
                     #collided.fall = True
