@@ -477,7 +477,7 @@ def createTestLevel():
     patlev = Lever(patplat2, 100)
     shieldbox = Box(1000, 450)
     # object testing zone
-    mugplat = Platform(1300, 500, 500,  30)
+    mugplat = Platform(1300, 450, 500,  30)
     intmug = Mug(mugplat, 100)
     boxmug = Mug(mugplat, 200)
     mugmug = Mug(mugplat, 300)
