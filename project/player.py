@@ -325,11 +325,12 @@ class Interactive(CustomSprite):
         
         # create surface with correct size
         self.image = pg.Surface((width,height),pg.SRCALPHA)
-        #pg.Surface.fill(self.image, (0,255,0))
         # load image from spritesheet
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         img = sheet.image_at((144,198,30,42),(0,255,0))
         image = pg.transform.scale(img, (int(width), int(height)))
+        pg.Surface.fill(self.image, (0,255,0))
+        
         self.images = {'right': image, 'left': pg.transform.flip(image, True, False)}
         self.image = self.images[self.facing]
 
@@ -349,11 +350,13 @@ class Interactive(CustomSprite):
 
     def intUpdate(self, facing, pos):
         if facing == "left":
+            print(f'left')
             if pos == "global":
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
             else:
                 self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
-        else: 
+        elif facing == "right": 
+            print(f'right')
             if pos == "global":
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
@@ -370,11 +373,13 @@ class Interactive(CustomSprite):
         self.updateRect()
     
     def updateRect(self):
+        self.image = self.images[self.player.facing]
         self.intUpdate(self.player.facing, "rel")
+        #self.intUpdate(self.faceinput, "rel")
     
     def resetRects(self):
         self.colliding = False
-        self.intUpdate(self.faceinput, "global")
+        self.intUpdate(self.player.facing, "global")
 
     def knockOver(self):
         collided_list = pg.sprite.spritecollide(self, self.game.group_mugs, False)
