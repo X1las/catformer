@@ -446,11 +446,11 @@ def createLevel5():
 ''' Testing Level '''
 def createTestLevel():
     # floor
-    floor      = Platform( 1200, 600 , 3000 , 50, floorplat = True  )
+    floor      = Platform( 1200, 600 , 3000 , 50, floorplat = True, name = "floor"  )
     # moving platform zone
     patplat    = Platform( 20, 150, 250,  30, vel = Vec(1,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
     levbutplat = Platform( 20, 300, 250,  30, vel = Vec(1,1), leftMaxDist = 120, rightMaxDist =   0, upMaxDist   = 10, downMaxDist  = 100)
-    intplat    = Platform( 20, 470, 250,  30, vel = Vec(0.5,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
+    intplat    = Platform( 20, 470, 250,  30, name = "intplat", vel = Vec(0.5,1), leftMaxDist =   0, rightMaxDist = 120, upMaxDist   = 10, downMaxDist  = 10)
     upplat1    = Platform(300, 400,  20, 100, vel = Vec(0,1), upMaxDist   =  10, downMaxDist  = 170)
     upplat2    = Platform(300, 250,  20, 100, vel = Vec(0,2), upMaxDist   =  10, downMaxDist  = 170)
     pat1 = PatrollingEnemy (patplat, 150, 50,vel = Vec(2,0))
@@ -462,7 +462,7 @@ def createTestLevel():
     patpatplat  = Platform( 500, 250, 200,  30)
     patplatplat = Platform( 500, 350, 200,  30)
     plat        = Platform( 500, 320,  50,  30)
-    intplat2    = Platform( 500, 470, 200,  30)
+    intplat2    = Platform( 500, 470, 200,  30, name = "intplat2")
     stopplat    = Platform( 800, 550,  40,  30)
     stopplat2   = Platform(1200, 550,  40,  30)
     pat2 = PatrollingEnemy(patplat2,     0, 200)
@@ -475,8 +475,8 @@ def createTestLevel():
     patbtn = Button(patplat2, 150)
     intlev = Lever(intplat2, 100)
     patlev = Lever(patplat2, 100)
-    shieldbox = Box(900, 450, name = "testbox")
-    shieldbox2 = Box(1000, 450, name = "testbox")
+    shieldbox = Box(950, 450, name = "testbox")
+    shieldbox2 = Box(1000, 450, name = "testbox2")
     # object testing zone
     mugplat = Platform(1300, 450, 500,  30)
     intmug = Mug(mugplat, 100)
@@ -485,8 +485,8 @@ def createTestLevel():
     btnmug = Mug(mugplat, 400)
     levmug = Mug(mugplat, 500)
     mug    = Mug(floor,  1650)
-    mugbox = Box(1250, 550)
-    boxbox = Box(1650, 550)
+    mugbox = Box(1250, 550, name = "mugbox")
+    boxbox = Box(1650, 550, name = "boxbox")
     mugbtn = Button(floor, 1750)
     muglev = Lever(floor, 1850)
     
@@ -505,7 +505,7 @@ def createTestLevel():
         'levers':    [movlev, intlev, patlev, muglev],
         'mugs':      [intmug, boxmug, mugmug, btnmug, levmug, mug],
         'goals':     [],
-        'enemies':   [pat1, int1, int2, pat2, pat3, pat4, pat5, int3],
+        'enemies':   [pat1, pat2, pat3, pat4, pat5, int1, int2, int3],
         'water':     [],
         'health':    [],
         'catnip':    []

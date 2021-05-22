@@ -120,6 +120,7 @@ class IntelligentEnemy(CustomSprite):
         
         #self.vel += self.addedVel
 
+        #self.solidCollisions()
         self.solidCollisions()
         self.detectPlayer()
         self.checkCliff()

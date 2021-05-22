@@ -50,6 +50,7 @@ class CustomSprite(pg.sprite.Sprite):
     pos    = vec(); vel  = vec(); acc = vec()
 
     isPlayer = False #Remove later
+    latestCorrectedPos = Vec()
 
 
     # Methods
@@ -207,7 +208,7 @@ class CustomSprite(pg.sprite.Sprite):
         if collided_objects:
             #print(collided_objects)
             for collided in collided_objects:
-                if collided != self and not collided.isPlatform and self.massHOR > collided.massHOR: # and self.massVER < collided.massVER:
+                if collided != self and not collided.isPlatform and self.massHOR >= collided.massHOR: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if (coll_side == "right" and self.vel.x > 0) or (coll_side == "left" and self.vel.x < 0):
                         collided.addedVel.x += self.vel.x + self.addedVel.x
@@ -235,22 +236,39 @@ class CustomSprite(pg.sprite.Sprite):
         group = self.game.group_solid
         collided_objects = pg.sprite.spritecollide(self, group, False)
         self.rect.midbottom = self.pos.rounded().asTuple()
+        #diffx, diffy = 0,0
         wasstoppedHOR = False
+        recursiveList = []
         if collided_objects:
             for collided in collided_objects:
                 if collided != self: # and collided not in ignoredSol: #and not self.isEnemy:
                     coll = self.collisionSide_Conditional(collided)
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
-                    if self.massVER < collided.massVER:
+                    #print(f'{self.name} massHOR {self.massHOR}')
+                    #print(f'collided: {collided.name} massHOR {collided.massHOR}')
+                    #if self.massVER < collided.massVER:
+                    if self.massVER < collided.massVER  or (self.massVER == collided.massVER and self.game.group_movables.has(self)):
+                        #if not collided.isPlatform:
+                         #   print(f'----- {collided.name} triggered {self.name}')
                         if coll_side == "top" or coll_side == "bot":
                             self.vel.y = self.addedVel.y
                             self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
+                            
+                            recursiveList.append(collided)
                             #if group.has(collided):
-                             #   self.solidCollisions()
-                    if self.massHOR < collided.massHOR:
+                                #collided.solidCollisions()
+                            tempy = self.pos.y
+                            self.pos.y = correctedPos.y
+                            self.latestCorrectedPos.y = self.pos.y - tempy
+                            #diffy = abs(tempy - self.pos.y)
+                    #if self.massHOR < collided.massHOR:
+                    #                                          it is ok that they are equally heavy it is supposed to be movable
+                    if self.massHOR < collided.massHOR or (self.massHOR == collided.massHOR and self.game.group_movables.has(self)):
+                        #if not collided.isPlatform:
+                         #   print(f'----- {collided.name} triggered {self.name}')
                         if coll_side == "left" or coll_side == "right":
                             self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
                             self.acc.x = 0
@@ -259,13 +277,25 @@ class CustomSprite(pg.sprite.Sprite):
                             if group.has(self):
                                 self.massHOR = collided.massHOR - 1
                             #if group.has(collided):
-                             #   self.solidCollisions()
-                    self.pos = correctedPos
+                             #   collided.solidCollisions()
+                            recursiveList.append(collided)
+                            #if group.has(collided):
+                             #   collided.solidCollisions()
+                            tempy = self.pos.x
+                            self.pos.x = correctedPos.x
+                            self.latestCorrectedPos.x = self.pos.x - tempy
+                            #self.pos.x = correctedPos.x # can't figure out whether this needs to be indented twice
+                            #tempy = self.pos.x
+                            #diffx = abs(tempy - self.pos.x)
+                            #self.latestCorrectedPos = vec(abs(tempy - self.pos.x)
+        #self.latestCorrectedPos = vec(diffx, diffy)
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
             self.stoppedHOR = True
         else: 
             self.stoppedHOR = False
+        for i in recursiveList:
+            i.solidCollisions()
 
 
     # Checking whether anything is on a solid

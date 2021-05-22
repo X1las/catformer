@@ -78,11 +78,11 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         self.correctPositions()
 
     def correctPositions(self):
-        #lis = []
-        #for i in self:
-         #   lis.append(i)
-        #lis.sort(key = lambda x: x.solidstrength, reverse = True)
-        lis = self.updateOrder()
+        lis = []
+        for i in self:
+            lis.append(i)
+        lis.sort(key = lambda x: x.solidstrength, reverse = True)
+        #lis = self.updateOrder()
         for i in lis:
             i.posCorrection()
 

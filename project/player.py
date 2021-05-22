@@ -60,7 +60,7 @@ class Player(CustomSprite):
         self.refreshCount           = 0                                                        
         self.refreshCount_prev      = 0         
         self.imageIndex = 0 
-
+        self.latestCorrectedPos = Vec()
         
 
 
@@ -350,13 +350,11 @@ class Interactive(CustomSprite):
 
     def intUpdate(self, facing, pos):
         if facing == "left":
-            print(f'left')
             if pos == "global":
                 self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
             else:
                 self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
         elif facing == "right": 
-            print(f'right')
             if pos == "global":
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
@@ -417,6 +415,7 @@ class Interactive(CustomSprite):
                             collided.pickupStarted = True
                         collided.has_collided = True
                         #collided.beingheld = True
+                        self.update()
                         self.vel = self.player.vel.copy()
                         self.acc = self.player.acc.copy()
                         collided.liftedBy(self)

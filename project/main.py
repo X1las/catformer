@@ -256,6 +256,7 @@ class Game:
         self.updateHUD()
 
 
+
       
     # Method that checks for events in pygame
     def events(self):
@@ -359,7 +360,7 @@ class Game:
     def startLoadTrig(self):
         if self.checkNameConflict():                             #check if name exists already
             self.data = self.getPlayerData()
-            self.new()                                           #opens the game
+            self.new()                                            #opens the game
         else:
             self.nameError = True                                #give error message
             self.activateSelected = False                        #disable activator (mouse1 or enter)

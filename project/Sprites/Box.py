@@ -57,6 +57,7 @@ class Box(CustomSprite):
             if self.beingHeld:
                 self.new_vel = self.interacter.player.vel.copy()
                 self.new_acc = self.interacter.player.acc.copy()
+                self.pos -= self.interacter.player.latestCorrectedPos.copy()
                 self.vel.x = self.new_vel.x
                 self.vel.y = 0
                 self.acc.x = self.new_acc.x
@@ -71,6 +72,7 @@ class Box(CustomSprite):
             self.gravity = GRAVITY
 
     def update(self):
+        #self.test()
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.applyPhysics()
         self.solidCollisions()
@@ -80,6 +82,8 @@ class Box(CustomSprite):
 
     def update2(self):
         self.pickupEffect()
+        #self.pickupEffect()
+        pass
 
 
     def liftedBy(self,interacter):
@@ -105,6 +109,7 @@ class Box(CustomSprite):
         self.pos   += self.vel +  self.acc * 0.5
         self.vel.x = self.addedVel.x
         self.has_collided = False
+        self.solidCollisions()
         #self.rect.midbottom = self.pos.realRound().asTuple()
 
 
