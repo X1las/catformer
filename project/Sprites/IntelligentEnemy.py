@@ -118,7 +118,7 @@ class IntelligentEnemy(CustomSprite):
         if self.imageIndex >= len(self.images_right)*6:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         
-        self.vel += self.addedVel
+        #self.vel += self.addedVel
 
         self.solidCollisions()
         self.detectPlayer()

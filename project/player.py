@@ -147,7 +147,7 @@ class Player(CustomSprite):
         self.move()
         self.determineGravity()
         self.applyPhysics() 
-        self.checkDamage()
+        #self.checkDamage()
         self.touchPickUp()
         self.solidCollisions()
         self.liftArm()
@@ -313,6 +313,7 @@ class Player(CustomSprite):
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
         self.game = game
+        self.name = "interactive"
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
         self._layer = 2
@@ -411,6 +412,8 @@ class Interactive(CustomSprite):
                             collided.pickupStarted = True
                         collided.has_collided = True
                         #collided.beingheld = True
+                        self.vel = self.player.vel.copy()
+                        self.acc = self.player.acc.copy()
                         collided.liftedBy(self)
                         self.player.lockFacing = True
             else:

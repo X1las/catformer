@@ -217,7 +217,10 @@ class PatrollingEnemy(CustomSprite):
                 self.imageIndex = 0
             self.wasunderground = False
         self.rect.midbottom = self.pos.rounded().asTuple()
-    # Currently doesn't matter. The worm just hides. so?
+
+
+
+    # Currently doesn't matter. The worm just hides. so? DELEtE?!
     def solidCollision(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         collideds = pg.sprite.spritecollide(self, self.game.group_platforms, False)

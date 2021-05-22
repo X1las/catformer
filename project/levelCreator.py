@@ -475,7 +475,8 @@ def createTestLevel():
     patbtn = Button(patplat2, 150)
     intlev = Lever(intplat2, 100)
     patlev = Lever(patplat2, 100)
-    shieldbox = Box(900, 450)
+    shieldbox = Box(900, 450, name = "testbox")
+    shieldbox2 = Box(1000, 450, name = "testbox")
     # object testing zone
     mugplat = Platform(1300, 450, 500,  30)
     intmug = Mug(mugplat, 100)
@@ -499,7 +500,7 @@ def createTestLevel():
             'track': ''
         },
         'platforms': [floor, patplat, intplat, levbutplat, upplat1, upplat2, patplat2, intplat2, patpatplat, plat, patplatplat, stopplat, stopplat2, mugplat],
-        'boxes':     [shieldbox, mugbox, boxbox],
+        'boxes':     [shieldbox, shieldbox2, mugbox, boxbox],
         'buttons':   [movbtn, intbtn, patbtn, mugbtn],
         'levers':    [movlev, intlev, patlev, muglev],
         'mugs':      [intmug, boxmug, mugmug, btnmug, levmug, mug],

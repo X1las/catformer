@@ -98,7 +98,7 @@ class Activator(CustomSprite):
             self.activated = False
             self.image = self.image_inactive
     def update(self):
-        self.vel.x += self.addedVel.x
+        #self.vel.x += self.addedVel.x
         if self.activated:
             self.activeEffect()
         elif self.deactivated:

@@ -7,6 +7,10 @@ vec = Vec
 
 
 class SpriteGroup(pg.sprite.LayeredUpdates):
+    orderedList = None
+    
+    def __init__(self):
+        pg.sprite.LayeredUpdates.__init__(self)
 
     def resetRects(self):
         for i in self:
@@ -21,6 +25,26 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.resetSprite()
 
     def updateOrder(self):
+        if not self.orderedList:
+            self.orderedList = self.createOrderedList()
+        self.orderedList.sort(key = lambda x: x.update_order, reverse = False)
+        return self.orderedList
+
+    def createOrderedList(self):
+        self.orderedList = self.sortList()
+        return self.orderedList
+
+    def collisionEffects(self):
+        lis = []
+        for i in self:
+            lis.append(i)
+        lis.sort(key = lambda x: x.solidstrength, reverse = True)
+        for i in lis:
+            i.pushEffect()
+        
+
+
+    def sortList(self):
         lis = []
         for i in self:
             lis.append(i)
@@ -54,10 +78,11 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         self.correctPositions()
 
     def correctPositions(self):
-        lis = []
-        for i in self:
-            lis.append(i)
-        lis.sort(key = lambda x: x.solidstrength, reverse = True)
+        #lis = []
+        #for i in self:
+         #   lis.append(i)
+        #lis.sort(key = lambda x: x.solidstrength, reverse = True)
+        lis = self.updateOrder()
         for i in lis:
             i.posCorrection()
 

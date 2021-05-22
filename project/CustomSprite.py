@@ -189,17 +189,15 @@ class CustomSprite(pg.sprite.Sprite):
                             collided.addedVel.y = self.vel.y + self.addedVel.y
                         if collided in self.game.group_solid:
                             collided.collisionEffect()
-                    #if (coll_side == "right" or coll_side == "left") and self.massHOR > collided.massHOR:
-                     #   collided.addedVel.x = self.vel.x + self.addedVel.x
 
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def pushEffect(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         if self.vel.x > 0:
-            self.rect.x += 1
+            self.rect.x += 2
         if self.vel.x < 0:
-            self.rect.x -= 1
+            self.rect.x -= 2
 
         #self.rect.x += self.r(self.relativeVel().x*100)
         collided_objects = None
@@ -211,14 +209,16 @@ class CustomSprite(pg.sprite.Sprite):
             for collided in collided_objects:
                 if collided != self and not collided.isPlatform and self.massHOR > collided.massHOR: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
-                    if coll_side == "right" and self.vel.x > 0:
+                    if (coll_side == "right" and self.vel.x > 0) or (coll_side == "left" and self.vel.x < 0):
                         collided.addedVel.x += self.vel.x + self.addedVel.x
-                    
-                    elif coll_side == "left" and self.vel.x < 0:
-                        #print(f'{self.name} on {collided.name}')
-                        collided.addedVel.x += self.vel.x + self.addedVel.x
+                        #if collided in self.game.group_solid:
+                         #       collided.pushEffect()
+                    #elif coll_side == "left" and self.vel.x < 0:
+                     #   collided.addedVel.x += self.vel.x + self.addedVel.x
 
         self.rect.midbottom = self.pos.rounded().asTuple()
+
+        self.collisionEffect()
 
 
 
@@ -248,6 +248,8 @@ class CustomSprite(pg.sprite.Sprite):
                             self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1
+                            #if group.has(collided):
+                             #   self.solidCollisions()
                     if self.massHOR < collided.massHOR:
                         if coll_side == "left" or coll_side == "right":
                             self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
@@ -256,6 +258,8 @@ class CustomSprite(pg.sprite.Sprite):
                             #if self.massHOR < collided.massHOR:
                             if group.has(self):
                                 self.massHOR = collided.massHOR - 1
+                            #if group.has(collided):
+                             #   self.solidCollisions()
                     self.pos = correctedPos
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:

@@ -248,9 +248,7 @@ class Game:
     def update(self):
         self.all_sprites.resetSprites()
         self.all_sprites.update()
-        for plat in self.group_solid:
-            plat.pushEffect()
-            plat.collisionEffect()
+        self.group_solid.collisionEffects()
         self.all_sprites.updateAddedvel()
         self.all_sprites.update2()
         self.all_sprites.updatePos()
