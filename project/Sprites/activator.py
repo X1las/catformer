@@ -15,7 +15,7 @@ class Activator(CustomSprite):
     activated = False
     deactivated = True
     auto_deactivate = False
-    
+    _layer = 5  
 
     def update(self):
         self.vel += self.addedVel
@@ -161,7 +161,7 @@ class Button(Activator):
         self.effect = effect; 
         self.width = width; self.height = height
         #self.pos = vec(x,y)
-
+        
 
 
         ''' probably not needed'''

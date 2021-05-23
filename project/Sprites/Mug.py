@@ -18,6 +18,7 @@ class Mug(CustomSprite):
         self.final = final
         self.placement = placement
         self.name = name
+        self._layer =9
         
         self.broken = False
         self.update_order = 11

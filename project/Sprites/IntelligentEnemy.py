@@ -39,7 +39,7 @@ class IntelligentEnemy(CustomSprite):
         self.isEnemy = True
         self.active = True
         self.ori_massVER = 8
-        self._layer = 10
+        self._layer = 25
         self.update_order = 5
         self.currentplat = None
 

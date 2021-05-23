@@ -13,6 +13,10 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
     def __init__(self):
         pg.sprite.LayeredUpdates.__init__(self)
 
+    #def draw(self):
+     #   for i 
+
+
     def resetRects(self):
         for i in self:
             i.resetRects()

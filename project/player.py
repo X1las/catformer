@@ -41,7 +41,7 @@ class Player(CustomSprite):
 
     def __init__(self, spawn, name="player"):
         
-        self._layer     = 2
+        self._layer     = 30
         self.spawn      = spawn
         self.pos        = spawn
         self.update_order        = 2
@@ -313,11 +313,11 @@ class Player(CustomSprite):
 # Interactive Field SubClass - Inherits from CustomSprite
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
+        self._layer = 20
         self.game = game
         self.name = "interactive"
         # anchor depends on which way player faces
-        pg.sprite.Sprite.__init__(self, game.all_sprites, game.group_interactiveFields)  
-        self._layer = 2
+        pg.sprite.Sprite.__init__(self, game.all_sprites)  
         self.update_order = 3
         self.player = player
         width = 30#self.player.width/2 + 5
@@ -330,7 +330,7 @@ class Interactive(CustomSprite):
         sheet = ss.Spritesheet('resources/spritesheet_green.png')
         img = sheet.image_at((144,198,30,42),(0,255,0))
         image = pg.transform.scale(img, (int(width), int(height)))
-        pg.Surface.fill(self.image, (0,255,0))
+        #pg.Surface.fill(self.image, (0,255,0))
         
         self.images = {'right': image, 'left': pg.transform.flip(image, True, False)}
         self.image = self.images[self.facing]

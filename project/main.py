@@ -245,6 +245,7 @@ class Game:
     """    ------------------- UPDATE ----------------------------------------------------------------"""
     """    ------------------- UPDATE ----------------------------------------------------------------"""
     # Method where we update game processesd
+    
     def update(self):
         self.all_sprites.resetSprites()
         self.all_sprites.update()

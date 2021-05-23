@@ -48,7 +48,7 @@ class CustomSprite(pg.sprite.Sprite):
     inAir           = True
     isPlatform = False
     pos    = vec(); vel  = vec(); acc = vec()
-
+    _layer = 6
     isPlayer = False #Remove later
     latestCorrectedPos = Vec()
     savedPos = vec()
@@ -249,10 +249,7 @@ class CustomSprite(pg.sprite.Sprite):
         group = self.game.group_solid
         grouplist = group.massUpdateOrder()
         collided_objects = pg.sprite.spritecollide(self, grouplist, False)
-        #collided_objects = self.collidingWithSolids
-        #print(f'{collided_objects}')
         self.rect.midbottom = self.pos.rounded().asTuple()
-        #diffx, diffy = 0,0
         wasstoppedHOR = False
         recursiveList = []
         if collided_objects:
@@ -261,9 +258,6 @@ class CustomSprite(pg.sprite.Sprite):
                     coll = self.collisionSide_Conditional(collided)
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
-                    #print(f'{self.name} massHOR {self.massHOR}')
-                    #print(f'collided: {collided.name} massHOR {collided.massHOR}')
-                    #if self.massVER < collided.massVER:
                     if self.massVER < collided.massVER  or (self.massVER == collided.massVER and self.game.group_movables.has(self)):
                         #if not collided.isPlatform:
                          #   print(f'----- {collided.name} triggered {self.name}')
@@ -274,39 +268,17 @@ class CustomSprite(pg.sprite.Sprite):
                                 self.massVER = collided.massVER - 1
                             
                             recursiveList.append(collided)
-                            #if group.has(collided):
-                                #collided.solidCollisions()
-                            #tempy = self.pos.y
                             self.pos.y = correctedPos.y
-                            #self.latestCorrectedPos.y = self.pos.y - tempy
-                            #self.latestCorrectedPos.y = self.pos.y - self.savedPos.y
-                            #diffy = abs(tempy - self.pos.y)
-                    #if self.massHOR < collided.massHOR:
                     #                                          it is ok that they are equally heavy it is supposed to be movable
                     if self.massHOR < collided.massHOR or (self.massHOR == collided.massHOR and self.game.group_movables.has(self)):
-                        #if not collided.isPlatform:
-                         #   print(f'----- {collided.name} triggered {self.name}')
                         if coll_side == "left" or coll_side == "right":
                             self.vel.x = self.addedVel.x # otherwise the player would get "pushed" out when touching box on moving platform
                             self.acc.x = 0
                             wasstoppedHOR = True
-                            #if self.massHOR < collided.massHOR:
                             if group.has(self):
                                 self.massHOR = collided.massHOR - 1
-                            #if group.has(collided):
-                             #   collided.solidCollisions()
                             recursiveList.append(collided)
-                            #if group.has(collided):
-                             #   collided.solidCollisions()
-                            #tempy = self.pos.x
                             self.pos.x = correctedPos.x
-                            #self.latestCorrectedPos.x = self.pos.x - tempy
-                            #self.latestCorrectedPos.x = self.savedPos.x - self.pos.x
-                            #self.pos.x = correctedPos.x # can't figure out whether this needs to be indented twice
-                            #tempy = self.pos.x
-                            #diffx = abs(tempy - self.pos.x)
-                            #self.latestCorrectedPos = vec(abs(tempy - self.pos.x)
-        #self.latestCorrectedPos = vec(diffx, diffy)
         # This was implemented so the player couldn't push the dog with the box. 
         if wasstoppedHOR:
             self.stoppedHOR = True

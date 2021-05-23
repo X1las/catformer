@@ -20,7 +20,7 @@ class Box(CustomSprite):
         ''' really not sure'''
 
         ''' pretty sure is needed'''
-        self._layer = 5
+        self._layer = 15
 
         ''' should be revisited'''
         self.solidstrength = 5
