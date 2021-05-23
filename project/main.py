@@ -25,7 +25,7 @@ from pygame.constants import KMOD_ALT, KMOD_GUI, KMOD_META, KMOD_MODE
 from settings import *
 from Sprites import *
 
-from player import *
+from player import *   
 from Level import Level
 from Vector import Vec
 from SpriteGroup import *
@@ -245,7 +245,7 @@ class Game:
     """    ------------------- UPDATE ----------------------------------------------------------------"""
     """    ------------------- UPDATE ----------------------------------------------------------------"""
     # Method where we update game processesd
-    
+
     def update(self):
         self.all_sprites.resetSprites()
         self.all_sprites.update()

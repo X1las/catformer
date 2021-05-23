@@ -33,7 +33,8 @@ class Platform(CustomSprite):
         self.originalsolidstrength = self.solidstrength
 
         self.relativePosition = self.pos.copy()
-        self._layer = 8                                                 # Typical self.smth = smth
+        self._layer = 8                                               
+        
         self.initX = x
         self.initY = y
         self.x, self.y = x,y

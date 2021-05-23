@@ -53,6 +53,7 @@ class CustomSprite(pg.sprite.Sprite):
     latestCorrectedPos = Vec()
     savedPos = vec()
     collidingWithSolids = []
+    draw_layer = 0
     # Methods
 
     def r(self, number):
@@ -104,6 +105,8 @@ class CustomSprite(pg.sprite.Sprite):
         pass
 
     def init(self):
+        self.draw_layer = self._layer
+        self._layer = self.update_order
         self.massHOR = self.solidstrength
         self.massVER = self.solidstrength
         self.ori_massHOR = self.massHOR

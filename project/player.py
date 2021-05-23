@@ -346,7 +346,7 @@ class Interactive(CustomSprite):
             self.rect.bottomright = (player.pos.x,player.pos.y)   
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
-
+        self.init()
         
 
     def intUpdate(self, facing, pos):
