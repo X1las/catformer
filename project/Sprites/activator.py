@@ -16,6 +16,7 @@ class Activator(CustomSprite):
     deactivated = True
     auto_deactivate = False
     _layer = 5  
+    draw_layer = 3
 
     def update(self):
         self.vel += self.addedVel

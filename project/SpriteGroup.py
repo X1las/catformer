@@ -7,17 +7,54 @@ vec = Vec
 
 
 class SpriteGroup(pg.sprite.LayeredUpdates):
-    orderedList = None
-    massOrdered = None
+
 
     def __init__(self):
         pg.sprite.LayeredUpdates.__init__(self)
+        self._sprite_drawlayers = {}
+        self._spritelist_draw = []
+        self.massOrdered = None
 
-    #def draw(self):
-     #   lis = self.updateOrder()
-      #  for i in self:
-       #     self.blit()
 
+    def sprites_draw(self):
+        return list(self._spritelist_draw)
+
+
+    """ -------- Small changes/overwriting LayeredUpdate's original methods"""
+    # Overwriting add_internal
+    def add_internal(self, sprite, layer = None):
+        super().add_internal(sprite, layer)
+
+        """ The below is close to equivalent to how sprites are added to LayeredUpdates
+            except that it adds it to the draw layer list
+        """
+        sprites = self._spritelist_draw 
+        sprites_drawlayers = self._sprite_drawlayers
+        drawlayer = sprite.draw_layer
+        sprites_drawlayers[sprite] = drawlayer
+
+        leng = len(sprites)
+        low = mid = 0
+        high = leng - 1
+        while low <= high:
+            mid = low + (high - low) // 2
+            if sprites_drawlayers[sprites[mid]] <= drawlayer:
+                low = mid + 1
+            else:
+                high = mid - 1
+        while mid < leng and sprites_drawlayers[sprites[mid]] <= drawlayer:
+            mid += 1
+        sprites.insert(mid, sprite)
+
+    # Overwriting remove_internal
+    def remove_internal(self, sprite):
+        """ Making sure removing the sprite from the group also removes its draw layer
+        """
+        super().remove_internal(sprite)
+        self._spritelist_draw.remove(sprite)
+        del self._sprite_drawlayers[sprite]
+
+    # Overwriting draw
     def draw(self, surface):
         """ This method is entirely taken from Pygame's own LayeredUpdates.draw(surface)
             besides the list given as the iterator. Now draws based on draw_layer attr. 
@@ -28,8 +65,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         self.lostsprites = []
         dirty_append = dirty.append
         init_rect = self._init_rect
-        draw_order = sorted(self.sprites(), key = lambda x: x.draw_layer, reverse = False)
-        for spr in draw_order:
+        for spr in self.sprites_draw(): # Identical besides self.sprites_draw() instead of self.sprites()
             rec = spritedict[spr]
             newrect = surface_blit(spr.image, spr.rect)
             if rec is init_rect:
@@ -43,42 +79,55 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             spritedict[spr] = newrect
         return dirty
 
-    def resetRects(self):
+
+
+
+    """ --------- The methods used on the groups in the Game class --------------------------"""
+    def resetSprites(self):
         for i in self:
-            i.resetRects()
+            i.resetSprite()
+    
+    def update(self):
+        for i in self.sprites():
+            i.update()
+
+    def collisionEffects(self):
+        lis = self.sprites().copy(s)
+        lis.sort(key = lambda x: x.solidstrength, reverse = True)
+        for i in lis:
+            i.pushEffect()
+
+    def update2(self):
+        for i in self.sprites():
+            i.update2()
+
+    def updateAddedvel(self):
+        for i in self.sprites():
+            i.updateAddedVel()
+
+    def updatePos(self):
+        for i in self.sprites():
+            i.updatePos()
+        self.correctPositions()
+
+    def correctPositions(self):
+        self.massSort('massVER')
+        for i in self.massOrdered:
+            i.posCorrection()
+        self.massSort("massHOR")
+        for i in self.massOrdered:
+            i.posCorrection()
 
     def updateRects(self):
         for i in self:
             i.updateRect()
 
-    def resetSprites(self):
+    def resetRects(self):
         for i in self:
-            i.resetSprite()
+            i.resetRects()
 
-    def updateOrder(self):
-        if not self.orderedList:
-            self.orderedList = self.createOrderedList()
-        self.orderedList.sort(key = lambda x: x.draw_layer, reverse = False)
-        return self.orderedList
-
-    def createOrderedList(self):
-        self.orderedList = self.sortList()
-        return self.orderedList
-
-    def collisionEffects(self):
-        lis = []
-        for i in self:
-            lis.append(i)
-        lis.sort(key = lambda x: x.solidstrength, reverse = True)
-        for i in lis:
-            i.pushEffect()
         
-    def massUpdateOrder(self):
-        if not self.massOrdered:
-            self.massOrdered = self.createMassOrdered()
-        return self.massOrdered
-
-
+    """ ---------- For sorting dependent on mass ---------------------------------------------"""
     def massSort(self, key):
         if not self.massOrdered:
             self.massOrdered = self.createMassOrdered()
@@ -89,59 +138,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         return self.massOrdered
 
     def createMassOrdered(self):
-        lis = []
-
-        for i in self:
-            lis.append(i)
+        lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = False)
         return lis
-
-
-    def sortList(self):
-        lis = []
-        for i in self:
-            lis.append(i)
-        #lis.sort(key = lambda x: x.update_order, reverse = False)
-        lis.sort(key = lambda x: x.draw_layer, reverse = False)
-        return lis
-
-    def update(self):
-        #lis = self.updateOrder()
-        for i in self:
-        #for i in lis:
-            i.update()
-
-    def update2(self):
-        #lis = self.updateOrder()
-        #for i in lis:
-        for i in self:
-            i.update2()
-
-
-    def updateAddedvel(self):
-        #lis = self.updateOrder()
-
-        #for i in lis:
-        for i in self:
-            i.updateAddedVel()
-
-
-    def updatePos(self):
-        #lis = self.updateOrder()
-        #for i in lis:
-        for i in self:
-            i.updatePos()
-            #i.posCorrection()
-        """ So, if box is pushing into something and getting pushed out, player is already updated before the box was pushed out, so it vibrates"""
-        self.correctPositions()
-
-    def correctPositions(self):
-        self.massSort('massVER')
-        for i in self.massOrdered:
-            i.posCorrection()
-        self.massSort("massHOR")
-        for i in self.massOrdered:
-            i.posCorrection()
-        
 
 

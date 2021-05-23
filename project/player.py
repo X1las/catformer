@@ -219,11 +219,10 @@ class Player(CustomSprite):
 
         else:
             self.isInteracting = False
-            try:
+            if self.interactive_field:
                 self.interactive_field.kill()
-                self.liftedBefore = False
-            except:
-                pass
+            self.liftedBefore = False
+            self.interactive_field = None
         self.intJustCreated = False    
         
     def update2(self):
@@ -313,12 +312,13 @@ class Player(CustomSprite):
 # Interactive Field SubClass - Inherits from CustomSprite
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
-        self._layer = 20
+        self._layer = 3
+        self.draw_layer = 20
+        self.update_order = 3
         self.game = game
         self.name = "interactive"
         # anchor depends on which way player faces
         pg.sprite.Sprite.__init__(self, game.all_sprites)  
-        self.update_order = 3
         self.player = player
         width = 30#self.player.width/2 + 5
         height = self.player.height     
@@ -346,7 +346,7 @@ class Interactive(CustomSprite):
             self.rect.bottomright = (player.pos.x,player.pos.y)   
         else: 
             self.rect.bottomleft = (player.pos.x,player.pos.y)   
-        self.init()
+        #self.init()
         
 
     def intUpdate(self, facing, pos):
