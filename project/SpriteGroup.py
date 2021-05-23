@@ -8,7 +8,8 @@ vec = Vec
 
 class SpriteGroup(pg.sprite.LayeredUpdates):
     orderedList = None
-    
+    massOrdered = None
+
     def __init__(self):
         pg.sprite.LayeredUpdates.__init__(self)
 
@@ -27,7 +28,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
     def updateOrder(self):
         if not self.orderedList:
             self.orderedList = self.createOrderedList()
-        self.orderedList.sort(key = lambda x: x.update_order, reverse = False)
+        #self.orderedList.sort(key = lambda x: x.update_order, reverse = False)
         return self.orderedList
 
     def createOrderedList(self):
@@ -42,6 +43,28 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         for i in lis:
             i.pushEffect()
         
+    def massUpdateOrder(self):
+        if not self.massOrdered:
+            self.massOrdered = self.createMassOrdered()
+        return self.massOrdered
+
+
+    def massSort(self, key):
+        if not self.massOrdered:
+            self.massOrdered = self.createMassOrdered()
+        elif key == "massHOR":
+            self.massOrdered.sort(key = lambda x: x.massHOR, reverse = True)
+        elif key == "massVER":
+            self.massOrdered.sort(key = lambda x: x.massVER, reverse = True)
+        return self.massOrdered
+
+    def createMassOrdered(self):
+        lis = []
+
+        for i in self:
+            lis.append(i)
+        lis.sort(key = lambda x: x.solidstrength, reverse = False)
+        return lis
 
 
     def sortList(self):
@@ -78,13 +101,12 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         self.correctPositions()
 
     def correctPositions(self):
-        lis = []
-        for i in self:
-            lis.append(i)
-        lis.sort(key = lambda x: x.solidstrength, reverse = True)
-        #lis = self.updateOrder()
-        for i in lis:
+        self.massSort('massVER')
+        for i in self.massOrdered:
             i.posCorrection()
-
+        self.massSort("massHOR")
+        for i in self.massOrdered:
+            i.posCorrection()
+        
 
 

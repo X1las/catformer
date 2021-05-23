@@ -111,7 +111,7 @@ class Game:
         # not necessary?æ
         self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
         self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
-        self.group_movables           = pg.sprite.Group()
+        self.group_movables           = SpriteGroup()
         self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
        
         self.framecount = 0

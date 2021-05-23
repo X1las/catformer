@@ -154,7 +154,8 @@ class Player(CustomSprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
     def updatePos(self):
-        self.pos += self.vel +  self.acc * 0.5
+        super().updatePos()
+        #self.pos += self.vel +  self.acc * 0.5
         self.collides_left = False; self.collides_right = False
 
     def determineGravity(self):

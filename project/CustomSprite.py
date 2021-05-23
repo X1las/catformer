@@ -51,8 +51,8 @@ class CustomSprite(pg.sprite.Sprite):
 
     isPlayer = False #Remove later
     latestCorrectedPos = Vec()
-
-
+    savedPos = vec()
+    collidingWithSolids = []
     # Methods
 
     def r(self, number):
@@ -115,6 +115,9 @@ class CustomSprite(pg.sprite.Sprite):
         self.massVER = self.ori_massVER
    
     def resetSprite(self):
+        self.savedPos = self.pos.copy() 
+        #self.collidingWithSolids = self.findSolidCollisions()
+        #self.latestCorrectedPos = vec()
         self.resetMass()
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
@@ -122,6 +125,7 @@ class CustomSprite(pg.sprite.Sprite):
         
     def updatePos(self):
         self.pos +=  self.vel +  self.acc * 0.5
+        #self.solidstrength = max(self.massHOR, self.massVER)
 
     def posCorrection(self):
         pass
@@ -179,7 +183,11 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.x += self.r(self.relativeVel().x)
         collided_objects = None
         if not self.isEnemy:
-            collided_objects = pg.sprite.spritecollide(self, self.game.all_sprites, False)
+            #collided_objects = pg.sprite.spritecollide(self, self.game.all_sprites, False)
+            group = self.game.all_sprites
+            grouplist = group.massUpdateOrder()
+            grouplist = group.massSort("massVER")
+            collided_objects = pg.sprite.spritecollide(self, grouplist, False)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self and not collided.isPlatform: # and self.massVER < collided.massVER:
@@ -202,9 +210,13 @@ class CustomSprite(pg.sprite.Sprite):
 
         #self.rect.x += self.r(self.relativeVel().x*100)
         collided_objects = None
-        #if not self.isEnemy:
-        collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
-        #print(f'self: {self.name}')
+        #collided_objects = pg.sprite.spritecollide(self, self.game.group_movables, False)
+        group = self.game.group_movables
+        #grouplist = group.massUpdateOrder()
+        grouplist = group.massSort("massHOR")
+        collided_objects = pg.sprite.spritecollide(self, grouplist, False)
+        #collided_objects = self.collidingWithSolids
+
         if collided_objects:
             #print(collided_objects)
             for collided in collided_objects:
@@ -218,8 +230,9 @@ class CustomSprite(pg.sprite.Sprite):
                      #   collided.addedVel.x += self.vel.x + self.addedVel.x
 
         self.rect.midbottom = self.pos.rounded().asTuple()
-
+        #self.solidCollisions()
         self.collisionEffect()
+
 
 
 
@@ -234,7 +247,10 @@ class CustomSprite(pg.sprite.Sprite):
         elif self.vel.y > 0:
             self.rect.y += self.r(self.vel.y + 1) 
         group = self.game.group_solid
-        collided_objects = pg.sprite.spritecollide(self, group, False)
+        grouplist = group.massUpdateOrder()
+        collided_objects = pg.sprite.spritecollide(self, grouplist, False)
+        #collided_objects = self.collidingWithSolids
+        #print(f'{collided_objects}')
         self.rect.midbottom = self.pos.rounded().asTuple()
         #diffx, diffy = 0,0
         wasstoppedHOR = False
@@ -260,9 +276,10 @@ class CustomSprite(pg.sprite.Sprite):
                             recursiveList.append(collided)
                             #if group.has(collided):
                                 #collided.solidCollisions()
-                            tempy = self.pos.y
+                            #tempy = self.pos.y
                             self.pos.y = correctedPos.y
-                            self.latestCorrectedPos.y = self.pos.y - tempy
+                            #self.latestCorrectedPos.y = self.pos.y - tempy
+                            #self.latestCorrectedPos.y = self.pos.y - self.savedPos.y
                             #diffy = abs(tempy - self.pos.y)
                     #if self.massHOR < collided.massHOR:
                     #                                          it is ok that they are equally heavy it is supposed to be movable
@@ -281,9 +298,10 @@ class CustomSprite(pg.sprite.Sprite):
                             recursiveList.append(collided)
                             #if group.has(collided):
                              #   collided.solidCollisions()
-                            tempy = self.pos.x
+                            #tempy = self.pos.x
                             self.pos.x = correctedPos.x
-                            self.latestCorrectedPos.x = self.pos.x - tempy
+                            #self.latestCorrectedPos.x = self.pos.x - tempy
+                            #self.latestCorrectedPos.x = self.savedPos.x - self.pos.x
                             #self.pos.x = correctedPos.x # can't figure out whether this needs to be indented twice
                             #tempy = self.pos.x
                             #diffx = abs(tempy - self.pos.x)

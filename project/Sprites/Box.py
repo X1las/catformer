@@ -57,7 +57,6 @@ class Box(CustomSprite):
             if self.beingHeld:
                 self.new_vel = self.interacter.player.vel.copy()
                 self.new_acc = self.interacter.player.acc.copy()
-                self.pos -= self.interacter.player.latestCorrectedPos.copy()
                 self.vel.x = self.new_vel.x
                 self.vel.y = 0
                 self.acc.x = self.new_acc.x
@@ -81,7 +80,7 @@ class Box(CustomSprite):
 
 
     def update2(self):
-        self.pickupEffect()
+        self.pickupEffect() 
         #self.pickupEffect()
         pass
 
@@ -106,7 +105,8 @@ class Box(CustomSprite):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         if self.vel.x == 0:
             self.pos = self.pos.rounded()
-        self.pos   += self.vel +  self.acc * 0.5
+        super().updatePos()
+        #self.pos   += self.vel +  self.acc * 0.5
         self.vel.x = self.addedVel.x
         self.has_collided = False
         self.solidCollisions()
@@ -116,5 +116,11 @@ class Box(CustomSprite):
 
     def posCorrection(self):
         # I am not sure this is needed
+        if self.beingHeld:
+            heldside = self.determineSide(self.interacter.player)
+            if heldside == "left":
+                self.set_right(self.interacter.player.left_x()-1)
+            elif heldside == "right":
+                self.set_left(self.interacter.player.right_x()+1)
         self.solidCollisions()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
