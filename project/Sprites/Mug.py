@@ -74,7 +74,7 @@ class Mug(CustomSprite):
         self.vel.x = self.addedVel.x
         if self.fall:
             self.applyGrav()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     def breaks(self):
         

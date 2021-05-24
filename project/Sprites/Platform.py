@@ -42,12 +42,6 @@ class Platform(CustomSprite):
         self.initY = y
         self.x, self.y = x,y
         self.init()
-        
-
-
-        self.prevPos = self.pos.copy()
-
-
 
     def startGame(self, game):
         self.game = game
@@ -99,49 +93,24 @@ class Platform(CustomSprite):
 
 
     def update(self):
-        #if self.floorplat:
-         #   print(f'in update : {self.pos}')
         if self.vel.x != 0:
             self.massHOR = 29.5
         elif self.vel.y != 0:
             self.massVER = 29.5
-
-        #if self.vel.x != 0 or self.vel.y != 0:
-         #   self.originalsolidstrength = 29.5
-          #  self.solidstrength = 29.5
-           # self.init() # Needs to update massHOR and massVER
         self.checkDist()
-       # if self.floorplat:
-        #    print(f'aft dist : {self.pos}')
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
     def updatePos(self):
-        #if self.floorplat:
-         #   print(f'in updPos : {self.pos}')
-        #print(f'new iter')
-
-        #if self.originalVel.y == 0:
-         #   print(self.vel)
-        self.checkDist()
+        #self.checkDist()
         self.solidCollision() # just moved it up
         super().updatePos()
-
-        self.prevPos = self.pos.copy()
-
-    def resetSprite(self):
-        #self.test()
-
-        super().resetSprite()
-        #if self.floorplat:
-         #   print(f'after reset : {self.pos}')
 
     def solidCollision(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x +=self.r(self.vel.x)
         self.rect.y +=self.r(self.vel.y)
         collided_objects = pg.sprite.spritecollide(self, self.game.group_platforms, False)
-
         if collided_objects:
             for collided in collided_objects:
                 if collided != self and self.solidstrength <= collided.solidstrength and not self.floorplat:
