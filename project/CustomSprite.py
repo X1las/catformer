@@ -188,7 +188,7 @@ class CustomSprite(pg.sprite.Sprite):
         if not self.isEnemy:
             #collided_objects = pg.sprite.spritecollide(self, self.game.all_sprites, False)
             group = self.game.all_sprites
-            grouplist = group.massUpdateOrder()
+            #grouplist = group.massUpdateOrder()
             grouplist = group.massSort("massVER")
             collided_objects = pg.sprite.spritecollide(self, grouplist, False)
         if collided_objects:
@@ -250,7 +250,8 @@ class CustomSprite(pg.sprite.Sprite):
         elif self.vel.y > 0:
             self.rect.y += self.r(self.vel.y + 1) 
         group = self.game.group_solid
-        grouplist = group.massUpdateOrder()
+        #grouplist = group.massSort("massVER")
+        grouplist = group.createMassOrdered()
         collided_objects = pg.sprite.spritecollide(self, grouplist, False)
         self.rect.midbottom = self.pos.rounded().asTuple()
         wasstoppedHOR = False
