@@ -188,9 +188,9 @@ class CustomSprite(pg.sprite.Sprite):
         if not self.isEnemy:
             #collided_objects = pg.sprite.spritecollide(self, self.game.all_sprites, False)
             group = self.game.all_sprites
-            grouplist = group.massUpdateOrder()
+            #grouplist = group.massUpdateOrder()
             grouplist = group.massSort("massVER")
-            collided_objects = pg.sprite.spritecollide(self, grouplist, False)
+            collided_objects = pg.sprite.spritecollide(self, group, False)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self and not collided.isPlatform: # and self.massVER < collided.massVER:
@@ -250,8 +250,8 @@ class CustomSprite(pg.sprite.Sprite):
         elif self.vel.y > 0:
             self.rect.y += self.r(self.vel.y + 1) 
         group = self.game.group_solid
-        grouplist = group.massUpdateOrder()
-        collided_objects = pg.sprite.spritecollide(self, grouplist, False)
+        #grouplist = group.massUpdateOrder()
+        collided_objects = pg.sprite.spritecollide(self, group, False)
         self.rect.midbottom = self.pos.rounded().asTuple()
         wasstoppedHOR = False
         recursiveList = []

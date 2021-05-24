@@ -92,7 +92,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.update()
 
     def collisionEffects(self):
-        lis = self.sprites().copy(s)
+        lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = True)
         for i in lis:
             i.pushEffect()
