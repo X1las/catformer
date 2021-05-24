@@ -1,47 +1,23 @@
-# Description:
-
-
-''' probably not needed'''
-
-''' just for testing?'''
-
-''' really not sure'''
-
-''' pretty sure is needed'''
-
-''' should be revisited'''
-
-''' in use'''
-
-
-
-
+# Description: Main executable, contains Game class and main loop
 # Imports
 import pygame as pg
-import sys
+import sys, os
 
-from pygame.constants import KMOD_ALT, KMOD_GUI, KMOD_META, KMOD_MODE
+import Spritesheet as ss
+from Level import Level
 
+from levelCreator import *
+from SpriteGroup import *
 from settings import *
 from Sprites import *
-
 from player import *   
-from Level import Level
-from Vector import Vec
-from SpriteGroup import *
-from levelCreator import *
-import os
-import Spritesheet as ss
+
+from pygame.constants import KMOD_ALT, KMOD_GUI, KMOD_META, KMOD_MODE
 
 # Game Class
 class Game:
     # Class Variables
     boundary = 600                                                              # default value for lower player boundary
-    
-    userName = ""                                                               # Used for saving and loading level progress based on given name
-    
-    
-    
     isDamaged = False                                                           # Boolean used for damage HUD after life is lost
     finished = False                                                            # Boolean used for endGame HUD when final level is reached
     paused = False                                                              # Boolean used to pause the game
@@ -49,41 +25,19 @@ class Game:
 
     # Initializer
     def __init__(self):
-        
-
-        ''' probably not needed'''
-
-        ''' just for testing?'''
-
-        ''' really not sure'''
-
-        ''' pretty sure is needed'''
-
-        ''' should be revisited'''
-
-        ''' in use'''
         pg.init()                                                               # Initializes the pygame module
-        pg.mixer.init()
+        pg.mixer.init()                                                         # Initializes the pygame mixer for music
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
-        self.clock = pg.time.Clock()                                            # Creates a pygame clock object
+        self.clock  = pg.time.Clock()                                           # Creates a pygame clock object
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
-        self.frames                 = 0                                         # variable used for checking performance
-
-
-            #not needed, old code
-        # Reads the player data from file and adds it to self.data
-        """self.data = self.getPlayerData()
-        if not self.data:
-            self.data = []
-            self.data.append(DEFAULT_LEVEL)
-            self.data.append(PLAYER_LIVES)
-            self.data.append(PLAYER_CATNIP)"""
+        self.frames = 0                                                         # variable used for checking performance
 
         # load images and sprite sheets
         self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
         self.dogSheet      = ss.Spritesheet('resources/Hyena_walk.png')
         self.platformSheet = ss.Spritesheet('resources/platforms.png')
         self.wormSheet     = ss.Spritesheet('resources/worm-spritesheet.png')
+
         # loads background image
         bg = pg.image.load("resources/bg.png")
         self.bg = pg.transform.scale(bg, (WIDTH+400, HEIGHT))
@@ -95,9 +49,6 @@ class Game:
     
     # Creates Sprite Groups
     def createSGroups(self):
-
-    
-        #self.all_sprites = pg.sprite.LayeredUpdates()                          # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         self.all_sprites = SpriteGroup()                                        # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
         
         self.group_platforms          = pg.sprite.Group()                       # Only applied  to platforms
@@ -109,14 +60,11 @@ class Game:
         self.group_damager            = pg.sprite.Group()                       # All hostiles
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
-        # not necessary?æ
+        
         self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
         self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_movables           = SpriteGroup()
         self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
-       
-        self.framecount = 0
-        self.accumframes = 0
 
     # Loads all the HUDs default values
     def createHUDs(self):
@@ -160,25 +108,28 @@ class Game:
             Text(f'Player has run out of lives', (300, 50)),
             Text("Press Q to quit", (300, 200))])
 
-
         self.menus = [self.mainmenu, self.newGamemenu, self.loadGamemenu, self.tutorialmenu, self.noLivesMenu]                          #adding each menu to a list
         for menu in self.menus:
             menu.initTexts()                                #initializing text inside menus
         self.tutorialmenu.initTexts(fontsize = 30)          #making tutorial fontsize smaller
 
 
-
     # Method that creates a new level
     def new(self):
         self.finished = False
-        self.createSGroups()                                                    # Creates all the sprite groups
+        self.createSGroups()                                       
+        
+        self.framecount = 0
+        self.accumframes = 0
+
+        # Checking for a level and loading player data if it doesn't throw an exception
         try:
             self.level
-            self.data = self.getPlayerData()                                    #reading playerdata file
+            self.data = self.getPlayerData()
         except:
             pass
         
-        self.level = Level(self)            #                                     
+        self.level = Level(self)                                                # Initializing the level object                                     
         
         # Removes player's save file if all levels are finished
         if self.data:
@@ -188,28 +139,21 @@ class Game:
                 if os.path.exists("playerData/"+self.userName+"Data.txt"):
                     os.remove("playerData/"+self.userName+"Data.txt")
         
-        if not self.level.load(self.level.name):                                #loading default level if it cannot load one
+        # Loads level from level name or default if no level name has been created
+        if not self.level.load(self.level.name):                     
             self.level.load(DEFAULT_LEVEL)
         
-        self.player = Player(self.level.spawn)                                  #
-        self.player.startGame(self)    
-        #
-        if self.data:                                                           #set lives and catnip to values from data file
+        self.player = Player(self.level.spawn)                                  # Initializing the Player object, giving it the level spawn as a parameter
+        self.player.startGame(self)                                             # Initializes the objects that have been loaded through level.load
+        
+        # Set lives and catnip to values from data file
+        if self.data:                                                           
             self.player.lives = self.data[1]
             self.player.catnip_level = self.data[2]    
 
-        # Probably delete!
-        try:
-            pg.mixer.music.load(self.level.musicTrack)                
-            pg.mixer.music.play(-1)
-            pg.mixer.music.set_volume(VOLUME)
-        except:
-            print("Error loading music!")
-
-        self.paused = False                                                     #reset paused to false incase still active from previous game
-        self.createHUDs()
-
-        self.run()                                  # Runs the game
+        self.paused = False                                                     # Reset paused to false incase still active from previous game
+        self.createHUDs()                                                       
+        self.run()                                                              # Runs the game
 
 
     # Method that loops until a false is passed inside the game
@@ -240,13 +184,9 @@ class Game:
                 if os.path.exists("playerData/"+self.userName+"Data.txt"):      #deleting data file when out of lives
                     os.remove("playerData/"+self.userName+"Data.txt")
             self.draw()
-            
+    
 
-    """    ------------------- UPDATE ----------------------------------------------------------------"""
-    """    ------------------- UPDATE ----------------------------------------------------------------"""
-    """    ------------------- UPDATE ----------------------------------------------------------------"""
-    # Method where we update game processesd
-
+    # Method where we update game processes
     def update(self):
         self.all_sprites.resetSprites()
         self.all_sprites.update()
@@ -256,10 +196,8 @@ class Game:
         self.all_sprites.updatePos()
         self.moveScreen()
         self.updateHUD()
-
-
-
       
+
     # Method that checks for events in pygame
     def events(self):
         for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
@@ -568,12 +506,7 @@ class Menu():
                     self.userName += event.unicode
         return self.userName
 
-
-# Game Loop
-# create objects and dicts
-
-''' remove these 
-'''
+### FOR TESTING - REMOVE WHEN DONE ###
 level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
@@ -588,10 +521,8 @@ pickleLevel(level4, 'level4')
 testLevel = createTestLevel()
 #pickleLevel(testLevel, 'level1')
 
-
-
+# Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
 g.start()
-#g.mainMenu()
 pg.quit()                                                                       # Exits the pygame program
 sys.exit()                                                                      # Makes sure the process is terminated (Linux issue mostly)

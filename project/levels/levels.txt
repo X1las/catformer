@@ -1,0 +1,3 @@
+Levels in this directory are binary, in order to change positions or remove/add object use the levelCreator.py file and run it to update the levels!
+
+Keep this file here in order for Github not to remove the directory!
