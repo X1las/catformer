@@ -184,7 +184,7 @@ class CustomSprite(pg.sprite.Sprite):
         if not self.isEnemy:
             group = self.game.all_sprites
             grouplist = group.massSort("massVER")
-            collided_objects = pg.sprite.spritecollide(self, grouplist, False)
+            collided_objects = pg.sprite.spritecollide(self, group, False)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self and not collided.isPlatform: # and self.massVER < collided.massVER:
