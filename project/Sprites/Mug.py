@@ -18,7 +18,7 @@ class Mug(CustomSprite):
         self.final = final
         self.placement = placement
         self.name = name
-        self.draw_layer = 9
+        self.draw_layer = 7
         self._layer =9
         
         self.broken = False
