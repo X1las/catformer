@@ -82,7 +82,6 @@ class Box(CustomSprite):
     def update2(self):
         self.pickupEffect() 
         #self.pickupEffect()
-        pass
 
 
     def liftedBy(self,interacter):
