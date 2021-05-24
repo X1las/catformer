@@ -35,17 +35,14 @@ class IntelligentEnemy(CustomSprite):
 
     
         """in use"""
-        self.init()
         self.isEnemy = True
         self.active = True
+        self.draw_layer = 25
+        self._layer = 5
+        #self.update_order = 5
+        self.init()
         self.ori_massVER = 8
-        self._layer = 25
-        self.update_order = 5
         self.currentplat = None
-
-
-        #self.stopMoving = False
-        #self.facing = None
     
     def onSameLevel(self):
         return (abs(self.target.pos.y - self.pos.y) < 125)
@@ -117,10 +114,6 @@ class IntelligentEnemy(CustomSprite):
         self.imageIndex += 1                        # increment image index every update
         if self.imageIndex >= len(self.images_right)*6:     # reset image index to 0 when running out of images
             self.imageIndex = 0
-        
-        #self.vel += self.addedVel
-
-        #self.solidCollisions()
         self.solidCollisions()
         self.detectPlayer()
         self.checkCliff()
@@ -150,37 +143,3 @@ class IntelligentEnemy(CustomSprite):
                 self.set_left(self.currentplat.left_x())
         except Exception as e:
             print(f'check cliff: {e}')
-
-
-    # The part that checks whether to just turn around or be pushed
-    # DELETE?
-    def solidCollisionsOW(self, group):
-        self.rect.midbottom = self.pos.rounded().asTuple()
-        self.rect.x +=self.r((self.relativeVel().x)*1.5)
-        self.rect.y +=self.r(self.vel.y*1.5)
-        collideds = pg.sprite.spritecollide(self, group, False)
-
-        if collideds:
-            for collided in collideds:
-
-                if collided != self:
-                    if self.ori_massHOR <= collided.massHOR:
-                        coll = self.collisionSide_Conditional(collided)
-                        coll_side = coll['side']
-                        correctedPos = coll['correctedPos']
-                        
-                        if coll_side == "left" or coll_side == "right": # left side of collidedd obj
-                            self.vel.x = self.addedVel.x
-                            self.pos = correctedPos
-                                
-                    """    
-                    if self.ori_massVER < collided.massVER:
-                        coll_side = self.determineSide(collided)
-                            
-                        if coll_side == "bot":
-                            if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                                self.pos.x = collided.left_x() - self.width/2
-                            else: 
-                                self.pos.x = collided.right_x() + self.width/2
-                            self.massVER = collided.massVER - 1
-                    """

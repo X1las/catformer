@@ -41,10 +41,12 @@ class Player(CustomSprite):
 
     def __init__(self, spawn, name="player"):
         
-        self._layer     = 30
+        self.draw_layer     = 30
+        self._layer     = 2
+
         self.spawn      = spawn
         self.pos        = spawn
-        self.update_order        = 2
+        #self.update_order        = 2
         self.name = name
 
 

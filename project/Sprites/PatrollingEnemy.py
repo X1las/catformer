@@ -46,7 +46,8 @@ class PatrollingEnemy(CustomSprite):
         self.currentplat = None # The platform it stands on/
         self.aboveground = True
         self.wasunderground = False # Only true when worm *just* popped up
-        self._layer = 4
+        #self._layer = 4
+        self.draw_layer = 4
         self.active = True
 
         self.init()

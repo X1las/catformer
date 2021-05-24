@@ -16,6 +16,8 @@ class Platform(CustomSprite):
         self.originalVel = self.vel.copy()
         self.floorplat = floorplat
         self.isPlatform = True
+
+
         if maxDist == None:
             self.leftMaxDist = leftMaxDist
             self.rightMaxDist = rightMaxDist
@@ -33,12 +35,12 @@ class Platform(CustomSprite):
         self.originalsolidstrength = self.solidstrength
 
         self.relativePosition = self.pos.copy()
-        self._layer = 8                                               
+        self._layer = 1                                               
+        self.draw_layer = 8                                               
         
         self.initX = x
         self.initY = y
         self.x, self.y = x,y
-        self.update_order = 1
         self.init()
         
 

@@ -18,10 +18,11 @@ class Mug(CustomSprite):
         self.final = final
         self.placement = placement
         self.name = name
+        self.draw_layer = 9
         self._layer =9
         
         self.broken = False
-        self.update_order = 11
+        #self.update_order = 11
         self.fall = False
         self.gravity = GRAVITY
         self.relativePosition = self.pos.copy()

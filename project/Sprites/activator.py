@@ -15,7 +15,7 @@ class Activator(CustomSprite):
     activated = False
     deactivated = True
     auto_deactivate = False
-    _layer = 5  
+    _layer = 5  # update layer
     draw_layer = 3
 
     def update(self):
@@ -31,7 +31,6 @@ class Activator(CustomSprite):
                         if not self.hasActivatedTarget:
                             doDeactivate = True
                             target = respawn['target']
-                            #self.hasActivatedTarget = True
                             target.respawn()
                 if e == "spawn":
                     for spawn in v:

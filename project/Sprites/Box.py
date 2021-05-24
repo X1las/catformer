@@ -20,7 +20,8 @@ class Box(CustomSprite):
         ''' really not sure'''
 
         ''' pretty sure is needed'''
-        self._layer = 15
+        self._layer = 6
+        self.draw_layer = 15
 
         ''' should be revisited'''
         self.solidstrength = 5
@@ -33,7 +34,6 @@ class Box(CustomSprite):
         self.beingHeld = False
         self.interacter = None
         self.justreleased = False
-        self.update_order = 6
         self.init()
 
     def startGame(self, game):
