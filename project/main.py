@@ -59,10 +59,10 @@ class Game:
         self.group_damager            = pg.sprite.Group()                       # All hostiles
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
+        self.group_movables           = SpriteGroup()
         
         self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
         self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
-        self.group_movables           = SpriteGroup()
         self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
 
     # Loads all the HUDs default values

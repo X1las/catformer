@@ -3,8 +3,6 @@ import pygame as pg
 from Vector import *
 from settings import *
 import math
-import time
-from threading import Timer
 
 # Variables
 vec = Vec
@@ -107,9 +105,6 @@ class CustomSprite(pg.sprite.Sprite):
         self.relativePosition = self.pos.copy()
    
     def resetSprite(self):
-        self.savedPos = self.pos.copy() 
-        #self.collidingWithSolids = self.findSolidCollisions()
-        #self.latestCorrectedPos = vec()
         self.massHOR = self.ori_massHOR
         self.massVER = self.ori_massVER
         self.vel -= self.addedVel
@@ -199,10 +194,13 @@ class CustomSprite(pg.sprite.Sprite):
 
     def pushEffect(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
+        self.rect.x += self.r(self.relativeVel().x)
+        """
         if self.vel.x > 0:
             self.rect.x += 2
         if self.vel.x < 0:
             self.rect.x -= 2
+        """
         collided_objects = None
         group = self.game.group_movables
         grouplist = group.massSort("massHOR")
@@ -221,14 +219,21 @@ class CustomSprite(pg.sprite.Sprite):
 
     def solidCollisions(self):#, ignoredSol = []):
         self.rect.midbottom = self.pos.rounded().asTuple()
+        """
         if self.vel.x < 0:
-            self.rect.x += self.r(self.relativeVel().x-2)
+            #self.rect.x += self.r(self.relativeVel().x-2)
+            self.rect.x += self.r(self.relativeVel().x)
         if self.vel.x > 0:
-            self.rect.x += self.r(self.relativeVel().x+2)
+            #self.rect.x += self.r(self.relativeVel().x+2)
+            self.rect.x += self.r(self.relativeVel().x)
         if self.vel.y < 0:
             self.rect.y += self.r(self.vel.y - 1) 
         elif self.vel.y > 0:
             self.rect.y += self.r(self.vel.y + 1) 
+        """
+        self.rect.x += self.r(self.relativeVel().x)
+        self.rect.y += self.r(self.relativeVel().y)
+
         group = self.game.group_solid
         grouplist = group.createMassOrdered()
         collided_objects = pg.sprite.spritecollide(self, grouplist, False)

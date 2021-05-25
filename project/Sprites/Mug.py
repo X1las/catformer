@@ -76,17 +76,19 @@ class Mug(CustomSprite):
             self.applyGrav()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
-    def breaks(self):
+    def breaks(self, collidedwith):
         
         self.image = self.image_broken
-        if self.standingon:
-            self.pos.y = self.standingon.top_y()
         self.pos = self.pos.rounded()
         if self.spawnItem != None:
             self.spawnItem.pos = self.pos.copy()
             self.spawnItem.startGame(self.game)
-        if self.final:
+        elif self.final:
             self.game.finished = True
+        if collidedwith.isPlatform:
+            self.pos.y = collidedwith.top_y()
+            self.vel.y = 0
+        
         self.broken = True
         self.fall = False
 
@@ -123,10 +125,11 @@ class Mug(CustomSprite):
     # When it thouches a platform or other solid
     def touchplat(self, group):
         self.rect.midbottom = self.pos.rounded().asTuple()
-        self.rect.y +=self.r(self.vel.y + 4) 
+        self.rect.y +=self.r(self.relativeVel().y) 
         collided_objects = self.collisionMultipleGroups(group, self.game.group_enemies)
         if collided_objects:
             for collided in collided_objects:
                 if collided != self.spawnPlat and self.fell_fast_enough and not self.broken:
-                    self.breaks()
+                    self.breaks(collided)
+                    return collided
         self.rect.midbottom = self.pos.rounded().asTuple()

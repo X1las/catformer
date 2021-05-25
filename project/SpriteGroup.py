@@ -19,9 +19,6 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
     def sprites_draw(self):
         return self._spritelist_draw
 
-    #def sprites(self):
-     #   return self.sprites_draw()
-
     """ -------- Small changes/overwriting LayeredUpdate's original methods"""
     # Overwriting add_internal
     def add_internal(self, sprite, layer = None):
