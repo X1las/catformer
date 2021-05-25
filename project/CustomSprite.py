@@ -44,11 +44,11 @@ class CustomSprite(pg.sprite.Sprite):
     friction        = FRICTION
     relativePosition = vec()
     addedVel        = Vec()
-    update_order        = 10
+    #update_order        = 10
     inAir           = True
     isPlatform = False
     pos    = vec(); vel  = vec(); acc = vec()
-    _layer = 6
+    _layer = 10
     isPlayer = False #Remove later
     latestCorrectedPos = Vec()
     savedPos = vec()
@@ -98,31 +98,30 @@ class CustomSprite(pg.sprite.Sprite):
     def updateAddedVel(self):
         self.vel += self.addedVel
 
-    def update2(self):
-        pass
 
     def init(self):
-        #self.draw_layer = self._layer
-        #self._layer = self.update_order
         self.massHOR = self.solidstrength
         self.massVER = self.solidstrength
         self.ori_massHOR = self.massHOR
         self.ori_massVER = self.massVER
         self.relativePosition = self.pos.copy()
-    
-    def resetMass(self):
-        self.massHOR = self.ori_massHOR
-        self.massVER = self.ori_massVER
    
     def resetSprite(self):
         self.savedPos = self.pos.copy() 
         #self.collidingWithSolids = self.findSolidCollisions()
         #self.latestCorrectedPos = vec()
-        self.resetMass()
+        self.massHOR = self.ori_massHOR
+        self.massVER = self.ori_massVER
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
         self.acc = vec(0,0)
         
+    def update(self):
+        pass
+
+    def update2(self):
+        pass
+
     def updatePos(self):
         self.pos +=  self.vel +  self.acc * 0.5
 
