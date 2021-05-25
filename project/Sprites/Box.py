@@ -25,7 +25,7 @@ class Box(CustomSprite):
 
         ''' should be revisited'''
         self.solidstrength = 5
-        self.originalsolidstrength = self.solidstrength
+        #self.originalsolidstrength = self.solidstrength
         self.relativePosition = self.pos.copy() # go to init() ?
 
         ''' in use'''

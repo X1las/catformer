@@ -32,7 +32,7 @@ class Platform(CustomSprite):
         self.solidstrength = 30
         if floorplat:
             self.solidstrength = 50
-        self.originalsolidstrength = self.solidstrength
+        #self.originalsolidstrength = self.solidstrength
 
         self.relativePosition = self.pos.copy()
         self._layer = 1                                               

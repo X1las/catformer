@@ -27,7 +27,7 @@ class CustomSprite(pg.sprite.Sprite):
     ''' pretty sure is needed'''
 
     ''' should be revisited'''
-    originalsolidstrength = 0
+    #originalsolidstrength = 0
     solidstrength       = 0
     massHOR             = 0
     massVER             = 0

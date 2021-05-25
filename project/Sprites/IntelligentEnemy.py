@@ -19,9 +19,7 @@ class IntelligentEnemy(CustomSprite):
         self._layer        = 5 
         self.currentplat   = None
         self.damagesPlayer = True
-        
-        ''' should be revisited'''
-        self.solidstrength = 8  # higher than the box, but lower than platforms
+        self.solidstrength = 8                              # higher than the box, but lower than platforms
         
         # setting mass/strength
         self.init()             

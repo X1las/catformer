@@ -15,12 +15,14 @@ from player import *
 
 # Game Class
 class Game:
+
     # Class Variables
     boundary = 600                                                              # default value for lower player boundary
     isDamaged = False                                                           # Boolean used for damage HUD after life is lost
     finished = False                                                            # Boolean used for endGame HUD when final level is reached
     paused = False                                                              # Boolean used to pause the game
     outOfLives = False                                                          # Boolean used for outOfLives loop
+
 
     # Initializer
     def __init__(self):
@@ -30,6 +32,7 @@ class Game:
         self.clock  = pg.time.Clock()                                           # Creates a pygame clock object
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
         self.frames = 0                                                         # variable used for checking performance
+
 
         # load images and sprite sheets
         self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
@@ -41,11 +44,13 @@ class Game:
         bg = pg.image.load("resources/bg.png")
         self.bg = pg.transform.scale(bg, (WIDTH+400, HEIGHT))
 
+
     #create the menus and start main menu
     def start(self):
         self.createMenus()
         self.mainMenu()
-    
+
+
     # Creates Sprite Groups
     def createSGroups(self):
         self.all_sprites = SpriteGroup()                                        # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
@@ -65,6 +70,7 @@ class Game:
         self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
         self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
 
+
     # Loads all the HUDs default values
     def createHUDs(self):
         resumeText     =  Menu.Text("Press P to resume", (300, 250), screen = self.screen)
@@ -75,10 +81,12 @@ class Game:
                            Menu.Text("You have finished the game", (300, 250), screen = self.screen, displayWay="custom", font = "resources/action-jackson.regular.ttf", color = (0,200,0), fontsize = 30)]
         self.scoreHUD   = [Menu.Text(f'Lives: {self.player.lives}',(100,50), screen = self.screen), Menu.Text(f'Catnip: {self.player.catnip_level}', (500,50), screen = self.screen)]
 
+
     #updates the values on HUD that change
     def updateHUD(self):
         self.scoreHUD[0].text = f'Lives: {self.player.lives}'
         self.scoreHUD[1].text = f'Catnip: {self.player.catnip_level}'
+
 
     #creating all the menu screens buttons and text
     def createMenus(self):
@@ -95,9 +103,11 @@ class Game:
                                    Menu.Button("Tutorial", trigger = self.tutorialScreen, screen=self.screen , y=325, textColor = (255,255,255)),
                                    quitBTN])
 
+
         self.newGamemenu = Menu(self.screen, buttons =  [startBTN, returnBTN], texts = [enterNameTXT]) 
         self.loadGamemenu = Menu(self.screen, buttons =  [startLoadBTN, returnBTN], texts = [enterNameLoadTXT])
             
+
         self.tutorialmenu = Menu(self.screen,buttons = [returnBTN], texts = [Menu.Text("Use arrow keys to move left/right", (300, 50)),
             Menu.Text("Press space to jump", (300, 100)),
             Menu.Text("Press P to pause", (300, 150)),
@@ -120,6 +130,13 @@ class Game:
         self.framecount = 0
         self.accumframes = 0
         self.checkPlayerData()                                                  # Checks for player data and fetches data from file if non-existant player
+        
+        if self.data[0] == "level4":
+            try:
+                os.remove("playerData/"+self.userName+"Data.txt")
+            except:
+                print("attempted removal of playerData, but file already gone")
+
         self.level = Level(self)                                                # Initializing the level object                                     
         
         # Removes player's save file if all levels are finished
@@ -326,18 +343,22 @@ class Game:
 
             pg.display.update()                                             #update the display
 
+
     #used to open main menu
     def mainMenu(self):
         self.runMenu(self.mainmenu)
  
+
     #used to open new game screen
     def nameStartScreen(self):
         self.runMenu(self.newGamemenu, takeUserName = True)
     
+
     #used to open load game screen
     def nameLoadScreen(self):
         self.runMenu(self.loadGamemenu, takeUserName = True)
-     
+    
+    
     #used to open no lives screen
     def noLivesScreen(self):
         self.outOfLives = False
@@ -386,8 +407,6 @@ class Game:
             else:
                 print("No player or playerData found, making new session!")
                 self.data = self.setPlayerData()
-
-        
 
 
 ### FOR TESTING - REMOVE WHEN DONE ###
