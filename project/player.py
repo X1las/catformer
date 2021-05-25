@@ -2,8 +2,6 @@
 
 # Imports
 import pygame as pg
-import copy
-
 from settings import *
 
 from Vector import Vec
@@ -63,12 +61,11 @@ class Player(CustomSprite):
         self.refreshCount_prev      = 0         
         self.imageIndex = 0 
         self.latestCorrectedPos = Vec()
-        
 
 
     def startGame(self, game):    
         self.game       = game
-        self.groups = game.all_sprites, game.group_pressureActivator, game.group_movables
+        self.groups     = game.all_sprites, game.group_pressureActivator, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         
         # create surface with correct size
@@ -114,6 +111,7 @@ class Player(CustomSprite):
 
     def takeDamage(self):
         self.lives -= 1
+        self.game.data[1] = self.lives
         self.respawn()
         self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
         self.game.playerTookDamage()
@@ -123,12 +121,12 @@ class Player(CustomSprite):
 
     def heal(self):
         self.lives += 1
-        self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
+        self.game.data[1] = self.lives
         return self.lives
 
     def addCatnip(self):
         self.catnip_level += 1
-        self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
+        self.game.data[2] = self.catnip_level
         return self.catnip_level
 
     def initKeys(self,jump, left, right, crouch):

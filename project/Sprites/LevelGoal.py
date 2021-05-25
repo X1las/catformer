@@ -42,7 +42,7 @@ class LevelGoal(CustomSprite):
         level = int(current[5:6])
         level+=1
         self.game.level.name = f"level{level}"
-        self.game.saveData(levelname = self.game.level.name, lives = self.game.player.lives, catnip = self.game.player.catnip_level)
+        self.game.data[0] = self.game.level.name
         self.game.new()
 
     def endGoal(self, player):

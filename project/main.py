@@ -126,7 +126,7 @@ class Game:
     # Method that creates a new level
     def new(self):
         self.finished = False
-        self.createSGroups()                                       
+        self.createSGroups()                                                    
         self.framecount = 0
         self.accumframes = 0
         self.checkPlayerData()                                                  # Checks for player data and fetches data from file if non-existant player
@@ -136,6 +136,7 @@ class Game:
                 os.remove("playerData/"+self.userName+"Data.txt")
             except:
                 print("attempted removal of playerData, but file already gone")
+
 
         self.level = Level(self)                                                # Initializing the level object                                     
         
@@ -223,7 +224,8 @@ class Game:
                 if event.key  == pg.K_p:                                        #pause/unpause the game
                     self.paused = not self.paused
                     self.isDamaged = False
-     
+    
+    
     # Method for drawing everything to the screen           
     def draw(self):                                         
         self.screen.blit(self.bg, (0,0))                    # Draws background image
@@ -233,13 +235,13 @@ class Game:
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
         self.all_sprites.resetRects()
         
+
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
         relative = self.player.pos.x - WIDTH/2
         for sprite in self.all_sprites:
             sprite.relativePosition = sprite.pos.copy()
-            sprite.relativePosition.x = sprite.pos.x-relative
-            
+            sprite.relativePosition.x = sprite.pos.x-relative    
 
 
     # Respawns the player and resets the camera
@@ -251,11 +253,13 @@ class Game:
             sprite.relativePosition.x -= self.relposx
         self.player.respawn()                               #respawn player to spawn position
 
+
     #reset camera and pause with damaged to true
     def playerTookDamage(self):
         self.resetCamera()
         self.isDamaged = True
         self.paused = True
+
 
     #draw different overlays
     def drawHUDs(self):
@@ -269,22 +273,27 @@ class Game:
         if self.finished:                                       #if game is finished show end game overlay
             self.drawHUD(self.endgameHUD)
     
+
     #draw HUD on screen
     def drawHUD(self, HUD):
         for text in HUD:
             text.blitText()
     
+
     #quit out of main menu loop
     def quitTrig(self):
         self.mainmenu.active = False
 
-    #return to main menu
+
+    # Return to main menu
     def returnTrig(self):
         self.newGamemenu.active = False
         self.loadGamemenu.active = False
         self.tutorialmenu.active = False
         self.selectedState = 0
 
+
+    # Method for starting a game on new
     def startNewTrig(self):
         if not self.userName == "":                              #check if name is not empty
             if not self.checkNameConflict():                     #check if name does not exist already
@@ -296,19 +305,22 @@ class Game:
             self.nameError = True                                #give error message
             self.activateSelected = False                        #disable activator (mouse1 or enter)
     
+
+    # Method for starting a game on load
     def startLoadTrig(self):
         if self.checkNameConflict():                             #check if name exists already
-            self.data = self.getPlayerData()
             self.new()                                           #opens the game
         else:
             self.nameError = True                                #give error message
             self.activateSelected = False                        #disable activator (mouse1 or enter)
 
-    #sets all menus to not active to quit the game
+
+    # Sets all menus to not active to quit the game
     def exitProgram(self):
         for menu in self.menus:
             menu.active = False
         self.playing = False
+
 
     #runs an inputed menu screen
     def runMenu(self, menu, takeUserName = False):
@@ -347,8 +359,8 @@ class Game:
     #used to open main menu
     def mainMenu(self):
         self.runMenu(self.mainmenu)
- 
 
+    
     #used to open new game screen
     def nameStartScreen(self):
         self.runMenu(self.newGamemenu, takeUserName = True)
@@ -364,12 +376,16 @@ class Game:
         self.outOfLives = False
         self.runMenu(self.noLivesMenu)
 
+
     #used to open tutorial screen
     def tutorialScreen(self):
         self.runMenu(self.tutorialmenu)
 
+
+    #return true/false if file exists/does not
     def checkNameConflict(self):
-        return os.path.exists("playerData/"+self.userName+"Data.txt")       #return true/false if file exists/does not
+        return os.path.exists("playerData/"+self.userName+"Data.txt")       
+
 
     #creates or updates a player data save file
     def setPlayerData(self, levelname = 'level1', lives = 9, catnip = 0):
@@ -380,6 +396,7 @@ class Game:
         file.write(f"{levelname},{str(lives)},{str(catnip)}")                #writing text to file
         file.close()
         return [levelname,lives,catnip]                                      #returning values
+
 
     # Gets player data from file
     def getPlayerData(self):
@@ -393,6 +410,7 @@ class Game:
             print("No playerdata found")
             return None
     
+
     def checkPlayerData(self):
         # Checking for a level and loading player data if it doesn't throw an exception
         try:
@@ -421,8 +439,8 @@ pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 # pickleLevel(level4, 'level1')
-testLevel = createTestLevel()
-pickleLevel(testLevel, 'level1')
+# testLevel = createTestLevel()
+# pickleLevel(testLevel, 'level1')
 
 # Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
