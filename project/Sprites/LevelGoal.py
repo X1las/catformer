@@ -27,8 +27,12 @@ class LevelGoal(CustomSprite):
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
     def update(self):
-        self.endGoal(self.game.player)
         self.rect.midbottom = self.pos.realRound().asTuple()
+
+
+    def update2(self):
+        self.endGoal(self.game.player)
+
 
     # Function that gets called whenever the player reaches a goal
     def nextLevel(self):
@@ -45,7 +49,8 @@ class LevelGoal(CustomSprite):
         has_collided = pg.sprite.collide_rect(self, player)
         if has_collided:
             self.game.endinglevel = True
-            self.game.player.image = self.game.player.images['sleep']
+            #self.game.player.image = self.game.player.images['sleep']
+            player.image = player.images['sleep']
             self.sleepcount += 1
             if self.sleepcount > 100:
                 self.nextLevel()

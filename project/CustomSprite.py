@@ -189,7 +189,7 @@ class CustomSprite(pg.sprite.Sprite):
                 if collided != self and not collided.isPlatform: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if coll_side == "top":
-                        collided.addedVel.x += self.vel.x + self.addedVel.x
+                        collided.addedVel.x = self.vel.x + self.addedVel.x
                         if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
                             collided.addedVel.y = self.vel.y + self.addedVel.y
                         if collided in self.game.group_solid:

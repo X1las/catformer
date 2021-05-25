@@ -17,8 +17,10 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
 
     def sprites_draw(self):
-        return list(self._spritelist_draw)
+        return self._spritelist_draw
 
+    #def sprites(self):
+     #   return self.sprites_draw()
 
     """ -------- Small changes/overwriting LayeredUpdate's original methods"""
     # Overwriting add_internal
@@ -89,6 +91,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
     
     def update(self):
         for i in self.sprites():
+            
             i.update()
 
     def collisionEffects(self):
@@ -102,7 +105,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.update2()
 
     def updateAddedvel(self):
-        for i in self.sprites():
+        for i in self:
             i.updateAddedVel()
 
     def updatePos(self):

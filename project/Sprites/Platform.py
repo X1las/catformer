@@ -42,12 +42,6 @@ class Platform(CustomSprite):
         self.initY = y
         self.x, self.y = x,y
         self.init()
-        
-
-
-        self.prevPos = self.pos.copy()
-
-
 
     def startGame(self, game):
         self.game = game
@@ -99,64 +93,33 @@ class Platform(CustomSprite):
 
 
     def update(self):
-        #if self.floorplat:
-         #   print(f'in update : {self.pos}')
         if self.vel.x != 0:
             self.massHOR = 29.5
         elif self.vel.y != 0:
             self.massVER = 29.5
-
-        #if self.vel.x != 0 or self.vel.y != 0:
-         #   self.originalsolidstrength = 29.5
-          #  self.solidstrength = 29.5
-           # self.init() # Needs to update massHOR and massVER
         self.checkDist()
-       # if self.floorplat:
-        #    print(f'aft dist : {self.pos}')
         self.rect.midbottom = self.pos.realRound().asTuple()
 
 
     def updatePos(self):
-        #if self.floorplat:
-         #   print(f'in updPos : {self.pos}')
-        #print(f'new iter')
-
-        #if self.originalVel.y == 0:
-         #   print(self.vel)
-        self.checkDist()
-        self.solidCollision() # just moved it up
+        #self.checkDist()
+        self.solidCollisions() # just moved it up
         super().updatePos()
 
-        self.prevPos = self.pos.copy()
-
-    def resetSprite(self):
-        #self.test()
-
-        super().resetSprite()
-        #if self.floorplat:
-         #   print(f'after reset : {self.pos}')
-
-    def solidCollision(self):
+    def solidCollisions(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x +=self.r(self.vel.x)
         self.rect.y +=self.r(self.vel.y)
         collided_objects = pg.sprite.spritecollide(self, self.game.group_platforms, False)
-
         if collided_objects:
             for collided in collided_objects:
-                if collided != self and self.solidstrength <= collided.solidstrength and not self.floorplat:
+                if collided != self and not self.floorplat:
                     coll = self.collisionSide_Conditional(collided)
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
-                    if coll_side == "top":
-                        self.vel.y = self.originalVel.y * (-1)
-                    if coll_side == "left": # left side of collidedd obj
-                        if collided.vel.x == 0: # If collided object is not moving, just turn around
-                            self.vel.x = self.originalVel.x * (-1)
-                    if coll_side == "right":
-                        if collided.vel.x == 0:
-                            self.vel.x = self.originalVel.x * (-1)
-                    if coll_side == "bot": # left side of collidedd obj
-                        self.vel.y = self.originalVel.y * (-1)
-                    self.pos = correctedPos
-        self.rect.midbottom = self.pos.rounded().asTuple()
+                    if (coll_side == "top" or coll_side == "bot") and self.massVER <= collided.massVER:
+                        self.vel.y = self.vel.y * (-1)
+                        self.pos = correctedPos
+                    if (coll_side == "left" or coll_side == "right") and self.massHOR <= collided.massHOR: # left side of collidedd obj
+                        self.vel.x = self.vel.x * (-1)
+                        self.pos = correctedPos

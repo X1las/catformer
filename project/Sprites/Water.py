@@ -15,6 +15,12 @@ class Water(CustomSprite):
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
         self.draw_layer = 15
+        self.solidstrength = 60
+        self.init()
+
+
+    def updatePos(self):
+        pass
 
     def startGame(self, game):
         self.game = game
