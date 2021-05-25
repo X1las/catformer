@@ -362,7 +362,7 @@ class Interactive(CustomSprite):
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
                 self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
-    
+    """
     def update(self):
         self.image = self.images[self.player.facing]
         if self.player.facing == "left":
@@ -372,7 +372,7 @@ class Interactive(CustomSprite):
         self.vel = self.player.vel
         self.acc = self.player.acc
         self.updateRect()
-    
+    """
     def updateRect(self):
         self.image = self.images[self.player.facing]
         self.intUpdate(self.player.facing, "rel")
