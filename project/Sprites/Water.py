@@ -9,7 +9,7 @@ from settings import *
 # Water SubClass - Inherits from Hostile
 class Water(CustomSprite):
     def __init__(self,x,y, width, height, name = "water"): 
-        self.active = True
+        self.damagesPlayer = True
         self.name = name
         self.width = width; self.height = height
         self.pos = vec(x,y)

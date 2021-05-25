@@ -39,7 +39,7 @@ class Player(CustomSprite):
     jumpcounter = 0
     liftedBefore = False
 
-    def __init__(self, spawn, name="player"):
+    def __init__(self, spawn, name="default"):
         
         self.draw_layer     = 30
         self._layer     = 2
@@ -115,6 +115,7 @@ class Player(CustomSprite):
     def takeDamage(self):
         self.lives -= 1
         self.respawn()
+        self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
         self.game.playerTookDamage()
 
         return self.lives
@@ -122,10 +123,12 @@ class Player(CustomSprite):
 
     def heal(self):
         self.lives += 1
+        self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
         return self.lives
 
     def addCatnip(self):
         self.catnip_level += 1
+        self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
         return self.catnip_level
 
     def initKeys(self,jump, left, right, crouch):
@@ -191,7 +194,7 @@ class Player(CustomSprite):
         self.rect = self.rect.inflate(-4,-4)
         if collided: 
             for collided_obj in collided:
-                if collided_obj.active:
+                if collided_obj.damagesPlayer:
                     self.takeDamage()         
         self.rect.midbottom = self.pos.rounded().asTuple()
 
