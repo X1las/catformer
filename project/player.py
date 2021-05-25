@@ -306,16 +306,14 @@ class Player(CustomSprite):
                         collides_top = True
 
         self.rect = self.rect.inflate(-inflation,-inflation)
-        print(f' {result}')
         return result           
 
 
 # Interactive Field SubClass - Inherits from CustomSprite
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
-        self._layer = 3
-        self.draw_layer = 20
-        self.update_order = 3
+        self._layer = player._layer + 1
+        self.draw_layer = player.draw_layer +1
         self.game = game
         self.name = "interactive"
         # anchor depends on which way player faces

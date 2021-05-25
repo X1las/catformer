@@ -103,29 +103,23 @@ class Platform(CustomSprite):
 
     def updatePos(self):
         #self.checkDist()
-        self.solidCollision() # just moved it up
+        self.solidCollisions() # just moved it up
         super().updatePos()
 
-    def solidCollision(self):
+    def solidCollisions(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x +=self.r(self.vel.x)
         self.rect.y +=self.r(self.vel.y)
         collided_objects = pg.sprite.spritecollide(self, self.game.group_platforms, False)
         if collided_objects:
             for collided in collided_objects:
-                if collided != self and self.solidstrength <= collided.solidstrength and not self.floorplat:
+                if collided != self and not self.floorplat:
                     coll = self.collisionSide_Conditional(collided)
                     coll_side = coll['side']
                     correctedPos = coll['correctedPos']
-                    if coll_side == "top":
-                        self.vel.y = self.originalVel.y * (-1)
-                    if coll_side == "left": # left side of collidedd obj
-                        if collided.vel.x == 0: # If collided object is not moving, just turn around
-                            self.vel.x = self.originalVel.x * (-1)
-                    if coll_side == "right":
-                        if collided.vel.x == 0:
-                            self.vel.x = self.originalVel.x * (-1)
-                    if coll_side == "bot": # left side of collidedd obj
-                        self.vel.y = self.originalVel.y * (-1)
-                    self.pos = correctedPos
-        self.rect.midbottom = self.pos.rounded().asTuple()
+                    if (coll_side == "top" or coll_side == "bot") and self.massVER <= collided.massVER:
+                        self.vel.y = self.vel.y * (-1)
+                        self.pos = correctedPos
+                    if (coll_side == "left" or coll_side == "right") and self.massHOR <= collided.massHOR: # left side of collidedd obj
+                        self.vel.x = self.vel.x * (-1)
+                        self.pos = correctedPos

@@ -90,8 +90,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.resetSprite()
     
     def update(self):
-        #for i in self.sprites():
         for i in self.sprites():
+            
             i.update()
 
     def collisionEffects(self):
@@ -101,7 +101,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.pushEffect()
 
     def update2(self):
-        for i in self:
+        for i in self.sprites():
             i.update2()
 
     def updateAddedvel(self):
@@ -109,7 +109,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.updateAddedVel()
 
     def updatePos(self):
-        for i in self:
+        for i in self.sprites():
             i.updatePos()
         self.correctPositions()
 
