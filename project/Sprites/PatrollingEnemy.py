@@ -48,7 +48,7 @@ class PatrollingEnemy(CustomSprite):
         self.wasunderground = False # Only true when worm *just* popped up
         #self._layer = 4
         self.draw_layer = 4
-        self.active = True
+        self.damagesPlayer = True
 
         self.init()
 
@@ -160,7 +160,7 @@ class PatrollingEnemy(CustomSprite):
         except Exception as e:
             print(f'touchbox: {e}')
         #self.vel += self.addedVel
-        self.active = self.aboveground # Whether it should deal damage'
+        self.damagesPlayer = self.aboveground # Whether it should deal damage'
         if self.activity == "popup":
             self.vel.x = 0
         elif self.activity == "hide":

@@ -584,9 +584,9 @@ pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
-#pickleLevel(level4, 'level1')
+# pickleLevel(level4, 'level1')
 testLevel = createTestLevel()
-#pickleLevel(testLevel, 'level1')
+pickleLevel(testLevel, 'level1')
 
 
 

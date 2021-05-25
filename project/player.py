@@ -191,7 +191,7 @@ class Player(CustomSprite):
         self.rect = self.rect.inflate(-4,-4)
         if collided: 
             for collided_obj in collided:
-                if collided_obj.active:
+                if collided_obj.damagesPlayer:
                     self.takeDamage()         
         self.rect.midbottom = self.pos.rounded().asTuple()
 
