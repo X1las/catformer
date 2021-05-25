@@ -117,26 +117,17 @@ class Game:
     def new(self):
         self.finished = False
         self.createSGroups()                                       
-        
         self.framecount = 0
         self.accumframes = 0
-
-        # Checking for a level and loading player data if it doesn't throw an exception
-        try:
-            self.level
-            self.data = self.getPlayerData()
-        except:
-            pass
-        
+        self.checkPlayerData()                                                  # Checks for player data and fetches data from file if non-existant player
         self.level = Level(self)                                                # Initializing the level object                                     
         
         # Removes player's save file if all levels are finished
-        if self.data:
-            self.level.name = self.data[0]
-            if self.level.name == "level4":
-                #sself.finished = True
-                if os.path.exists("playerData/"+self.userName+"Data.txt"):
-                    os.remove("playerData/"+self.userName+"Data.txt")
+        self.level.name = self.data[0]
+        
+        if self.data[0] == "level4":
+            if os.path.exists("playerData/"+self.userName+"Data.txt"):
+                os.remove("playerData/"+self.userName+"Data.txt")
         
         # Loads level from level name or default if no level name has been created
         if not self.level.load(self.level.name):                     
@@ -145,10 +136,9 @@ class Game:
         self.player = Player(self.level.spawn)                                  # Initializing the Player object, giving it the level spawn as a parameter
         self.player.startGame(self)                                             # Initializes the objects that have been loaded through level.load
         
-        # Set lives and catnip to values from data file
-        if self.data:                                                           
-            self.player.lives = self.data[1]
-            self.player.catnip_level = self.data[2]    
+        # Set lives and catnip to values from data file                                                          
+        self.player.lives = self.data[1]
+        self.player.catnip_level = self.data[2]    
 
         self.paused = False                                                     # Reset paused to false incase still active from previous game
         self.createHUDs()                                                       
@@ -202,14 +192,10 @@ class Game:
         for event in pg.event.get():                                            # Iterates through all events happening per tick that pygame registers
             
             if event.type == (pg.QUIT):                                         # Check if the user closes the game window
-                if os.path.exists("playerData/"+self.userName+"Data.txt"):       #return true/false if file exists/does not
-                    self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)
                 self.exitProgram()
             
             if event.type == pg.KEYDOWN:                                        # Checks if the user has any keys pressed down
                 if event.key == pg.K_q:                                         # checks if the uses presses q
-                    if os.path.exists("playerData/"+self.userName+"Data.txt"):       #return true/false if file exists/does not
-                        self.saveData(levelname = self.level.name, lives = self.player.lives, catnip = self.player.catnip_level)  #saves player data
                     if self.playing:                                            #breaking loops to quit to main menu
                         self.playing = False   
                     self.newGamemenu.active = False
@@ -229,8 +215,6 @@ class Game:
         self.drawHUDs()     
         pg.display.update()                                 # Updates the drawings to the screen object and flips it
         self.all_sprites.resetRects()
-  
-
         
     # Method for moving everything on the screen relative to where the player is moving
     def moveScreen(self):
@@ -287,7 +271,6 @@ class Game:
     def startNewTrig(self):
         if not self.userName == "":                              #check if name is not empty
             if not self.checkNameConflict():                     #check if name does not exist already
-                self.data = self.saveData()                      #saves new playerdata file with default values
                 self.new()                                       #opens the game
             else:
                 self.nameError = True                            #give error message
@@ -299,7 +282,7 @@ class Game:
     def startLoadTrig(self):
         if self.checkNameConflict():                             #check if name exists already
             self.data = self.getPlayerData()
-            self.new()                                            #opens the game
+            self.new()                                           #opens the game
         else:
             self.nameError = True                                #give error message
             self.activateSelected = False                        #disable activator (mouse1 or enter)
@@ -368,7 +351,7 @@ class Game:
         return os.path.exists("playerData/"+self.userName+"Data.txt")       #return true/false if file exists/does not
 
     #creates or updates a player data save file
-    def saveData(self, levelname = 'level1', lives = 9, catnip = 0):
+    def setPlayerData(self, levelname = 'level1', lives = 9, catnip = 0):
         try:
             file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
         except:
@@ -388,6 +371,23 @@ class Game:
         except IOError:                                                      #error if data is  found
             print("No playerdata found")
             return None
+    
+    def checkPlayerData(self):
+        # Checking for a level and loading player data if it doesn't throw an exception
+        try:
+            if (self.player):
+                pass
+            self.setPlayerData(self.data[0] , self.data[1] , self.data[2])
+            print("Player Data updated Successfully!")
+        except:
+            self.data = self.getPlayerData()
+            if self.data:
+                print("No player found, loading data from file!")
+            else:
+                print("No player or playerData found, making new session!")
+                self.data = self.setPlayerData()
+
+        
 
 
 ### FOR TESTING - REMOVE WHEN DONE ###
