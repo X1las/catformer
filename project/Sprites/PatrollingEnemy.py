@@ -173,36 +173,3 @@ class PatrollingEnemy(CustomSprite):
                 self.imageIndex = 0
             self.wasunderground = False
         self.rect.midbottom = self.pos.rounded().asTuple()
-
-
-    '''
-    # Currently doesn't matter. The worm just hides. so? DELEtE?!
-    def solidCollision(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
-        collided_list = pg.sprite.spritecollide(self, self.game.group_platforms, False)
-
-        if collided_list:
-            for collided in collided_list:
-                # handle floor plat better
-                if collided != self and collided != self.currentplat: #and collided.name != "p_floor" and self.lessMassThan(collided) :
-                    
-                    #coll_side = self.determineSide(collided)
-                    coll = self.collisionSide_Conditional(collided)
-                    coll_side = coll['side']
-                    correctedPos = coll['correctedPos']
-                    if coll_side == "left": # left side of collidedd obj
-                        self.vel.x *= -1
-                            
-                    if coll_side == "right":
-                        self.vel.x *= -1
-                    self.pos = correctedPos
-                            
-                    """    
-                    if coll_side == "bot":
-                        if  abs(self.right_x() - collided.left_x()) < abs(collided.right_x() - self.left_x() ):
-                            self.pos.x = collided.left_x() - self.width/2
-                        else: 
-                            self.pos.x = collided.right_x() + self.width/2
-                        #self.count = 5
-                    """
-    '''
