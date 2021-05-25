@@ -1,37 +1,32 @@
 # Imports
 import math
 import pygame as pg
-from   settings     import GRAVITY
 from   CustomSprite import CustomSprite
 from   Vector       import Vec as vec
 
 # Intelligent Enemy SubClass 
 class IntelligentEnemy(CustomSprite):
     def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 1.7, name = "enemyai"):
-        self.spawnPlat = spawnPlat                      # the platform the enemy spawns on
-        self.placement = placement                      # placement relative to the spawn platform
-        self.pos       = vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()) # position
-        self.speed     = speed                          # horizontal velocity
-        self.vel       = vec(speed,0); self.acc = vec() # velocity and acceleration
-        self.width     = width;  self.height = height   # size
-        self.name      = name
-    
+        self.spawnPlat     = spawnPlat                      # the platform the enemy spawns on
+        self.placement     = placement                      # placement relative to the spawn platform
+        self.pos           = vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()) # position
+        self.speed         = speed                          # horizontal velocity
+        self.vel           = vec(speed,0); self.acc = vec() # velocity and acceleration
+        self.width         = width;  self.height = height   # size
+        self.name          = name
+        self.isEnemy       = True                           # used in CustomSprite.collisionEffect
+        self.draw_layer    = 25                             # specifies when to draw
+        self._layer        = 5 
+        self.currentplat   = None
+        self.damagesPlayer = True
+        
         ''' should be revisited'''
         self.solidstrength = 8  # higher than the box, but lower than platforms
-    
-        """in use"""
-        self.isEnemy = True     # used in CustomSprite.collisionEffect
-        self.draw_layer = 25    # specifies when to draw
-        self._layer = 5         # 
+        
         # setting mass/strength
         self.init()             
-        self.ori_massVER = 8
-        self.currentplat = None
-        self.damagesPlayer = True      # player takes damage if enemy is active (rename?)
-
-        '''unused'''
-        #self.update_order = 5
-    
+        self.ori_massVER   = 8
+        
     # methods for checking where the player is relative to the enemy:
     # within 125 pixels above/below the enemy
     def onSameLevel(self):
@@ -57,13 +52,13 @@ class IntelligentEnemy(CustomSprite):
         # get spritesheet
         sheet = self.game.dogSheet
         # create sub-rectangles to load from spritesheet
-        rect1 = pg.Rect(  3, 21, 45, 27)
-        rect2 = pg.Rect( 50, 21, 45, 27)
-        rect3 = pg.Rect( 99, 21, 45, 27)
-        rect4 = pg.Rect(147, 21, 45, 27)
-        rect5 = pg.Rect(195, 21, 45, 27)
-        rect6 = pg.Rect(243, 21, 45, 27)
-        rects = [rect1, rect2, rect3, rect4, rect5, rect6]
+        rects = []
+        rects.append(pg.Rect(  3, 21, 45, 27))
+        rects.append(pg.Rect( 50, 21, 45, 27))
+        rects.append(pg.Rect( 99, 21, 45, 27))
+        rects.append(pg.Rect(147, 21, 45, 27))
+        rects.append(pg.Rect(195, 21, 45, 27))
+        rects.append(pg.Rect(243, 21, 45, 27))
         # load images from spritesheet
         self.images_left = sheet.images_at(rects, colorkey=(0,0,0))
         # scale images to correct size
@@ -98,13 +93,13 @@ class IntelligentEnemy(CustomSprite):
         else:
             self.vel.x = self.addedVel.x
 
-
-    def updatePos(self): # fix
-        self.acc   += vec(0, self.gravity)                  # Gravity
+    # method for updating position and acceleration
+    def updatePos(self):
+        self.acc   += vec(0, self.gravity)          # currently, gravity is 0 for this class
         self.pos +=  self.vel +  self.acc * 0.5
         self.acc = vec(0,0)     
 
-
+    # method for updating
     def update(self):
         self.target = self.game.player              # define the player as the target
         self.imageIndex += 1                        # increment image index every update
@@ -116,18 +111,18 @@ class IntelligentEnemy(CustomSprite):
         self.rect.midbottom = self.pos.rounded().asTuple()
 
 
-
+    # overwriting inherited method
     def posCorrection(self):
         self.solidCollisions()
 
     # method for stopping the enemy on the edge of a platform
     def checkCliff(self):
         try:
-            if self.right_x() >= self.spawnPlat.right_x() and self.vel.x > 0:
+            if self.right_x() >= self.spawnPlat.right_x() and self.vel.x > 0:   # right edge
                 self.vel = self.addedVel
                 self.vel *= 0
                 self.set_right(self.spawnPlat.right_x() ) # Number here must be bigger than 3 lines before. Otherwise dog stands still on edges
-            elif self.left_x() <= self.spawnPlat.left_x()  and self.vel.x < 0: 
+            elif self.left_x() <= self.spawnPlat.left_x()  and self.vel.x < 0:  # left edge
                 self.vel = self.addedVel
                 self.vel *= 0
                 self.set_left(self.spawnPlat.left_x())
