@@ -161,7 +161,7 @@ class Player(CustomSprite):
     def updatePos(self):
         super().updatePos()
         #self.pos += self.vel +  self.acc * 0.5
-        self.collides_left = False; self.collides_right = False
+        #self.collides_left = False; self.collides_right = False
 
     def determineGravity(self):
         if self.on_solid(self.game.group_solid):
@@ -283,26 +283,25 @@ class Player(CustomSprite):
                     if coll_side == "left": # left side of collidedd obj
                         if collided.vel.x + collided.addedVel.x < 0:
                             movingHOR = True
-                        if self.collides_left and movingHOR:
+                        if collides_left and movingHOR:
                             self.takeDamage()
                             result = True
-                        self.collides_right = True
+                        collides_right = True
                     if coll_side == "right":
                         if collided.vel.x + collided.addedVel.x > 0:
                             movingHOR = True
-                        if self.collides_right and movingHOR:
+                        if collides_right and movingHOR:
                             self.takeDamage()
-                            #self.vel.x *= 0
-                        self.collides_left = True
+                        scollides_left = True
                     if coll_side == "top": # left side of collidedd obj
-                        if collided.vel.y < 0:
+                        if collided.vel.y + collided.addedVel.y < 0:
                             movingVER = True
                         if collides_top and movingVER:
                             self.takeDamage()
                             result = True
                         collides_bot = True
                     if coll_side == "bot":
-                        if collided.vel.y > 0:
+                        if collided.vel.y + collided.addedVel.y > 0:
                             movingVER = True
                         if collides_bot and movingVER:
                             self.takeDamage()
@@ -310,16 +309,14 @@ class Player(CustomSprite):
                         collides_top = True
 
         self.rect = self.rect.inflate(-inflation,-inflation)
-          
         return result           
 
 
 # Interactive Field SubClass - Inherits from CustomSprite
 class Interactive(CustomSprite):
     def __init__(self, game,  player, facing):
-        self._layer = 3
-        self.draw_layer = 20
-        self.update_order = 3
+        self._layer = player._layer + 1
+        self.draw_layer = player.draw_layer +1
         self.game = game
         self.name = "interactive"
         # anchor depends on which way player faces
@@ -365,7 +362,7 @@ class Interactive(CustomSprite):
                 self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
             else: 
                 self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
-    
+    """
     def update(self):
         self.image = self.images[self.player.facing]
         if self.player.facing == "left":
@@ -375,7 +372,7 @@ class Interactive(CustomSprite):
         self.vel = self.player.vel
         self.acc = self.player.acc
         self.updateRect()
-    
+    """
     def updateRect(self):
         self.image = self.images[self.player.facing]
         self.intUpdate(self.player.facing, "rel")

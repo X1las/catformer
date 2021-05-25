@@ -13,6 +13,7 @@ class PickUp(CustomSprite):
         self.width = width; self.height = height
         self.type = type_
         self.pos = vec(x,y)
+        self.draw_layer = 10
         self.relativePosition = self.pos.copy()
 
     def startGame(self, game):
