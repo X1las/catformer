@@ -5,14 +5,13 @@ import sys, os
 
 import Spritesheet as ss
 from Level import Level
+from Menu import Menu
 
 from levelCreator import *
 from SpriteGroup import *
 from settings import *
 from Sprites import *
 from player import *   
-
-from pygame.constants import KMOD_ALT, KMOD_GUI, KMOD_META, KMOD_MODE
 
 # Game Class
 class Game:
@@ -68,13 +67,13 @@ class Game:
 
     # Loads all the HUDs default values
     def createHUDs(self):
-        resumeText     =  Text("Press P to resume", (300, 250), screen = self.screen)
-        quitText       =  Text("Press Q to quit", (300, 350), screen = self.screen)
-        self.pauseHUD   = [Text("Game is paused",(300, 150), screen = self.screen), resumeText, quitText]
-        self.damageHUD  = [Text("YOU DIED",                   (300, 150), screen = self.screen, displayWay="custom", font = "resources/gypsy-curse.regular.ttf", color = (255, 0, 0), fontsize=80), resumeText, quitText]
-        self.endgameHUD = [Text("Congratulations" ,           (300, 150), screen = self.screen, displayWay="custom", font = "resources/action-jackson.regular.ttf", color = (0,200,0)),
-                           Text("You have finished the game", (300, 250), screen = self.screen, displayWay="custom", font = "resources/action-jackson.regular.ttf", color = (0,200,0), fontsize = 30)]
-        self.scoreHUD   = [Text(f'Lives: {self.player.lives}',(100,50), screen = self.screen), Text(f'Catnip: {self.player.catnip_level}', (500,50), screen = self.screen)]
+        resumeText     =  Menu.Text("Press P to resume", (300, 250), screen = self.screen)
+        quitText       =  Menu.Text("Press Q to quit", (300, 350), screen = self.screen)
+        self.pauseHUD   = [Menu.Text("Game is paused",(300, 150), screen = self.screen), resumeText, quitText]
+        self.damageHUD  = [Menu.Text("YOU DIED",                   (300, 150), screen = self.screen, displayWay="custom", font = "resources/gypsy-curse.regular.ttf", color = (255, 0, 0), fontsize=80), resumeText, quitText]
+        self.endgameHUD = [Menu.Text("Congratulations" ,           (300, 150), screen = self.screen, displayWay="custom", font = "resources/action-jackson.regular.ttf", color = (0,200,0)),
+                           Menu.Text("You have finished the game", (300, 250), screen = self.screen, displayWay="custom", font = "resources/action-jackson.regular.ttf", color = (0,200,0), fontsize = 30)]
+        self.scoreHUD   = [Menu.Text(f'Lives: {self.player.lives}',(100,50), screen = self.screen), Menu.Text(f'Catnip: {self.player.catnip_level}', (500,50), screen = self.screen)]
 
     #updates the values on HUD that change
     def updateHUD(self):
@@ -83,30 +82,30 @@ class Game:
 
     #creating all the menu screens buttons and text
     def createMenus(self):
-        quitBTN          = Button("Quit",  trigger = self.quitTrig, screen=self.screen , y=475, textColor = (255,255,255))
-        returnBTN        = Button("Return", trigger = self.returnTrig, screen = self.screen, y = 475, textColor = (255,255,255))
-        startBTN         = Button("Start", trigger = self.startNewTrig, screen = self.screen, y = 325, textColor = (255,255,255))
-        startLoadBTN     = Button("Start", trigger = self.startLoadTrig, screen = self.screen, y = 325, textColor = (255,255,255))
-        enterNameTXT     = Text("Please enter a name", (300,100), screen = self.screen, color = (255,255,255))
-        enterNameLoadTXT = Text("Please enter a name to load", (300,100), screen = self.screen, color = (255,255,255))
+        quitBTN          = Menu.Button("Quit",  trigger = self.quitTrig, screen=self.screen , y=475, textColor = (255,255,255))
+        returnBTN        = Menu.Button("Return", trigger = self.returnTrig, screen = self.screen, y = 475, textColor = (255,255,255))
+        startBTN         = Menu.Button("Start", trigger = self.startNewTrig, screen = self.screen, y = 325, textColor = (255,255,255))
+        startLoadBTN     = Menu.Button("Start", trigger = self.startLoadTrig, screen = self.screen, y = 325, textColor = (255,255,255))
+        enterNameTXT     = Menu.Text("Please enter a name", (300,100), screen = self.screen, color = (255,255,255))
+        enterNameLoadTXT = Menu.Text("Please enter a name to load", (300,100), screen = self.screen, color = (255,255,255))
 
         self.mainmenu = Menu(self.screen,
-                        buttons = [Button("New Game", trigger = self.nameStartScreen, screen = self.screen, y = 25, textColor = (255,255,255)), 
-                                   Button("Load Game", trigger =self.nameLoadScreen, screen=self.screen , y=175, textColor = (255,255,255)),
-                                   Button("Tutorial", trigger = self.tutorialScreen, screen=self.screen , y=325, textColor = (255,255,255)),
+                        buttons = [Menu.Button("New Game", trigger = self.nameStartScreen, screen = self.screen, y = 25, textColor = (255,255,255)), 
+                                   Menu.Button("Load Game", trigger =self.nameLoadScreen, screen=self.screen , y=175, textColor = (255,255,255)),
+                                   Menu.Button("Tutorial", trigger = self.tutorialScreen, screen=self.screen , y=325, textColor = (255,255,255)),
                                    quitBTN])
 
         self.newGamemenu = Menu(self.screen, buttons =  [startBTN, returnBTN], texts = [enterNameTXT]) 
         self.loadGamemenu = Menu(self.screen, buttons =  [startLoadBTN, returnBTN], texts = [enterNameLoadTXT])
             
-        self.tutorialmenu = Menu(self.screen,buttons = [returnBTN], texts = [Text("Use arrow keys to move left/right", (300, 50)),
-            Text("Press space to jump", (300, 100)),
-            Text("Press P to pause", (300, 150)),
-            Text("Press Q to quit", (300, 200)),
-            Text("Press D to interact",( 300, 250))])
+        self.tutorialmenu = Menu(self.screen,buttons = [returnBTN], texts = [Menu.Text("Use arrow keys to move left/right", (300, 50)),
+            Menu.Text("Press space to jump", (300, 100)),
+            Menu.Text("Press P to pause", (300, 150)),
+            Menu.Text("Press Q to quit", (300, 200)),
+            Menu.Text("Press D to interact",( 300, 250))])
         self.noLivesMenu = Menu(self.screen, buttons = [returnBTN], texts = [
-            Text(f'Player has run out of lives', (300, 50)),
-            Text("Press Q to quit", (300, 200))])
+            Menu.Text(f'Player has run out of lives', (300, 50)),
+            Menu.Text("Press Q to quit", (300, 200))])
 
         self.menus = [self.mainmenu, self.newGamemenu, self.loadGamemenu, self.tutorialmenu, self.noLivesMenu]                          #adding each menu to a list
         for menu in self.menus:
@@ -338,8 +337,8 @@ class Game:
             menu.currentButton()
             if takeUserName:                                                #if on a screen with typing
                 if self.nameError:                                          #error message if invalid name entered
-                    Text("Invalid name entered", (300, 300), screen = self.screen, color = (255,255,255)).blitText()
-                Text(self.userName, (300, 150), screen = self.screen, color = (255,255,255)).blitText()    #create name input as text object
+                    Menu.Text("Invalid name entered", (300, 300), screen = self.screen, color = (255,255,255)).blitText()
+                Menu.Text(self.userName, (300, 150), screen = self.screen, color = (255,255,255)).blitText()    #create name input as text object
             menu.blitMenu()                                                 #call function to draw text
 
             pg.display.update()                                             #update the display
@@ -390,121 +389,6 @@ class Game:
             print("No playerdata found")
             return None
 
-#class used to represend a text object
-class Text():
-    def __init__(self, text, position, screen = None, font = 'Comic Sans MS', displayWay = "sysfont", fontsize = 40, bold = False, color = (0,0,0)):
-        self.text = text; self.position = position; self.font = font; self.fontsize = fontsize; self.bold = bold; 
-        self.color = color
-        self.displayWay = displayWay; 
-        self.screen = screen
-    
-    #used to check if default system font or custom font should be rendered
-    def rendered(self):
-        if self.displayWay == "sysfont":
-            font = pg.font.SysFont(self.font, self.fontsize, self.bold, False)
-            return font.render(self.text, True, self.color) #returning rendered text surface
-        else:
-            font = pg.font.Font(self.font, self.fontsize)   #loading custom font
-            return font.render(self.text, True, self.color)
-
-    #draws text on the screen
-    def blitText(self):
-        drawtext = self.rendered()
-        textRect = drawtext.get_rect()
-        textRect.center = self.position
-        self.screen.blit(drawtext, textRect)
-
-#class used to represent a button object
-class Button():
-    def __init__(self, text, trigger = None, screen = None, x = 190, y = 325, size = (220, 100), color = (0, 125, 255), textColor = (0, 0, 0)):
-        self.color = color
-        self.rect = pg.Rect((x,y), size)
-        self.x, self.y = x,y; self.width = size[0]; self.height = size[1]
-        self.screen = screen
-        self.text = Text(text, (self.x + round(self.width/2),self.y + 50), screen = self.screen, color= textColor)
-        self.trigger_ = trigger
-
-    #draws a rectangle on the screen
-    def drawButton(self):
-        pg.draw.rect(self.screen, self.color, self.rect)
-        self.text.blitText()
-
-    #used to trigger something when button is activated
-    def triggers(self):
-        self.trigger_()
-
-    #return a string containing the text inside a text object
-    def __str__(self):
-        return self.text.text
-
-#class used to represent a menu object
-class Menu():
-
-    def __init__(self,  screen, buttons = [], texts = []):
-        self.screen = screen
-        self.buttons = buttons
-        self.texts = texts
-        for button in self.buttons:
-            button.screen = self.screen
-        self.selectedButton = self.buttons[0]
-        self.selectedState = 0
-        self.activateSelected = False
-        self.active = False
-
-    #used to initialize values of text
-    def initTexts(self, fontsize = 40, color = (255,255,255)):
-        for text in self.texts:
-            text.color = color; text.fontsize = fontsize; text.screen = self.screen
-
-    #function for currently selected button
-    def currentButton(self):
-        orangeRect     = pg.Rect(75, self.selectedButton.y + 25, 50, 50)
-        pg.draw.rect(self.screen, (255, 125, 0), orangeRect)                #draws indicator for currently selected button
-        if self.activateSelected:                                           #if selected activate trigger
-            self.selectedButton.triggers()
-            self.activateSelected = False
-    
-    #draws menus
-    def blitMenu(self):
-        for button in self.buttons:
-            button.drawButton()                                             #calling draw on each button
-        for text in self.texts:
-            text.blitText()                                                 #calling draw on each text
-
-    #getting user input for menu screens
-    def menuNavigation(self, event, takeUserName = False):
-        #for event in pg.event.get():                                
-        if event.type == pg.KEYDOWN:
-            if (event.key == pg.K_RETURN) or (event.key == pg.K_KP_ENTER):  #sets value to true if enter is pressed
-                self.activateSelected = True
-            if event.key == pg.K_q and not takeUserName:                 #quit if not in a typing menu
-                self.active = False
-            if event.key == pg.K_DOWN:                                   #increase value for selection
-                self.selectedState += 1
-                self.selectedButton = self.selectedState % len(self.buttons)
-                self.selectedButton = self.buttons[self.selectedButton]
-            if event.key == pg.K_UP:                                     #decrease value for selection
-                self.selectedState -= 1
-                self.selectedButton = self.selectedState % len(self.buttons)
-                self.selectedButton = self.buttons[self.selectedButton]
-            
-        if event.type == pg.MOUSEBUTTONDOWN:                             #sets value to true if mouse1 is pressed
-            if event.button == 1:       
-                self.activateSelected = True                                
-
-    # events used to type in the menu
-    def writeName(self, event, username):
-        self.userName = username
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_BACKSPACE:                              #backspace for removing unwanted text
-                self.userName = self.userName[:-1]
-            elif(pg.K_0 <= event.key <= pg.K_9):                         #checking correct key range and no modifiers are pressed
-                if not ((event.mod & pg.KMOD_SHIFT) or (event.mod & pg.KMOD_CTRL) or (event.mod & pg.KMOD_ALT) or (event.mod & KMOD_MODE) or (event.mod & KMOD_META) or (event.mod & KMOD_GUI)):
-                    self.userName += event.unicode
-            elif(pg.K_a <= event.key <= pg.K_z):                         #checking correct key range and no modifiers are pressed
-                if not ((event.mod & pg.KMOD_CTRL) or (event.mod & pg.KMOD_ALT) or (event.mod & KMOD_MODE) or (event.mod & KMOD_META) or (event.mod & KMOD_GUI)):
-                    self.userName += event.unicode
-        return self.userName
 
 ### FOR TESTING - REMOVE WHEN DONE ###
 level1 = createLevel1()
