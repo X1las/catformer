@@ -334,7 +334,7 @@ def createLevel3():
     levelName = {
         'name': 'level3',
         'settings': {
-            'spawn': Vec(endplat.right_x(),100),
+            'spawn': Vec(startplat.left_x(),startplat.top_y()),
             'length': 5000,
         },
         'platforms': plats,

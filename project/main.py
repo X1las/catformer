@@ -293,6 +293,10 @@ class Game:
     def startNewTrig(self):
         if not self.userName == "":                              #check if name is not empty
             if not self.checkNameConflict():                     #check if name does not exist already
+                try:
+                    self.data = None
+                except:
+                    pass   
                 self.new()                                       #opens the game
             else:
                 self.nameError = True                            #give error message
@@ -305,7 +309,11 @@ class Game:
     # Method for starting a game on load
     def startLoadTrig(self):
         if self.checkNameConflict():                             #check if name exists already
-            self.new()                                           #opens the game
+            try:
+                self.data = None
+            except:
+                pass   
+            self.new()                                              #opens the game
         else:
             self.nameError = True                                #give error message
             self.activateSelected = False                        #disable activator (mouse1 or enter)
@@ -385,14 +393,17 @@ class Game:
 
     #creates or updates a player data save file
     def setPlayerData(self, levelname = 'level1', lives = 9, catnip = 0):
-        if self.data[0] != "level4":
-            try:
-                file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
-            except:
-                file = open("playerData/"+self.userName+"Data.txt","w")
-            file.write(f"{levelname},{str(lives)},{str(catnip)}")                #writing text to file
-            file.close()
-            return [levelname,lives,catnip]                                      #returning values
+        try: 
+            if self.data[0] != "level4":
+                try:
+                    file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
+                except:
+                    file = open("playerData/"+self.userName+"Data.txt","w")
+                file.write(f"{levelname},{str(lives)},{str(catnip)}")                #writing text to file
+                file.close()
+                return [levelname,lives,catnip]                                      #returning values
+        except: 
+            return [levelname,lives,catnip]    
 
 
     # Gets player data from file
@@ -413,7 +424,7 @@ class Game:
         try:
             if (self.player):
                 pass
-            self.setPlayerData(self.data[0] , self.data[1] , self.data[2])
+            self.setPlayerData(levelname = self.data[0] , lives =self.data[1] , catnip = self.data[2])
             print("Player Data updated Successfully!")
         except:
             self.data = self.getPlayerData()
