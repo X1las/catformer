@@ -265,7 +265,7 @@ def createLevel3():
 
 
     plats = [floor, leftboundary, rightboundary, startplat, 
-            hiddenlevplat1, hiddenlevplat2, hiddenwaterplat1, hiddenwaterplat2, tinyhiddenplat,
+            hiddenlevplat1, hiddenlevplat2, hiddenwaterplat1, tinyhiddenplat,
             plat1, movingd, mugplat, boxrespplat, btnmugplat, movinga,
             plat2, topleftdoor, hiddendoor,
             topleft,
