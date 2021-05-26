@@ -1,7 +1,6 @@
 # Description: Main executable, contains Game class and main loop
 
-#Imports:
-
+# Imports
 # External Modules:
 import pygame as pg
 import sys, os
@@ -16,7 +15,6 @@ from SpriteGroup import SpriteGroup
 # Functional Imports:
 from levelCreator import *
 from settings import *
-from Sprites import *
 
 # Game Class
 class Game:

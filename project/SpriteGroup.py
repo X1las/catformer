@@ -1,7 +1,6 @@
 import pygame as pg
-from Vector import *
+from Vector import Vec
 from settings import *
-import math
 
 vec = Vec
 
