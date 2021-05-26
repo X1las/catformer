@@ -122,6 +122,14 @@ class Game:
 
     # Method that creates a new level
     def new(self):
+        
+        try: 
+            for Sprite in self.all_sprites:
+                if Sprite != self.player:
+                    del Sprite
+        except:
+            print("no sprites to remove!")
+        
         self.finished = False
         self.createSGroups()                                                    
         self.framecount = 0
@@ -143,6 +151,8 @@ class Game:
             if os.path.exists("playerData/"+self.userName+"Data.txt"):
                 os.remove("playerData/"+self.userName+"Data.txt")
         
+        
+
         # Loads level from level name or default if no level name has been created
         if not self.level.load(self.level.name):                     
             self.level.load(DEFAULT_LEVEL)

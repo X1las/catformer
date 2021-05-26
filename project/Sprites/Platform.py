@@ -17,7 +17,6 @@ class Platform(CustomSprite):
         self.floorplat = floorplat
         self.isPlatform = True
 
-
         if maxDist == None:
             self.leftMaxDist = leftMaxDist
             self.rightMaxDist = rightMaxDist
@@ -74,10 +73,10 @@ class Platform(CustomSprite):
             for i in range(numOfBrownParts_h):
                 self.image.blit(brownPiece, (i*end_left.get_width(),fill))
             fill += brownPiece.get_height()
-
             
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.midbottom = (self.pos.x,self.pos.y)
+
 
     # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
@@ -91,7 +90,6 @@ class Platform(CustomSprite):
             self.vel.y =  -1* abs(self.originalVel.y)
 
 
-
     def update(self):
         if self.vel.x != 0:
             self.massHOR = 29.5
@@ -102,9 +100,10 @@ class Platform(CustomSprite):
 
 
     def updatePos(self):
-        #self.checkDist()
+        self.checkDist()
         self.solidCollisions() # just moved it up
         super().updatePos()
+
 
     def solidCollisions(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
