@@ -461,8 +461,8 @@ pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 # pickleLevel(level4, 'level1')
-# testLevel = createTestLevel()
-# pickleLevel(testLevel, 'level1')
+testLevel = createTestLevel()
+pickleLevel(testLevel, 'level1')
 
 # Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
