@@ -426,7 +426,7 @@ def createLevel5():
     levelName = {
         'name': 'level5',
         'settings': {
-            'spawn': Vec(630,550),
+            'spawn': Vec(600,550),
             'length': 5000,
         },
         'platforms': [leftboundary, rightboundary, plat0, plat1, plat2, plat3, WINPLAT, floor],
