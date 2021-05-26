@@ -1,9 +1,7 @@
 # Imports
-import Spritesheet as ss
 import pygame as pg
 
 from CustomSprite import CustomSprite
-from Vector import Vec as vec
 from settings import *
 from Sprites.Platform import Platform
 
