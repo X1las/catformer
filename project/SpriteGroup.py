@@ -1,13 +1,19 @@
+#Description:
+
+# Imports
+# External Iports:
 import pygame as pg
+
+# Project Imports:
 from Vector import Vec
 from settings import *
 
+# variables:
 vec = Vec
-
 
 class SpriteGroup(pg.sprite.LayeredUpdates):
 
-
+    # Initializor
     def __init__(self):
         pg.sprite.LayeredUpdates.__init__(self)
         self._sprite_drawlayers = {}
@@ -15,11 +21,12 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         self.massOrdered = None
 
 
+    # Drawing method?
     def sprites_draw(self):
         return self._spritelist_draw
 
-    """ -------- Small changes/overwriting LayeredUpdate's original methods"""
-    # Overwriting add_internal
+
+    # Extending add_internal from pygame's spritegroup
     def add_internal(self, sprite, layer = None):
         super().add_internal(sprite, layer)
 
@@ -44,6 +51,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             mid += 1
         sprites.insert(mid, sprite)
 
+
     # Overwriting remove_internal
     def remove_internal(self, sprite):
         """ Making sure removing the sprite from the group also removes its draw layer
@@ -51,6 +59,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         super().remove_internal(sprite)
         self._spritelist_draw.remove(sprite)
         del self._sprite_drawlayers[sprite]
+
 
     # Overwriting draw
     def draw(self, surface):
@@ -78,16 +87,13 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         return dirty
 
 
-
-
-    """ --------- The methods used on the groups in the Game class --------------------------"""
+    # Methods used on groups in Game:
     def resetSprites(self):
         for i in self:
             i.resetSprite()
     
     def update(self):
         for i in self.sprites():
-            
             i.update()
 
     def collisionEffects(self):
@@ -126,7 +132,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             i.resetRects()
 
         
-    """ ---------- For sorting dependent on mass ---------------------------------------------"""
+    # Sort method for sorting by object mass
     def massSort(self, key):
         if not self.massOrdered:
             self.massOrdered = self.createMassOrdered()
@@ -136,6 +142,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             self.massOrdered.sort(key = lambda x: x.massVER, reverse = True)
         return self.massOrdered
 
+
+    # Method that does something ordered maybe?
     def createMassOrdered(self):
         lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = False)

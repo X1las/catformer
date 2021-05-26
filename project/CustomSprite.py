@@ -1,8 +1,11 @@
 # Imports
+# Extenal Modules:
 import pygame as pg
+import math
+
+# Project Imports
 from Vector import Vec
 from settings import *
-import math
 
 # Variables
 vec = Vec
@@ -10,31 +13,12 @@ vec = Vec
 # Classes
 class CustomSprite(pg.sprite.Sprite):
     
-
-
-
     # Class Variables:
-
-
-    # Attributes:
-        
-    ''' probably not needed'''
-
-    ''' just for testing?'''
-
-    ''' really not sure'''
-
-    ''' pretty sure is needed'''
-
-    ''' should be revisited'''
-    #originalsolidstrength = 0
     solidstrength       = 0
     massHOR             = 0
     massVER             = 0
     ori_massHOR         = massHOR
     ori_massVER         = massVER
-
-    ''' in use'''
     stoppedHOR      = False
     stoppedVER      = False
     isEnemy         = False
@@ -42,7 +26,6 @@ class CustomSprite(pg.sprite.Sprite):
     friction        = FRICTION
     relativePosition = vec()
     addedVel        = Vec()
-    #update_order        = 10
     inAir           = True
     isPlatform = False
     pos    = vec(); vel  = vec(); acc = vec()
@@ -51,8 +34,9 @@ class CustomSprite(pg.sprite.Sprite):
     latestCorrectedPos = Vec()
     savedPos = vec()
     draw_layer = 0
-    # Methods
 
+    # Methods
+    # Method for rounding
     def r(self, number):
         rounded_num = number
         rounded_num = abs(rounded_num)
@@ -61,6 +45,8 @@ class CustomSprite(pg.sprite.Sprite):
             rounded_num *= -1
         return rounded_num
 
+
+    # Methods for getting sides of a sprite's rectangle
     def top_y(self):
         return self.pos.y - self.height
     def bot_y(self):
@@ -70,6 +56,8 @@ class CustomSprite(pg.sprite.Sprite):
     def right_x(self): 
         return self.pos.x + self.width/2
 
+
+    # Methods for setting sides of a sprite's rectangle
     def set_top(self, ypos):
         self.pos.y = ypos + self.height
     def set_bot(self, ypos):
@@ -79,6 +67,8 @@ class CustomSprite(pg.sprite.Sprite):
     def set_right(self, xpos):
         self.pos.x = xpos - self.width/2
 
+
+    # Methods for getting corners of a sprite's rectangle
     def bottomleft(self):
         return vec(self.left_x(), self.bot_y()).rounded()
     def bottomright(self):
@@ -90,13 +80,18 @@ class CustomSprite(pg.sprite.Sprite):
     def mid(self):
         return vec(self.pos.x,self.bot_y()-self.height/2)
     
+
+    # Function for returning relative velocity of a sprite
     def relativeVel(self):
         return self.vel - self.addedVel
 
+
+    # Function for updating velocity
     def updateAddedVel(self):
         self.vel += self.addedVel
 
 
+    # Does init?
     def init(self):
         self.massHOR = self.solidstrength
         self.massVER = self.solidstrength
@@ -104,6 +99,8 @@ class CustomSprite(pg.sprite.Sprite):
         self.ori_massVER = self.massVER
         self.relativePosition = self.pos.copy()
    
+
+    # Resets sprite?
     def resetSprite(self):
         self.massHOR = self.ori_massHOR
         self.massVER = self.ori_massVER
@@ -111,24 +108,34 @@ class CustomSprite(pg.sprite.Sprite):
         self.addedVel = Vec(0,0)
         self.acc = vec(0,0)
         
+
+    # Updates position? don't we have like 50 of these?
+    def updatePos(self):
+        self.pos +=  self.vel +  self.acc * 0.5
+
+
+    # Updates rectangles? don't we also have like 50 of these?
+    def updateRect(self):
+        self.rect.midbottom = self.relativePosition.rounded().asTuple()
+
+
+    # Resets rectangles??
+    def resetRects(self):
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
+
+    # Default functions for SpriteGroup:
     def update(self):
         pass
 
     def update2(self):
         pass
 
-    def updatePos(self):
-        self.pos +=  self.vel +  self.acc * 0.5
-
     def posCorrection(self):
         pass
 
-    def updateRect(self):
-        self.rect.midbottom = self.relativePosition.rounded().asTuple()
 
-    def resetRects(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
-
+    # Determines the side of collisions?
     def determineSide(self, collided):
         leftcoll  = abs(self.right_x() - collided.left_x())
         rightcoll = abs(collided.right_x() - self.left_x() )
@@ -145,10 +152,12 @@ class CustomSprite(pg.sprite.Sprite):
         if mins == botcoll:
             return "bot"
 
-    ''' It gets the side of collision, but also checks whether it should correct the position (and returns the position) '''
+
+    # Gets the side of collision, but also checks whether it should correct the position and returns it
     def collisionSide_Conditional(self, collided):
         coll_side = self.determineSide(collided)
         result = {"side" : "None", "correctedPos" : self.pos}
+
         if coll_side == "top":
             newpos = Vec(self.pos.x, collided.top_y())
             if newpos.y <= self.pos.y:
@@ -168,8 +177,7 @@ class CustomSprite(pg.sprite.Sprite):
         return result 
 
 
-
-    # CLEANED
+    # Does stuff when colliding maybe?
     def collisionEffect(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.y -= 5
@@ -192,6 +200,8 @@ class CustomSprite(pg.sprite.Sprite):
 
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+
+    # Oooh, does a pushing effect
     def pushEffect(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.x += self.r(self.relativeVel().x)
@@ -215,9 +225,8 @@ class CustomSprite(pg.sprite.Sprite):
         self.collisionEffect()
 
 
-
-
-    def solidCollisions(self):#, ignoredSol = []):
+    # Solid collision i think?
+    def solidCollisions(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
         """
         if self.vel.x < 0:
@@ -285,6 +294,7 @@ class CustomSprite(pg.sprite.Sprite):
         self.rect.bottom -= 2
         return result
 
+
     # Applies gravity and friction to the velocity of the sprite
     def applyPhysics(self):
         self.acc.y += self.gravity                  # Gravity
@@ -292,4 +302,3 @@ class CustomSprite(pg.sprite.Sprite):
         self.vel   += self.acc                              # equations of motion
         if abs(self.vel.x + self.addedVel.x) < 0.01:
             self.vel.x = self.addedVel.x
-

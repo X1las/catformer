@@ -1,12 +1,16 @@
 # Imports
+# External Imports:
 import pygame as pg
-
-from CustomSprite import CustomSprite
-from settings import *
 from Sprites.Platform import Platform
 
-# Case SubClass - Inherits from CustomSprite
+# Project Imports:
+from CustomSprite import CustomSprite
+from settings import *
+
+# Mut Class - Inherits from CustomSprite class
 class Mug(CustomSprite):
+
+    # Initializer
     def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None, final = False):
         self.spawnPlat = plat
         self.standingon = plat
@@ -28,9 +32,7 @@ class Mug(CustomSprite):
         self.init()
 
 
-
-
-
+    # Includes the Game class in the object after it has been loaded onto a level
     def startGame(self, game):
         self.game = game
         self.groups = game.all_sprites, game.group_mugs
@@ -62,22 +64,28 @@ class Mug(CustomSprite):
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
 
+    # Object Update
     def update(self):
-        # Check whether the mug has even fallen yet
-        if not self.broken:
-            if self.vel.y > 1:
+
+        if not self.broken:                                                 # Check whether the mug has even fallen yet
+            if self.vel.y > 1:                                              
                 self.fell_fast_enough = True
             self.touchplat(self.game.group_solid)
         
         self.vel.x = self.addedVel.x
+
         if self.fall:
             self.applyGrav()
+
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+
+    # Function that breaks the mug
     def breaks(self, collidedwith):
         
         self.image = self.image_broken
         self.pos = self.pos.rounded()
+
         if self.spawnItem != None:
             self.spawnItem.pos = self.pos.copy()
             self.spawnItem.startGame(self.game)
@@ -90,11 +98,14 @@ class Mug(CustomSprite):
         self.broken = True
         self.fall = False
 
+
     # Applies basic gravity
     def applyGrav(self):
-        self.acc.y += self.gravity                  # Gravity
-        self.vel.y += self.acc.y                              # equations of motion
+        self.acc.y += self.gravity                                          # Gravity
+        self.vel.y += self.acc.y                                            # Equations of motion
 
+
+    # Updates position of the object?
     def updatePos(self):
         self.standingon = self.on_solid(self.game.group_platforms)
         if self.standingon and not self.fall:
@@ -109,6 +120,8 @@ class Mug(CustomSprite):
         super().updatePos()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+
+    # Checks for multiple collisions between the objects
     def collisionMultipleGroups(self,*groups):
         collidedObjects = []
         for group in groups:
@@ -117,10 +130,8 @@ class Mug(CustomSprite):
                 collidedObjects.append(collision)
         return collidedObjects
 
-    #def posCorrection(self):
-       # self.acc = vec(0,0)                             # resetting acceleration (otherwise it just builds up)
 
-    # When it thouches a platform or other solid
+    # When it thouches a platform or other solids
     def touchplat(self, group):
         self.rect.midbottom = self.pos.rounded().asTuple()
         self.rect.y +=self.r(self.relativeVel().y) 

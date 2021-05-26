@@ -1,12 +1,14 @@
 # Description:
 
 # Imports
+# External Imports:
 import pygame as pg
-from settings import *
-
-from Vector import Vec
-from CustomSprite import CustomSprite
 from random import choice, randrange, uniform
+
+# Project Imports:
+from CustomSprite import CustomSprite
+from Vector import Vec
+from settings import *
 import Spritesheet as ss
 
 # Variables

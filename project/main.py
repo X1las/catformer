@@ -5,7 +5,7 @@
 import pygame as pg
 import sys, os
 
-# Class Imports
+# Project Imports
 import Spritesheet as ss
 from Level import Level
 from Menu import Menu
