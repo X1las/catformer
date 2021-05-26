@@ -151,7 +151,6 @@ class Game:
             if os.path.exists("playerData/"+self.userName+"Data.txt"):
                 os.remove("playerData/"+self.userName+"Data.txt")
         
-        
 
         # Loads level from level name or default if no level name has been created
         if not self.level.load(self.level.name):                     
