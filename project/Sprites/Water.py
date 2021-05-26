@@ -1,28 +1,29 @@
 # Imports
+import math
 import pygame as pg
+from   CustomSprite import CustomSprite
+from   Vector       import Vec as vec
 
-from CustomSprite import CustomSprite
-from Vector import Vec as vec
-from settings import *
-
-# Water SubClass - Inherits from Hostile
+# Water SubClass - Inherits from CustomSprite
 class Water(CustomSprite):
     def __init__(self,x,y, width, height, name = "water"): 
-        self.damagesPlayer = True
+        self.damagesPlayer = True                   # water should damage player
         self.name = name
-        self.width = width; self.height = height
-        self.pos = vec(x,y)
+        self.width = width; self.height = height    # size
+        self.pos = vec(x,y)                         # position
         self.relativePosition = self.pos.copy()
-        self.draw_layer = 16
-        self.solidstrength = 60
-        self.init()
+        self.draw_layer = 16                        # layer for drawing
+        self.solidstrength = 60                     # high so it cannot be pushed by other sprites
+        self.init()                                 # setting "mass"/strength
 
-
+    # overwriting inherited method
     def updatePos(self):
         pass
 
+    # method for setting game dependent attributes
     def startGame(self, game):
         self.game = game
+        # add to sprite groups
         self.groups = game.all_sprites, game.group_damager
         pg.sprite.Sprite.__init__(self, self.groups)
 
@@ -41,8 +42,8 @@ class Water(CustomSprite):
 
         fill_h = 0      # for tracking how much was filled horizontally
         fill_v = 0      # for tracking how much was filled vertically
+        numOfWaveParts = math.ceil(self.width/self.images[0].get_width())   # estimated number of wave parts needed
         # filling horizontally
-        numOfWaveParts = math.ceil(self.width/self.images[0].get_width())
         while fill_h < self.width:
             for i in range(len(self.images)-1):
                 self.image.blit(self.images[i], (fill_h,0))
@@ -56,7 +57,3 @@ class Water(CustomSprite):
         
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
-
-        
-    # Catnip
-    # Health (fish)
