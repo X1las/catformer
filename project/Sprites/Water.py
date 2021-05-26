@@ -13,7 +13,7 @@ class Water(CustomSprite):
         self.width = width; self.height = height
         self.pos = vec(x,y)
         self.relativePosition = self.pos.copy()
-        self.draw_layer = 15
+        self.draw_layer = 16
         self.solidstrength = 60
         self.init()
 

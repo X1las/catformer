@@ -159,7 +159,7 @@ class PatrollingEnemy(CustomSprite):
                         self.activity = "hide"
                         self.imageIndex = 0
                         self.aboveground = False
-                    elif self.activity == "walk":
+                    if self.activity == "walk":
                         self.addedVel = self.currentplat.vel
                         self.pos.y = self.currentplat.pos.y - 1
                         self.aboveground = False
