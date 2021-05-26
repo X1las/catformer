@@ -33,7 +33,6 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
         self.frames = 0                                                         # variable used for checking performance
 
-
         # load images and sprite sheets
         self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
         self.dogSheet      = ss.Spritesheet('resources/Hyena_walk.png')
@@ -103,10 +102,8 @@ class Game:
                                    Menu.Button("Tutorial", trigger = self.tutorialScreen, screen=self.screen , y=325, textColor = (255,255,255)),
                                    quitBTN])
 
-
         self.newGamemenu = Menu(self.screen, buttons =  [startBTN, returnBTN], texts = [enterNameTXT]) 
         self.loadGamemenu = Menu(self.screen, buttons =  [startLoadBTN, returnBTN], texts = [enterNameLoadTXT])
-            
 
         self.tutorialmenu = Menu(self.screen,buttons = [returnBTN], texts = [Menu.Text("Use arrow keys to move left/right", (300, 50)),
             Menu.Text("Press space to jump", (300, 100)),
@@ -136,8 +133,7 @@ class Game:
                 os.remove("playerData/"+self.userName+"Data.txt")
             except:
                 print("attempted removal of playerData, but file already gone")
-
-
+        
         self.level = Level(self)                                                # Initializing the level object                                     
         
         # Removes player's save file if all levels are finished
@@ -360,7 +356,7 @@ class Game:
     def mainMenu(self):
         self.runMenu(self.mainmenu)
 
-    
+
     #used to open new game screen
     def nameStartScreen(self):
         self.runMenu(self.newGamemenu, takeUserName = True)
@@ -389,13 +385,14 @@ class Game:
 
     #creates or updates a player data save file
     def setPlayerData(self, levelname = 'level1', lives = 9, catnip = 0):
-        try:
-            file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
-        except:
-            file = open("playerData/"+self.userName+"Data.txt","w")
-        file.write(f"{levelname},{str(lives)},{str(catnip)}")                #writing text to file
-        file.close()
-        return [levelname,lives,catnip]                                      #returning values
+        if self.data[0] != "level4":
+            try:
+                file = open("playerData/"+self.userName+"Data.txt","x")          #opening file based on userName
+            except:
+                file = open("playerData/"+self.userName+"Data.txt","w")
+            file.write(f"{levelname},{str(lives)},{str(catnip)}")                #writing text to file
+            file.close()
+            return [levelname,lives,catnip]                                      #returning values
 
 
     # Gets player data from file
