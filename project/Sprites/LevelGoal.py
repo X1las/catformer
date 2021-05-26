@@ -1,9 +1,7 @@
 # Imports
-import Spritesheet as ss
 import pygame as pg
 
 from CustomSprite import CustomSprite
-from Vector import Vec as vec
 from settings import *
 
 # LevelGoal SubClass - Inherits from CustomSprite

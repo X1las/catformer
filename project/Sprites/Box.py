@@ -1,5 +1,4 @@
 # Imports
-import Spritesheet as ss
 import pygame as pg
 
 from CustomSprite import CustomSprite

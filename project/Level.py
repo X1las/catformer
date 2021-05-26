@@ -1,5 +1,4 @@
 # imports
-import pygame as pg
 import pickle
 from Vector import Vec
 

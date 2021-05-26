@@ -1,17 +1,22 @@
 # Description: Main executable, contains Game class and main loop
-# Imports
+
+#Imports:
+
+# External Modules:
 import pygame as pg
 import sys, os
 
+# Class Imports
 import Spritesheet as ss
 from Level import Level
 from Menu import Menu
+from player import Player 
+from SpriteGroup import SpriteGroup
 
+# Functional Imports:
 from levelCreator import *
-from SpriteGroup import *
 from settings import *
 from Sprites import *
-from player import *   
 
 # Game Class
 class Game:
@@ -150,7 +155,6 @@ class Game:
         if self.data[0] == "level4":
             if os.path.exists("playerData/"+self.userName+"Data.txt"):
                 os.remove("playerData/"+self.userName+"Data.txt")
-        
         
 
         # Loads level from level name or default if no level name has been created
