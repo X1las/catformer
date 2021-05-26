@@ -1,9 +1,8 @@
 # Imports
-from settings import GRAVITY
 import pygame as pg
-
-from CustomSprite import CustomSprite
-from Vector import Vec as vec
+from   CustomSprite import CustomSprite
+from   Vector       import Vec as vec
+from   settings     import GRAVITY
 
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
@@ -71,9 +70,8 @@ class Box(CustomSprite):
     def update2(self):
         self.pickupEffect() 
 
-    
+    # method for lifting up the box
     def liftedBy(self,interacter):
-
         # Setting how much box should be lifted
         self.interacter = interacter
         if not interacter.player.inAir or interacter.player.vel.y > 0:
@@ -87,7 +85,7 @@ class Box(CustomSprite):
             self.beingHeld = False
         self.rect.midbottom = self.pos.realRound().asTuple()
 
-
+    # method for updating the position
     def updatePos(self):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         if self.vel.x == 0:
@@ -99,10 +97,8 @@ class Box(CustomSprite):
         self.solidCollisions()
         #self.rect.midbottom = self.pos.realRound().asTuple()
 
-
-
+    # method for correcting position
     def posCorrection(self):
-        # I am not sure this is needed
         if self.beingHeld:
             heldside = self.determineSide(self.interacter.player)
             if heldside == "left":
