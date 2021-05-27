@@ -13,7 +13,7 @@ class Activator(CustomSprite):
     activated = False
     deactivated = True
     auto_deactivate = False
-    _layer = 5  # update layer
+    _layer = 0  # update layer
     draw_layer = 3
 
     def update(self):

@@ -254,7 +254,7 @@ def createLevel3():
     plat2  = Platform(boxrespplat.left_x() - 100, boxrespplat.top_y() - 30, 80, 30)
     #plat3  = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
     btnmugplat = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
-    movinga = Platform(leftboundary.right_x() + 50, btnmugplat.bot_y() + 60, 100, 30, leftMaxDist = 0, rightMaxDist =  btnmugplat.left_x() - 120 - leftboundary.right_x())
+    movinga = Platform(leftboundary.right_x() + 50, btnmugplat.bot_y() + 60, 100, 30, leftMaxDist = 0, rightMaxDist =  btnmugplat.left_x() - 120 - leftboundary.right_x(), name = "movinga")
 
 
     topleft = Platform(leftboundary.right_x() + 360/2, movinga.top_y() - 30, 360, 30)

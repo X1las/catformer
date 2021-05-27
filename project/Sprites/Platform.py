@@ -79,25 +79,13 @@ class Platform(CustomSprite):
 
     # Checking if the enemy is outside it's patrolling area
     def checkDist(self):
-        if  self.pos.x -  self.initX >= self.rightMaxDist:
-            if self.vel.x == 0: # right boundary
-                self.vel.x = 0
-            if self.vel.x > 0: # right boundary
+        if  self.pos.x -  self.initX >= self.rightMaxDist and self.vel.x > 0: # right boundary
                 self.vel.x =  -1 * abs(self.originalVel.x)
-        elif self.pos.x - self.initX <= -1*self.leftMaxDist:
-            if self.vel.x == 0: # right boundary
-                self.vel.x = 0
-            if self.vel.x < 0:
+        elif self.pos.x - self.initX <= -1*self.leftMaxDist and self.vel.x < 0:
                 self.vel.x =  abs(self.originalVel.x)
-        elif self.pos.y - self.initY <= -1* abs(self.upMaxDist):
-            if self.vel.y == 0:
-                self.vel.y = 0
-            if self.vel.y < 0:
+        elif self.pos.y - self.initY <= -1* abs(self.upMaxDist) and self.vel.y < 0:
                 self.vel.y =  abs(self.originalVel.y)
-        elif self.pos.y - self.initY >= self.downMaxDist: 
-            if self.vel.y == 0:
-                self.vel.y = 0
-            if self.vel.y > 0:
+        elif self.pos.y - self.initY >= self.downMaxDist and self.vel.y > 0:
                 self.vel.y =  -1* abs(self.originalVel.y)
 
 
