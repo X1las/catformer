@@ -18,7 +18,7 @@ class Box(CustomSprite):
         self.width  = width; self.height = height   # size
         self.name = name
         self.pos = vec(x,y)                         # position
-        self._layer = 6
+        self._layer = 7
         self.draw_layer = 15                        # layer for drawing
         self.solidstrength = 5                      # lower than for intelligent enemy
         self.initX = x; self.initY = y              # initial position for respawning
