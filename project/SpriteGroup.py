@@ -100,6 +100,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = True)
         for i in lis:
+            #if i.isPlatform:
+             #   print(f'vel: {i.addedVel}')
             i.pushEffect()
 
     def update2(self):

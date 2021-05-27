@@ -104,6 +104,7 @@ class CustomSprite(pg.sprite.Sprite):
     def resetSprite(self):
         self.massHOR = self.ori_massHOR
         self.massVER = self.ori_massVER
+
         self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
         self.acc = vec(0,0)
@@ -258,6 +259,7 @@ class CustomSprite(pg.sprite.Sprite):
                     if self.massVER < collided.massVER  or (self.massVER == collided.massVER and self.game.group_movables.has(self)):
                         if coll_side == "top" or coll_side == "bot":
                             self.vel.y = self.addedVel.y
+                            
                             self.acc.y = 0
                             if group.has(self):
                                 self.massVER = collided.massVER - 1

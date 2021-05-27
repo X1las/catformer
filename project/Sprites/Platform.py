@@ -8,13 +8,13 @@ from settings import *
 # Platform SubClass - Inherits from CustomSprite
 class Platform(CustomSprite):
 
+    isPlatform = True
     game = None
     def __init__(self, x, y, width, height, name = "plat", vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
         self.height = height; self.width = width; self.name = name; 
         self.pos = vec(x,y); self.vel = vel
         self.originalVel = self.vel.copy()
         self.floorplat = floorplat
-        self.isPlatform = True
 
         if maxDist == None:
             self.leftMaxDist = leftMaxDist
@@ -30,7 +30,6 @@ class Platform(CustomSprite):
         self.solidstrength = 30
         if floorplat:
             self.solidstrength = 50
-        #self.originalsolidstrength = self.solidstrength
 
         self.relativePosition = self.pos.copy()
         self._layer = 1                                               
@@ -101,6 +100,7 @@ class Platform(CustomSprite):
     def updatePos(self):
         self.checkDist()
         self.solidCollisions() # just moved it up
+        #print(f'in platform: {self.addedVel}')
         super().updatePos()
 
 
