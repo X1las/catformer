@@ -11,10 +11,13 @@ def unpickle(filename):
 
 
 class Level:
+
+    
     def __init__(self, game):
         self.game = game
         self.spawn = Vec()
     
+
     # Function to load level files
     def load(self , filename):
         

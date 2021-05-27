@@ -443,6 +443,7 @@ def createLevel5():
 
     return levelName
 
+
 ''' Testing Level '''
 def createTestLevel():
     # floor
@@ -489,7 +490,6 @@ def createTestLevel():
     boxbox = Box(1650, 550, name = "boxbox")
     mugbtn = Button(floor, 1750)
     muglev = Lever(floor, 1850)
-    
 
 
     testLevel = {
@@ -514,13 +514,12 @@ def createTestLevel():
     return testLevel
 
 
-
-
 # pickling method
 def pickleLevel(level, filename):
     outfile = open(f'levels/{filename}','wb')   # 'wb' means write binary
     pickle.dump(level, outfile)
     outfile.close()
+
 
 # create objects and dicts
 level1 = createLevel1()
@@ -528,6 +527,7 @@ level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
 testLevel = createTestLevel()
+
 
 # pickle levels
 pickleLevel(level1, 'level1')

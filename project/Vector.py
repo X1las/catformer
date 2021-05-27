@@ -5,16 +5,18 @@ import math, copy
 
 # Classes
 class Vec(object):
+
+    # Class Variables
     __slots__=['x', 'y', 'len', 'mag']
+
 
     def __init__(self, x=0, y=0):
         self.x = x; self.y = y
 
-  
-
 
     def __setattr__(self, name, value):
         object.__setattr__(self, name, value)
+
 
     def __getitem__(self, item):
         if isinstance(item, int):
@@ -33,6 +35,7 @@ class Vec(object):
         if isinstance(item, str):
             self.__setattr__(item, insert)
 
+
     def length(self):
         self.len = math.sqrt(self.x**2+self.y**2)
         return self.len
@@ -42,14 +45,17 @@ class Vec(object):
         newx = self.x + other.x; newy = self.y + other.y
         return Vec(newx, newy)
 
+
     def __sub__(self, other):
         newx = self.x - other.x; newy = self.y - other.y
         return Vec(newx, newy)
+
 
     def __mul__(self, scale : (float or int)):
         newx = self.x * scale; newy = self.y * scale
         #self.x *= scale; self.y *= scale
         return Vec(newx, newy)
+
 
     def __truediv__(self, scale : (float or int)):
         newx = self.x / scale; newy = self.y / scale
@@ -60,19 +66,24 @@ class Vec(object):
     def __str__(self):
         return f'({self.x},{self.y})'
 
+
     def __abs__(self):
         newx = abs(self.x)
         newy = abs(self.y)
         return Vec(newx, newy)
 
+
     def setList(self, x, y):
         self.lis = [x,y]
+
 
     def asTuple(self):
         return (self.x,self.y)
 
+
     def __round__(self):
         self.x, self.y = round(self.x), round(self.y)
+
 
     def rounded(self):
         #return self.realRound()
@@ -80,12 +91,12 @@ class Vec(object):
         roundedy = self.normRound(self.y)
         return Vec(roundedx,roundedy)
 
+
     def realRound(self):
         #return self.rounded()
         roundedx = self.rounding(self.x)
         roundedy = self.rounding(self.y)
         return Vec(roundedx,roundedy)    
-
 
         
     def roundUp(self):
@@ -103,13 +114,16 @@ class Vec(object):
             result = 0
         return inte + result
 
+
     def roundUpN(self, number):
         rounded_num = number
         rounded_num = math.floor(rounded_num)
         return rounded_num        
 
+
     def similarTo(self, other, deltaX, deltaY):
         return abs(self.x - other.x) <= deltaX and abs(self.y - other.y) <= deltaY 
+
 
     def rounding(self, number):
         neg = False
@@ -121,8 +135,10 @@ class Vec(object):
             rounded_num *= -1
         return rounded_num        
 
+
     def printExact(self):
         print(f'({self.x},{self.y})')
+
 
     def copy(self):
         return Vec(copy.copy(self.x),copy.copy(self.y))

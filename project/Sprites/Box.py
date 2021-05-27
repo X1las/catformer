@@ -1,12 +1,19 @@
 # Imports
+# External Modules:
 import pygame as pg
+
+# Class Imports:
 from   CustomSprite import CustomSprite
 from   Vector       import Vec as vec
 from   settings     import GRAVITY
 
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
+    
+    # Class variables
     game = None
+    
+    # Initializer
     def __init__(self, x, y, width = 44, height = 44, name = "box"):
         self.width  = width; self.height = height   # size
         self.name = name
@@ -20,6 +27,7 @@ class Box(CustomSprite):
         self.interacter = None
         self.justreleased = False                   # tracks if player just let go of box
         self.init()                                 # setting mass/strength
+
 
     # set game dependent attributes
     def startGame(self, game):
@@ -36,9 +44,11 @@ class Box(CustomSprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.initX,self.initY)
 
+
     # method for setting box back to initial position
     def respawn(self):
         self = self.__init__(self.initX, self.initY, self.width, self.height, self.name)
+
 
     # method for being pulled/pushed by player
     def pickupEffect(self):
@@ -58,6 +68,7 @@ class Box(CustomSprite):
         if self.beingHeld == False:
             self.gravity = GRAVITY
 
+
     # method for updating
     def update(self):
         self.rect.midbottom = self.pos.rounded().asTuple()
@@ -66,9 +77,11 @@ class Box(CustomSprite):
         #self.vel += self.addedVel 
         self.rect.midbottom = self.pos.rounded().asTuple()
 
+
     # overwriting inherited method
     def update2(self):
         self.pickupEffect() 
+
 
     # method for lifting up the box
     def liftedBy(self,interacter):
@@ -85,6 +98,7 @@ class Box(CustomSprite):
             self.beingHeld = False
         self.rect.midbottom = self.pos.realRound().asTuple()
 
+
     # method for updating the position
     def updatePos(self):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
@@ -96,6 +110,7 @@ class Box(CustomSprite):
         self.has_collided = False
         self.solidCollisions()
         #self.rect.midbottom = self.pos.realRound().asTuple()
+
 
     # method for correcting position
     def posCorrection(self):
