@@ -26,7 +26,6 @@ class Game:
     paused = False                                                              # Boolean used to pause the game
     outOfLives = False                                                          # Boolean used for outOfLives loop
 
-
     # Initializer
     def __init__(self):
         pg.init()                                                               # Initializes the pygame module
@@ -119,13 +118,14 @@ class Game:
 
         self.menus = [self.mainmenu, self.newGamemenu, self.loadGamemenu, self.tutorialmenu, self.noLivesMenu]                          #adding each menu to a list
         for menu in self.menus:
-            menu.initTexts()                                #initializing text inside menus
-        self.tutorialmenu.initTexts(fontsize = 30)          #making tutorial fontsize smaller
+            menu.initTexts()                                # Initializing text inside menus
+        self.tutorialmenu.initTexts(fontsize = 30)          # Making tutorial fontsize smaller
 
 
     # Method that creates a new level
     def new(self):
         
+        # 
         try: 
             for Sprite in self.all_sprites:
                 if Sprite != self.player:
@@ -137,8 +137,9 @@ class Game:
         self.createSGroups()                                                    
         self.framecount = 0
         self.accumframes = 0
-        self.checkPlayerData()                                                  # Checks for player data and fetches data from file if non-existant player
+        self.checkPlayerData()                              # Checks for player data and fetches data from file if non-existant player
         
+        # 
         if self.data[0] == "level4":
             try:
                 os.remove("playerData/"+self.userName+"Data.txt")
@@ -153,7 +154,6 @@ class Game:
         if self.data[0] == "level4":
             if os.path.exists("playerData/"+self.userName+"Data.txt"):
                 os.remove("playerData/"+self.userName+"Data.txt")
-        
 
         # Loads level from level name or default if no level name has been created
         if not self.level.load(self.level.name):                     
