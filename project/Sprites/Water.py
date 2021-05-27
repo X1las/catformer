@@ -11,14 +11,16 @@ class Water(CustomSprite):
         self.name = name
         self.width = width; self.height = height    # size
         self.pos = vec(x,y)                         # position
+        self.oripos = self.pos.copy()
         self.relativePosition = self.pos.copy()
         self.draw_layer = 16                        # layer for drawing
         self.solidstrength = 60                     # high so it cannot be pushed by other sprites
+
         self.init()                                 # setting "mass"/strength
 
     # overwriting inherited method
     def updatePos(self):
-        pass
+        self.pos = self.oripos.copy()
 
     # method for setting game dependent attributes
     def startGame(self, game):

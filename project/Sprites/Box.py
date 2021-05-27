@@ -103,7 +103,7 @@ class Box(CustomSprite):
     def updatePos(self):
         # Only if the box is being picked up, should it get the vel/acc from the interactive field
         if self.vel.x == 0:
-            self.pos = self.pos.rounded()
+            self.pos.x = self.pos.rounded().x
         super().updatePos()
         #self.pos   += self.vel +  self.acc * 0.5
         self.vel.x = self.addedVel.x
