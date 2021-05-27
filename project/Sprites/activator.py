@@ -25,15 +25,15 @@ class Activator(CustomSprite):
         try:
             for e,v in self.effect.items():
                 if e == "respawn":
-                    for respawn in v:
-                        if not self.hasActivatedTarget:
-                            doDeactivate = True
+                    if not self.hasActivatedTarget:
+                        doDeactivate = True
+                        for respawn in v:
                             target = respawn['target']
                             target.respawn()
                 if e == "spawn":
-                    for spawn in v:
-                        if not self.hasActivatedTarget:
-                            doDeactivate = True
+                    if not self.hasActivatedTarget:
+                        doDeactivate = True
+                        for spawn in v:
                             #self.hasActivatedTarget = True
                             target = spawn['target']
                             target.startGame(self.game)
@@ -43,10 +43,10 @@ class Activator(CustomSprite):
                         target = move["target"]
                         move['target'].vel = move["movespeed"].copy() + target.originalVel
                 if e == "conMove":
-                    for conMove in  v:
+                    if not self.hasActivatedTarget:
+                        doDeactivate = True
+                        for conMove in  v:
                         
-                        if not self.hasActivatedTarget:
-                            doDeactivate = True
                             target = conMove["target"]
                             target.originalVel = conMove['movespeed'].copy()
                             target.vel = target.originalVel.copy()
@@ -73,7 +73,7 @@ class Activator(CustomSprite):
                     for conMove in v:
                         target = conMove["target"]
                         target.originalVel *= 0
-                        target.vel = target.originalVel
+                        target.vel = target.originalVel.copy()
             if doActivate:
                 self.hasDeactivatedTarget = True
         except Exception as e:
