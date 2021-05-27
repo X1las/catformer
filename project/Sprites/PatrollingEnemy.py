@@ -9,6 +9,8 @@ from   Vector           import Vec as vec
 class PatrollingEnemy(CustomSprite):
 
     def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 29, vel = vec(1.2,0), name = "enemy"):
+        super().__init__()
+        
         self.plat             = plat                        # the platform the enemy spawns on
         self.placement        = placement                   # placement relative to the spawn platform
         self.pos              = vec(self.plat.left_x() + placement, self.plat.top_y()) # position

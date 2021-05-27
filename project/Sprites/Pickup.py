@@ -9,6 +9,8 @@ from settings import *
 class PickUp(CustomSprite):
 
     def __init__(self,x,y, type_,  width = 16, height = 16, name = "pickup"): 
+        super().__init__()
+        
         self.width = width; self.height = height; self.name = name
         self.type = type_
         self.pos = vec(x,y)

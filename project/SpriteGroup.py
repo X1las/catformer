@@ -15,10 +15,10 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Initializor
     def __init__(self):
-        pg.sprite.LayeredUpdates.__init__(self)
         self._sprite_drawlayers = {}
         self._spritelist_draw = []
         self.massOrdered = None
+        pg.sprite.LayeredUpdates.__init__(self)
 
 
     # Drawing method?

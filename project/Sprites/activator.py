@@ -112,6 +112,7 @@ class Activator(CustomSprite):
 class Lever(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
     def __init__(self, plat, placement, width = 30, height = 20, name = "lever", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+        super().__init__()
         self._layer = 1
         self.plat = plat
         self.name = name
@@ -152,6 +153,8 @@ class Lever(Activator):
 class Button(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}): 
     def __init__(self, plat:Platform, placement, width = 30, height = 20, name = "button", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
+        super().__init__()
+        
         self.plat = plat
         self.name = name
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 

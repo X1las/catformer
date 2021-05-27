@@ -7,11 +7,14 @@ from settings import *
 # LevelGoal SubClass - Inherits from CustomSprite
 class LevelGoal(CustomSprite):
     def __init__(self,plat, placement, name = "Goal"): 
+        super().__init__()
+        
         self.pos = Vec(plat.left_x() + placement, plat.top_y()) 
         self.width = 55; self.height = 20
         self.name = name
         self.relativePosition = self.pos.copy()
         self.sleepcount = 0
+        self.init()
 
     def startGame(self, game):
         self.game = game
@@ -41,6 +44,7 @@ class LevelGoal(CustomSprite):
         level+=1
         self.game.data[0] = f"level{level}"
         self.game.level.name = f"level{level}"
+        
         self.game.new()
 
     def endGoal(self, player):

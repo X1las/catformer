@@ -15,6 +15,8 @@ class Box(CustomSprite):
     
     # Initializer
     def __init__(self, x, y, width = 44, height = 44, name = "box"):
+        super().__init__()
+        
         self.width  = width; self.height = height   # size
         self.name = name
         self.pos = vec(x,y)                         # position

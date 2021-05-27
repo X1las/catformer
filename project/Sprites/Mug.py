@@ -12,6 +12,8 @@ class Mug(CustomSprite):
 
     # Initializer
     def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None, final = False):
+        
+        super().__init__()
         self.spawnPlat        = plat               # the platform tht the mug spawns on
         self.standingon       = plat
         self.spawnItem        = spawnItem          # what the mug should spwan when broken

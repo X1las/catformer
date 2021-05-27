@@ -40,6 +40,7 @@ class Player(CustomSprite):
     liftedBefore = False
 
     def __init__(self, spawn, name="default"):
+        super().__init__()
         
         self.draw_layer     = 30
         self._layer     = 4
@@ -132,11 +133,6 @@ class Player(CustomSprite):
         self.catnip_level += 1
         self.game.data[2] = self.catnip_level
         return self.catnip_level
-
-
-    def initKeys(self,jump, left, right, crouch):
-        self.jump_key = jump
-
 
     # --> The different things that updates the position of the player
     def update(self):                                                         # Updating pos, vel and acc.
@@ -317,6 +313,8 @@ class Player(CustomSprite):
     # Interactive Field SubClass - Inherits from CustomSprite
     class Interactive(CustomSprite):
         def __init__(self, game,  player, facing):
+            super().__init__()
+
             self._layer = player._layer + 1
             self.draw_layer = player.draw_layer +1
             self.game = game

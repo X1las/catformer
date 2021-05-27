@@ -7,6 +7,8 @@ from   Vector       import Vec as vec
 # Water SubClass - Inherits from CustomSprite
 class Water(CustomSprite):
     def __init__(self,x,y, width, height, name = "water"): 
+        super().__init__()
+        
         self.damagesPlayer = True                   # water should damage player
         self.name = name
         self.width = width; self.height = height    # size

@@ -11,6 +11,8 @@ class Platform(CustomSprite):
     isPlatform = True
     game = None
     def __init__(self, x, y, width, height, name = "plat", vel = Vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
+        super().__init__()
+        
         self.height = height; self.width = width; self.name = name; 
         self.pos = vec(x,y); self.vel = vel
         self.originalVel = self.vel.copy()
@@ -75,6 +77,7 @@ class Platform(CustomSprite):
             
         self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite
         self.rect.midbottom = (self.pos.x,self.pos.y)
+        self.isPlatform = True
 
 
     # Checking if the enemy is outside it's patrolling area

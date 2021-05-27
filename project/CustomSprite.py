@@ -25,7 +25,6 @@ class CustomSprite(pg.sprite.Sprite):
     gravity         = GRAVITY
     friction        = FRICTION
     relativePosition = vec()
-    addedVel        = Vec()
     inAir           = True
     isPlatform = False
     pos    = vec(); vel  = vec(); acc = vec()
@@ -34,6 +33,12 @@ class CustomSprite(pg.sprite.Sprite):
     latestCorrectedPos = Vec()
     savedPos = vec()
     draw_layer = 0
+
+
+    def __init__(self):
+        self.addedVel        = Vec()
+
+
 
     # Methods
     # Method for rounding
@@ -93,6 +98,11 @@ class CustomSprite(pg.sprite.Sprite):
 
     # Does init?
     def init(self):
+        try:
+            print(f'{self.name} : {self.addedVel.x}')
+        except:
+            print(f'FAILED FOR {self.name}')
+        #self.addedVel = vec(0,0)
         self.massHOR = self.solidstrength
         self.massVER = self.solidstrength
         self.ori_massHOR = self.massHOR
@@ -104,6 +114,7 @@ class CustomSprite(pg.sprite.Sprite):
     def resetSprite(self):
         self.massHOR = self.ori_massHOR
         self.massVER = self.ori_massVER
+        #print(f'{self.name} -- {self.vel}')
         if not self.isPlatform:
             self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
@@ -193,6 +204,8 @@ class CustomSprite(pg.sprite.Sprite):
                 if collided != self and not collided.isPlatform: # and self.massVER < collided.massVER:
                     coll_side = collided.determineSide(self)
                     if coll_side == "top":
+                        #print(f'{self.name} added to {collided.name}')
+                        #print(f'{self.vel.x + self.addedVel.x} AND {collided.vel.x}')
                         collided.addedVel.x = self.vel.x + self.addedVel.x
                         if self.vel.y >= 0: # if it is added when something goes up, it will push sprite too far up
                             collided.addedVel.y = self.vel.y + self.addedVel.y
