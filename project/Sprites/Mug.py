@@ -129,8 +129,8 @@ class Mug(CustomSprite):
         collided_objects    = self.collisionMultipleGroups(group, self.game.group_enemies)
         if collided_objects:
             for collided in collided_objects:
-                if collided != self.spawnPlat and self.fell_fast_enough and not self.broken:
-                    # only break if not broken and fell fast enough on another platform/solid
+                if collided != self.spawnPlat and self.fell_fast_enough:
+                    # only break if fell fast enough on another solid/enemy
                     self.breaks(collided)
                     return collided
         self.rect.midbottom = self.pos.rounded().asTuple()
