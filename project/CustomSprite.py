@@ -98,11 +98,6 @@ class CustomSprite(pg.sprite.Sprite):
 
     # Does init?
     def init(self):
-        try:
-            print(f'{self.name} : {self.addedVel.x}')
-        except:
-            print(f'FAILED FOR {self.name}')
-        #self.addedVel = vec(0,0)
         self.massHOR = self.solidstrength
         self.massVER = self.solidstrength
         self.ori_massHOR = self.massHOR

@@ -38,7 +38,7 @@ class Level:
         # set objects   
         self.platforms = levelData['platforms']
         self.boxes     = levelData['boxes'    ]
-        self.mugs      = levelData['mugs'    ]
+        self.mugs      = levelData['mugs'     ]
         self.buttons   = levelData['buttons'  ]
         self.levers    = levelData['levers'   ]
         self.goals     = levelData['goals'    ]
