@@ -104,8 +104,8 @@ class CustomSprite(pg.sprite.Sprite):
     def resetSprite(self):
         self.massHOR = self.ori_massHOR
         self.massVER = self.ori_massVER
-
-        self.vel -= self.addedVel
+        if not self.isPlatform:
+            self.vel -= self.addedVel
         self.addedVel = Vec(0,0)
         self.acc = vec(0,0)
         

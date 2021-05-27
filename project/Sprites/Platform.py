@@ -97,6 +97,9 @@ class Platform(CustomSprite):
         self.checkDist()
         self.rect.midbottom = self.pos.realRound().asTuple()
 
+    def updateAddedVel(self):
+        pass
+
 
     def updatePos(self):
         self.checkDist()
