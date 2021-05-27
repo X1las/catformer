@@ -5,7 +5,7 @@
 import pygame as pg
 import sys, os
 
-# Class Imports
+# Project Imports
 import Spritesheet as ss
 from Level import Level
 from Menu import Menu
@@ -452,15 +452,15 @@ level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
-level4 = createLevel5()
+#level4 = createLevel5()
 # pickle levels
 pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 # pickleLevel(level4, 'level1')
-testLevel = createTestLevel()
-pickleLevel(testLevel, 'level1')
+#testLevel = createTestLevel()
+#pickleLevel(testLevel, 'level9')
 
 # Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

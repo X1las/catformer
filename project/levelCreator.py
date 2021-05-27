@@ -94,7 +94,7 @@ def createLevel1():
     level1 = {
         'name': 'level1',
         'settings': {
-            'spawn': Vec(endplat.mid().x + 40, 350),
+            'spawn': Vec(startplat.mid().x + 40, 350),
             'length': 5000,
         },
         'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
@@ -204,7 +204,7 @@ def createLevel2():
     levelName = {
         'name': 'level2',
         'settings': {
-            'spawn': Vec(goalplat.right_x(),100),
+            'spawn': Vec(floor.left_x()+850,400),
             'length': 5000,
         },
         #'platforms': [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2, plat1],
