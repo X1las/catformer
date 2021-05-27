@@ -130,6 +130,7 @@ class Game:
             for Sprite in self.all_sprites:
                 if Sprite != self.player:
                     del Sprite
+            print("removed old sprites")
         except:
             print("no sprites to remove!")
         
@@ -139,7 +140,8 @@ class Game:
         self.accumframes = 0
         self.checkPlayerData()                              # Checks for player data and fetches data from file if non-existant player
         
-        # 
+        
+        # Checker, to see if the player hit the end level
         if self.data[0] == "level4":
             try:
                 os.remove("playerData/"+self.userName+"Data.txt")
@@ -320,15 +322,15 @@ class Game:
 
     # Method for starting a game on load
     def startLoadTrig(self):
-        if self.checkNameConflict():                             #check if name exists already
+        if self.checkNameConflict():                                        #check if name exists already
             try:
                 self.data = None
             except:
                 pass   
-            self.new()                                              #opens the game
+            self.new()                                                      #opens the game
         else:
-            self.nameError = True                                #give error message
-            self.activateSelected = False                        #disable activator (mouse1 or enter)
+            self.nameError = True                                           #give error message
+            self.activateSelected = False                                   #disable activator (mouse1 or enter)
 
 
     # Sets all menus to not active to quit the game
@@ -352,24 +354,24 @@ class Game:
                 self.noLivesScreen()
             
             for event in pg.event.get():
-                if event.type == (pg.QUIT):                                 #breaks all loops if QUIT is pressed
+                if event.type == (pg.QUIT):                                                                                     # breaks all loops if QUIT is pressed
                     self.exitProgram()
-                if takeUserName:                                            #if typing is required call writeName
+                if takeUserName:                                                                                                # if typing is required call writeName
                     self.userName = menu.writeName(event, self.userName)
                 
-                menu.menuNavigation(event,takeUserName)                     #events for navitagion through menus
-            mx, my = pg.mouse.get_pos()                                     #get mouse position
+                menu.menuNavigation(event,takeUserName)                                                                         # events for navitagion through menus
+            mx, my = pg.mouse.get_pos()                                                                                         # get mouse position
             for button in menu.buttons:
-                if button.rect.collidepoint((mx, my)):                      #checking if mouse position is on a button
-                    menu.selectedButton = button                            #set selected button to one colliding with mouse
+                if button.rect.collidepoint((mx, my)):                                                                          #checking if mouse position is on a button
+                    menu.selectedButton = button                                                                                # set selected button to one colliding with mouse
             menu.currentButton()
-            if takeUserName:                                                #if on a screen with typing
-                if self.nameError:                                          #error message if invalid name entered
+            if takeUserName:                                                                                                    # if on a screen with typing
+                if self.nameError:                                                                                              # error message if invalid name entered
                     Menu.Text("Invalid name entered", (300, 300), screen = self.screen, color = (255,255,255)).blitText()
-                Menu.Text(self.userName, (300, 150), screen = self.screen, color = (255,255,255)).blitText()    #create name input as text object
-            menu.blitMenu()                                                 #call function to draw text
+                Menu.Text(self.userName, (300, 150), screen = self.screen, color = (255,255,255)).blitText()                    # create name input as text object
+            menu.blitMenu()                                                                                                     # call function to draw text
 
-            pg.display.update()                                             #update the display
+            pg.display.update()                                                                                                 # update the display
 
 
     #used to open main menu
