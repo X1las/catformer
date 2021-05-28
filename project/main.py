@@ -25,15 +25,15 @@ class Game:
     finished = False                                                            # Boolean used for endGame HUD when final level is reached
     paused = False                                                              # Boolean used to pause the game
     outOfLives = False                                                          # Boolean used for outOfLives loop
+    frames = 0
 
     # Initializer
     def __init__(self):
+
         pg.init()                                                               # Initializes the pygame module
-        pg.mixer.init()                                                         # Initializes the pygame mixer for music
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
         self.clock  = pg.time.Clock()                                           # Creates a pygame clock object
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
-        self.frames = 0                                                         # variable used for checking performance
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings                                                         # variable used for checking performance
 
         # load images and sprite sheets
         self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
@@ -406,7 +406,7 @@ class Game:
 
 
     #creates or updates a player data save file
-    def setPlayerData(self, levelname = 'level1', lives = 9, catnip = 0):
+    def setPlayerData(self, levelname = DEFAULT_LEVEL, lives = PLAYER_LIVES, catnip = PLAYER_CATNIP):
         try: 
             if self.data[0] != "level4":
                 try:
