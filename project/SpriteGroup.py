@@ -14,18 +14,19 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         pg.sprite.LayeredUpdates.__init__(self)
 
 
-    # Drawing method?
+    # Returns the list sorted by draw_layer
     def sprites_draw(self):
         return self._spritelist_draw
 
 
+    """ Overwriting LayeredUpdates methods """
     # Extending add_internal from pygame's spritegroup
     def add_internal(self, sprite, layer = None):
         super().add_internal(sprite, layer)
 
-        """ The below is close to equivalent to how sprites are added to LayeredUpdates
-            except that it adds it to the draw layer list
-        """
+        # The below is close to equivalent to how sprites are added to LayeredUpdates
+        # except that it adds it to the draw layer list
+        
         sprites = self._spritelist_draw 
         sprites_drawlayers = self._sprite_drawlayers
         drawlayer = sprite.draw_layer
@@ -47,8 +48,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Overwriting remove_internal
     def remove_internal(self, sprite):
-        """ Making sure removing the sprite from the group also removes its draw layer
-        """
+        #Making sure removing the sprite from the group also removes its draw layer
         super().remove_internal(sprite)
         self._spritelist_draw.remove(sprite)
         del self._sprite_drawlayers[sprite]
@@ -56,9 +56,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Overwriting draw
     def draw(self, surface):
-        """ This method is entirely taken from Pygame's own LayeredUpdates.draw(surface)
-            besides the list given as the iterator. Now draws based on draw_layer attr. 
-        """
+        # This method is entirely taken from Pygame's own LayeredUpdates.draw(surface)
+        # besides the list given as the iterator. Now draws based on draw_layer attr. 
         spritedict = self.spritedict
         surface_blit = surface.blit
         dirty = self.lostsprites
@@ -80,7 +79,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         return dirty
 
 
-    # Methods used on groups in Game:
+    """ Methods iterating through the sprites calling methods from CustomSprite"""
     def resetSprites(self):
         for sprite in self:
             sprite.resetSprite()
@@ -124,7 +123,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         for sprite in self:
             sprite.resetRects()
 
-        
+    
+    """ Sorting methods"""
     # Sort method for sorting by object mass
     def massSort(self, key):
         if not self.massOrdered:
