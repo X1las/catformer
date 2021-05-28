@@ -203,10 +203,9 @@ def createLevel2():
     levelName = {
         'name': 'level2',
         'settings': {
-            'spawn': Vec(plat4.left_x()+3,plat4.top_y()),
+            'spawn': Vec(floor.left_x()+850,400),
             'length': 5000,
         },
-        #'platforms': [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2, plat1],
         'platforms': plats,
         'boxes':     [box1],
         'buttons':   [waters1btn, mov2btn],#btn1, btn2],
