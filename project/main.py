@@ -54,7 +54,7 @@ class Game:
 
     # Creates Sprite Groups
     def createSGroups(self):
-        self.all_sprites = SpriteGroup()                                        # A sprite group you can pass layers for which draws things in the order of addition to the group - "LayeredUpdates is a sprite group that handles layers and draws like OrderedUpdates."
+        self.all_sprites = SpriteGroup()                                        # 
         
         self.group_platforms          = pg.sprite.Group()                       # Only applied  to platforms
         self.group_boxes              = pg.sprite.Group()                       # Only applied to boxes
@@ -66,10 +66,6 @@ class Game:
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
         self.group_movables           = SpriteGroup()
-        
-        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
-        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
-        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
 
 
     # Loads all the HUDs default values
@@ -128,8 +124,10 @@ class Game:
         # 
         try: 
             for Sprite in self.all_sprites:
-                if Sprite != self.player:
-                    del Sprite
+                #if Sprite != self.player:
+                    #pass
+                del Sprite
+            
             print("removed old sprites")
         except:
             print("no sprites to remove!")
@@ -205,13 +203,15 @@ class Game:
 
     # Method where we update game processes
     def update(self):
-        self.all_sprites.resetSprites()
+        #for i in self.all_sprites:
+         #   print(f'{i.name} with {i.vel}')
         self.all_sprites.update()
-        self.group_solid.collisionEffects()
+        self.group_solid.dragAlongSprites()
         self.all_sprites.updateAddedvel()
         self.all_sprites.update2()
         self.all_sprites.updatePos()
         self.moveScreen()
+        self.all_sprites.resetSprites()
         self.updateHUD()
       
 

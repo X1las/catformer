@@ -12,6 +12,7 @@ class Platform(CustomSprite):
 
     # Initializer
     def __init__(self, x, y, width, height, name = "plat", vel = vec(), floorplat = False, maxDist = None, leftMaxDist = 1000, rightMaxDist = 1000, upMaxDist = 2, downMaxDist = 2):
+        super().__init__()
         self.height = height; self.width = width; self.name = name  # size, name
         self.pos = vec(x,y); self.vel = vel                         # position, velocity
         self.originalVel       = self.vel.copy()                    # original velocity
@@ -25,13 +26,13 @@ class Platform(CustomSprite):
 
         # define maximum moving distance in each direction
         if maxDist == None:
-            # default values
+            # individually defined distances
             self.leftMaxDist  = leftMaxDist
             self.rightMaxDist = rightMaxDist
             self.downMaxDist  = downMaxDist
             self.upMaxDist    = upMaxDist
         else:
-            # if given as input
+            # one maximum distance for all directions
             self.leftMaxDist  = maxDist
             self.rightMaxDist = maxDist
             self.downMaxDist  = maxDist
@@ -79,6 +80,7 @@ class Platform(CustomSprite):
         # Making and getting dimensions of the sprite
         self.rect = self.image.get_rect()            
         self.rect.midbottom = (self.pos.x,self.pos.y)
+        self.isPlatform = True
 
 
     # Checking if the (moving) platform is outside it's moving area
