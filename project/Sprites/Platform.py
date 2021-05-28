@@ -26,13 +26,13 @@ class Platform(CustomSprite):
 
         # define maximum moving distance in each direction
         if maxDist == None:
-            # default values
+            # individually defined distances
             self.leftMaxDist  = leftMaxDist
             self.rightMaxDist = rightMaxDist
             self.downMaxDist  = downMaxDist
             self.upMaxDist    = upMaxDist
         else:
-            # if given as input
+            # one maximum distance for all directions
             self.leftMaxDist  = maxDist
             self.rightMaxDist = maxDist
             self.downMaxDist  = maxDist
