@@ -1,5 +1,5 @@
 # catformer
-A Cat-Platformer in Pytohn!
+A Cat-Platformer in Python!
 
 Install:
 
