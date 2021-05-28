@@ -13,7 +13,7 @@ from player import Player
 from SpriteGroup import SpriteGroup
 
 # Functional Imports:
-from levelCreator import *
+#from levelCreator import *
 from settings import *
 
 # Game Class
@@ -450,7 +450,7 @@ class Game:
 
 
 ### FOR TESTING - REMOVE WHEN DONE ###
-level1 = createLevel1()
+"""level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
@@ -462,7 +462,7 @@ pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 # pickleLevel(level4, 'level1')
 testLevel = createTestLevel()
-pickleLevel(testLevel, 'level9')
+pickleLevel(testLevel, 'level9')"""
 
 # Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
