@@ -18,7 +18,7 @@ class LevelGoal(CustomSprite):
 
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_levelGoals, game.group_movables
+        self.groups = game.all_sprites, game.group_movables
         pg.sprite.Sprite.__init__(self, self.groups)
         # load image from spritesheet
         sheet = self.game.spriteSheet

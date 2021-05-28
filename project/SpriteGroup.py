@@ -4,13 +4,6 @@
 # External Iports:
 import pygame as pg
 
-# Project Imports:
-from Vector import Vec
-from settings import *
-
-# variables:
-vec = Vec
-
 class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Initializor
@@ -89,49 +82,47 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Methods used on groups in Game:
     def resetSprites(self):
-        for i in self:
-            i.resetSprite()
+        for sprite in self:
+            sprite.resetSprite()
     
     def update(self):
-        for i in self.sprites():
-            i.update()
+        for sprite in self.sprites():
+            sprite.update()
 
-    def collisionEffects(self):
+    def dragAlongSprites(self):
         lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = True)
-        for i in lis:
-            #if i.isPlatform:
-             #   print(f'vel: {i.addedVel}')
-            i.pushEffect()
+        for sprite in lis:
+            sprite.pushEffect()
 
     def update2(self):
-        for i in self.sprites():
-            i.update2()
+        for sprite in self.sprites():
+            sprite.update2()
 
     def updateAddedvel(self):
-        for i in self:
-            i.updateAddedVel()
+        for sprite in self:
+            sprite.updateAddedVel()
 
     def updatePos(self):
-        for i in self.sprites():
-            i.updatePos()
+        for sprite in self.sprites():
+            sprite.updatePos()
         self.correctPositions()
 
     def correctPositions(self):
         self.massSort('massVER')
-        for i in self.massOrdered:
-            i.posCorrection()
+        for sprite in self.massOrdered:
+            sprite.posCorrection()
         self.massSort("massHOR")
-        for i in self.massOrdered:
-            i.posCorrection()
+        for sprite in self.massOrdered:
+            sprite.posCorrection()
 
     def updateRects(self):
-        for i in self:
-            i.updateRect()
+        for sprite in self:
+            sprite.updateRect()
 
     def resetRects(self):
-        for i in self:
-            i.resetRects()
+        for sprite in self:
+            sprite.resetRects()
 
         
     # Sort method for sorting by object mass
@@ -144,8 +135,14 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             self.massOrdered.sort(key = lambda x: x.massVER, reverse = True)
         return self.massOrdered
 
+    # sorts such that sprites further down on the screen are first in the list
+    def heightSort(self):
+        lis = self.sprites().copy()
+        lis.sort(key = lambda x: x.pos.y, reverse = False)
+        return lis
 
-    # Method that does something ordered maybe?
+
+    # Sort list based on solidstrength
     def createMassOrdered(self):
         lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = False)
