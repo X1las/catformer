@@ -4,13 +4,6 @@
 # External Iports:
 import pygame as pg
 
-# Project Imports:
-from Vector import Vec
-from settings import *
-
-# variables:
-vec = Vec
-
 class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Initializor
@@ -21,18 +14,19 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         pg.sprite.LayeredUpdates.__init__(self)
 
 
-    # Drawing method?
+    # Returns the list sorted by draw_layer
     def sprites_draw(self):
         return self._spritelist_draw
 
 
+    """ Overwriting LayeredUpdates methods """
     # Extending add_internal from pygame's spritegroup
     def add_internal(self, sprite, layer = None):
         super().add_internal(sprite, layer)
 
-        """ The below is close to equivalent to how sprites are added to LayeredUpdates
-            except that it adds it to the draw layer list
-        """
+        # The below is close to equivalent to how sprites are added to LayeredUpdates
+        # except that it adds it to the draw layer list
+        
         sprites = self._spritelist_draw 
         sprites_drawlayers = self._sprite_drawlayers
         drawlayer = sprite.draw_layer
@@ -54,8 +48,7 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Overwriting remove_internal
     def remove_internal(self, sprite):
-        """ Making sure removing the sprite from the group also removes its draw layer
-        """
+        #Making sure removing the sprite from the group also removes its draw layer
         super().remove_internal(sprite)
         self._spritelist_draw.remove(sprite)
         del self._sprite_drawlayers[sprite]
@@ -63,9 +56,8 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
 
     # Overwriting draw
     def draw(self, surface):
-        """ This method is entirely taken from Pygame's own LayeredUpdates.draw(surface)
-            besides the list given as the iterator. Now draws based on draw_layer attr. 
-        """
+        # This method is entirely taken from Pygame's own LayeredUpdates.draw(surface)
+        # besides the list given as the iterator. Now draws based on draw_layer attr. 
         spritedict = self.spritedict
         surface_blit = surface.blit
         dirty = self.lostsprites
@@ -87,53 +79,52 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         return dirty
 
 
-    # Methods used on groups in Game:
+    """ Methods iterating through the sprites calling methods from CustomSprite"""
     def resetSprites(self):
-        for i in self:
-            i.resetSprite()
+        for sprite in self:
+            sprite.resetSprite()
     
     def update(self):
-        for i in self.sprites():
-            i.update()
+        for sprite in self.sprites():
+            sprite.update()
 
-    def collisionEffects(self):
+    def dragAlongSprites(self):
         lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = True)
-        for i in lis:
-            #if i.isPlatform:
-             #   print(f'vel: {i.addedVel}')
-            i.pushEffect()
+        for sprite in lis:
+            sprite.pushEffect()
 
     def update2(self):
-        for i in self.sprites():
-            i.update2()
+        for sprite in self.sprites():
+            sprite.update2()
 
     def updateAddedvel(self):
-        for i in self:
-            i.updateAddedVel()
+        for sprite in self:
+            sprite.updateAddedVel()
 
     def updatePos(self):
-        for i in self.sprites():
-            i.updatePos()
+        for sprite in self.sprites():
+            sprite.updatePos()
         self.correctPositions()
 
     def correctPositions(self):
         self.massSort('massVER')
-        for i in self.massOrdered:
-            i.posCorrection()
+        for sprite in self.massOrdered:
+            sprite.posCorrection()
         self.massSort("massHOR")
-        for i in self.massOrdered:
-            i.posCorrection()
+        for sprite in self.massOrdered:
+            sprite.posCorrection()
 
     def updateRects(self):
-        for i in self:
-            i.updateRect()
+        for sprite in self:
+            sprite.updateRect()
 
     def resetRects(self):
-        for i in self:
-            i.resetRects()
+        for sprite in self:
+            sprite.resetRects()
 
-        
+    
+    """ Sorting methods"""
     # Sort method for sorting by object mass
     def massSort(self, key):
         if not self.massOrdered:
@@ -144,8 +135,14 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
             self.massOrdered.sort(key = lambda x: x.massVER, reverse = True)
         return self.massOrdered
 
+    # sorts such that sprites further down on the screen are first in the list
+    def heightSort(self):
+        lis = self.sprites().copy()
+        lis.sort(key = lambda x: x.pos.y, reverse = False)
+        return lis
 
-    # Method that does something ordered maybe?
+
+    # Sort list based on solidstrength
     def createMassOrdered(self):
         lis = self.sprites().copy()
         lis.sort(key = lambda x: x.solidstrength, reverse = False)

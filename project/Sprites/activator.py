@@ -8,79 +8,85 @@ from threading import Timer
 
 class Activator(CustomSprite):
 
-    hasActivatedTarget = False
+    # Initial booleans representing an inactive Activator
+    hasActivatedTargets  = False
     hasDeactivatedTarget = False
-    activated = False
-    deactivated = True
-    auto_deactivate = False
+    activated            = False
+    deactivated          = True
+    auto_deactivate      = False
+
+    # Draw/update layers
     _layer = 0  # update layer
     draw_layer = 3
 
-    def update(self):
-        self.vel += self.addedVel
-
-
+    # When Activator is activated
     def activeEffect(self):
-        doDeactivate = False
+        hasActivated = False
         try:
+            # Traversing through the given event dictionary
             for e,v in self.effect.items():
+                # Respawns an already existing sprite
                 if e == "respawn":
-                    if not self.hasActivatedTarget:
-                        doDeactivate = True
+                    if not self.hasActivatedTargets: # Only happens the first iterations of it active state
+                        hasActivated = True          # Sets the self.hasActivatedTargets afterwards
                         for respawn in v:
                             target = respawn['target']
                             target.respawn()
+                # Spawns a new item
                 if e == "spawn":
-                    if not self.hasActivatedTarget:
-                        doDeactivate = True
+                    if not self.hasActivatedTargets:
+                        hasActivated = True
                         for spawn in v:
-                            #self.hasActivatedTarget = True
                             target = spawn['target']
                             target.startGame(self.game)
+                # Causes target to move with given velocity until it cannot anymore
                 if e == "move":
                     self.hasDeactivatedTarget = False
                     for move in v:
                         target = move["target"]
                         move['target'].vel = move["movespeed"].copy() + target.originalVel
+                # Causes target to move back and forth within it's area of movement
                 if e == "conMove":
-                    if not self.hasActivatedTarget:
-                        doDeactivate = True
+                    if not self.hasActivatedTargets:
+                        hasActivated = True
                         for conMove in  v:
-                        
                             target = conMove["target"]
                             target.originalVel = conMove['movespeed'].copy()
                             target.vel = target.originalVel.copy()
-            if doDeactivate:
-                self.hasActivatedTarget = True
+            if hasActivated:
+                self.hasActivatedTargets = True
         except Exception as e:
             print(f'button activate: {e}') 
 
+    # When Activator is deactivated
     def deactiveEffect(self):
-        doActivate = False
-        try: # shouldn't be try except, I think
+        hasDeactivated = False
+        try: 
             for e,v in self.effect.items():
+                # Just making it possible to respawn target again upon activating again
                 if e == "respawn":
-                    self.hasActivatedTarget = False
+                    self.hasActivatedTargets = False
+                # Moves target in the deactivate velocity given as event input
                 if e == "move":
                     if not self.hasDeactivatedTarget:
-                        doActivate = True
+                        hasDeactivated = True
                         for move in v:
                             target = move["target"]
                             move['target'].vel = move["deactspeed"].copy() + target.originalVel
-
+                # Stops the platform from moving
                 if e == "conMove":
-                    self.hasActivatedTarget = False
+                    self.hasActivatedTargets = False
                     for conMove in v:
                         target = conMove["target"]
                         target.originalVel *= 0
                         target.vel = target.originalVel.copy()
-            if doActivate:
+            if hasDeactivated:
                 self.hasDeactivatedTarget = True
         except Exception as e:
             print(f'button deact: {e}') 
 
 
-
+    # The function called outside to set state to activated
     def activate(self):
         if not self.activated:
             self.activated = True
@@ -89,14 +95,16 @@ class Activator(CustomSprite):
             if self.auto_deactivate:
                 t = Timer(1, self.deactivate)
                 t.start() 
-            #self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
+    
+    # The function called outside to set state to deactivated
     def deactivate(self):
         if not self.deactivated:
             self.deactivated = True
             self.activated = False
             self.image = self.image_inactive
+
+    # Runs events based on state
     def update(self):
-        #self.vel.x += self.addedVel.x
         if self.activated:
             self.activeEffect()
         elif self.deactivated:
@@ -105,7 +113,7 @@ class Activator(CustomSprite):
 
     def updatePos(self):
         super().updatePos()
-        self.pos.y = self.plat.top_y()
+        self.pos.y = self.plat.top_y() # Should always just stay on top of the platform
 
 
 # Lever SubClass - Inherits from CustomSprite
@@ -113,22 +121,19 @@ class Lever(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
     def __init__(self, plat, placement, width = 30, height = 20, name = "lever", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         super().__init__()
-        self._layer = 1
-        self.plat = plat
-        self.name = name
-        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
-        self.placement = placement
+        self.plat = plat;   self.name = name;     self.placement = placement
         self.width = width; self.height = height; self.effect = effect; 
-        self.auto_deactivate = autodeactivate
-        #self.pos = vec(x,y)
+        
+        # start positions
+        self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.relativePosition = self.pos.copy()
         
+        self._layer = 1
+        # Automatically deactive lever
+        self.auto_deactivate = autodeactivate
         self.deactivate_counter = 30
-        #self.x = x; self.y = y
-        '''move to super'''
 
-
-
+    # Set game-specific variables
     def startGame(self, game):
         self.game = game
         self.groups = game.all_sprites, game.group_levers
@@ -155,36 +160,15 @@ class Button(Activator):
     def __init__(self, plat:Platform, placement, width = 30, height = 20, name = "button", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         super().__init__()
         
-        self.plat = plat
-        self.name = name
+        self.plat = plat;   self.placement = placement; self.name = name
+        self.width = width; self.height = height;       self.effect = effect; 
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
-        self.placement = placement
-
-        self.effect = effect; 
-        self.width = width; self.height = height
-        #self.pos = vec(x,y)
-        
-
-
-        ''' probably not needed'''
-        #self.x = x; self.y = y
-        #self.activated = False
-        #self.deactivated = True
-
-        ''' just for testing?'''
-
-        ''' really not sure'''
-
-        ''' pretty sure is needed'''
         self.relativePosition = self.pos.copy()
 
-        ''' should be revisited'''
-
-        ''' in use'''
-
+    # Set game-specific variables
     def startGame(self, game):
         self.game = game
-        self.groups = game.all_sprites, game.group_buttons
+        self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
 
         # create sub-rectangles to load from spritesheet
@@ -201,6 +185,7 @@ class Button(Activator):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
+    # Activator's adtivate() and deactivate() should also change side of button (so it looks pressed)
     def activate(self):
         super().activate()
         self.rect.update(self.pos.asTuple(), (self.width, self.height/2))
@@ -208,21 +193,14 @@ class Button(Activator):
         super().deactivate()
         self.rect.update(self.pos.asTuple(), (self.width, self.height))
 
-
     def update(self):
         self.buttonPress()
-        super().update()
-        self.activated = False # Not sure if needed
 
+    # deciding whether the button is activated or deactivated
     def buttonPress(self):
+        # Check if any pressure activators are on the button
         collided_list = pg.sprite.spritecollide(self, self.game.group_pressureActivator, False)
         if collided_list:
-            for collided in collided_list:
-                self.activate()
-                self.prevActivated = True
-                return self
+            self.activate()
         else:
             self.deactivate()
-            self.activated = False
-            self.deactivated = True
-            return None

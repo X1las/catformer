@@ -69,7 +69,6 @@ def createLevel1():
     rightboundary = Platform(1400, 550, 100, 550)
     # boxes
     box1 = Box(startplat.left_x() + 20 , 200 , 44 , 44 )
-    box2 = Box(660 , 200 , 44 , 44 )
 
 
 
@@ -98,7 +97,7 @@ def createLevel1():
             'length': 5000,
         },
         'platforms': [floor, startplat, p_1, p_2, mugplat, waterDiv1, waterDiv2, moving1, moving2, endplat, leftboundary, rightboundary], # , p_1, p_2, p_3, p_4, p_5],
-        'boxes':     [  box1],# box2],
+        'boxes':     [ box1],
         'buttons':   [],
         'levers':    [],
         'mugs':      [mug1],
@@ -106,7 +105,7 @@ def createLevel1():
         'enemies':   [pat1, pat2],
         'water':     [water1],
         'health':    [health1],
-        'catnip':    [],#catnip1]
+        'catnip':    [],
     }
     return level1
 
@@ -207,7 +206,6 @@ def createLevel2():
             'spawn': Vec(floor.left_x()+850,400),
             'length': 5000,
         },
-        #'platforms': [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2, plat1],
         'platforms': plats,
         'boxes':     [box1],
         'buttons':   [waters1btn, mov2btn],#btn1, btn2],
@@ -534,4 +532,4 @@ pickleLevel(level1, 'level1')
 pickleLevel(level2, 'level2')
 pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
-pickleLevel(testLevel, 'level1')
+pickleLevel(testLevel, 'testlevel')

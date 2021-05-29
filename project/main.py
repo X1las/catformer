@@ -13,7 +13,7 @@ from player import Player
 from SpriteGroup import SpriteGroup
 
 # Functional Imports:
-from levelCreator import *
+#from levelCreator import *
 from settings import *
 
 # Game Class
@@ -25,15 +25,15 @@ class Game:
     finished = False                                                            # Boolean used for endGame HUD when final level is reached
     paused = False                                                              # Boolean used to pause the game
     outOfLives = False                                                          # Boolean used for outOfLives loop
+    frames = 0
 
     # Initializer
     def __init__(self):
+
         pg.init()                                                               # Initializes the pygame module
-        pg.mixer.init()                                                         # Initializes the pygame mixer for music
         pg.display.set_caption(TITLE)                                           # Changes the name of the window to the TITLE in settings
         self.clock  = pg.time.Clock()                                           # Creates a pygame clock object
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings
-        self.frames = 0                                                         # variable used for checking performance
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))                      # Makes a screen object with the WIDTH and HEIGHT in settings                                                         # variable used for checking performance
 
         # load images and sprite sheets
         self.spriteSheet   = ss.Spritesheet('resources/spritesheet_green.png')
@@ -66,10 +66,6 @@ class Game:
         self.group_enemies            = pg.sprite.Group()
         self.group_pressureActivator  = pg.sprite.Group()                       # Things that can activate a button
         self.group_movables           = SpriteGroup()
-        
-        self.group_buttons            = pg.sprite.Group()                       # Only applied to button sprite      
-        self.group_levelGoals         = pg.sprite.Group()                       # Only applied to the levelGoal sprite
-        self.group_interactiveFields  = pg.sprite.Group()                       # Only apllies to the interactive field
 
 
     # Loads all the HUDs default values
@@ -210,7 +206,7 @@ class Game:
         #for i in self.all_sprites:
          #   print(f'{i.name} with {i.vel}')
         self.all_sprites.update()
-        self.group_solid.collisionEffects()
+        self.group_solid.dragAlongSprites()
         self.all_sprites.updateAddedvel()
         self.all_sprites.update2()
         self.all_sprites.updatePos()
@@ -411,7 +407,7 @@ class Game:
 
 
     #creates or updates a player data save file
-    def setPlayerData(self, levelname = 'level1', lives = 9, catnip = 0):
+    def setPlayerData(self, levelname = DEFAULT_LEVEL, lives = PLAYER_LIVES, catnip = PLAYER_CATNIP):
         try: 
             if self.data[0] != "level4":
                 try:
@@ -455,7 +451,7 @@ class Game:
 
 
 ### FOR TESTING - REMOVE WHEN DONE ###
-level1 = createLevel1()
+"""level1 = createLevel1()
 level2 = createLevel2()
 level3 = createLevel3()
 level4 = createLevel4()
@@ -467,7 +463,7 @@ pickleLevel(level3, 'level3')
 pickleLevel(level4, 'level4')
 # pickleLevel(level4, 'level1')
 testLevel = createTestLevel()
-pickleLevel(testLevel, 'level9')
+pickleLevel(testLevel, 'level9')"""
 
 # Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean

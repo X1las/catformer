@@ -34,7 +34,7 @@ class Player(CustomSprite):
     dist_from_top       = 0
     dist_from_bottom    = 0
     collides_left = False; collides_right = False
-
+    inAir = False
     canjump = True
     jumpcounter = 0
     liftedBefore = False
