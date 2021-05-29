@@ -480,7 +480,7 @@ def createTestLevel():
     shieldbox2 = Box(1000, 450, name = "testbox2")
     # object testing zone
     mugplat = Platform(1300, 450, 500,  30)
-    intmug = Mug(mugplat, 100)
+    intmug = Mug(mugplat, 30)
     boxmug = Mug(mugplat, 200)
     mugmug = Mug(mugplat, 300)
     btnmug = Mug(mugplat, 400)

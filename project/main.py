@@ -304,6 +304,7 @@ class Game:
         self.newGamemenu.active = False
         self.loadGamemenu.active = False
         self.tutorialmenu.active = False
+        self.noLivesMenu.active = False
         self.selectedState = 0
 
 
