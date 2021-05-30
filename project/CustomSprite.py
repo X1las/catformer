@@ -98,6 +98,9 @@ class CustomSprite(pg.sprite.Sprite):
         self.ori_massVER = self.massVER
         self.relativePosition = self.pos.copy()
    
+    def updateRect(self):
+        self.rect.midbottom = self.pos.rounded().asTuple()
+
 
     """ ----------- For iterative purposes (SpriteGroup) ---------------------- """
 
@@ -111,17 +114,18 @@ class CustomSprite(pg.sprite.Sprite):
         self.acc = Vec(0,0)
 
     # Updates rectangles before drawing so it matches the screen position
-    def updateRect(self):
+    def toRelativeRect(self):
         self.rect.midbottom = self.relativePosition.rounded().asTuple()
 
 
     # Resets rectangles after drawing so they match the global position
     def resetRects(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
     # The base update for the first updates each sprite does
     def update(self):
-        pass
+        self.updateRect()
+        
 
     # Adds velocity given from another sprite below it (see dragAlongSprite() and pushEffect())
     def updateAddedVel(self):
@@ -188,7 +192,7 @@ class CustomSprite(pg.sprite.Sprite):
     # This method is called on the sprite that pushes.
     def pushEffect(self):
         # Check a bit ahead of itself
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         self.rect.x += self.r(self.relativeVel().x)
         # Check collisions with objects sorted by their horizontal 'mass'
         group = self.game.group_movables
@@ -208,7 +212,7 @@ class CustomSprite(pg.sprite.Sprite):
     def dragAlongSprite(self):
         if not self.isEnemy: # Someone on top of the enemy should not move with the enemy
             # Make sure it catches things above itself and a bit ahead of it's x-velocity
-            self.rect.midbottom = self.pos.rounded().asTuple()
+            self.updateRect()
             self.rect.y -= 5
             self.rect.x += self.r(self.relativeVel().x)
             # Check collisions with objects sorted by their y-position
@@ -225,14 +229,14 @@ class CustomSprite(pg.sprite.Sprite):
                                 collided.addedVel.y = self.vel.y + self.addedVel.y
                             if collided in self.game.group_solid: # Run it again in case of stacking on platform
                                 collided.dragAlongSprite()
-            self.rect.midbottom = self.pos.rounded().asTuple()
+            self.updateRect()
 
     # Checking if a sprite is colliding with a solid sprite and pushes it out/stops its velocity and acceleration
     def solidCollisions(self):
         wasstoppedHOR = False
         recursiveList = [] 
         # Move rect a bit ahead
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         self.rect.x += self.r(self.relativeVel().x)
         self.rect.y += self.r(self.relativeVel().y)
         # Sorting the solids so it will check for the heavier ones first

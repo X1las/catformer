@@ -115,9 +115,9 @@ class SpriteGroup(pg.sprite.LayeredUpdates):
         for sprite in self.massOrdered:
             sprite.posCorrection()
 
-    def updateRects(self):
+    def toRelativeRects(self):
         for sprite in self:
-            sprite.updateRect()
+            sprite.toRelativeRect()
 
     def resetRects(self):
         for sprite in self:

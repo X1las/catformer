@@ -136,11 +136,11 @@ class PatrollingEnemy(CustomSprite):
             self.pos.y = self.plat.top_y()
         self.checkDist()                      # turn around if at the edge of platform or patrolling area
         self.updateAnimation()                # update current image
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
     
     # method for hiding underground
     def hide(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         if self.aboveground:
             # if above ground, get which platform it's on
             possibleplat = self.on_solid(self.game.group_platforms)
@@ -152,7 +152,7 @@ class PatrollingEnemy(CustomSprite):
         
         # collision detection
         collided_list = pg.sprite.spritecollide(self, self.game.group_solid, False)
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         if collided_list:
             # if enemy collides with any objects, update activity
             for collided in collided_list:
@@ -174,4 +174,4 @@ class PatrollingEnemy(CustomSprite):
                 self.activity = 'popup'
                 self.imageIndex = 0
             self.wasunderground = False
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()

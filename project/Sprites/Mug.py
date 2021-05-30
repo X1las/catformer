@@ -75,7 +75,7 @@ class Mug(CustomSprite):
         # only apply gravity if knocked over, i.e. falling
         if self.fall:
             self.applyGrav()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
     # Method that breaks the mug
     def breaks(self, collidedwith):
@@ -111,7 +111,7 @@ class Mug(CustomSprite):
                 self.vel.y = self.addedVel.y; self.acc.y = 0        # update y-velocity and acceleration
         self.vel.x = self.addedVel.x
         super().updatePos()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
 
     # Checks for multiple collisions between the objects
@@ -126,7 +126,7 @@ class Mug(CustomSprite):
 
     # When it touches a platform or other solids
     def touchplat(self, group):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         self.rect.y        += self.r(self.relativeVel().y) 
         collided_objects    = self.collisionMultipleGroups(group, self.game.group_enemies)
         if collided_objects:
@@ -135,4 +135,4 @@ class Mug(CustomSprite):
                     # only break if fell fast enough on another solid/enemy
                     self.breaks(collided)
                     return collided
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()

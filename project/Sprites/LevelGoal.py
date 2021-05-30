@@ -27,13 +27,8 @@ class LevelGoal(CustomSprite):
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
-    def update(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
-
-
     def update2(self):
         self.endGoal(self.game.player)
-
 
     # Function that gets called whenever the player reaches a goal
     def nextLevel(self):

@@ -108,7 +108,7 @@ class IntelligentEnemy(CustomSprite):
         self.solidCollisions()                      # checks for and handles collisions with solid objects
         self.detectPlayer()                         # checks for the player's position relative to the enemy
         self.checkCliff()                           # stops enemy from walking off of cliffs
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
 
     # overwriting inherited method

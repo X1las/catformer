@@ -239,7 +239,7 @@ class Game:
     # Method for drawing everything to the screen           
     def draw(self):                                         
         self.screen.blit(self.bg, (0,0))                    # Draws background image
-        self.all_sprites.updateRects()
+        self.all_sprites.toRelativeRects()
         self.all_sprites.draw(self.screen)                  # Draws all sprites to the screen in order of addition and layers (see LayeredUpdates from 'new()' )
         self.drawHUDs()     
         pg.display.update()                                 # Updates the drawings to the screen object and flips it

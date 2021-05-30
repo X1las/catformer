@@ -109,7 +109,7 @@ class Activator(CustomSprite):
             self.activeEffect()
         elif self.deactivated:
             self.deactiveEffect()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
     def updatePos(self):
         super().updatePos()

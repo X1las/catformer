@@ -33,6 +33,3 @@ class PickUp(CustomSprite):
         self.image = pg.transform.scale(self.image, (self.width, self.height))  # scale Surface to size
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.pos.x,self.pos.y)
-
-    def update(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()

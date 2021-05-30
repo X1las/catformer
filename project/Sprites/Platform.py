@@ -105,7 +105,7 @@ class Platform(CustomSprite):
         elif self.vel.y != 0:
             self.massVER = 29.5
         self.checkDist()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
     # Overwriting inherited method
     def updateAddedVel(self):
@@ -119,7 +119,7 @@ class Platform(CustomSprite):
 
     # Method for checking for collisions with other platforms
     def solidCollisions(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         self.rect.x        += self.r(self.vel.x)
         self.rect.y        += self.r(self.vel.y)
         collided_objects = pg.sprite.spritecollide(self, self.game.group_platforms, False)

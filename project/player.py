@@ -16,52 +16,34 @@ vec = Vec
 
 # Classes
 class Player(CustomSprite):
-    catnip_level        = PLAYER_CATNIP
-    lives               = PLAYER_LIVES
 
-    isPlayer            = True
-    facing              = None
-    solid               = True
-    on_collided_surface = False 
-    stop_falling        = False
-    lockFacing          = False
-    can_fall_and_move   = True
-
-    width               = 47 
-    height              = 42
-    dist_from_right     = 0
-    dslopest_from_left  = 0
-    dist_from_top       = 0
-    dist_from_bottom    = 0
-    collides_left = False; collides_right = False
-    inAir = False
-    canjump = True
-    jumpcounter = 0
-    liftedBefore = False
-
-    def __init__(self, spawn, name="default"):
+    def __init__(self, spawn, name="player"):
         super().__init__()
+        self.spawn = spawn;  self.name   = name
         
-        self.draw_layer     = 30
-        self._layer     = 4
+        # Initial values
+        self.width        = 47;     
+        self.height       = 42
+        self.catnip_level = PLAYER_CATNIP
+        self.lives        = PLAYER_LIVES
+        self.draw_layer   = 30
+        self._layer       = 4
+        self.pos = spawn.copy()
 
-        self.spawn      = spawn
-        self.pos        = spawn
-        #self.update_order        = 2
-        self.name = name
+        self.isPlayer     = True
+        self.facing       = None
+        self.lockFacing   = False
 
-
-
-        self.prevpos = vec() # delete
-        self.prevvel = vec()
-        self.prevrelpos = vec()
-        self.prevrelvel = vec()
-        self.init()
+        self.inAir        = False
+        self.canjump      = True; 
+        self.jumpcounter = 0
+        self.liftedBefore = False
         self.interactive_field      = None                                       
         self.imageIndex = 0 
-        self.latestCorrectedPos = Vec()
 
+        self.init()
 
+    # Doing all the things where the game must have been created before
     def startGame(self, game):    
         self.game       = game
         self.groups     = game.all_sprites, game.group_pressureActivator, game.group_movables
@@ -101,27 +83,33 @@ class Player(CustomSprite):
 
         self.rect = self.image.get_rect()
         self.rect.midbottom         = (self.spawn.x,self.spawn.y)
+    
+    # Set player pos to the initial spawn position
     def respawn(self):
-        self.pos        = self.spawn
+        self.pos  = self.spawn.copy()
+    
+    # Handling if the player takes damage
     def takeDamage(self):
         self.lives -= 1
-        self.game.data[1] = self.lives
+        #self.game.data[1] = self.lives # ???
         self.respawn()
-        self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
-        self.game.playerTookDamage()
-        return self.lives
+        self.game.setPlayerData(self.game.level.name, self.lives, self.catnip_level)
+        self.game.playerTookDamage() # Trigger the game's handling of the player dying
 
-
+    # increase lives of player
     def heal(self):
         self.lives += 1
         self.game.data[1] = self.lives
-        return self.lives
 
+    # increase catnip score for player
     def addCatnip(self):
         self.catnip_level += 1
         self.game.data[2] = self.catnip_level
         return self.catnip_level
 
+    # Check if the player has been on the ground for short
+    # otherwise the player can just jump right off an object
+    #   as soon as they touch the corner
     def checkIfCanJump(self):
         if not self.inAir:
             self.jumpcounter += 1
@@ -133,21 +121,26 @@ class Player(CustomSprite):
         else:
             self.canjump = False
 
-    # --> The different things that updates the position of the player
-    def update(self):                                                         # Updating pos, vel and acc.
+    # walking or sitting animation
+    def animation(self):
         self.imageIndex += 1                        # increment image index every update
         if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
             self.imageIndex = 0
         self.image = self.images['sit'][self.facing]
+
+
+    # The player's primary update 
+    def update(self):                                                        
+        self.animation()
         self.checkIfCanJump()
         self.move()
         self.determineGravity()
         self.applyPhysics() 
         self.touchPickUp()
         self.liftArm()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
-
+    # Determine gravity. Gravity would be 0 if on a solid
     def determineGravity(self):
         if self.on_solid(self.game.group_solid):
             self.inAir = False
@@ -156,42 +149,38 @@ class Player(CustomSprite):
             self.inAir = True
             self.gravity = GRAVITY
 
-
+    # Correct for solid collisions
     def posCorrection(self):
         self.solidCollisions()
-        self.rect.midbottom = self.pos.rounded().asTuple()
 
-
+    # Damage player if below screen
     def outOfBounds(self):
-          if (self.pos.y > self.game.boundary):
+        if (self.pos.y > self.game.boundary):
             self.takeDamage()
 
-
+    # All the things that can damage a player
     def checkDamage(self):
-        self.inbetweenSolids()
-        self.outOfBounds()
-        self.touchEnemy()
+        self.inbetweenSolids() # Getting squashed by two solids
+        self.outOfBounds()     # Falling below screen
+        self.touchEnemy()      # Colliding with enemy/water
 
-
+    # Checking if the player should take damage from touching an enemy/water
     def touchEnemy(self):
-        damager = self.game.group_damager
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         self.rect = self.rect.inflate(4,4)
-        collided = pg.sprite.spritecollide(self, damager, False)
+        collided = pg.sprite.spritecollide(self, self.game.group_damager, False)
         self.rect = self.rect.inflate(-4,-4)
         if collided: 
             for collided_obj in collided:
                 if collided_obj.damagesPlayer:
                     self.takeDamage()         
-        self.rect.midbottom = self.pos.rounded().asTuple()
 
-
+    # Run the methods related to the player's interactive arm
     def interactUpdate(self):
         self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
-        self.interactive_field.leverPull()
-        self.interactive_field.pickupSprite()
-        self.interactive_field.knockOver()
-
+        self.interactive_field.leverPull()      # Checks for collision with levers
+        self.interactive_field.pickupSprite()   # Checks for collision with box
+        self.interactive_field.knockOver()      # Checks for collisions with mugs
 
 
     # Handling whether the user pressed the interactive key
@@ -202,7 +191,7 @@ class Player(CustomSprite):
             self.isInteracting = True
             # Only the during the first iteration while pressing the key
             if not self.liftedBefore:
-                self.interactive_field = self.Interactive(self.game,self, self.facing)
+                self.interactive_field = self.Interactive(self)
                 self.liftedBefore      = True # stays true until key is released
                 self.intJustCreated    = True 
             # Trigger the effects of using the interactive arm
@@ -212,151 +201,145 @@ class Player(CustomSprite):
             if self.interactive_field:
                 self.interactive_field.kill()
             self.liftedBefore      = False
-            self.interactive_field = None # Reset the variable
+            self.interactive_field = None
         self.intJustCreated = False    
         
+    # Later update so all other included objects are updated
     def update2(self):
         self.checkDamage()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
-        keys = pg.key.get_pressed()                                     # Checks for keys getting pressed
-        if keys[pg.K_LEFT]:                                             # If it's left arrow
-            if not self.lockFacing:
+        keys = pg.key.get_pressed()                                     
+        if keys[pg.K_LEFT]:              # left arrow                               
+            self.acc.x = -PLAYER_ACC     # Accelerates to the left
+            # only if the facing has not been locked from picking up box
+            if not self.lockFacing:     
                 self.facing = "left"
             if not self.inAir and not self.isInteracting:
                 self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/15)]
-            self.acc.x = -PLAYER_ACC                                    # Accelerates to the left
         if keys[pg.K_RIGHT]:
             if not self.lockFacing:
                 self.facing = "right"
             self.acc.x = PLAYER_ACC                                          
             if not self.inAir and not self.isInteracting:
                 self.image = self.images['walk'][self.facing][math.floor(self.imageIndex/15)]
+        # Adding vertical velocity, only if the player is not already in the air
         if keys[pg.K_SPACE] and not self.inAir and self.canjump:                                                 
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP
 
-
+    # Colliding with health or catnip
     def touchPickUp(self):
-        pickups = self.game.group_pickups
-        collided = pg.sprite.spritecollide(self, pickups, False)
+        collided = pg.sprite.spritecollide(self, self.game.group_pickups, True)
         if collided: 
             for collided_obj in collided:
                 if collided_obj.type == 'health' and self.lives < 9:
                     self.heal()
-                    collided_obj.kill()
                 if collided_obj.type == 'catnip':
                     self.addCatnip()
-                    collided_obj.kill()
 
 
+    # Checks whether the player is about to be squashed between two solids
     def inbetweenSolids(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
         inflation = 2
         self.rect = self.rect.inflate(inflation,inflation)
-        collideds = pg.sprite.spritecollide(self, self.game.group_solid, False)
-        result = False
-        movingVER = False
-        movingHOR = False
-        collides_top = False; collides_bot = False
-        collides_left = False; collides_right = False
-        if collideds:
-            for collided in collideds:
-                if collided != self:
-                    coll_side = self.determineSide(collided)
-                    if coll_side == "left": # left side of collidedd obj
-                        if collided.vel.x + collided.addedVel.x < 0:
-                            movingHOR = True
-                        if collides_left and movingHOR:
-                            self.takeDamage()
-                            result = True
-                        collides_right = True
-                    if coll_side == "right":
-                        if collided.vel.x + collided.addedVel.x > 0:
-                            movingHOR = True
-                        if collides_right and movingHOR:
-                            self.takeDamage()
-                        scollides_left = True
-                    if coll_side == "top": 
-                        if collided.vel.y + collided.addedVel.y < 0:
-                            movingVER = True
-                        if collides_top and movingVER:
-                            self.takeDamage()
-                            result = True
-                        collides_bot = True
-                    if coll_side == "bot":
-                        if collided.vel.y + collided.addedVel.y > 0:
-                            movingVER = True
-                        if collides_bot and movingVER:
-                            self.takeDamage()
-                            result = True
-                        collides_top = True
-
+        collided_list = pg.sprite.spritecollide(self, self.game.group_solid, False)
+        # variables changed and used to detect whether player should take damage
+        movingVER     = movingHOR      = False
+        collides_top  = collides_bot   = False
+        collides_left = collides_right = False
+        
+        if collided_list:
+            for collided in collided_list:
+                coll_side = self.determineSide(collided)
+                if coll_side == "left":   # left side of collidedd obj
+                    # If a later 'collided' comes from the left, we know that the player was also touched from its right side
+                    collides_right = True
+                    # at least one of the solids should be moving towards the player
+                    if collided.vel.x + collided.addedVel.x < 0:
+                        movingHOR = True
+                    # If another 'collided' came form the left side of the player
+                    if collides_left and movingHOR:
+                        self.takeDamage()
+                elif coll_side == "right":
+                    if collided.vel.x + collided.addedVel.x > 0:
+                        movingHOR = True
+                    if collides_right and movingHOR:
+                        self.takeDamage()
+                    scollides_left = True
+                elif coll_side == "top": 
+                    if collided.vel.y + collided.addedVel.y < 0:
+                        movingVER = True
+                    if collides_top and movingVER:
+                        self.takeDamage()
+                    collides_bot = True
+                elif coll_side == "bot":
+                    if collided.vel.y + collided.addedVel.y > 0:
+                        movingVER = True
+                    if collides_bot and movingVER:
+                        self.takeDamage()
+                    collides_top = True
         self.rect = self.rect.inflate(-inflation,-inflation)
-        return result      
 
          
     # Interactive Field SubClass - Inherits from CustomSprite
     class Interactive(CustomSprite):
-        def __init__(self, game,  player, facing):
+        def __init__(self, player):
             super().__init__()
-
-            self._layer = player._layer + 1
-            self.draw_layer = player.draw_layer +1
-            self.game = game
-            self.name = "interactive"
-            # anchor depends on which way player faces
-            pg.sprite.Sprite.__init__(self, game.all_sprites)  
             self.player = player
-            width = 30#self.player.width/2 + 5
-            height = self.player.height     
-            self.facing = facing
+            self.game   = player.game
+            self.name   = "interactive"
+
+            self._layer     = player._layer + 1
+            self.draw_layer = player.draw_layer +1
+            pg.sprite.Sprite.__init__(self, self.game.all_sprites)  
             
+            width  = 30
+            height = self.player.height     
             # create surface with correct size
             self.image = pg.Surface((width,height),pg.SRCALPHA)
             # load image from spritesheet
-            sheet = ss.Spritesheet('resources/spritesheet_green.png')
-            img = sheet.image_at((144,198,30,42),(0,255,0))
-            image = pg.transform.scale(img, (int(width), int(height)))
-            #pg.Surface.fill(self.image, (0,255,0))
-            
-            self.images = {'right': image, 'left': pg.transform.flip(image, True, False)}
-            self.image = self.images[self.facing]
+            sheet      = ss.Spritesheet('resources/spritesheet_green.png')
+            img        = sheet.image_at((144,198,30,42),(0,255,0))
+            image      = pg.transform.scale(img, (int(width), int(height)))
 
-            self.rect = self.image.get_rect()            # Making and getting dimensions of the sprite 
-            self.width = image.get_width()/2; self.height = image.get_height()/2
+            # Determine intial visual facing            
+            self.images = {'right': image, 'left': pg.transform.flip(image, True, False)}
+            self.image  = self.images[self.player.facing]
+            self.rect   = self.image.get_rect()            # Making and getting dimensions of the sprite 
             
-            self.colliding = False
-            self.faceinput = self.player.facing
+            self.width  = image.get_width()/2; 
+            self.height = image.get_height()/2
+            self.pos              = player.pos.copy()
             self.relativePosition = self.pos.copy()
-            self.vel = self.player.vel
-            if self.facing == "left":
+            
+            if self.player.facing == "left":
                 self.rect.bottomright = (player.pos.x,player.pos.y)   
             else: 
-                self.rect.bottomleft = (player.pos.x,player.pos.y)   
-            #self.init()
+                self.rect.bottomleft  = (player.pos.x,player.pos.y)   
             
-
-        def intUpdate(self, facing, pos):
-            if facing == "left":
+        # For updating the Rect of the interactive arm
+        def intUpdate(self, pos = None):
+            if self.player.facing == "left":
                 if pos == "global":
                     self.rect.bottomright = (self.player.pos.x,self.player.pos.y)   
                 else:
                     self.rect.bottomright = self.player.relativePosition.rounded().asTuple()
-            elif facing == "right": 
+            elif self.player.facing == "right": 
                 if pos == "global":
                     self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
                 else: 
                     self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
  
-        def updateRect(self):
+        # Overwrite from CustomSprite, since Interactive rect pos is not set from midbottom 
+        def toRelativeRect(self):
             self.image = self.images[self.player.facing]
-            self.intUpdate(self.player.facing, "rel")
+            self.intUpdate()
         
         def resetRects(self):
-            self.colliding = False
-            self.intUpdate(self.player.facing, "global")
+            self.intUpdate(pos = "global")
 
         def knockOver(self):
             collided_list = pg.sprite.spritecollide(self, self.game.group_mugs, False)
@@ -366,7 +349,6 @@ class Player(CustomSprite):
                         collided.fall = True
 
         def pickupSprite(self):
-            self.colliding = False
             canpickup = True
             collided_list = pg.sprite.spritecollide(self,  self.game.group_boxes, False)
             if collided_list: 
@@ -383,9 +365,7 @@ class Player(CustomSprite):
                             if side == "top":
                                 canpickup = False
                     if canpickup:
-                        self.colliding = True
                         collided.has_collided = True
-                        self.update()
                         self.vel = self.player.vel.copy()
                         self.acc = self.player.acc.copy()
                         collided.liftedBy(self)

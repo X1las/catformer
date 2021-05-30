@@ -73,11 +73,10 @@ class Box(CustomSprite):
 
     # method for updating
     def update(self):
-        self.rect.midbottom = self.pos.rounded().asTuple()
         self.applyPhysics()
         self.solidCollisions()
         #self.vel += self.addedVel 
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
 
     # overwriting inherited method
@@ -98,7 +97,7 @@ class Box(CustomSprite):
             self.justreleased = True
         else: 
             self.beingHeld = False
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
 
 
     # method for updating the position
@@ -111,7 +110,7 @@ class Box(CustomSprite):
         self.vel.x = self.addedVel.x
         self.has_collided = False
         self.solidCollisions()
-        #self.rect.midbottom = self.pos.rounded().asTuple()
+        #self.updateRect()
 
 
     # method for correcting position
@@ -123,4 +122,4 @@ class Box(CustomSprite):
             elif heldside == "right":
                 self.set_left(self.interacter.player.right_x()+1)
         self.solidCollisions()
-        self.rect.midbottom = self.pos.rounded().asTuple()
+        self.updateRect()
