@@ -33,6 +33,8 @@ class CustomSprite(pg.sprite.Sprite):
     # initializer. Should not be used to create a sprite. Should only be called by subclasses
     def __init__(self):
         self.addedVel        = Vec()
+        print(type(self))
+        print(self.addedVel)
 
 
 
@@ -86,9 +88,6 @@ class CustomSprite(pg.sprite.Sprite):
     # Returns the velocity of a sprite relative to the moving sprite below it
     def relativeVel(self):
         return self.vel - self.addedVel
-
-
-
 
     # Method to call on nearly all sprites upon their __init__. 
     # just to keep the individual sprite __init__ shorter
