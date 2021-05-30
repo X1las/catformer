@@ -98,7 +98,7 @@ class Box(CustomSprite):
             self.justreleased = True
         else: 
             self.beingHeld = False
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     # method for updating the position
@@ -111,7 +111,7 @@ class Box(CustomSprite):
         self.vel.x = self.addedVel.x
         self.has_collided = False
         self.solidCollisions()
-        #self.rect.midbottom = self.pos.realRound().asTuple()
+        #self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     # method for correcting position

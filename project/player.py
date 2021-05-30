@@ -399,12 +399,12 @@ class Player(CustomSprite):
             if collided_list: 
                 if self.player.refreshedInt_box:
                     for collided in collided_list:
-                        collided.rect.midbottom = collided.pos.realRound().asTuple()
+                        collided.rect.midbottom = collided.pos.rounded().asTuple()
                     
                         collided.rect.y -= 2
                         # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
                         testcol = pg.sprite.spritecollide(collided, self.game.group_solid, False)
-                        collided.rect.midbottom = collided.pos.realRound().asTuple()
+                        collided.rect.midbottom = collided.pos.rounded().asTuple()
                         for i in testcol:
                             if i != collided:
                                 side = i.determineSide(collided)

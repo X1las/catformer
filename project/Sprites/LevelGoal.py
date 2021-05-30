@@ -28,7 +28,7 @@ class LevelGoal(CustomSprite):
         self.rect.midbottom = (self.pos.x,self.pos.y)
 
     def update(self):
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
 
     def update2(self):
