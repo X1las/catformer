@@ -57,11 +57,7 @@ class Player(CustomSprite):
         self.prevrelpos = vec()
         self.prevrelvel = vec()
         self.init()
-        self.refreshedInt_lever     = False                                                       
-        self.refreshedInt_box       = False                                                  
         self.interactive_field      = None                                       
-        self.refreshCount           = 0                                                        
-        self.refreshCount_prev      = 0         
         self.imageIndex = 0 
         self.latestCorrectedPos = Vec()
 
@@ -105,21 +101,14 @@ class Player(CustomSprite):
 
         self.rect = self.image.get_rect()
         self.rect.midbottom         = (self.spawn.x,self.spawn.y)
-
     def respawn(self):
         self.pos        = self.spawn
-
-    def setSpawn(self,spawn):
-        self.spawn      = spawn
-
-
     def takeDamage(self):
         self.lives -= 1
         self.game.data[1] = self.lives
         self.respawn()
         self.game.setPlayerData(self.game.level.name , self.lives , self.catnip_level)
         self.game.playerTookDamage()
-
         return self.lives
 
 
@@ -128,18 +117,12 @@ class Player(CustomSprite):
         self.game.data[1] = self.lives
         return self.lives
 
-
     def addCatnip(self):
         self.catnip_level += 1
         self.game.data[2] = self.catnip_level
         return self.catnip_level
 
-    # --> The different things that updates the position of the player
-    def update(self):                                                         # Updating pos, vel and acc.
-        self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
-            self.imageIndex = 0
-        self.image = self.images['sit'][self.facing]
+    def checkIfCanJump(self):
         if not self.inAir:
             self.jumpcounter += 1
         else:
@@ -149,12 +132,18 @@ class Player(CustomSprite):
             self.canjump = True
         else:
             self.canjump = False
+
+    # --> The different things that updates the position of the player
+    def update(self):                                                         # Updating pos, vel and acc.
+        self.imageIndex += 1                        # increment image index every update
+        if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
+            self.imageIndex = 0
+        self.image = self.images['sit'][self.facing]
+        self.checkIfCanJump()
         self.move()
         self.determineGravity()
         self.applyPhysics() 
-        #self.checkDamage()
         self.touchPickUp()
-        self.solidCollisions()
         self.liftArm()
         self.rect.midbottom = self.pos.rounded().asTuple()
 
@@ -199,33 +188,31 @@ class Player(CustomSprite):
 
     def interactUpdate(self):
         self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
-        self.refreshedInt_lever = self.refreshCount > self.refreshCount_prev      #
-        self.refreshedInt_box   = self.refreshCount >= self.refreshCount_prev       #
         self.interactive_field.leverPull()
         self.interactive_field.pickupSprite()
         self.interactive_field.knockOver()
 
-        self.refreshCount_prev = self.refreshCount
 
 
+    # Handling whether the user pressed the interactive key
     def liftArm(self):
         self.lockFacing = False
         keys = pg.key.get_pressed()
         if keys[pg.K_d]:
             self.isInteracting = True
+            # Only the during the first iteration while pressing the key
             if not self.liftedBefore:
                 self.interactive_field = self.Interactive(self.game,self, self.facing)
-                self.liftedBefore = True
-                self.intJustCreated = True
-                self.refreshCount += 1
+                self.liftedBefore      = True # stays true until key is released
+                self.intJustCreated    = True 
+            # Trigger the effects of using the interactive arm
             self.interactUpdate()
-
         else:
             self.isInteracting = False
             if self.interactive_field:
                 self.interactive_field.kill()
-            self.liftedBefore = False
-            self.interactive_field = None
+            self.liftedBefore      = False
+            self.interactive_field = None # Reset the variable
         self.intJustCreated = False    
         
     def update2(self):
@@ -291,7 +278,7 @@ class Player(CustomSprite):
                         if collides_right and movingHOR:
                             self.takeDamage()
                         scollides_left = True
-                    if coll_side == "top": # left side of collidedd obj
+                    if coll_side == "top": 
                         if collided.vel.y + collided.addedVel.y < 0:
                             movingVER = True
                         if collides_top and movingVER:
@@ -362,21 +349,10 @@ class Player(CustomSprite):
                     self.rect.bottomleft = (self.player.pos.x,self.player.pos.y)   
                 else: 
                     self.rect.bottomleft = self.player.relativePosition.rounded().asTuple()
-        """
-        def update(self):
-            self.image = self.images[self.player.facing]
-            if self.player.facing == "left":
-                self.pos = Vec(self.player.left_x(), self.player.mid().y)
-            if self.player.facing == "right":
-                self.pos = Vec(self.player.right_x(), self.player.mid().y)
-            self.vel = self.player.vel
-            self.acc = self.player.acc
-            self.updateRect()
-        """
+ 
         def updateRect(self):
             self.image = self.images[self.player.facing]
             self.intUpdate(self.player.facing, "rel")
-            #self.intUpdate(self.faceinput, "rel")
         
         def resetRects(self):
             self.colliding = False
@@ -388,52 +364,39 @@ class Player(CustomSprite):
                 for collided in collided_list:
                     if self.player.intJustCreated and not collided.broken:
                         collided.fall = True
-                        #collided.gravity = PLAYER_GRAV
-                        #collided.fall = True
 
         def pickupSprite(self):
-            justPickedUp = self.player.intJustCreated
             self.colliding = False
             canpickup = True
             collided_list = pg.sprite.spritecollide(self,  self.game.group_boxes, False)
             if collided_list: 
-                if self.player.refreshedInt_box:
-                    for collided in collided_list:
-                        collided.rect.midbottom = collided.pos.realRound().asTuple()
+                for collided in collided_list:
+                    collided.rect.midbottom = collided.pos.rounded().asTuple()
+                
+                    collided.rect.y -= 2
                     
-                        collided.rect.y -= 2
-                        # Kind of bad solution. removed from the group, because otherwise it detects collision with itself
-                        testcol = pg.sprite.spritecollide(collided, self.game.group_solid, False)
-                        collided.rect.midbottom = collided.pos.realRound().asTuple()
-                        for i in testcol:
-                            if i != collided:
-                                side = i.determineSide(collided)
-                                if side == "top":
-                                    canpickup = False
-
-                        if canpickup:
-                    
-                            self.colliding = True
-                            if justPickedUp:
-                                collided.pickupStarted = True
-                            collided.has_collided = True
-                            #collided.beingheld = True
-                            self.update()
-                            self.vel = self.player.vel.copy()
-                            self.acc = self.player.acc.copy()
-                            collided.liftedBy(self)
-                            self.player.lockFacing = True
-                else:
-                    self.colliding = False # remove?
+                    testcol = pg.sprite.spritecollide(collided, self.game.group_solid, False)
+                    collided.rect.midbottom = collided.pos.rounded().asTuple()
+                    for i in testcol:
+                        if i != collided:
+                            side = i.determineSide(collided)
+                            if side == "top":
+                                canpickup = False
+                    if canpickup:
+                        self.colliding = True
+                        collided.has_collided = True
+                        self.update()
+                        self.vel = self.player.vel.copy()
+                        self.acc = self.player.acc.copy()
+                        collided.liftedBy(self)
+                        self.player.lockFacing = True
 
         def leverPull(self):
             collided_list = pg.sprite.spritecollide(self, self.game.group_levers, False)
             if collided_list: 
                 for collided in collided_list:
-                    if self.player.refreshedInt_lever:
+                    if self.player.intJustCreated:
                         if not collided.activated:
                             collided.activate()
                         else:
                             collided.deactivate()
-                    collided.prevActivated = True
-                    return collided # del?
