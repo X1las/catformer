@@ -105,7 +105,7 @@ class Platform(CustomSprite):
         elif self.vel.y != 0:
             self.massVER = 29.5
         self.checkDist()
-        self.rect.midbottom = self.pos.realRound().asTuple()
+        self.rect.midbottom = self.pos.rounded().asTuple()
 
     # Overwriting inherited method
     def updateAddedVel(self):
