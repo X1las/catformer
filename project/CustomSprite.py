@@ -33,8 +33,6 @@ class CustomSprite(pg.sprite.Sprite):
     # initializer. Should not be used to create a sprite. Should only be called by subclasses
     def __init__(self):
         self.addedVel        = Vec()
-        print(type(self))
-        print(self.addedVel)
 
 
 

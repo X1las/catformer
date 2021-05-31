@@ -81,13 +81,13 @@ def createLevel1():
     pat1 = PatrollingEnemy(floor, 700, 100)
     pat2 = PatrollingEnemy(floor,  waterDiv2.right_x()-floor.left_x() + 80, 50)
     # water
-    water1 = Water(565 + (1100 - 550 - 30)/2, 600 , 1100 - 550 - 30   , 60)
+    water1 = Water(floor, waterDiv1, waterDiv2,  60, placementy=floor.height)
     # health
     health1 = PickUp(1300, 540, 'health')                                          
     # catnip
     catnip1 = PickUp(400, 370, 'catnip')   
     # mugs
-    mug1 = Mug(mugplat , 50 , spawnItem = catnip1)
+    mug1 = Mug(mugplat , 30 , spawnItem = catnip1)
 
     # create dictionary
     level1 = {
@@ -196,8 +196,8 @@ def createLevel2():
     pat1 = PatrollingEnemy(enemyplat, 70, maxDist = 100)
     detect1 = IntelligentEnemy(floor, 1400)
     # water
-    water1 = Water(waterdiv1.right_x() + water1width/2, bottom , water1width, 36 )
-    water2 = Water(underwater.mid().x  + rightwat.width/2 - 13, underwater.top_y() , underwater.width - rightwat.width/2, plat2.height - 5)
+    water1 = Water(floor, waterdiv1, waterdiv2, 36 )
+    water2 = Water(underwater, jumper1, rightwat, plat2.height - 5)
     # catnip
 
     levelName = {
@@ -208,8 +208,8 @@ def createLevel2():
         },
         'platforms': plats,
         'boxes':     [box1],
-        'buttons':   [waters1btn, mov2btn],#btn1, btn2],
-        'levers':    [mov1lev],#lever1, lever2],
+        'buttons':   [waters1btn, mov2btn],
+        'levers':    [mov1lev],
         'mugs':      [mug1, mug2],
         'goals':     [goal],
         'enemies':   [pat1, detect1],
@@ -250,7 +250,6 @@ def createLevel3():
     endplat  = Platform(befend.right_x() + 150, befend.top_y() - 30, 150, 30)
     enddoor  = Platform(endplat.left_x() + 10, endplat.top_y(), 20, 200, downMaxDist = 0, upMaxDist = 80)
     plat2  = Platform(boxrespplat.left_x() - 100, boxrespplat.top_y() - 30, 80, 30)
-    #plat3  = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
     btnmugplat = Platform(plat2.left_x() - 100, plat2.top_y() - 30, 80, 30)
     movinga = Platform(leftboundary.right_x() + 50, btnmugplat.bot_y() + 60, 100, 30, leftMaxDist = 0, rightMaxDist =  btnmugplat.left_x() - 120 - leftboundary.right_x(), name = "movinga")
 
@@ -306,7 +305,7 @@ def createLevel3():
     btnD = Button(plat1, 40, effect = dic)
 
     '''WATER '''
-    water1 = Water(leftboundary.right_x() + round((startplat.left_x() - leftboundary.right_x())/2) - 2, bottom, startplat.left_x() - leftboundary.right_x() + 4, 40)
+    water1 = Water(floor, leftboundary, startplat, 40)
 
 
     '''PICKUPS'''
@@ -364,7 +363,6 @@ def createLevel4():
     plat2 = Platform( plat1.right_x() + 100, plat1.top_y() - 50, 100, 30)
     plat3 = Platform( plat2.right_x() + 100, plat2.top_y() - 50, 100, 30)
     WINPLAT = Platform( plat3.right_x() + 100, plat3.top_y() - 50, 100, 30)
-    #win = PickUp(0,0,"health")
     mug1 = Mug(WINPLAT , 50 , spawnItem = None, width = 100, height = 100, final = True)
 
     levelName = {
@@ -392,7 +390,6 @@ def createLevel4():
 ''' End Level '''
 def createLevel5():
     # platforms
-    #left = -200
     bottom = 550
     leftboundary = Platform(50, bottom, 100, bottom)
     rightboundary = Platform(1800 , bottom, 100, bottom)
@@ -403,16 +400,9 @@ def createLevel5():
     plat2 = Platform( plat1.right_x() + 100, plat1.top_y() - 50, 100, 30, vel = Vec(1,0), maxDist = 50)
     plat3 = Platform( plat2.right_x() + 100, plat2.top_y() - 50, 100, 30)
     WINPLAT = Platform( plat3.right_x() + 100, plat3.top_y() - 50, 100, 30)
-    #win = PickUp(0,0,"health")
     mug1 = Mug(WINPLAT , 50 , spawnItem = None, width = 100, height = 100, final = True)
     mug2 = Mug(plat0 , 50 , spawnItem = None)
     box1 = Box(plat0.mid().x - 22, plat0.top_y() - 40)
-
-
-    #dic = { "respawn" : [{"target": box1}]
-                  #}
-    #leverE = Lever(plat2, 40, effect = dic, autodeactivate = True)
-
 
     ''' BUTTONS '''
     dic = {  "move" : [{"movespeed"  : Vec(0,-1), "deactspeed" : Vec(0,1) , "target" : plat3}]

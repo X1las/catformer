@@ -121,6 +121,10 @@ class Lever(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
     def __init__(self, plat, placement, width = 30, height = 20, name = "lever", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         super().__init__()
+        if placement > plat.width - width/2:
+            placement = plat.width - width/2
+        elif placement < 0:
+            placement = width/2
         self.plat = plat;   self.name = name;     self.placement = placement
         self.width = width; self.height = height; self.effect = effect; 
         
@@ -159,9 +163,13 @@ class Button(Activator):
     #def __init__(self,x,y, width, height, name = None, effect = {}): 
     def __init__(self, plat:Platform, placement, width = 30, height = 20, name = "button", effect = {}, autodeactivate = False):#None, movespeed = None, target = None, autodeactivate = None): 
         super().__init__()
-        
+        if placement > plat.width - width/2:
+            placement = plat.width - width/2
+        elif placement < 0:
+            placement = width/2
         self.plat = plat;   self.placement = placement; self.name = name
         self.width = width; self.height = height;       self.effect = effect; 
+        
         self.pos = Vec(self.plat.left_x() + placement, self.plat.top_y()) 
         self.relativePosition = self.pos.copy()
 
@@ -195,6 +203,7 @@ class Button(Activator):
 
     def update(self):
         self.buttonPress()
+        super().update()
 
     # deciding whether the button is activated or deactivated
     def buttonPress(self):

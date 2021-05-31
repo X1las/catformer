@@ -6,12 +6,18 @@ from   Vector       import Vec as vec
 
 # Water SubClass - Inherits from CustomSprite
 class Water(CustomSprite):
-    def __init__(self,x,y, width, height, name = "water"): 
+    def __init__(self, onplat, leftplat, rightplat, height, placementy = 0,  name = "water"): 
         super().__init__()
-        
+        if placementy < 0:
+            placementy = 0
+        elif placementy > onplat.height:
+            placementy = onplat.bot_y()
+        self.width = rightplat.left_x() - leftplat.right_x()
+        y = onplat.top_y() + placementy
+        x = self.r(leftplat.right_x() + self.width/2)
         self.damagesPlayer = True                   # water should damage player
         self.name = name
-        self.width = width; self.height = height    # size
+        self.height = height
         self.pos = vec(x,y)                         # position
         self.oripos = self.pos.copy()
         self.relativePosition = self.pos.copy()
@@ -23,6 +29,8 @@ class Water(CustomSprite):
     # overwriting inherited method
     def updatePos(self):
         self.pos = self.oripos.copy()
+
+
 
     # method for setting game dependent attributes
     def startGame(self, game):

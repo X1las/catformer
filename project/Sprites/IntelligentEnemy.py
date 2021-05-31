@@ -8,7 +8,10 @@ from   Vector       import Vec as vec
 class IntelligentEnemy(CustomSprite):
     def __init__(self,spawnPlat, placement, width = 36, height = 28, speed = 1.5, name = "enemyai"):
         super().__init__()
-        print(self.addedVel)
+        if placement > spawnPlat.width - width/2:
+            placement = spawnPlat.width - width/2
+        elif placement < 0:
+            placement = width/2
         self.spawnPlat     = spawnPlat                      # the platform the enemy spawns on
         self.placement     = placement                      # placement relative to the spawn platform
         self.pos           = vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()) # position

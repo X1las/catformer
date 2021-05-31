@@ -10,7 +10,10 @@ class PatrollingEnemy(CustomSprite):
 
     def __init__(self,plat : Platform, placement, maxDist, width = 23, height = 29, vel = vec(1.2,0), name = "enemy"):
         super().__init__()
-        
+        if placement > plat.width - width/2:
+            placement = plat.width - width/2
+        elif placement < 0:
+            placement = width/2
         self.plat             = plat                        # the platform the enemy spawns on
         self.placement        = placement                   # placement relative to the spawn platform
         self.pos              = vec(self.plat.left_x() + placement, self.plat.top_y()) # position

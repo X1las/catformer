@@ -14,8 +14,11 @@ class Mug(CustomSprite):
     def __init__(self, plat : Platform, placement, width = 29, height = 26, name = "mug", spawnItem = None, final = False):
         
         super().__init__()
+        if placement > plat.width - width/2:
+            placement = plat.width - width/2
+        elif placement < 0:
+            placement = width/2
         self.spawnPlat        = plat               # the platform tht the mug spawns on
-        self.standingon       = plat
         self.spawnItem        = spawnItem          # what the mug should spwan when broken
         self.width = width; self.height = height   # size
         self.pos = Vec(self.spawnPlat.left_x() + placement, self.spawnPlat.top_y()).rounded() # position
