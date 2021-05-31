@@ -43,6 +43,7 @@ class Player(CustomSprite):
 
         self.init()
 
+
     # Doing all the things where the game must have been created before
     def startGame(self, game):    
         self.game       = game
@@ -83,30 +84,25 @@ class Player(CustomSprite):
 
         self.rect = self.image.get_rect()
         self.rect.midbottom         = (self.spawn.x,self.spawn.y)
+
+    # The player's primary update 
+    def update(self):                                                        
+        self.animation()        # Animating walking and sitting
+        self.checkIfCanJump()   # Check if player stood on solid shortly + update to jump image
+        self.move()             # Add left/right movement to acc and jumping to vel
+        self.determineGravity() # Decide if gravity should be 0 or GRAVITY
+        self.applyPhysics()     # Apply acc to velocity
+        self.touchPickUp()      # Handle collisions with pickups
+        self.liftArm()          # Handle interactions with boxes, mugs and levers
+        self.updateRect()       # Update player's Rect
+
+    # walking or sitting animation
+    def animation(self):
+        self.imageIndex += 1                        # increment image index every update
+        if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
+            self.imageIndex = 0
+        self.image = self.images['sit'][self.facing]
     
-    # Set player pos to the initial spawn position
-    def respawn(self):
-        self.pos  = self.spawn.copy()
-    
-    # Handling if the player takes damage
-    def takeDamage(self):
-        self.lives -= 1
-        #self.game.data[1] = self.lives # ???
-        self.respawn()
-        self.game.setPlayerData(self.game.level.name, self.lives, self.catnip_level)
-        self.game.playerTookDamage() # Trigger the game's handling of the player dying
-
-    # increase lives of player
-    def heal(self):
-        self.lives += 1
-        self.game.data[1] = self.lives
-
-    # increase catnip score for player
-    def addCatnip(self):
-        self.catnip_level += 1
-        self.game.data[2] = self.catnip_level
-        return self.catnip_level
-
     # Check if the player has been on the ground for short
     # otherwise the player can just jump right off an object
     #   as soon as they touch the corner
@@ -120,93 +116,6 @@ class Player(CustomSprite):
             self.canjump = True
         else:
             self.canjump = False
-
-    # walking or sitting animation
-    def animation(self):
-        self.imageIndex += 1                        # increment image index every update
-        if self.imageIndex >= len(self.images['walk']['right'])*15:     # reset image index to 0 when running out of images
-            self.imageIndex = 0
-        self.image = self.images['sit'][self.facing]
-
-
-    # The player's primary update 
-    def update(self):                                                        
-        self.animation()
-        self.checkIfCanJump()
-        self.move()
-        self.determineGravity()
-        self.applyPhysics() 
-        self.touchPickUp()
-        self.liftArm()
-        self.updateRect()
-
-    # Determine gravity. Gravity would be 0 if on a solid
-    def determineGravity(self):
-        if self.on_solid(self.game.group_solid):
-            self.inAir = False
-            self.gravity = 0
-        else:
-            self.inAir = True
-            self.gravity = GRAVITY
-
-    # Correct for solid collisions
-    def posCorrection(self):
-        self.solidCollisions()
-
-    # Damage player if below screen
-    def outOfBounds(self):
-        if (self.pos.y > self.game.boundary):
-            self.takeDamage()
-
-    # All the things that can damage a player
-    def checkDamage(self):
-        self.inbetweenSolids() # Getting squashed by two solids
-        self.outOfBounds()     # Falling below screen
-        self.touchEnemy()      # Colliding with enemy/water
-
-    # Checking if the player should take damage from touching an enemy/water
-    def touchEnemy(self):
-        self.updateRect()
-        self.rect = self.rect.inflate(4,4)
-        collided = pg.sprite.spritecollide(self, self.game.group_damager, False)
-        self.rect = self.rect.inflate(-4,-4)
-        if collided: 
-            for collided_obj in collided:
-                if collided_obj.damagesPlayer:
-                    self.takeDamage()         
-
-    # Run the methods related to the player's interactive arm
-    def interactUpdate(self):
-        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
-        self.interactive_field.leverPull()      # Checks for collision with levers
-        self.interactive_field.pickupSprite()   # Checks for collision with box
-        self.interactive_field.knockOver()      # Checks for collisions with mugs
-
-
-    # Handling whether the user pressed the interactive key
-    def liftArm(self):
-        self.lockFacing = False
-        keys = pg.key.get_pressed()
-        if keys[pg.K_d]:
-            self.isInteracting = True
-            # Only the during the first iteration while pressing the key
-            if not self.liftedBefore:
-                self.interactive_field = self.Interactive(self)
-                self.liftedBefore      = True # stays true until key is released
-                self.intJustCreated    = True 
-            # Trigger the effects of using the interactive arm
-            self.interactUpdate()
-        else:
-            self.isInteracting = False
-            if self.interactive_field:
-                self.interactive_field.kill()
-            self.liftedBefore      = False
-            self.interactive_field = None
-        self.intJustCreated = False    
-        
-    # Later update so all other included objects are updated
-    def update2(self):
-        self.checkDamage()
 
     # ---> Checks for pressed keys to move left/right and jump
     def move(self):
@@ -229,6 +138,15 @@ class Player(CustomSprite):
             self.inAir = True                                                    
             self.vel.y = -PLAYER_JUMP
 
+    # Determine gravity. Gravity would be 0 if on a solid
+    def determineGravity(self):
+        if self.on_solid(self.game.group_solid):
+            self.inAir = False
+            self.gravity = 0
+        else:
+            self.inAir = True
+            self.gravity = GRAVITY
+
     # Colliding with health or catnip
     def touchPickUp(self):
         collided = pg.sprite.spritecollide(self, self.game.group_pickups, True)
@@ -239,6 +157,81 @@ class Player(CustomSprite):
                 if collided_obj.type == 'catnip':
                     self.addCatnip()
 
+    # increase lives of player
+    def heal(self):
+        self.lives += 1
+        self.game.data[1] = self.lives
+
+    # increase catnip score for player
+    def addCatnip(self):
+        self.catnip_level += 1
+        self.game.data[2] = self.catnip_level
+        return self.catnip_level
+
+    # Handling whether the user pressed the interactive key
+    def liftArm(self):
+        self.lockFacing = False
+        keys = pg.key.get_pressed()
+        if keys[pg.K_d]:
+            self.isInteracting = True
+            # Only the during the first iteration while pressing the key
+            if not self.liftedBefore:
+                self.interactive_field = self.Interactive(self)
+                self.liftedBefore      = True # stays true until key is released
+                self.intJustCreated    = True 
+            # Trigger the effects of using the interactive arm
+            self.interactUpdate()
+        else:
+            self.isInteracting = False
+            if self.interactive_field:
+                self.interactive_field.kill()
+            self.liftedBefore      = False
+            self.interactive_field = None
+        self.intJustCreated = False    
+    
+    # Run the methods related to the player's interactive arm
+    def interactUpdate(self):
+        self.image = self.images['interact'][self.facing][math.floor(self.imageIndex/30)]
+        self.interactive_field.leverPull()      # Checks for collision with levers
+        self.interactive_field.pickupSprite()   # Checks for collision with box
+        self.interactive_field.knockOver()      # Checks for collisions with mugs
+
+    # Set player pos to the initial spawn position
+    def respawn(self):
+        self.pos  = self.spawn.copy()
+    
+    # Later update so all other included objects are updated
+    def update2(self):
+        self.checkDamage()
+
+    # All the things that can damage a player
+    def checkDamage(self):
+        self.outOfBounds()     # Falling below screen
+        self.touchEnemy()      # Colliding with enemy/water
+        self.inbetweenSolids() # Getting squashed by two solids
+
+    # Handling if the player takes damage
+    def takeDamage(self):
+        self.lives -= 1
+        self.respawn()
+        self.game.setPlayerData(self.game.level.name, self.lives, self.catnip_level)
+        self.game.playerTookDamage() # Trigger the game's handling of the player dying
+
+    # Damage player if below screen
+    def outOfBounds(self):
+        if (self.pos.y > self.game.boundary):
+            self.takeDamage()
+
+    # Checking if the player should take damage from touching an enemy/water
+    def touchEnemy(self):
+        self.updateRect()
+        self.rect = self.rect.inflate(4,4)
+        collided = pg.sprite.spritecollide(self, self.game.group_damager, False)
+        self.rect = self.rect.inflate(-4,-4)
+        if collided: 
+            for collided_obj in collided:
+                if collided_obj.damagesPlayer:
+                    self.takeDamage()         
 
     # Checks whether the player is about to be squashed between two solids
     def inbetweenSolids(self):
@@ -283,8 +276,12 @@ class Player(CustomSprite):
                     collides_top = True
         self.rect = self.rect.inflate(-inflation,-inflation)
 
+    # Correct for solid collisions
+    def posCorrection(self):
+        self.solidCollisions()
+
          
-    # Interactive Field SubClass - Inherits from CustomSprite
+    # Interactive Field SubClass - The arm of the cat
     class Interactive(CustomSprite):
         def __init__(self, player):
             super().__init__()
