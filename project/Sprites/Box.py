@@ -53,9 +53,9 @@ class Box(CustomSprite):
     def pickupEffect(self):
         if self.has_collided: # triggered in Player class
             if self.beingHeld: # only true if player is not jumping
-                self.vel.x = self.interacter.player.vel.copy()
+                self.vel   = self.interacter.player.vel.copy()
                 self.vel.y   = 0
-                self.acc.x   = self.new_acc.x
+                self.acc.x   = self.interacter.player.acc.x
                 self.gravity = 0
         else:
             self.beingHeld = False
