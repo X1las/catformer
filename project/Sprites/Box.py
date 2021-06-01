@@ -10,10 +10,7 @@ from   settings     import GRAVITY
 # Box SubClass - Inherits from CustomSprite
 class Box(CustomSprite):
     
-    # Class variables
-    game = None
-    
-    # Initializer
+    # IConstructuer
     def __init__(self, x, y, width = 44, height = 44, name = "box"):
         super().__init__()
         
