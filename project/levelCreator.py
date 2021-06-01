@@ -114,14 +114,13 @@ def createLevel2():
     bottom = 550
     left = -200
     # platforms
-    ceil   = Platform( 1000 - left, 0 , 3000 - left, 50 )
     floor   = Platform( 1000 - left, 600 , 3000 - left, 50 ,floorplat = True )
     rightboundary = Platform(1800 - left, bottom, 100, bottom)
     
     water1width = 200
-    waterdiv1 = Platform( 400 - left , bottom ,  20 , 40 )
-    midwater  = Platform( waterdiv1.right_x() + water1width/2 , 530 ,     50 , 30)
-    waterdiv2 = Platform( waterdiv1.right_x() + water1width + 10 , bottom ,  20 , 40)
+    waterdiv1   = Platform( 400 - left , bottom ,  20 , 40 )
+    midwater    = Platform( waterdiv1.right_x() + water1width/2 , 530 ,     50 , 30)
+    waterdiv2   = Platform( waterdiv1.right_x() + water1width + 10 , bottom ,  20 , 40)
 
     # height 1
     plat1     = Platform(1200 - left, 500    , 500 , 30 )
@@ -134,14 +133,14 @@ def createLevel2():
 
 
     #height 2 part 1
-    plat3     = Platform(plat1.right_x() -(plat1.right_x()-blocker.right_x())/2, blocker.top_y() + 30, plat1.right_x()-blocker.right_x() , 30)
-    moving1   = Platform(plat1.right_x() + 50, plat1.bot_y()    , 100 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y, name = "moving1")
-    underwater= Platform(blocker.left_x()  - 200, blocker.top_y() + 60, 400 , 20)
-    boxstop   = Platform(blocker.left_x() + 5, blocker.top_y()    , 10 , 10 )
+    plat3      = Platform(plat1.right_x() -(plat1.right_x()-blocker.right_x())/2, blocker.top_y() + 30, plat1.right_x()-blocker.right_x() , 30)
+    moving1    = Platform(plat1.right_x() + 50, plat1.bot_y()    , 100 , 30, downMaxDist = 0, upMaxDist = plat1.pos.y - plat3.pos.y, name = "moving1")
+    underwater = Platform(blocker.left_x()  - 200, blocker.top_y() + 60, 400 , 20)
+    boxstop    = Platform(blocker.left_x() + 5, blocker.top_y()    , 10 , 10 )
     waterplat1 = Platform(underwater.left_x() + underwater.width*3/4, underwater.top_y(), 50, 20, downMaxDist = 0, upMaxDist = 40)
     waterplat2 = Platform(underwater.left_x() + underwater.width*2/4, underwater.top_y(), 50, 20,  downMaxDist = 0, upMaxDist = waterplat1.upMaxDist)
     waterplat3 = Platform(underwater.left_x() + underwater.width*1/4, underwater.top_y(), 50, 20, downMaxDist = 0, upMaxDist = waterplat1.upMaxDist)
-    rightwat  = Platform(underwater.left_x() , underwater.top_y(), 50, 30)
+    rightwat   = Platform(underwater.left_x() , underwater.top_y(), 50, 30)
     
     
     
@@ -154,20 +153,20 @@ def createLevel2():
     
     #height 3
     plat4      = Platform(smallleft.right_x() + 50 + 60, smallleft.top_y() - 20, 100, 30)
-    rightmov  = Platform(plat4.right_x() + 300, plat4.bot_y(), 80, 30)
-    moving2   = Platform(rightmov.left_x() - 30, plat4.bot_y(), 60 , 30, leftMaxDist = rightmov.left_x() - plat4.right_x(), rightMaxDist = 0)
-    longplat = Platform(rightmov.right_x() + 250, rightmov.bot_y() - 10, 300, 30)
-    enemyplat = Platform(longplat.right_x() + 200, longplat.bot_y(), 200, 30)
-    enemsafe  = Platform(enemyplat.mid().x, enemyplat.top_y(), 20, 40)
-    goalplat  = Platform(enemyplat.right_x() + 150, enemyplat.bot_y(), 150, 30)
+    rightmov   = Platform(plat4.right_x() + 300, plat4.bot_y(), 80, 30)
+    moving2    = Platform(rightmov.left_x() - 30, plat4.bot_y(), 60 , 30, leftMaxDist = rightmov.left_x() - plat4.right_x(), rightMaxDist = 0)
+    longplat   = Platform(rightmov.right_x() + 250, rightmov.bot_y() - 10, 300, 30)
+    enemyplat  = Platform(longplat.right_x() + 200, longplat.bot_y(), 200, 30)
+    enemsafe   = Platform(enemyplat.mid().x, enemyplat.top_y(), 20, 40)
+    goalplat   = Platform(enemyplat.right_x() + 150, enemyplat.bot_y(), 150, 30)
 
     leftboundary = Platform(jumper4.left_x() - 50, bottom, 100, bottom)
 
     plats = [floor, leftboundary, rightboundary, waterdiv1, midwater ,waterdiv2,
-             plat1, blocker, vert,  plat2, moving1, rightwat, plat5, vert2, vert3,#jumphelp, jumphelp2,
+             plat1, blocker, vert,  plat2, moving1, rightwat, plat5, vert2, vert3,
              plat3, underwater, boxstop, waterplat1, waterplat2, waterplat3,
              jumper1, jumper2, jumper3, jumper4, smallleft, 
-             plat4, moving2, rightmov, longplat, enemyplat,  goalplat #enemsafe,
+             plat4, moving2, rightmov, longplat, enemyplat,  goalplat
              ]
     # boxes
     box1 = Box( blocker.pos.x , plat1.top_y() , 44 , 44 )
@@ -183,7 +182,6 @@ def createLevel2():
     lev1eff = {  "conMove" : [{"movespeed"  : Vec(0,-1), "target" : moving1} ]
                         }
     mov1lev = Lever(plat5, 40, effect = lev1eff)
-    #mov1lev = Lever(moving1, 40, effect = lev1eff)
     # pickups
     health1 = PickUp(1300, 540, 'health')                                          #
     catnip1 = PickUp(400, 370, 'catnip')   
@@ -197,7 +195,7 @@ def createLevel2():
     detect1 = IntelligentEnemy(floor, 1400)
     # water
     water1 = Water(floor, waterdiv1, waterdiv2, 36 )
-    water2 = Water(underwater, jumper1, rightwat, plat2.height - 5)
+    water2 = Water(underwater, rightwat, blocker, plat2.height - 5)
     # catnip
 
     levelName = {
@@ -353,7 +351,6 @@ def createLevel3():
 ''' End Level '''
 def createLevel4():
     # platforms
-    #left = -200
     bottom = 550
     leftboundary = Platform(50, bottom, 100, bottom)
     rightboundary = Platform(1800 , bottom, 100, bottom)

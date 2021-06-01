@@ -38,8 +38,9 @@ class Player(CustomSprite):
         self.canjump      = True; 
         self.jumpcounter = 0
         self.liftedBefore = False
-        self.interactive_field      = None                                       
+        self.interactive_field  = None                                       
         self.imageIndex = 0 
+        self.isInteracting = False
 
         self.init()
 

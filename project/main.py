@@ -124,8 +124,6 @@ class Game:
         # 
         try: 
             for Sprite in self.all_sprites:
-                #if Sprite != self.player:
-                    #pass
                 del Sprite
             
             print("removed old sprites")
@@ -203,8 +201,6 @@ class Game:
 
     # Method where we update game processes
     def update(self):
-        #for i in self.all_sprites:
-         #   print(f'{i.name} with {i.vel}')
         self.all_sprites.update()
         self.group_solid.dragAlongSprites()
         self.all_sprites.updateAddedvel()
@@ -448,22 +444,6 @@ class Game:
             else:
                 print("No player or playerData found, making new session!")
                 self.data = self.setPlayerData()
-
-
-### FOR TESTING - REMOVE WHEN DONE ###
-"""level1 = createLevel1()
-level2 = createLevel2()
-level3 = createLevel3()
-level4 = createLevel4()
-#level4 = createLevel5()
-# pickle levels
-pickleLevel(level1, 'level1')
-pickleLevel(level2, 'level2')
-pickleLevel(level3, 'level3')
-pickleLevel(level4, 'level4')
-# pickleLevel(level4, 'level1')
-testLevel = createTestLevel()
-pickleLevel(testLevel, 'level9')"""
 
 # Creating game instance and loop
 g = Game()                                                                      # Creates a game instance                                                                                # While loop checking the Game.running boolean
