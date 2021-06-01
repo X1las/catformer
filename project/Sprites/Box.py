@@ -47,27 +47,27 @@ class Box(CustomSprite):
         self.rect.midbottom = (self.initX,self.initY)
 
 
-    # method for setting box back to initial position
+    # method for setting box back to initial position. Used by Activators
     def respawn(self):
         self = self.__init__(self.initX, self.initY, self.width, self.height, self.name)
 
 
     # method for being pulled/pushed by player
     def pickupEffect(self):
-        if self.has_collided:
-            if self.beingHeld:
-                self.new_vel = self.interacter.player.vel.copy()
-                self.new_acc = self.interacter.player.acc.copy()
-                self.vel.x   = self.new_vel.x
+        if self.has_collided: # triggered in Player class
+            if self.beingHeld: # only true if player is not jumping
+                self.vel.x = self.interacter.player.vel.copy()
                 self.vel.y   = 0
                 self.acc.x   = self.new_acc.x
                 self.gravity = 0
         else:
             self.beingHeld = False
+            # make sure position is rounded to avoid wobbling
             if self.justreleased:
                 self.pos = self.pos.rounded()
                 self.justreleased = False
-        if self.beingHeld == False:
+        # only have non-zero gravity if the player isn't lifting the box
+        if not self.beingHeld:
             self.gravity = GRAVITY
 
 
@@ -75,11 +75,10 @@ class Box(CustomSprite):
     def update(self):
         self.applyPhysics()
         self.solidCollisions()
-        #self.vel += self.addedVel 
         self.updateRect()
 
 
-    # overwriting inherited method
+    # Applying some effects of being lifted
     def update2(self):
         self.pickupEffect() 
 
@@ -88,13 +87,17 @@ class Box(CustomSprite):
     def liftedBy(self,interacter):
         # Setting how much box should be lifted
         self.interacter = interacter
+        # Only of the player is on a solid or moving downwards should they be able to carry the box
         if not interacter.player.inAir or interacter.player.vel.y > 0:
             self.beingHeld = True
             self.pos.y = interacter.player.pos.y - 3
+            # Since box is a solid, it would stop the player when they pick it up and walk towards it.
+            # Therefore, if the box is not colliding with another solid, the player's mass is temporarily greater
+            #   resulting in the player not being stopped by the box
             if not self.stoppedHOR:
                 self.interacter.player.massHOR = self.ori_massHOR - 1
                 self.massHOR = self.interacter.player.massHOR - 1
-            self.justreleased = True
+            self.justreleased = True # Meant for rounding position later
         else: 
             self.beingHeld = False
         self.updateRect()
@@ -102,20 +105,19 @@ class Box(CustomSprite):
 
     # method for updating the position
     def updatePos(self):
-        # Only if the box is being picked up, should it get the vel/acc from the interactive field
+        # If the pos is not moving screen-wise, the position should be rounded. Otherwise, box "wobbles" when player moves
         if self.vel.x == 0:
             self.pos.x = self.pos.rounded().x
         super().updatePos()
-        #self.pos   += self.vel +  self.acc * 0.5
-        self.vel.x = self.addedVel.x
+        self.vel.x = self.addedVel.x # Make sure box stands still on anything moving in x direction
         self.has_collided = False
         self.solidCollisions()
-        #self.updateRect()
 
 
     # method for correcting position
     def posCorrection(self):
         if self.beingHeld:
+            # Set it such that the pos is always one pixel away from the player with picked up.
             heldside = self.determineSide(self.interacter.player)
             if heldside == "left":
                 self.set_right(self.interacter.player.left_x()-1)
