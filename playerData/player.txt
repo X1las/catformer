@@ -1,0 +1,3 @@
+PlayerData files in this directory can be edited to change levels and lives.
+
+Keep this file here in order for Github not to remove the directory!
